@@ -1,0 +1,13 @@
+(,*s,#s,*p,#p)(,*s:#s,*p:#p)(,#s:#s:#s,#s:*s:*s,*s:*s:*s,#s:#p:#p,*s:#p:#p,#p:#p:#p,#s:*p:*p,*s:*p:*p,#p:*p:*p,*p:*p:*p)()()
+s()
+(,"is"597860748)
+p(,&:9r)
+b()
+l()
+i(,&:3,id:1)
+l()
+=(,L\N()A:BS*s:#s.L\N()B:BS*s:#s.L\N()C:BS*s:#s.L\N()D:BS*s:#s.L\N()f:L@N()_:BVC:*s.BVD:*s.L\N()g:L@N()_:BVB:*s.BVC:*s.L\N()h:L@N()_:BVA:*s.BVB:*s.NA(,NA(,NA(,NA(,NA(,BVis_Set,BVA),BVD),NA(,NA(,NA(,NA(,NA(,BV&,BVA),BVB),BVD),NA(,NA(,NA(,NA(,NA(,BV&,BVB),BVC),BVD),BVf),BVg)),BVh)),NA(,NA(,NA(,NA(,NA(,BV&,BVA),BVC),BVD),BVf),NA(,NA(,NA(,NA(,NA(,BV&,BVA),BVB),BVC),BVg),BVh))),L\N()x:BVA:*s.NA(,NA(,BVis_refl,BVD),NA(,BVf,NA(,BVg,NA(,BVh,BVx))))))comp_assoc:L@N()A:BS*s:#s.L@N()B:BS*s:#s.L@N()C:BS*s:#s.L@N()D:BS*s:#s.L@N()f:L@N()_:BVC:*s.BVD:*s.L@N()g:L@N()_:BVB:*s.BVC:*s.L@N()h:L@N()_:BVA:*s.BVB:*s.NA(,NA(,NA(,BV=,L@N()x:BVA:*s.BVD),NA(,NA(,NA(,NA(,NA(,BV&,BVA),BVB),BVD),NA(,NA(,NA(,NA(,NA(,BV&,BVB),BVC),BVD),BVf),BVg)),BVh)),NA(,NA(,NA(,NA(,NA(,BV&,BVA),BVC),BVD),BVf),NA(,NA(,NA(,NA(,NA(,BV&,BVA),BVB),BVC),BVg),BVh))):*p.
+=(,L\N()A:BS*s:#s.L\N()B:BS*s:#s.L\N()f:L@N()_:BVA:*s.BVB:*s.NA(,NA(,NA(,NA(,NA(,BVis_Set,BVA),BVB),NA(,NA(,NA(,NA(,NA(,BV&,BVA),BVB),BVB),NA(,BVid,BVB)),BVf)),BVf),L\N()x:BVA:*s.NA(,NA(,BVis_refl,BVB),NA(,BVf,BVx))))id_comp:L@N()A:BS*s:#s.L@N()B:BS*s:#s.L@N()f:L@N()_:BVA:*s.BVB:*s.NA(,NA(,NA(,BV=,L@N()x:BVA:*s.BVB),NA(,NA(,NA(,NA(,NA(,BV&,BVA),BVB),BVB),NA(,BVid,BVB)),BVf)),BVf):*p.
+=(,L\N()A:BS*s:#s.L\N()B:BS*s:#s.L\N()f:L@N()_:BVA:*s.BVB:*s.NA(,NA(,NA(,NA(,NA(,BVis_Set,BVA),BVB),NA(,NA(,NA(,NA(,NA(,BV&,BVA),BVA),BVB),BVf),NA(,BVid,BVA))),BVf),L\N()x:BVA:*s.NA(,NA(,BVis_refl,BVB),NA(,BVf,BVx))))comp_id:L@N()A:BS*s:#s.L@N()B:BS*s:#s.L@N()f:L@N()_:BVA:*s.BVB:*s.NA(,NA(,NA(,BV=,L@N()x:BVA:*s.BVB),NA(,NA(,NA(,NA(,NA(,BV&,BVA),BVA),BVB),BVf),NA(,BVid,BVA))),BVf):*p.
+=(,L\N()A:BS*s:#s.L\N()B:BS*s:#s.L\N()C:BS*s:#s.L\N()f:L@N()_:BVB:*s.BVC:*s.L\N()g:L@N()_:BVA:*s.BVB:*s.L\N()x:BVA:*s.NA(,BVf,NA(,BVg,BVx)))&:L@N()A:BS*s:#s.L@N()B:BS*s:#s.L@N()C:BS*s:#s.L@N()f:L@N()_:BVB:*s.BVC:*s.L@N()g:L@N()_:BVA:*s.BVB:*s.L@N()x:BVA:*s.BVC:*s.
+=(,L\N()A:BS*s:#s.L\N()x:BVA:*s.BVx)id:L@N()A:BS*s:#s.L@N()x:BVA:*s.BVA:*s.

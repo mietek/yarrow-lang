@@ -1,0 +1,44 @@
+<P>
+Yarrow has a module system that allows pieces of contexts to be loaded
+without repeating type-checking. A module is a file, consisting of:
+</P>
+<OL>
+<LI>a segment of context
+<LI>a type-system in which this segment is valid
+<LI>an import list of modules that contain variables
+    needed for this segment
+<LI>infix and implicit declarations for variables in the segment
+</OL>
+<P>
+A module is created by the command <A HREF="#Save"><CODE>Save</CODE></A>
+<VAR>name</VAR>. In this module all new variables are saved; new variables
+are not contained in a loaded module.
+In a following session, all definitions and declarations in the module can be
+regained quickly by the command <A HREF="#Load"><CODE>Load</CODE></A>
+<VAR>name</VAR>.
+</P>
+
+<P>
+A module <VAR>m</VAR> can depend on other modules.
+This is automatically registered
+when saving: all modules loaded on that moment form the import list of
+module <VAR>m</VAR>. When <VAR>m</VAR> is loaded, any imported modules are
+also loaded. If any of the imported modules has changed since
+it was included in the import-list of <VAR>m</VAR>, the context defined in
+<VAR>m</VAR> is type-checked again. In this way consistency is guaranteed.
+</P>
+
+<P>
+Yarrow always keeps the context ordered in such a way, that it can be split
+in two pieces. The first piece corresponds to loaded modules, and the
+second piece contains new variables. The <CODE>Save</CODE> command will only
+save the second piece, and <CODE>Load</CODE> will insert the
+new variables between the two pieces.
+</P>
+
+<P>
+The <A HREF="#Clear"><CODE>Clear</CODE></A> command makes Yarrow forget
+that it has loaded the last module. This is necessary if modules have to be
+concatenated in a bigger module or if some definitions have to be deleted
+from a module.
+</P>

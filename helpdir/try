@@ -1,0 +1,23 @@
+<DL>
+ <DT>Syntax:
+ <DD><CODE>Try</CODE> <VAR>tactic</VAR>
+ <DT>Effect:
+ <DD> This tactical tries <VAR>tactic</VAR>, but does not fail if
+               <VAR>tactic</VAR> fails.
+ <DT>Example:
+ <DD><P>
+     <CODE>Apply H Then Try Assumption</CODE><BR>
+           This example shows how <CODE>Try</CODE> can be useful.
+           All hypotheses of <CODE>H</CODE> that are in the context are
+           immediately proved. If <CODE>Try</CODE> were omitted, a single
+           failure of the <CODE>Assumption</CODE> tactic (which is probable)
+           would mean failure of the whole composed tactic.
+     </P>
+     <P><CODE>Try</CODE> <VAR>tactic</VAR> is the same as
+        <VAR>tactic</VAR> <CODE>Else</CODE> <CODE>"skip"</CODE>.
+     </P>
+ <DT>See also:
+ <DD><A HREF="#Repeat"><CODE>Repeat</CODE></A>,
+     <A HREF="#Then"><CODE>Then</CODE></A>,
+     <A HREF="#Else"><CODE>Else</CODE></A>
+</DL>

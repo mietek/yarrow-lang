@@ -1,0 +1,77 @@
+-- File: sessions/Uminus/Uminus.ys
+--
+-- This script-file shows inconsistency of the system \U-
+-- The paradox in this system is from:
+-- Antonius J.C. Hurkens. A simplification of Girard's Paradox.
+-- In Mariangiola Dezani-Ciancaglini and Gordon Plotkin, editors,
+-- "Typed Lambda Calculi and Applications, Proceedings of TLCA '95".
+-- LNCS 902, Springer Verlag, 1995.
+--
+-- Note that the TERMS in this system are not all normalizing, but
+-- the TYPES (inhabitants of *) are. So type-checking is still decidable;
+-- yarrow will never get in an infinite computation when a proof-term is
+-- constructed.
+
+-- lambda-U-minus
+system (*,#,##),
+       (*:#,#:##),
+       ((*,*),(#,*),(#,#),(##,#))
+
+-- we can't define
+-- def pow := \S:#.S->*
+-- so we must always write "pow S" out to "S->*"
+
+def False := @p:*.p
+def Not := \p:*.p->False
+
+-- def U := @X:#.((pow pow X -> X)-> pow pow X)
+def U := @X:#.((((X->*)->*) -> X) -> ((X->*)->*))
+def PU := U->*
+def PPU := PU->*
+
+-- we can define tau and sigma as abstractions
+def tau := \t:PPU.\X:#.\f:(((X->*)->*)->X).
+           \p:X->*. t (\x:U.p (f (x X f))) :
+           PPU -> U
+def sigma := \s:U.s U (\t:PPU.tau t) : U -> PPU
+
+def Delta := \y:U.Not (@p:PU. sigma y p -> p (tau (sigma y)))
+def Omega := tau (\p:PU.@x:U. sigma x p -> p x)
+
+-- We show inconsistency of lambda-U-minus:
+
+prove lemma : @p:PU.(@x:U.(sigma x p -> p x)) -> p Omega
+intro
+intro H1
+apply H1
+unfold sigma
+unfold Omega
+unfold 1 tau
+intro
+exact H1 (tau (sigma x))
+exit
+
+prove false : False
+apply lemma Delta
+intro
+intro H2
+unfold Delta
+unfold Not
+intro H3
+apply H3 Delta
+assumption
+
+intro
+unfold 1 sigma in H3
+unfold 1 sigma
+unfold 1 tau
+unfold 1 sigma
+apply H3
+
+intro
+unfold sigma
+unfold 1 Omega
+unfold 1 tau
+apply lemma
+exit
+

@@ -1,0 +1,10 @@
+<DL>
+ <DT>Syntax:
+ <DD><CODE>Cut</CODE> <VAR>term</VAR>
+ <DT>Effect:
+ <DD> Prove the goal by using the cut rule for <VAR>term</VAR>.
+               That is, first prove the goal assuming <VAR>term</VAR>,
+               and prove <VAR>term</VAR> later.
+ <DT>See also:
+ <DD><A HREF="#First"><CODE>First</CODE></A>
+</DL>

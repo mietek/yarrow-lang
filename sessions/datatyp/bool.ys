@@ -1,0 +1,195 @@
+-- bool
+
+Path "../logic"
+Read "lambdaL"
+Load "prop"
+Load "is"
+
+--------------
+-- BOOLEANS --
+--------------
+
+Def Bool := @A:*s. A->A->A
+Def true  := \A:*s. \x:A.\y:A. x : Bool
+Def false := \A:*s. \x:A.\y:A. y : Bool
+Def if := \A:*s. \b:Bool. \x,y:A. b A x y :
+          @A:*s. Bool -> A -> A -> A
+Implicit 1 if
+
+Var diff : Not (true=false)
+
+Var ind_Bool : @P:Bool->*p. P true -> P false -> (@b:Bool. P b)
+
+Prove exh_Bool : @b:Bool. b=true \/ b=false
+Apply ind_Bool
+OrIL Then Refl
+OrIR Then Refl
+Exit
+
+Prove if_true  : @A:*s. @x,y:A. if true x y = x
+Intro A, x, y
+Refl
+Exit
+
+Prove if_false : @A:*s. @x,y:A. if false x y = y
+Intro A, x, y
+Refl
+Exit
+
+Def not := \b:Bool. if b false true
+
+Prove not_true  : not true = false
+Refl
+Exit
+
+Prove not_false : not false = true
+Refl
+Exit
+
+Prove not_is_false_ : @b:Bool. not b = false -> b = true
+Apply ind_Bool
+Intro
+Refl
+Intro
+Lewrite H
+Refl
+Exit
+
+Prove not_is_true_ : @b:Bool. not b = true -> b = false
+Apply ind_Bool
+Intro
+Lewrite H
+Refl
+Intro
+Refl
+Exit
+
+Prove not_not : @b:Bool. not (not b) = b
+Apply ind_Bool Then Refl
+Exit
+
+
+-- Name in lemmas: and
+Def (&&) := \a,b:Bool. if a b false : Bool->Bool->Bool
+
+Prove true_and : @b:Bool. true && b = b
+Intro
+Refl
+Exit
+
+Prove false_and : @b:Bool. false && b = false
+Intro
+Refl
+Exit
+
+Prove and_true : @b:Bool. b && true = b
+Apply ind_Bool Then Refl
+Exit
+
+Prove and_false : @b:Bool. b && false = false
+Apply ind_Bool Then Refl
+Exit
+
+Prove comm_and : @b,c:Bool. b && c = c && b
+Intro
+Apply ind_Bool
+Rewrite and_true
+Rewrite true_and
+Refl
+Rewrite and_false
+Rewrite false_and
+Refl
+Exit
+
+Prove assoc_and : @b,c,d:Bool. (b&&c)&&d = b&&(c&&d)
+Intro b,c
+Apply ind_Bool
+Repeat Rewrite and_true
+Refl
+Repeat Rewrite and_false
+Refl
+Exit
+
+Prove and_is_false_ : @b,c:Bool. b&&c = false -> b=false \/ c=false
+Apply ind_Bool Then Apply ind_Bool Then Intro
+OrIL Then Assumption
+OrIR Then Refl
+OrIL Then Refl
+OrIL Then Refl
+Exit
+
+Prove and_is_true_ : @b,c:Bool. b&&c = true -> b=true /\ c=true
+Apply ind_Bool Then Apply ind_Bool Then Intro
+AndI Then Refl
+AndI Then Try Refl Then Try Assumption
+AndI Then Try Refl Then Try Assumption
+AndI Then Assumption
+Exit
+
+Def (||) := \a,b:Bool. if a true b : Bool->Bool->Bool
+
+Prove true_or : @b:Bool. true || b = true
+Intro
+Refl
+Exit
+
+Prove false_or : @b:Bool. false || b = b
+Intro
+Refl
+Exit
+
+Prove or_true : @b:Bool. b || true = true
+Apply ind_Bool Then Refl
+Exit
+
+Prove or_false : @b:Bool. b || false = b
+Apply ind_Bool Then Refl
+Exit
+
+Prove comm_or : @b,c:Bool. b || c = c || b
+Intro
+Apply ind_Bool
+Rewrite or_true
+Rewrite true_or
+Refl
+Rewrite or_false
+Rewrite false_or
+Refl
+Exit
+
+Prove assoc_or : @b,c,d:Bool. (b||c)||d = b||(c||d)
+Intro b,c
+Apply ind_Bool
+Repeat Rewrite or_true
+Refl
+Repeat Rewrite or_false
+Refl
+Exit
+
+Prove or_is_true_ : @b,c:Bool. b || c = true -> b=true \/ c=true
+Apply ind_Bool
+Intros
+OrIL
+Refl
+Apply ind_Bool
+Intro
+OrIR
+Refl
+Intro
+OrIL
+Assumption
+Exit
+
+Prove or_is_false_ : @b,c:Bool. b || c = false -> b=false /\ c=false
+Apply ind_Bool Then Apply ind_Bool Then Intro Then AndI Then Try Assumption
+Refl
+Refl
+Exit
+
+Prove not_and : @b,c:Bool. not (b&&c) = not b || not c
+Apply ind_Bool Then Apply ind_Bool Then Refl
+Exit
+
+Prove not_or : @b,c:Bool. not (b||c) = not b && not c
+Apply ind_Bool Then Apply ind_Bool Then Refl
+Exit

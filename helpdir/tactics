@@ -1,0 +1,45 @@
+<P>
+In the prove-mode a term of a given type is interactively constructed.
+Tactics are the commands that direct this process. We call the term that
+is being constructed the proof-term.
+</P>                            
+<P>
+More specifically, at every moment during the construction, the proof-term
+is a lambda-term with some <EM>holes</EM> in it. Every hole has a type,
+which is called the <EM>goal</EM>.
+At the beginning, the proof-term is just one hole, and its type is the
+type given in the <CODE>prove</CODE>-command.
+By tactics this hole is gradually filled in, refining the corresponding goal.
+Typically, new holes are constructed during this process. The proof-term
+is complete when there are no holes left. Then the prove-mode can be exited
+and the constructed term is included as a definition in the context.
+</P>
+<P>
+A hole can occur inside a lambda-abstraction. This means that every hole has
+a <EM>local context</EM>, listing the abstracted variables with their types.
+In the prove-mode the first goal is shown under its local context, seperated
+by a line. The other goals are shown without their context. An example:
+</P>
+<P><CODE>
+2 goals<BR>
+<BR>
+P : *<BR>
+Q : *<BR>
+R : *<BR>
+H : P->Q->R<BR>
+H1 : Q<BR>
+H2 : P<BR>
+--------------------------------------------------<BR>
+P<BR>
+<BR>
+2) Q<BR>
+</CODE></P>
+<P>
+This shows two goals, <CODE>P</CODE> and <CODE>Q</CODE>, and the local
+context of the first goal. Holes themselves are not shown, unless the
+corresponding option is turned on. Then the whole process of constructing
+proof-term is made explicit
+(see <A HREF="#Option"><CODE>Option</CODE></A>).
+Normally tactics work on the first goal. Another goal can be selected with
+the <A HREF="#Focus"><CODE>Focus</CODE></A> tactic.
+</P>

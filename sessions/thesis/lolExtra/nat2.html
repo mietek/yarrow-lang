@@ -1,0 +1,267 @@
+<HTML>
+<HEAD>
+<TITLE>lolExtra/nat2 (with proofs)</TITLE>
+</HEAD>
+<BODY BGCOLOR="#FFFFFF", TEXT="#000000">
+<PRE><FONT COLOR="#000000"></FONT><FONT COLOR="#000000">-- File: nat2
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#000000">-- defines eq, +, and max
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#000000">Path "../lol"
+</FONT><FONT COLOR="#000000">Load "nat"
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#000000">--------
+</FONT><FONT COLOR="#000000">-- eq --
+</FONT><FONT COLOR="#000000">--------
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#0000FF">Def eq := iternat (\n:Nat. isZero n) (\eq_Pm:Nat-&gt;Bool. 
+</FONT><FONT COLOR="#0000FF">          primrecnat false (\Pn:Nat. \dummy:Bool. eq_Pm Pn))
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#0000FF">Prove eq_O_O : eq O O = true
+</FONT><FONT COLOR="#000000">Unfold eq
+</FONT><FONT COLOR="#000000">Rewrite iternat_O
+</FONT><FONT COLOR="#000000">Apply isZero_O
+</FONT><FONT COLOR="#000000">Exit
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#0000FF">Prove eq_O_Sm : @m:Nat. eq O (S m) = false
+</FONT><FONT COLOR="#000000">Intro
+</FONT><FONT COLOR="#000000">Unfold eq
+</FONT><FONT COLOR="#000000">Rewrite iternat_O
+</FONT><FONT COLOR="#000000">Apply isZero_Sm
+</FONT><FONT COLOR="#000000">Exit
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#0000FF">Prove eq_Sm_O : @m:Nat. eq (S m) O = false
+</FONT><FONT COLOR="#000000">Intro
+</FONT><FONT COLOR="#000000">Unfold eq
+</FONT><FONT COLOR="#000000">Rewrite iternat_Sm
+</FONT><FONT COLOR="#000000">Apply primrecnat_O
+</FONT><FONT COLOR="#000000">Exit
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#0000FF">Prove eq_Sm_Sn : @m,n:Nat. eq (S m) (S n) = eq m n
+</FONT><FONT COLOR="#000000">Intros
+</FONT><FONT COLOR="#000000">Unfold 1 eq
+</FONT><FONT COLOR="#000000">Rewrite iternat_Sm
+</FONT><FONT COLOR="#000000">Rewrite primrecnat_Sm
+</FONT><FONT COLOR="#000000">Refl
+</FONT><FONT COLOR="#000000">Exit
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#0000FF">Prove eq__Eq : @m,n:Nat. eq m n = true -&gt; m=n
+</FONT><FONT COLOR="#000000">Apply nat_double_ind
+</FONT><FONT COLOR="#000000">Apply indnat
+</FONT><FONT COLOR="#000000">Intro
+</FONT><FONT COLOR="#000000">Refl
+</FONT><FONT COLOR="#000000">Intro
+</FONT><FONT COLOR="#000000">Rewrite eq_O_Sm
+</FONT><FONT COLOR="#000000">Intros
+</FONT><FONT COLOR="#000000">FalseE
+</FONT><FONT COLOR="#000000">NotE false_is_true_
+</FONT><FONT COLOR="#000000">Exact H1
+</FONT><FONT COLOR="#000000">Intro
+</FONT><FONT COLOR="#000000">Rewrite eq_Sm_O
+</FONT><FONT COLOR="#000000">Intro
+</FONT><FONT COLOR="#000000">FalseE
+</FONT><FONT COLOR="#000000">Apply false_is_true_ On H
+</FONT><FONT COLOR="#000000">Intros 3
+</FONT><FONT COLOR="#000000">Rewrite eq_Sm_Sn
+</FONT><FONT COLOR="#000000">Intro
+</FONT><FONT COLOR="#000000">Rewrite H
+</FONT><FONT COLOR="#000000">Assumption
+</FONT><FONT COLOR="#000000">Refl
+</FONT><FONT COLOR="#000000">Exit
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#0000FF">Prove eq_m_m : @m:Nat. eq m m = true
+</FONT><FONT COLOR="#000000">Apply indnat
+</FONT><FONT COLOR="#000000">Apply eq_O_O
+</FONT><FONT COLOR="#000000">Intros
+</FONT><FONT COLOR="#000000">Rewrite eq_Sm_Sn
+</FONT><FONT COLOR="#000000">Assumption
+</FONT><FONT COLOR="#000000">Exit
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#0000FF">Prove eq_m_n : @m,n:Nat. Not (m=n) -&gt; eq m n = false
+</FONT><FONT COLOR="#000000">Intros
+</FONT><FONT COLOR="#000000">OrE exh_bool (eq m n)
+</FONT><FONT COLOR="#000000">Forward eq__Eq On H1
+</FONT><FONT COLOR="#000000">FalseE
+</FONT><FONT COLOR="#000000">NotE H
+</FONT><FONT COLOR="#000000">Assumption
+</FONT><FONT COLOR="#000000">Assumption
+</FONT><FONT COLOR="#000000">Exit
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#0000FF">Prove Not_eq__Not_Eq : @m,n:Nat. eq m n = false -&gt; Not (m=n)
+</FONT><FONT COLOR="#000000">Intros
+</FONT><FONT COLOR="#000000">NotI
+</FONT><FONT COLOR="#000000">Cut eq m n = true
+</FONT><FONT COLOR="#000000">Intro
+</FONT><FONT COLOR="#000000">NotE false_is_true_
+</FONT><FONT COLOR="#000000">Lewrite H
+</FONT><FONT COLOR="#000000">Lewrite H2
+</FONT><FONT COLOR="#000000">Refl
+</FONT><FONT COLOR="#000000">Rewrite H1
+</FONT><FONT COLOR="#000000">Apply eq_m_m
+</FONT><FONT COLOR="#000000">Exit
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#000000">----------
+</FONT><FONT COLOR="#000000">-- plus --
+</FONT><FONT COLOR="#000000">----------
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#000000">-- Name in lemmas: plus
+</FONT><FONT COLOR="#0000FF">Def (+) := \m:Nat.\n:Nat. iternat n S m : Nat-&gt;Nat-&gt;Nat
+</FONT><FONT COLOR="#000000">Infix 5 (+)
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#0000FF">Prove O_plus : @n:Nat. O+n = n
+</FONT><FONT COLOR="#000000">Intro n
+</FONT><FONT COLOR="#000000">Unfold (+)
+</FONT><FONT COLOR="#000000">Rewrite iternat_O
+</FONT><FONT COLOR="#000000">Refl
+</FONT><FONT COLOR="#000000">Exit
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#0000FF">Prove Sm_plus : @m,n:Nat. S m + n = S (m + n)
+</FONT><FONT COLOR="#000000">Intro m, n
+</FONT><FONT COLOR="#000000">Unfold (+)
+</FONT><FONT COLOR="#000000">Rewrite iternat_Sm
+</FONT><FONT COLOR="#000000">Refl
+</FONT><FONT COLOR="#000000">Exit
+</FONT><FONT COLOR="#000000">    
+</FONT><FONT COLOR="#0000FF">Prove plus_O : @n:Nat. n+O = n
+</FONT><FONT COLOR="#000000">Apply indnat  
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#000000">Rewrite O_plus
+</FONT><FONT COLOR="#000000">Refl
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#000000">Intro n, H
+</FONT><FONT COLOR="#000000">Rewrite Sm_plus
+</FONT><FONT COLOR="#000000">Rewrite H
+</FONT><FONT COLOR="#000000">Refl
+</FONT><FONT COLOR="#000000">Exit
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#0000FF">Prove plus_Sm : @m,n:Nat. m + S n = S (m+n)
+</FONT><FONT COLOR="#000000">Intros
+</FONT><FONT COLOR="#000000">Pattern m
+</FONT><FONT COLOR="#000000">Apply indnat
+</FONT><FONT COLOR="#000000">Repeat Rewrite O_plus
+</FONT><FONT COLOR="#000000">Refl
+</FONT><FONT COLOR="#000000">Intros
+</FONT><FONT COLOR="#000000">Repeat Rewrite Sm_plus
+</FONT><FONT COLOR="#000000">Rewrite H
+</FONT><FONT COLOR="#000000">Refl
+</FONT><FONT COLOR="#000000">Exit
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#0000FF">Prove plus_comm : @m,n:Nat. m+n = n+m
+</FONT><FONT COLOR="#000000">Intro
+</FONT><FONT COLOR="#000000">Apply indnat
+</FONT><FONT COLOR="#000000">Rewrite plus_O
+</FONT><FONT COLOR="#000000">Rewrite O_plus
+</FONT><FONT COLOR="#000000">Refl
+</FONT><FONT COLOR="#000000">Intro n,H
+</FONT><FONT COLOR="#000000">Rewrite Sm_plus
+</FONT><FONT COLOR="#000000">Rewrite plus_Sm
+</FONT><FONT COLOR="#000000">Rewrite H
+</FONT><FONT COLOR="#000000">Refl
+</FONT><FONT COLOR="#000000">Exit
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#0000FF">Prove plus_assoc : @m,n,p:Nat. (m+n)+p = m+(n+p)
+</FONT><FONT COLOR="#000000">Intros
+</FONT><FONT COLOR="#000000">Pattern m
+</FONT><FONT COLOR="#000000">Apply indnat
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#000000">Repeat Rewrite O_plus
+</FONT><FONT COLOR="#000000">Refl
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#000000">Intro m2, H
+</FONT><FONT COLOR="#000000">Repeat Rewrite Sm_plus
+</FONT><FONT COLOR="#000000">Rewrite H
+</FONT><FONT COLOR="#000000">Refl
+</FONT><FONT COLOR="#000000">Exit
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#000000">InfixR 5 (+)
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#000000">---------
+</FONT><FONT COLOR="#000000">-- max --
+</FONT><FONT COLOR="#000000">---------
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#0000FF">Def max := \m,n:Nat. if (leq n m) m n
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#0000FF">Prove Le_max1 : @m,n:Nat. m &lt;= max m n 
+</FONT><FONT COLOR="#000000">Intros
+</FONT><FONT COLOR="#000000">Unfold max
+</FONT><FONT COLOR="#000000">OrE exh_bool On leq n m
+</FONT><FONT COLOR="#000000">Rewrite H1
+</FONT><FONT COLOR="#000000">Rewrite if_true
+</FONT><FONT COLOR="#000000">Apply Le_refl
+</FONT><FONT COLOR="#000000">Rewrite H1
+</FONT><FONT COLOR="#000000">Rewrite if_false
+</FONT><FONT COLOR="#000000">Apply m_Lt_n__m_Le_n
+</FONT><FONT COLOR="#000000">Apply leq_false__Gt
+</FONT><FONT COLOR="#000000">Assumption
+</FONT><FONT COLOR="#000000">Exit
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#0000FF">Prove max_comm : @m,n:Nat. max m n = max n m
+</FONT><FONT COLOR="#000000">Intros
+</FONT><FONT COLOR="#000000">Unfold max
+</FONT><FONT COLOR="#000000">OrE Le_Or_Gt On m, n
+</FONT><FONT COLOR="#000000">OrE Le__Lt_Or_is On H1
+</FONT><FONT COLOR="#000000">Rewrite Le__leq_true On H1
+</FONT><FONT COLOR="#000000">Rewrite if_true
+</FONT><FONT COLOR="#000000">Rewrite Gt__leq_false On H3
+</FONT><FONT COLOR="#000000">Rewrite if_false
+</FONT><FONT COLOR="#000000">Refl
+</FONT><FONT COLOR="#000000">Repeat Rewrite H3
+</FONT><FONT COLOR="#000000">Refl
+</FONT><FONT COLOR="#000000">Forward m_Lt_n__m_Le_n On H1
+</FONT><FONT COLOR="#000000">Rewrite Le__leq_true On H2
+</FONT><FONT COLOR="#000000">Rewrite if_true
+</FONT><FONT COLOR="#000000">Rewrite Gt__leq_false On H1
+</FONT><FONT COLOR="#000000">Rewrite if_false
+</FONT><FONT COLOR="#000000">Refl
+</FONT><FONT COLOR="#000000">Exit
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#0000FF">Prove Le_max2 : @m,n:Nat. n &lt;= max m n 
+</FONT><FONT COLOR="#000000">Intros
+</FONT><FONT COLOR="#000000">Rewrite max_comm
+</FONT><FONT COLOR="#000000">Apply Le_max1
+</FONT><FONT COLOR="#000000">Exit
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#0000FF">Prove max_assoc : @m,n,p:Nat. max (max m n) p = max m (max n p)
+</FONT><FONT COLOR="#000000">Intros
+</FONT><FONT COLOR="#000000">Unfold max
+</FONT><FONT COLOR="#000000">OrE exh_bool On leq n m
+</FONT><FONT COLOR="#000000">Repeat Rewrite H1
+</FONT><FONT COLOR="#000000">Repeat Rewrite if_true
+</FONT><FONT COLOR="#000000">OrE exh_bool On leq p n
+</FONT><FONT COLOR="#000000">Repeat Rewrite H3
+</FONT><FONT COLOR="#000000">Repeat Rewrite if_true
+</FONT><FONT COLOR="#000000">Rewrite H1
+</FONT><FONT COLOR="#000000">Rewrite if_true
+</FONT><FONT COLOR="#000000">Forward leq_true__Le On H1
+</FONT><FONT COLOR="#000000">Forward leq_true__Le On H3
+</FONT><FONT COLOR="#000000">Forward Le_trans On H5, H4
+</FONT><FONT COLOR="#000000">Rewrite Le__leq_true On H6
+</FONT><FONT COLOR="#000000">Rewrite if_true
+</FONT><FONT COLOR="#000000">Refl
+</FONT><FONT COLOR="#000000">Repeat Rewrite H3
+</FONT><FONT COLOR="#000000">Repeat Rewrite if_false
+</FONT><FONT COLOR="#000000">Refl
+</FONT><FONT COLOR="#000000">Repeat Rewrite H1
+</FONT><FONT COLOR="#000000">Repeat Rewrite if_false
+</FONT><FONT COLOR="#000000">OrE exh_bool On leq p n
+</FONT><FONT COLOR="#000000">Repeat Rewrite H3
+</FONT><FONT COLOR="#000000">Repeat Rewrite if_true
+</FONT><FONT COLOR="#000000">Rewrite H1
+</FONT><FONT COLOR="#000000">Rewrite if_false
+</FONT><FONT COLOR="#000000">Refl
+</FONT><FONT COLOR="#000000">Repeat Rewrite H3
+</FONT><FONT COLOR="#000000">Repeat Rewrite if_false
+</FONT><FONT COLOR="#000000">Forward leq_false__Gt On H1
+</FONT><FONT COLOR="#000000">Forward leq_false__Gt On H3
+</FONT><FONT COLOR="#000000">Forward Lt_trans On H4, H5
+</FONT><FONT COLOR="#000000">Rewrite Gt__leq_false On H6
+</FONT><FONT COLOR="#000000">Rewrite if_false
+</FONT><FONT COLOR="#000000">Refl
+</FONT><FONT COLOR="#000000">Exit
+</FONT></PRE>
+</BODY>
+</HTML>

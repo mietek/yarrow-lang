@@ -1,0 +1,26 @@
+<DL>
+ <DT>Syntax:
+ <DD><CODE>Binder</CODE> <VAR>var</VAR>
+ <DT>Effect:
+ <DD><VAR>var</VAR> is declared as a binder,
+     so applications of  <VAR>var</VAR> to an abstraction are parsed and
+     printed in
+     an abbreviated form,
+     i.e. the lambda is left out.<BR>
+    After a variable is declared as binder, it is always interpreted by
+    the parser as a binder; only if parenthesized, it can be used as an
+    ordinary variable.
+<DT>Example:
+ <DD>Assume the following declaration has been made:<BR>
+     <CODE>Ex : (Nat-&gt;*) -&gt; *<BR>
+     </CODE>and <CODE>Ex</CODE> is declared as a binder:<BR>
+     <CODE>Binder Ex</CODE><BR>
+     then the expression <CODE>Ex x:Nat. x=x</CODE> stands for
+    <CODE>Ex (\x:Nat. x=x)</CODE>.<BR>
+    <BR>
+    The application
+    of <CODE>Ex</CODE> to <CODE>P</CODE> is now written as
+    <CODE>(Ex) P</CODE>.
+ <DT>See also:
+ <DD><A HREF="#Implicit"><CODE>Implicit</CODE></A>
+</DL>

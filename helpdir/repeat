@@ -1,0 +1,11 @@
+<DL>
+ <DT>Syntax:
+ <DD><CODE>Repeat</CODE> <VAR>tactic</VAR>
+ <DT>Effect:
+ <DD>Repeats <VAR>tactic</VAR> as often as possible, but with a
+               maximum of 10 times. So it is ensured the repetition
+               always ends.
+ <DT>See also:
+ <DD><A HREF="#Try"><CODE>Try</CODE></A>,
+     <A HREF="#Then"><CODE>Then</CODE></A>
+</DL>

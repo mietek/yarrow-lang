@@ -1,0 +1,14 @@
+This directory contains the 8 different systems of the lambda cube:
+
+name file  |  PTS
+--------------------------------------------------------
+arrow      | lambda-arrow       (simply typed lambda calculus)
+lambda2    | lambda-2           (second order or polymorphic lambda calculus)
+lambdaw    | lambda-weak-omega  
+lambdaO    | lambda-omega       (higher order lambda calculus)
+lambdaP    | lambda-P
+lambdaQ    | lambda-P2
+lambdaR    | lambda-P-weak-omega
+lambdaC    | lambda-C           (calculations of constructions)
+
+Jan Zwanenburg, 27-11-'96

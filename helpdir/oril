@@ -1,0 +1,12 @@
+<DL>
+ <DT>Syntax:
+ <DD><CODE>OrIL</CODE>
+ <DT>Effect:
+ <DD>The goal should be a disjunction. This tactic reduces this goal to the
+     disjunct on the left hand side.<BR>
+     This tactic needs an introduction lemma for disjunction of the
+     following form:<BR>
+     <CODE>@P,Q:s. P -> or P Q</CODE>
+ <DT>See also:
+ <DD><A HREF="#Use"><CODE>Use</CODE></A>
+</DL>

@@ -1,0 +1,15 @@
+<DL>
+ <DT>Syntax:
+ <DD><CODE>InfixR</CODE> <VAR>num</VAR> <VAR>var</VAR>
+ <DT>Effect:
+ <DD> Sets the precedence of operator <VAR>var</VAR> to <VAR>num</VAR>, 
+               and makes it right-associative.
+ <DT>Example:
+ <DD><CODE>InfixR 7 (^)</CODE><BR>
+     After this, <CODE>x^y^z</CODE> will be interpreted as
+     <CODE>x^(y^z)</CODE>.
+ <DT>See also:
+ <DD><A HREF="#Infix"><CODE>Infix</CODE></A>,
+     <A HREF="#InfixL"><CODE>InfixL</CODE></A>,
+     <A HREF="#infix-notation"><CODE>infix-notation</CODE></A>
+</DL>

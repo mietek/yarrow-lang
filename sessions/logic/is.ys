@@ -1,0 +1,57 @@
+-- is
+-- defines Leibniz-equality with basic lemmas
+-- we also assume the extensionality principle for functions
+
+Read "lambdaL"
+
+-- prefix name: is
+Def (=) := \A:*s.\x,y:A. @P:A->*p. P y -> P x
+Infix 4 (=)
+Implicit 1 (=)
+
+Prove is_refl : @A:*s.@x:A. x=x
+Unfold (=)
+Intro A,x,P,H
+Assumption
+Exit
+
+-- Indicate that this lemma must used by the refl tactic
+Use Refl is_refl
+
+
+Prove is_elim_l : @A:*s.@x,y:A.@P:A->*p. x=y -> P y -> P x
+Intros
+Apply H
+Assumption
+Exit
+
+-- Indicate that this lemma must used by the rewrite tactic
+Use Rewrite is_elim_l
+
+
+Prove is_elim_r : @A:*s.@x,y:A.@P:A->*p. x=y -> P x -> P y
+Intro A,x,y,P,H
+Rewrite H
+Intro
+Assumption
+Exit
+
+
+-- Indicate that this lemma must used by the lewrite tactic
+Use Lewrite is_elim_r
+
+             
+Prove is_sym : @A:*s.@x,y:A. x=y -> y=x
+Intros
+Rewrite H
+Refl
+Exit
+
+Prove is_trans : @A:*s.@x,y,z:A. x=y -> y=z -> x=z
+Intro A,x,y,z,H1,H2
+Rewrite H1
+Assumption
+Exit
+
+-- the axiom of extensionality for ordinary functions
+Var is_Set :  @A,B:*s.@f,g:A->B. (@x:A. f x = g x) -> f = g

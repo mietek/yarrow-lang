@@ -1,0 +1,6 @@
+This directory contains the source code for Yarrow.
+For information concerning installing Yarrow see the file
+  - doc/inGof.html (for Gofer), or
+  - doc/inHas.html (for Haskell).
+
+Jan Zwanenburg, 5-2-'97

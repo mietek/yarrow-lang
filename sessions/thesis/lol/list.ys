@@ -1,0 +1,323 @@
+-- File: list
+
+-- This file introduces lists.
+-- It consists of two parts.
+-- 1. Axioms, corresponding to Section 4.5
+-- 2. Library, corresponding to Section 4.6
+
+
+-- naming conventions for lemmas:
+-- variables for Lists are always ending in s
+-- e.g. as,xs,ys
+
+Load "bool"
+
+-----------------------
+-----------------------
+--                   --
+--  1.  A X I O M S  --
+--                   --
+-----------------------
+-----------------------
+
+Var List : *s -> *s
+Var nil : @A:*s. List A
+
+-- Name in lemmas: cons
+Var (;) : @A:*s. A -> List A -> List A
+Implicit 1 (;)    
+InfixR 5 (;)   
+
+
+Var primreclist : @A,B:*s. B-> (A -> List A -> B -> B) -> List A -> B
+Implicit 2 primreclist
+
+Var primreclist_nil : @A,B:*s. @nv:B. @sv: A -> List A -> B -> B.
+                                 primreclist nv sv (nil A) = nv
+
+Var primreclist_cons : @A,B:*s. @nv:B. @sv: A -> List A -> B -> B.
+                         @head:A. @tail:List A.
+                                  primreclist nv sv (head;tail) = 
+                                  sv head tail (primreclist nv sv tail)
+
+Var indlist : @A:*s. @P:List A->*p. P (nil A) ->
+                                    (@a:A. @as:List A. P as -> P (a;as)) ->
+                                    (@as:List A. P as)
+
+-------------------------
+-------------------------
+--                     --
+--  2.  L I B R A R Y  --
+--                     --
+-------------------------
+-------------------------
+
+--------------
+-- iterlist --
+--------------
+
+-- iterlist is also known as foldr
+Def iterlist := \A,B:*s. \nv:B. \sv:A->B->B.
+                primreclist nv (\a:A. \dummy:List A. sv a) :
+                @A,B:*s. B-> (A -> B -> B) -> List A -> B
+Implicit 2 iterlist
+
+Prove iterlist_nil : @A,B:*s. @nv:B. @sv: A -> B -> B.
+                                iterlist nv sv (nil A) = nv
+Intros
+Unfold iterlist
+Apply primreclist_nil
+Exit
+
+Prove iterlist_cons : @A,B:*s. @nv:B. @sv: A -> B -> B.
+                         @head:A. @tail:List A.
+                                  iterlist nv sv (head;tail) = 
+                                  sv head (iterlist nv sv tail)
+Intros
+Unfold 1 iterlist
+Apply primreclist_cons
+Exit
+
+----------
+-- tail --
+----------
+
+Def tail := \A:*s. primreclist (nil A) (\hd:A.\tl:List A.\p:List A.tl)
+Implicit 1 tail
+
+Prove tail_nil : @A:*s. tail (nil A) = nil A
+Intro
+Unfold tail
+Rewrite primreclist_nil
+Refl
+Exit
+
+Prove tail_cons : @A:*s. @a:A. @l:List A. tail (a;l) = l
+Intros
+Unfold tail
+Rewrite primreclist_cons
+Refl
+Exit
+
+----------
+-- head --
+----------
+
+Def head := \A:*s. \a:A. iterlist a (\a':A. \prev:A.a') :
+            @A:*s. A -> List A -> A
+Implicit 1 head
+
+Prove head_nil : @A:*s. @a:A. head a (nil A) = a
+Intros
+Unfold head
+Rewrite iterlist_nil
+Refl
+Exit
+
+Prove head_cons : @A:*s. @a,b:A. @l:List A. head a (b;l) = b
+Intros
+Unfold head
+Rewrite iterlist_cons
+Refl
+Exit
+
+-------------------------------------------
+-- nil and cons are different injections --
+-------------------------------------------
+
+Prove nil_is_cons_ : @A:*s. @l:List A. @a:A. Not (nil A = a;l)
+Intros
+NotI
+Let f := primreclist false (\h:A.\dummy:List A.\b:Bool. true)
+NotE true_is_false_
+First f (a;l) = f (nil A)
+Rewrite H
+Refl
+Unfold f
+Rewrite primreclist_cons
+Rewrite primreclist_nil
+Intro
+Assumption
+Exit
+
+Prove cons_is_nil_ : @A:*s. @l:List A. @a:A. Not (a;l = nil A)
+Intros
+NotI
+NotE nil_is_cons_ on l,a
+Apply is_sym
+Assumption
+Exit
+
+Prove cons_is_cons_ : @A:*s. @l1,l2:List A. @a1,a2:A. 
+                             a1;l1 = a2;l2 -> a1 = a2 /\ l1=l2
+Intros
+AndI
+
+First head a1 (a1;l1) = head a1 (a2;l2)
+Rewrite H
+Refl
+
+Repeat Rewrite head_cons
+Intro
+Assumption
+Lewrite 2 tail_cons On a2
+Lewrite 1 tail_cons On a1
+Rewrite H
+Refl
+Exit
+
+------------
+-- concat --
+------------
+
+-- Name in lemmas: concat
+Def (++) := \A:*s. \as,as' : List A. iterlist as' (
+                  \hd:A. \concat_tail : List A. hd;concat_tail) as :
+            @A:*s. List A -> List A -> List A
+Implicit 1 (++)
+
+Prove nil_concat : @A:*s. @as:List A. (nil A)++as = as
+Intros
+Unfold (++)
+Rewrite iterlist_nil
+Refl
+Exit
+
+Prove cons_concat : @A:*s. @a:A. @as,as': List A. 
+                    (a;as) ++ as' = a ; (as++as')
+Intros
+Unfold (++)
+Rewrite iterlist_cons
+Refl
+Exit
+
+Prove concat_assoc : @A:*s. @bs,cs,as : List A. (as++bs)++cs = as++(bs++cs)
+Intro A, bs, cs
+Apply indlist
+Repeat Rewrite nil_concat
+Refl
+Intros
+Repeat Rewrite cons_concat
+Rewrite H
+Refl
+Exit
+
+Prove concat_nil : @A:*s. @as:List A. as ++ (nil A) = as
+Intro A
+Apply indlist
+Rewrite nil_concat
+Refl
+Intros
+Rewrite cons_concat
+Rewrite H
+Refl
+Exit
+
+---------------
+-- singleton --
+---------------
+                                          
+Def singleton := \A:*s. \a:A. a ; (nil A) : @A:*s. A -> List A
+Implicit 1 singleton
+
+-------------------
+-- RELATION Elem --
+-------------------
+
+Def Elem := \A:*s.\a:A.\l:List A. 
+                 @P:List A -> *p. (@m:List A. P (a;m)) ->
+                                  (@m:List A.@b:A. P m -> P (b;m)) ->
+                                  P l :
+            @A:*s. A -> List A -> *p
+Implicit 1 Elem
+
+Prove Elem_a_a_cons : @A:*s.@a:A.@l:List A. Elem a (a;l)
+Unfold Elem
+Intros
+Apply H
+Exit
+
+Prove Elem_a_b_cons : @A:*s.@a,b:A.@l:List A. Elem a l -> Elem a (b;l)
+Intros
+Unfold Elem
+Intros
+Apply H2
+Unfold Elem In H
+Apply H Then Assumption
+Exit                   
+
+Prove Elem_strong_ind : @A:*s.@a:A.@l:List A. Elem a l ->
+                           @P:List A -> *p.
+                           (@m:List A. P (a;m)) ->
+                           (@m:List A. @b:A. Elem a m -> P m -> P (b;m)) ->
+                           P l
+Intros
+Cut Elem a l /\ P l
+Intro
+AndER H3
+Assumption
+Pattern l
+Apply H
+Intro
+AndI
+Apply Elem_a_a_cons
+Apply H1
+Intros
+AndI
+AndEL H3
+Apply Elem_a_b_cons
+Assumption
+AndE H3
+Apply H2 Then Assumption
+Exit
+
+Prove Elem_exh : @A:*s.@a:A.@l:List A. 
+                     Elem a l -> 
+                     (Ex m:List A. l = a;m) \/
+                     (Ex m:List A. Ex b:A. l = b;m /\ Elem a m) 
+Intros
+Apply Elem_strong_ind On H
+Intros
+OrIL
+ExistsI m
+Refl
+Intros
+OrIR
+ExistsI m
+ExistsI b
+AndI
+Refl
+Assumption
+Exit
+
+Prove Elem_nil_ : @A:*s. @a:A. Not (Elem a (nil A))
+Intros
+NotI
+OrE Elem_exh On H
+ExistsE H2
+Apply nil_is_cons_ On H3
+ExistsE H2
+ExistsE H3
+AndE H4
+Apply nil_is_cons_ on H5
+Exit
+
+Prove Elem_cons_ : @A:*s.@a,b:A. @l:List A. Elem a (b;l) -> a=b \/ Elem a l
+Intros
+OrE Elem_exh On H
+OrIL
+ExistsE H2
+AndEL cons_is_cons_ On H3
+Rewrite H5
+Refl
+OrIR
+ExistsE H2
+ExistsE H3
+AndE H4
+AndER cons_is_cons_ On H5
+Rewrite H8
+Assumption
+Exit
+
+
+

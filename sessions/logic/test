@@ -1,0 +1,5 @@
+yarrow
+load "prop"
+javacontext False .. Or_assoc : #p On "test.yct"
+quit
+mv *.yct ~/viewer

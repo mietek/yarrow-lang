@@ -1,0 +1,102 @@
+There is help available on the following notions and commands:<BR>
+General notions:<BR>
+<!--  notions -->
+<A HREF="#about"><CODE>about</CODE></A>
+<A HREF="#background"><CODE>background</CODE></A>
+<A HREF="#introduction"><CODE>introduction</CODE></A>
+<A HREF="#syntax"><CODE>syntax</CODE></A>
+<A HREF="#multi-line"><CODE>multi-line</CODE></A>
+<A HREF="#infix-notation"><CODE>infix-notation</CODE></A>
+<A HREF="#matching"><CODE>matching</CODE></A>
+<A HREF="#modules"><CODE>modules</CODE></A>
+<A HREF="#tactics"><CODE>tactics</CODE></A>
+<A HREF="#main-mod"><CODE>main-mode</CODE></A>
+<A HREF="#prove-mo"><CODE>prove-mode</CODE></A>
+<A HREF="#extensio"><CODE>extensions</CODE></A>
+<A HREF="#subtyping"><CODE>subtyping</CODE></A>
+<A HREF="#records"><CODE>records</CODE></A>
+<A HREF="#paths"><CODE>paths</CODE></A>
+<BR>
+<BR>
+General commands:<BR>
+<!--  general commands -->
+<A HREF="#Help"><CODE>Help</CODE></A>
+<A HREF="#Context"><CODE>Context</CODE></A>
+<A HREF="#Option"><CODE>Option</CODE></A>
+<A HREF="#Infix"><CODE>Infix</CODE></A>
+<A HREF="#InfixR"><CODE>InfixR</CODE></A>
+<A HREF="#InfixL"><CODE>InfixL</CODE></A>
+<A HREF="#Binder"><CODE>Binder</CODE></A>
+<A HREF="#Implicit"><CODE>Implicit</CODE></A>
+<A HREF="#Read"><CODE>Read</CODE></A>
+<A HREF="#Use"><CODE>Use</CODE></A>
+<A HREF="#Task"><CODE>Task</CODE></A>
+<!--  context-sensitive commands -->
+<A HREF="#Type"><CODE>Type</CODE></A>
+<A HREF="#bdRed"><CODE>bdRed</CODE></A>
+<A HREF="#bRed"><CODE>bRed</CODE></A>
+<A HREF="#dRed"><CODE>dRed</CODE></A>
+<A HREF="#Check"><CODE>Check</CODE></A>
+<A HREF="#Print"><CODE>Print</CODE></A>
+<A HREF="#Deduction"><CODE>Deduction</CODE></A>
+<!--  main commands -->
+<A HREF="#Def"><CODE>Def</CODE></A>
+<A HREF="#Var"><CODE>Var</CODE></A>
+<A HREF="#Prove"><CODE>Prove</CODE></A>
+<A HREF="#Reset"><CODE>Reset</CODE></A>
+<A HREF="#System"><CODE>System</CODE></A>
+<A HREF="#Quit"><CODE>Quit</CODE></A>
+<A HREF="#Load"><CODE>Load</CODE></A>
+<A HREF="#Clear"><CODE>Clear</CODE></A>
+<A HREF="#Save"><CODE>Save</CODE></A>
+<A HREF="#Path"><CODE>Path</CODE></A>
+<BR>
+Commands in proof mode:<BR>
+<!--  prover commands -->
+<A HREF="#Exit"><CODE>Exit</CODE></A>
+<A HREF="#Abort"><CODE>Abort</CODE></A>
+<A HREF="#Show"><CODE>Show</CODE></A>
+<A HREF="#Undo"><CODE>Undo</CODE></A>
+<A HREF="#Restart"><CODE>Restart</CODE></A>
+<A HREF="#History"><CODE>History</CODE></A>
+<A HREF="#Focus"><CODE>Focus</CODE></A>
+<BR>
+<BR>
+Tactics:<BR>
+<!--  tactics -->
+<A HREF="#Intro"><CODE>Intro</CODE></A>
+<A HREF="#Intros"><CODE>Intros</CODE></A>
+<A HREF="#Assumption"><CODE>Assumption</CODE></A>
+<A HREF="#Let"><CODE>Let</CODE></A>
+<A HREF="#Unfold"><CODE>Unfold</CODE></A>
+<A HREF="#Simplify"><CODE>Simplify</CODE></A>
+<A HREF="#Convert"><CODE>Convert</CODE></A>
+<A HREF="#Cut"><CODE>Cut</CODE></A>
+<A HREF="#First"><CODE>First</CODE></A>
+<A HREF="#Forward"><CODE>Forward</CODE></A>
+<A HREF="#Exact"><CODE>Exact</CODE></A>
+<A HREF="#Apply"><CODE>Apply</CODE></A>
+<A HREF="#Pattern"><CODE>Pattern</CODE></A>
+<A HREF="#Hide"><CODE>Hide</CODE></A>
+<A HREF="#Unhide"><CODE>Unhide</CODE></A>
+<!--  special tactics -->
+<A HREF="#Rewrite"><CODE>Rewrite</CODE></A>
+<A HREF="#Lewrite"><CODE>Lewrite</CODE></A>
+<A HREF="#Refl"><CODE>Refl</CODE></A>
+<A HREF="#AndI"><CODE>AndI</CODE></A>
+<A HREF="#AndEL"><CODE>AndEL</CODE></A>
+<A HREF="#AndER"><CODE>AndER</CODE></A>
+<A HREF="#AndE"><CODE>AndE</CODE></A>
+<A HREF="#OrIL"><CODE>OrIL</CODE></A>
+<A HREF="#OrIR"><CODE>OrIR</CODE></A>
+<A HREF="#OrE"><CODE>OrE</CODE></A>
+<A HREF="#NotI"><CODE>NotI</CODE></A>
+<A HREF="#NotE"><CODE>NotE</CODE></A>
+<A HREF="#FalseE"><CODE>FalseE</CODE></A>
+<A HREF="#ExistsI"><CODE>ExistsI</CODE></A>
+<A HREF="#ExistsE"><CODE>ExistsE</CODE></A>
+<!--  tacticals -->
+<A HREF="#Repeat"><CODE>Repeat</CODE></A>
+<A HREF="#Try"><CODE>Try</CODE></A>
+<A HREF="#Then"><CODE>Then</CODE></A>
+<A HREF="#Else"><CODE>Else</CODE></A>

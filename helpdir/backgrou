@@ -1,0 +1,49 @@
+<P>
+Yarrow started off as an implementation of a typing algorithm for PTSs.
+      Over the time it evolved into a simple proof-assistant.
+      Its main features are:
+</P>
+<UL>
+<LI> A particular pure type system (with subtyping) can be chosen at run-time.
+<LI> There are general tactics for proving propositions.
+<LI> Tactics for forward reasoning.
+<LI> Special rewriting tactics for the Leibniz-equality, and tactics for 
+     propositional and predicate logic.
+<LI> An easy-to-use system for infix notation, implicit arguments and binders.
+<LI> It is portable, because it runs on any platform on which 
+     Haskell runs. This includes <!--PC's and--> most Unix systems.
+<LI> It has a built-in help system.
+<!-- <LI> The implementation is well documented. There is extensive
+     documentation on how to add your own tactics.-->
+</UL>
+
+<P>
+This program has some disadvantages compared to other proof-assistants:
+</P>
+<UL>
+<LI> No automatic proof-search tactics.
+<LI> No inductive types, since they do not belong to PTSs.
+<LI> No mouse-control, but some effort has been spent to make
+     the keyboard-interface user-friendly.
+</UL>
+
+<P>
+This program was developed by Jan Zwanenburg. 
+Questions and remarks will be gratefully received and answered.
+You can reach the author at the following address.
+</P>
+
+<P>
+Jan Zwanenburg<BR>
+Computing Science Department<BR>
+University of Nijmegen<BR>
+Postbus 9010<BR>
+650 Gl Nijmegen<BR>
+The Netherlands<BR>
+e-mail: <A HREF="mailto:janz@cs.kun.nl">janz@cs.kun.nl</A><BR>
+Homepage: <A HREF="http://www.cs.kun.nl/~janz/">
+     http://www.cs.kun.nl/~janz/</A><BR>
+Yarrow homepage: 
+     <A HREF="http://www.cs.kun.nl/~janz/yarrow/index.html">
+     http://www.cs.kun.nl/~janz/yarrow/index.html</A><BR>
+</P>

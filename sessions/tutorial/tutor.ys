@@ -1,0 +1,72 @@
+-- This is the script file for the tutorial in doc/sessions/tutor.ps
+
+-- preliminaries
+option +p
+help syntax
+ 
+-- example 1
+
+prove example1 :  @P,Q,R:*. (P->Q->R) -> (P->Q) -> (P->R)
+show
+intro
+intro
+intros
+apply H
+show 2
+exact H2
+apply H1
+exact H2
+exit
+
+
+
+-- example 2
+
+var nat : *
+var zero : nat
+var succ : nat->nat
+var IS : @A:*. A->A->*
+var refl : @A:*. @z:A. IS A z z
+
+def two := succ (succ zero) : nat
+def f := \x:nat. succ (succ x) : nat->nat
+
+prove example2 : IS nat (f zero) two
+apply refl
+abort
+
+
+-- example 3 
+
+def false := @P:*. P
+def not := \P:*. P->false
+var classic : @P:*. not (not P) -> P
+
+prove example3 : @P,Q:*. (not P -> Q) -> (not Q -> P)
+intros
+apply classic
+-- intro results in Error message
+unfold 1 not
+intro
+unfold not in H1
+apply H1
+apply H
+exact H2
+
+restart
+intros
+apply classic
+undo
+abort
+
+
+-- example 4
+
+prove example4 : @A:*. @P,Q:A->*. (@x:A. P x -> Q x) -> (@y:A. P y) -> 
+                                    (@z:A. Q z)
+intros
+apply H
+apply H1
+exit
+
+print example4

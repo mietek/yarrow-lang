@@ -1,0 +1,15 @@
+<DL>
+ <DT>Syntax:
+ <DD>
+   <OL>
+   <LI><CODE>Task</CODE> <VAR>var</VAR>
+   <LI><CODE>Task</CODE>
+   </OL>
+ <DT>Effect:
+ <DD>This command switches to the proof-task for <VAR>var</VAR>.
+     Of course, this is only useful when there are multiple proof-tasks.
+     <BR>
+     The second variant displays all current proof-tasks.
+ <DT>See also:
+ <DD><A HREF="#Prove"><CODE>Prove</CODE></A>
+</DL>

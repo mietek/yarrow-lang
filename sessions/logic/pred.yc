@@ -1,0 +1,11 @@
+(,*s,#s,*p,#p)(,*s:#s,*p:#p)(,*s:*p:*p,*s:#p:#p,#s:*p:*p,#s:#p:#p,*p:*p:*p,#p:*p:*p,#p:#p:#p)()()
+s()
+()
+p()
+b()
+l()
+i(,Ex:1)
+l(,Ex_e:1:Ex:ExistsE:(,*p),Ex_i:1:Ex:ExistsI:())
+=(,L\N()A:BS*s:#s.L\N()P:L@N()_:BVA:*s.BS*p:#p.L\N()R:BS*p:#p.L\N()H:L@N()Q:BS*p:#p.L@N()_:L@N()x:BVA:*s.L@N()_:NA(,BVP,BVx):*p.BVQ:*p.BVQ:*p.NA(,BVH,BVR))Ex_e:L@N()A:BS*s:#s.L@N()P:L@N()_:BVA:*s.BS*p:#p.L@N()R:BS*p:#p.L@N()_:NA(,NA(,BVEx,BVA),BVP):*p.L@N()_:L@N()x:BVA:*s.L@N()_:NA(,BVP,BVx):*p.BVR:*p.BVR:*p.
+=(,L\N()A:BS*s:#s.L\N()x:BVA:*s.L\N()P:L@N()_:BVA:*s.BS*p:#p.L\N()HPx:NA(,BVP,BVx):*p.L\N()Q:BS*p:#p.L\N()H:L@N()x1:BVA:*s.L@N()_1:NA(,BVP,BVx1):*p.BVQ:*p.NA(,NA(,BVH,BVx),BVHPx))Ex_i:L@N()A:BS*s:#s.L@N()x:BVA:*s.L@N()P:L@N()_:BVA:*s.BS*p:#p.L@N()_:NA(,BVP,BVx):*p.NA(,NA(,BVEx,BVA),BVP):*p.
+=(,L\N()A:BS*s:#s.L\N()P:L@N()_:BVA:*s.BS*p:#p.L@N()Q:BS*p:#p.L@N()_:L@N()x:BVA:*s.L@N()_:NA(,BVP,BVx):*p.BVQ:*p.BVQ)Ex:L@N()A:BS*s:#s.L@N()P:L@N()_:BVA:*s.BS*p:#p.BS*p:#p.

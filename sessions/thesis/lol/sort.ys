@@ -1,0 +1,326 @@
+-- File: sort
+
+-- This file contains the example of sorting, as in Section 4.7
+
+Load "nat"
+Load "list"
+
+-----------------------
+-- PREDICATE Ordered --
+-----------------------
+
+-- Ordered is the smallest predicate with
+--  * Ordered nil
+--  * Ordered l -> (@b:Nat. Elem b l -> a<=b) -> Ordered (a;l)
+-- This is a nice definition, since there are only two clauses, that follow
+-- the structure of lists.
+
+Def Ordered := \l:List Nat. 
+               @P:List Nat -> *p.
+               P (nil Nat) ->
+               (@a:Nat.@m:List Nat. P m -> (@b:Nat. Elem b m -> a<=b) -> 
+                                    P (a;m)) ->
+               P l :
+               List Nat -> *p
+
+Prove Ordered_nil : Ordered (nil Nat)
+Unfold Ordered
+Intros
+Assumption
+Exit
+
+Prove Ordered_cons : @a:Nat.@m:List Nat. Ordered m -> 
+                                        (@b:Nat. Elem b m -> a<=b) -> 
+                                        Ordered (a;m)
+Intros
+Unfold Ordered
+Intros
+Apply H3
+Apply H Then Assumption
+Assumption
+Exit
+
+Prove Ordered_singleton : @m:Nat. Ordered (singleton m)
+Intro
+Apply Ordered_cons
+Apply Ordered_nil
+Intros
+FalseE
+Apply Elem_nil_ On H
+Exit
+
+Prove Ordered_exh : @l:List Nat. Ordered l -> 
+                     l = nil Nat \/
+                     Ex a:Nat. Ex m:List Nat. l = a;m /\
+                                              (@b:Nat. Elem b m -> a<=b) /\
+                                              Ordered m
+Intros
+Apply H
+OrIL
+Refl
+Intros
+OrIR
+ExistsI a
+ExistsI m
+AndI
+Refl
+AndI
+Assumption
+OrE H1
+Rewrite H3
+Apply Ordered_nil
+ExistsE H3
+ExistsE H4
+AndE H5
+Rewrite H6
+AndE H7
+Apply Ordered_cons
+Assumption
+Assumption
+Exit
+
+Prove Ordered_cons_ : @a:Nat.@m:List Nat. Ordered (a;m) -> 
+                                          (@b:Nat. Elem b m -> a<=b) /\
+                                          Ordered m
+Intros 3
+OrE Ordered_exh On H
+FalseE
+Apply cons_is_nil_ On H2
+ExistsE H2
+ExistsE H3
+AndE H4
+AndE cons_is_cons_ On H5
+Rewrite H8
+Repeat Rewrite H9
+Assumption
+Exit
+
+
+----------
+-- Perm --
+----------
+
+Def Perm := \A:*s. \as,bs: List A.
+                  @P : List A -> List A -> *p.
+                  (@xs:List A. P xs xs) ->
+                  (@xs,ys,zs:List A. P xs ys -> P ys zs -> P xs zs) ->
+                  (@xs,ys:List A.@x,y:A. P (xs++(x;y;ys)) (xs++(y;x;ys))) ->
+                  P as bs :
+            @A:*s. List A -> List A -> *p
+Implicit 1 Perm
+
+-- An alternative definition of Perm is with clauses
+-- - @xs:List A. Perm xs xs
+-- - @xs,ys,zs:List A. Perm xs ys -> Perm ys zs -> Perm xs zs
+-- - @xs:List A. @x,y:A. Perm (x;y;bs) (y;x;bs)
+-- - @xs,ys:List A. @x:A. Perm xs ys -> Perm (x;xs) (Perm x;ys)
+-- Advantage: no concatenation necessary.
+-- Disadvantage: less intuitive.
+
+Prove Perm_refl : @A:*s. @xs:List A. Perm xs xs
+Unfold Perm
+Intros
+Apply H
+Exit
+
+Prove Perm_trans : @A:*s. @xs,ys,zs:List A. Perm xs ys -> Perm ys zs -> 
+                                            Perm xs zs
+Intros
+Unfold Perm
+Intros
+Apply H3 On ys
+Apply H Then Assumption
+Apply H1 Then Assumption
+Exit
+
+Prove Perm_swap : @A:*s. @xs,ys:List A.@x,y:A. 
+                                     Perm (xs++(x;y;ys)) (xs++(y;x;ys))
+Unfold Perm Then Intros
+Apply H2
+Exit
+                                                                 
+Prove Perm_cons : @A:*s. @a:A. @l,m:List A. Perm l m -> Perm (a;l) (a;m)
+Intros
+Apply H
+Intro
+Apply Perm_refl
+Intros
+Apply Perm_trans On H1, H2
+Intros
+Lewrite cons_concat
+Lewrite cons_concat
+Apply Perm_swap
+Exit
+
+Prove Perm_sym : @A:*s. @xs,ys:List A. Perm xs ys -> Perm ys xs
+Intros
+Apply H
+Apply Perm_refl
+Intros
+Apply Perm_trans On H2, H1
+Intros
+Apply Perm_swap
+Exit
+
+
+---------------------
+-- FUNCTION insert --
+---------------------
+
+Def insert := \n:Nat. primreclist (singleton n) (
+                      \head:Nat. \tail:List Nat. \insert_tail:List Nat. 
+                         if (leq n head) (n;head;tail) (head;insert_tail)) : 
+              Nat -> List Nat -> List Nat
+
+Prove insert_nil : @m:Nat. insert m (nil Nat) = singleton m
+Intro
+Unfold insert
+Apply primreclist_nil
+Exit
+
+Prove Le__insert : @m,n:Nat.@l:List Nat. m<=n -> insert m (n;l) = m;n;l
+Intros
+Unfold insert
+Rewrite primreclist_cons
+Rewrite Le__leq_true On H
+Rewrite if_true
+Refl
+Exit
+
+Prove Gt__insert : @m,n:Nat.@l:List Nat. n<m -> insert m (n;l) = n;(insert m l)
+Intros
+Unfold 1 insert
+Rewrite primreclist_cons
+Rewrite Gt__leq_false On H
+Rewrite if_false
+Refl
+Exit
+
+Prove Elem_insert_ : @m,n:Nat.@ns:List Nat. Elem m (insert n ns) -> 
+                                            m=n \/ Elem m ns
+Intros 2
+Apply indlist
+Rewrite insert_nil
+Unfold singleton
+Intro
+OrIL
+OrE Elem_cons_ On H Then Try Assumption
+FalseE
+Apply Elem_nil_ On H2
+Intros 2
+OrE Le_Or_Gt n a
+Rewrite Le__insert
+Assumption
+Intros
+Apply Elem_cons_
+Assumption
+Rewrite Gt__insert Then Try Assumption
+Intros
+OrE Elem_cons_ On H2
+OrIR
+Rewrite H4
+Apply Elem_a_a_cons
+OrE H1 On H4
+OrIL
+Assumption
+OrIR
+Apply Elem_a_b_cons
+Assumption
+Exit
+
+Prove Ordered_insert  : @m:Nat. @l:List Nat. Ordered l ->
+                                             Ordered (insert m l)
+Intro
+Apply indlist
+Intro
+Rewrite insert_nil
+Apply Ordered_singleton
+Intros
+AndE Ordered_cons_ On H1
+OrE Le_Or_Gt On m, a
+Rewrite Le__insert Then Try Assumption
+Apply Ordered_cons
+Assumption
+Intros
+Apply Le_trans On H6
+OrE Elem_cons_ On H7
+Rewrite H9
+Apply Le_refl
+Apply H3 Then Assumption
+Rewrite Gt__insert Then Try Assumption
+Apply Ordered_cons
+Apply H Then Assumption
+Intros
+OrE Elem_insert_ On H7
+Rewrite H9
+Apply m_Lt_n__m_Le_n
+Assumption
+Apply H3
+Assumption
+Exit
+
+Prove Perm_insert : @m:Nat. @l:List Nat. Perm (insert m l) (m;l)
+Intro
+Apply indlist
+Rewrite insert_nil
+Apply Perm_refl
+Intros
+OrE Le_Or_Gt On m, a
+Rewrite Le__insert
+Assumption
+Apply Perm_refl
+Rewrite Gt__insert
+Assumption
+Apply Perm_trans On a;m;as
+Apply Perm_cons
+Assumption
+First Perm (nil Nat ++ (a;m;as)) (nil Nat ++ (m;a;as))
+Apply Perm_swap
+Repeat Rewrite nil_concat
+Intro Then Assumption
+Exit
+
+----------
+-- sort --
+----------
+
+-- sort [] = sort
+-- sort (x:xs) = insert x (sort xs)
+
+Def sort := primreclist (nil Nat) (\head:Nat. \tail:List Nat. 
+                                \sort_tail:List Nat. insert head sort_tail) :
+            List Nat -> List Nat
+-- bdRed sort (S O ; O ; nil Nat)
+-- 255 reductions!
+
+Prove sort_nil : sort (nil Nat) = nil Nat
+Unfold sort
+Apply primreclist_nil
+Exit
+
+Prove sort_cons : @m:Nat.@l:List Nat. sort (m;l) = insert m (sort l)
+Intros
+Unfold 1 sort
+Apply primreclist_cons
+Exit
+
+Prove Ordered_sort : @l:List Nat. Ordered (sort l)
+Apply indlist
+Rewrite sort_nil
+Apply Ordered_nil
+Intros
+Rewrite sort_cons
+Apply Ordered_insert
+Assumption
+Exit
+
+Prove Perm_sort : @l:List Nat. Perm (sort l) l
+Apply indlist
+Rewrite sort_nil
+Apply Perm_refl
+Intros
+Rewrite sort_cons
+Forward Perm_cons On a, H
+Apply Perm_trans On H1                                               
+Apply Perm_insert
+Exit

@@ -1,0 +1,15 @@
+(,*s,#s,*p,#p)(,*s:#s,*p:#p)(,#s:#s:#s,#s:*s:*s,*s:*s:*s,#s:#p:#p,*s:#p:#p,#p:#p:#p,#s:*p:*p,*s:*p:*p,#p:*p:*p,*p:*p:*p)()()
+s()
+()
+p(,=:4n)
+b()
+l()
+i(,=:1)
+l(,is_elim_r:1:=:Lewrite:(,*p),is_elim_l:1:=:Rewrite:(,*p),is_refl:1:=:Refl:())
+:N()is_Set:L@N()A:BS*s:#s.L@N()B:BS*s:#s.L@N()f:L@N()_:BVA:*s.BVB:*s.L@N()g:L@N()_:BVA:*s.BVB:*s.L@N()_:L@N()x:BVA:*s.NA(,NA(,NA(,BV=,BVB),NA(,BVf,BVx)),NA(,BVg,BVx)):*p.NA(,NA(,NA(,BV=,L@N()_:BVA:*s.BVB),BVf),BVg):*p.
+=(,L\N()A:BS*s:#s.L\N()x:BVA:*s.L\N()y:BVA:*s.L\N()z:BVA:*s.L\N()H1:NA(,NA(,NA(,BV=,BVA),BVx),BVy):*p.L\N()H2:NA(,NA(,NA(,BV=,BVA),BVy),BVz):*p.NA(,NA(,NA(,NA(,NA(,NA(,BVis_elim_l,BVA),BVx),BVy),L\N()H:BVA:*s.NA(,NA(,NA(,BV=,BVA),BVH),BVz)),BVH1),BVH2))is_trans:L@N()A:BS*s:#s.L@N()x:BVA:*s.L@N()y:BVA:*s.L@N()z:BVA:*s.L@N()_:NA(,NA(,NA(,BV=,BVA),BVx),BVy):*p.L@N()_:NA(,NA(,NA(,BV=,BVA),BVy),BVz):*p.NA(,NA(,NA(,BV=,BVA),BVx),BVz):*p.
+=(,L\N()A:BS*s:#s.L\N()x:BVA:*s.L\N()y:BVA:*s.L\N()H:NA(,NA(,NA(,BV=,BVA),BVx),BVy):*p.NA(,NA(,NA(,NA(,NA(,NA(,BVis_elim_l,BVA),BVx),BVy),L\N()H1:BVA:*s.NA(,NA(,NA(,BV=,BVA),BVy),BVH1)),BVH),NA(,NA(,BVis_refl,BVA),BVy)))is_sym:L@N()A:BS*s:#s.L@N()x:BVA:*s.L@N()y:BVA:*s.L@N()_:NA(,NA(,NA(,BV=,BVA),BVx),BVy):*p.NA(,NA(,NA(,BV=,BVA),BVy),BVx):*p.
+=(,L\N()A:BS*s:#s.L\N()x:BVA:*s.L\N()y:BVA:*s.L\N()P:L@N()_:BVA:*s.BS*p:#p.L\N()H:NA(,NA(,NA(,BV=,BVA),BVx),BVy):*p.NA(,NA(,NA(,NA(,NA(,NA(,BVis_elim_l,BVA),BVx),BVy),L\N()H1:BVA:*s.L@N()_:NA(,BVP,BVH1):*p.NA(,BVP,BVy)),BVH),L\N()H1:NA(,BVP,BVy):*p.BVH1))is_elim_r:L@N()A:BS*s:#s.L@N()x:BVA:*s.L@N()y:BVA:*s.L@N()P:L@N()_:BVA:*s.BS*p:#p.L@N()_:NA(,NA(,NA(,BV=,BVA),BVx),BVy):*p.L@N()_:NA(,BVP,BVx):*p.NA(,BVP,BVy):*p.
+=(,L\N()A:BS*s:#s.L\N()x:BVA:*s.L\N()y:BVA:*s.L\N()P:L@N()_:BVA:*s.BS*p:#p.L\N()H:NA(,NA(,NA(,BV=,BVA),BVx),BVy):*p.L\N()H1:NA(,BVP,BVy):*p.NA(,NA(,BVH,BVP),BVH1))is_elim_l:L@N()A:BS*s:#s.L@N()x:BVA:*s.L@N()y:BVA:*s.L@N()P:L@N()_:BVA:*s.BS*p:#p.L@N()_:NA(,NA(,NA(,BV=,BVA),BVx),BVy):*p.L@N()_:NA(,BVP,BVy):*p.NA(,BVP,BVx):*p.
+=(,L\N()A:BS*s:#s.L\N()x:BVA:*s.L\N()P:L@N()_:BVA:*s.BS*p:#p.L\N()H:NA(,BVP,BVx):*p.BVH)is_refl:L@N()A:BS*s:#s.L@N()x:BVA:*s.NA(,NA(,NA(,BV=,BVA),BVx),BVx):*p.
+=(,L\N()A:BS*s:#s.L\N()x:BVA:*s.L\N()y:BVA:*s.L@N()P:L@N()_:BVA:*s.BS*p:#p.L@N()_:NA(,BVP,BVy):*p.NA(,BVP,BVx))=:L@N()A:BS*s:#s.L@N()x:BVA:*s.L@N()y:BVA:*s.BS*p:#p.

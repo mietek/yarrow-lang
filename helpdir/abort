@@ -1,0 +1,10 @@
+<DL>
+ <DT>Syntax:
+ <DD><CODE>Abort</CODE>
+ <DT>Effect:
+ <DD> Aborts the current proof-task and returns to main-mode
+      (if no other proof-tasks are running).
+      The proof is not recorded, even if it is completed.
+ <DT>See also:
+ <DD><A HREF="#Exit"><CODE>Exit</CODE></A>
+</DL>

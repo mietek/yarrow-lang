@@ -1,0 +1,22 @@
+<DL>
+ <DT>Syntax:
+ <DD>
+  <OL>
+  <LI><CODE>Pattern</CODE> <VAR>term</VAR>
+  <LI><CODE>Pattern</CODE> <VAR>num-list</VAR> <VAR>term</VAR>
+  </OL>
+ <DT>Effect:
+ <DD>This tactic performs a beta-expansion. The first
+               variant abstracts over all occurrences of <VAR>term</VAR>
+               in the current goal, the second variant abstracts only
+               over the numbered occurences of <VAR>term</VAR>.<BR>
+               In this way the goal can be converted into a form more
+               suitable for matching.
+ <DT>Shortcomings:
+ <DD>If there are numbers in the list not
+     corresponding to an occurrence, no error is given. Do not use the
+     number 0, since that indicates a path
+     (see <A HREF="#paths"><CODE>paths</CODE></A>).
+ <DT>See also:
+ <DD><A HREF="#Convert"><CODE>Convert</CODE></A>
+</DL>

@@ -1,0 +1,51 @@
+<HTML>
+<HEAD>
+<TITLE>lol/bool (without proofs)</TITLE>
+</HEAD>
+<BODY BGCOLOR="#FFFFFF", TEXT="#000000">
+<PRE><FONT COLOR="#000000"></FONT><FONT COLOR="#000000">-- File: bool
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#000000">-- This file introduces the booleans.
+</FONT><FONT COLOR="#000000">-- It consists of two parts.
+</FONT><FONT COLOR="#000000">-- 1. Axioms, corresponding to Section 4.5
+</FONT><FONT COLOR="#000000">-- 2. Library, corresponding to Section 4.6
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#000000">Load "lambdaL"
+</FONT><FONT COLOR="#000000">Load "logic"
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#000000">-----------------------
+</FONT><FONT COLOR="#000000">-----------------------
+</FONT><FONT COLOR="#000000">--                   --
+</FONT><FONT COLOR="#000000">--  1.  A X I O M S  --
+</FONT><FONT COLOR="#000000">--                   --
+</FONT><FONT COLOR="#000000">-----------------------
+</FONT><FONT COLOR="#000000">-----------------------
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#FF0000">Var Bool : *s
+</FONT><FONT COLOR="#FF0000">Var true : Bool
+</FONT><FONT COLOR="#FF0000">Var false : Bool
+</FONT><FONT COLOR="#FF0000">Var if : @A:*s. Bool -&gt; A -&gt; A -&gt; A
+</FONT><FONT COLOR="#000000">Implicit 1 if
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#FF0000">Var if_true  : @A:*s. @x,y:A. if true x y = x
+</FONT><FONT COLOR="#FF0000">Var if_false : @A:*s. @x,y:A. if false x y = y
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#FF0000">Var indbool : @P:Bool-&gt;*p. P true -&gt; P false -&gt; (@b:Bool. P b)
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#FF0000">Var true_is_false_ : Not (true=false)
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#000000">-------------------------
+</FONT><FONT COLOR="#000000">-------------------------
+</FONT><FONT COLOR="#000000">--                     --
+</FONT><FONT COLOR="#000000">--  2.  L I B R A R Y  --
+</FONT><FONT COLOR="#000000">--                     --
+</FONT><FONT COLOR="#000000">-------------------------
+</FONT><FONT COLOR="#000000">-------------------------
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#0000FF">Prove false_is_true_ : Not (false=true)
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#0000FF">Prove exh_bool : @b:Bool. b=true \/ b=false
+</FONT></PRE>
+</BODY>
+</HTML>

@@ -1,0 +1,649 @@
+-- File: library
+
+-- This file gives our general theory of ADTs, leading to the main theorems.
+-- It follows the structure of Sections 6.7.4, 6.7.5, and 6.7.6, and is hence
+-- divided in the following parts.
+--  4. Quotients and Subsets (Section 6.7.4)
+--  5. Sensible and well-behaved (Section 6.7.5)
+--  6. Main results (Section 6.7.6)
+
+
+Path "../lol"
+Path "../lolExtra"
+Load "lambdaLplus"
+Load "parametricity"
+
+
+----------------------------------------------------
+----------------------------------------------------
+--                                                --
+--  4. Q U O T I E N T S   A N D   S U B S E T S  --
+--                                                --
+----------------------------------------------------
+----------------------------------------------------
+
+Def IsQuotAlg := \I:*s->*s.
+              \R:*s. \opsR : I R. \(~~):R->R->*p. \Q:*s. \opsQ : I Q.
+              Ex surj:R->Q.
+                (@r,r':R. r ~~ r' <=> surj r = surj r') /\
+                IsSurjection surj /\
+                Sim I R Q (\r:R.\q:Q. q = surj r) opsR opsQ  :
+              @I:*s->*s.@R:*s. I R -> (R->R->*p) -> @Q:*s. I Q -> *p
+
+Def IsSubsetAlg := \I:*s->*s.\R:*s. \opsR : I R. \Inv:R->*p. \S:*s.\opsS : I S.
+                Ex inj:S->R.
+                  IsInjection inj /\
+                  (Inv <==> Image inj) /\
+                  Sim I R S (\r:R.\s:S. r = inj s) opsR opsS  :
+                @I:*s->*s. @R:*s. I R -> (R->*p) -> @S:*s. I S -> *p
+
+Def IsQuotSubsetAlg := \I:*s->*s.
+               \R:*s. \opsR : I R. \(~~) : R->R->*p. \Inv:R->*p. 
+               \Q:*s. \opsQ : I Q.
+                     ExR Rel:R->Q->*p.
+                     (Inv <==> Dom Rel) /\
+                     (@q:Q. Ex r:R. Rel r q) /\
+                     (@r,r':R. @q,q':Q. Rel r q -> Rel r' q' -> 
+                                        r~~r' <=> q=q') /\
+                     Sim I R Q Rel opsR opsQ : 
+              @I:*s->*s.@R:*s. I R -> (R->R->*p) -> (R->*p) -> @Q:*s. I Q -> *p
+
+var exis_QuotAlg :@I:*s->*s. FirstO I ->
+                  @R:*s. @opsR:I R. @(~~):R->R->*p. 
+                  Bisim I R (~~) opsR -> IsER (~~) ->
+                  ExK Q:*s. Ex opsQ: I Q. 
+                  IsQuotAlg I R opsR (~~) Q opsQ
+
+
+var exis_SubsetAlg :  @I:*s->*s. FirstO I ->
+                    @R:*s. @opsR:I R. @Inv:R->*p.
+                    IsInvar I R Inv opsR ->
+                    ExK S:*s. Ex opsS: I S. 
+                    IsSubsetAlg I R opsR Inv S opsS
+
+Prove exis_QuotSubsetAlg : @I:*s->*s. FirstO I ->
+                @R:*s. @opsR:I R. @(~~):R->R->*p. @Inv:R->*p.
+                IsERon (~~) Inv -> 
+                Bisim I R (~~) opsR ->
+                IsInvar I R Inv opsR -> 
+                ExK Q:*s. Ex opsQ: I Q. 
+                IsQuotSubsetAlg I R opsR (~~) Inv Q opsQ
+Intros
+ExistsE exis_SubsetAlg On H3
+Assumption
+ExistsE H5
+Unfold IsSubsetAlg In H6
+ExistsE H6
+AndE H7
+AndE H9
+Let (~) := \s1,s2:S. inj s1 ~~ inj s2
+First Bisim I S (~) opsS
+First Sim I R R (Restr (~~) Inv) opsR opsR
+Apply Sim_FirstO_Restr
+Assumption
+Unfold Restr
+Repeat AndI Then Assumption
+Intro
+Forward SimFirstO_Trans On H12, H11
+Assumption
+First Comp (Restr (~~) Inv) (\r:R.\s:S. r = inj s) <===> 
+      (\r:R.\s:S. Inv r /\ r ~~ inj s)
+Apply equiv_predR
+Intros
+Unfold Comp
+Apply equiv_prop Then Intro
+ExistsE H14
+Unfold Restr In H15
+AndE H15
+AndE H16
+AndE H19
+AndI
+Assumption
+Lewrite H17
+Assumption
+AndE H14
+ExistsI inj b
+Unfold Restr
+Repeat AndI Then Try Assumption
+Rewrite H10
+Apply Image_f_f_x
+Refl
+Intro
+Rewrite H14 In H13
+Hide H13
+Forward Sim_sym On H15
+Apply FirstO__SimplyT
+Assumption
+Forward SimFirstO_Trans On H16, H15
+Assumption
+First (Comp (Inverse (\r:R.\s:S. Inv r /\ r ~~ inj s)) 
+            (\r:R.\s:S. Inv r /\ r ~~ inj s)) <===> (~)
+Apply equiv_predR
+Intros
+Unfold Inverse
+Unfold Comp
+Unfold (~)
+Apply equiv_prop Then Intro
+ExistsE H18
+AndE H19
+AndE H20
+AndE H21
+Unfold IsERon In H1
+AndE H1
+AndE H27
+Apply H29 On H25
+Rewrite H10 Then Apply Image_f_f_x
+Assumption
+Rewrite H10 Then Apply Image_f_f_x
+Apply H28
+Assumption
+Rewrite H10 Then Apply Image_f_f_x
+Assumption
+ExistsI inj a
+Repeat AndI
+Rewrite H10 Then Apply Image_f_f_x
+Unfold IsERon In H1
+AndE H1
+Apply H19
+Rewrite H10 Then Apply Image_f_f_x
+Rewrite H10 Then Apply Image_f_f_x
+Assumption
+Intro
+Unfold Bisim
+Lewrite H18
+Assumption
+First IsER (~)
+Unfold IsERon In H1
+AndE H1
+AndE H13
+Unfold (~)
+Unfold IsER
+Repeat AndI
+Intro
+Apply H12
+Rewrite H10 Then Apply Image_f_f_x
+Intros 2
+Apply H14
+Rewrite H10 Then Apply Image_f_f_x
+Rewrite H10 Then Apply Image_f_f_x
+Intros 3
+Apply H15
+Rewrite H10 Then Apply Image_f_f_x
+Rewrite H10 Then Apply Image_f_f_x
+Rewrite H10 Then Apply Image_f_f_x
+Intros
+ExistsE exis_QuotAlg On H13
+Assumption
+Assumption
+ExistsI Q
+ExistsE H15
+ExistsI opsQ
+Unfold IsQuotAlg In H16
+ExistsE H16
+AndE H17
+AndE H19
+Unfold IsQuotSubsetAlg
+Let Rel := \r:R.\q:Q. Ex s:S. r = inj s /\ q = surj s
+ExistsI Rel
+Repeat AndI
+Rewrite H10
+Unfold Rel
+Apply equiv_predQ
+Intro
+Apply equiv_prop Then Intro
+Unfold Dom
+Unfold Image In H22
+ExistsE H22
+ExistsI surj a1
+ExistsI a1
+AndI
+Rewrite H23
+Refl
+Refl
+Unfold Dom In H22
+ExistsE H22
+ExistsE H23
+AndE H24
+Rewrite H25
+Apply Image_f_f_x
+Intro
+Unfold Rel
+ExistsE H20 On q
+ExistsI inj a
+ExistsI a
+AndI
+Refl
+Rewrite H23
+Refl
+Unfold Rel
+Intros
+ExistsE H22
+ExistsE H23
+AndE H24
+AndE H25
+Rewrite H26
+Rewrite H27
+Rewrite H28
+Rewrite H29
+Lewrite H18
+Unfold (~)
+Refl
+Forward SimFirstO_Trans On H11, H21
+Assumption
+First Comp (\r:R.\s:S. r = inj s) (\r:S.\q:Q. q = surj r) <===> Rel
+Unfold Rel
+Unfold Comp
+Refl
+Intro
+Lewrite H23
+Assumption
+Exit
+
+Prove pack_QuotSubset : @I:*s->*s. SimplyT I ->
+                 @R:*s. @opsR:I R. @(~~):R->R->*p.
+                 @Inv: R->*p.
+                 @Q:*s. @opsQ:I Q. IsQuotSubsetAlg I R opsR (~~) Inv Q opsQ ->
+                 (=) (Sig X:*s. I X) (pack I R opsR) (pack I Q opsQ)
+Intros
+Unfold IsQuotSubsetAlg In H1
+ExistsE H1
+AndE H2
+AndE H4
+AndE H6
+Apply parSigma On H8
+Assumption
+Exit
+
+
+------------------------------------------------------------
+------------------------------------------------------------
+--                                                        --
+--  5. S E N S I B L E   A N D   W E L L - B E H A V E D  --
+--                                                        --
+------------------------------------------------------------
+------------------------------------------------------------
+
+Def Sensible := \I:*s->*s. \Spec : @R:*s.(R->R->*p) -> (R->*p) -> I R -> *p.
+                 @R:*s.@opsR:I R.@(~~):R->R->*p. @Inv:R->*p.@Q:*s.@opsQ:I Q.
+                 IsQuotSubsetAlg I R opsR (~~) Inv Q opsQ ->
+                 Spec R (~~) Inv opsR -> Spec Q ((=) Q) (\q:Q.True) opsQ
+
+Def WB := \I:*s->*s.
+     \Spec: (@R:*s.(R->R->*p) -> (R->*p) -> I R -> *p).
+     @Y,Z:*s. 
+     @RelY:Y->Y->*p.  @RelZ:Z->Z->*p.
+     @InvY:Y->*p. @InvZ:Z->*p. IsERon RelY InvY -> IsERon RelZ InvZ ->
+     @opsY:I Y. @opsZ : I Z.
+     (ExR (~):Y->Z->*p.
+       Sim I Y Z (~) opsY opsZ /\
+       (Restr RelY InvY <===> LeftC (~)) /\
+       (Restr RelZ InvZ <===> RightC (~)) /\
+       IsZclosed (~)) ->
+     Spec Y RelY InvY opsY -> Spec Z RelZ InvZ opsZ
+Implicit 1 WB
+
+-- For proving properties about WB, it is easier to use the following,
+-- equivalent formulation.
+Def WB' := \I:*s->*s.
+     \Spec: (@R:*s.(R->R->*p) -> (R->*p) -> I R -> *p).
+     @Y,Z:*s.
+     @RelY:Y->Y->*p. @RelZ:Z->Z->*p.
+     @InvY:Y->*p. @InvZ:Z->*p.
+     @opsY:I Y. @opsZ : I Z.
+     @(~):Y->Z->*p.
+       Sim I Y Z (~) opsY opsZ ->
+       IsZclosed (~) ->
+       (Restr RelY InvY) <===> LeftC (~) ->
+       (Restr RelZ InvZ) <===> RightC (~) ->
+       IsERon RelY InvY ->
+       IsERon RelZ InvZ ->
+       Spec Y RelY InvY opsY -> Spec Z RelZ InvZ opsZ
+Implicit 1 WB'
+
+-- WB and WB' are really equivalent:
+Prove WB__WB' : @I:*s->*s. @Spec : (@R:*s.(R->R->*p) -> (R->*p) -> I R -> *p).
+                WB' I Spec <=> WB I Spec
+Intros
+Unfold WB
+Unfold WB'
+Apply equiv_prop Then Intros
+ExistsE H3
+AndE H5
+AndE H7
+AndE H9
+Apply H On H11, H4 Then Assumption
+Apply H On H7 Then Try Assumption
+ExistsI (~)
+Repeat AndI Then Assumption
+Exit
+
+Prove WB__Sensible : @I:*s->*s. SimplyT I -> 
+            @Spec: (@R:*s. (R->R->*p)->(R->*p)->I R->*p).
+            WB' I Spec -> Sensible I Spec
+Intros
+Unfold Sensible
+Intros
+Unfold IsQuotSubsetAlg In H2
+ExistsE H2
+AndE H4
+AndE H6
+AndE H8
+Apply H1 On H10, H3
+Unfold IsZclosed
+Intros
+Cut z1=z2
+Intro
+Rewrite H14
+Assumption
+Lewrite H9 On H11, H12
+Rewrite H9 On H11, H11
+Refl
+Apply equiv_predR
+Intro x,y
+Apply equiv_prop Then Intros
+Unfold Restr In H11
+AndE H11
+AndE H13
+Rewrite H5 In H12
+Rewrite H5 In H15
+Unfold Dom In H16 Then ExistsE H16
+Unfold Dom In H17 Then ExistsE H17
+Unfold LeftC
+ExistsI b
+AndI
+Assumption
+Rewrite H9 On H18, H19 In H14
+Rewrite H20
+Assumption
+Unfold LeftC In H11
+ExistsE H11
+AndE H12
+Unfold Restr
+Repeat AndI
+Rewrite H5
+Unfold Dom Then ExistsI z Then Assumption
+Rewrite H9 On H13, H14
+Refl
+Rewrite H5
+Unfold Dom Then ExistsI z Then Assumption
+Apply equiv_predR
+Intro q1,q2
+Unfold Restr
+Unfold RightC
+Apply equiv_prop Then Intro
+AndE H11
+AndE H13
+ExistsE H7 On q1
+ExistsI r
+AndI
+Assumption
+Lewrite H14
+Assumption
+Repeat AndI Then Try Exact true_True
+ExistsE H11
+AndE H12
+Lewrite H9 On H13, H14
+Rewrite H9 On H13, H13
+Refl
+Unfold IsERon
+Repeat AndI Then Intros
+Rewrite H5 In H11
+Unfold Dom In H12 Then ExistsE H12
+Rewrite H9 On H13, H13
+Refl
+Rewrite H5 In H11
+Rewrite H5 In H12
+Unfold Dom In H14 Then ExistsE H14
+Unfold Dom In H15 Then ExistsE H15
+Rewrite H9 On H17, H16
+Apply is_sym
+Lewrite H9 On H16, H17
+Assumption
+Rewrite H5 In H11
+Rewrite H5 In H12
+Rewrite H5 In H13
+Unfold Dom In H16 Then ExistsE H16
+Unfold Dom In H17 Then ExistsE H17
+Unfold Dom In H18 Then ExistsE H18
+Rewrite H9 On H19, H21
+Apply is_trans On b1
+Lewrite H9 On H19, H20
+Assumption
+Lewrite H9 On H20, H21
+Assumption
+Apply IsER__IsERon
+Apply IsER_is
+Exit
+
+Prove WB_Prop: @I:*s->*s. @P:*p.
+   WB' (\R:*s.\(~~):R->R->*p. \Inv:R->*p.\ops:I R.  P)
+Intro
+Unfold WB'
+Intros
+Assumption
+Exit
+
+Prove WB_Impl : @I:*s->*s. SimplyT I ->
+   @P,Q:(@R:*s. (R->R->*p)->(R->*p)->I R->*p).
+   WB' P -> WB' Q ->
+   WB' (\R:*s.\(~~):R->R->*p.\Inv:R->*p.\ops:I R. 
+                     P R (~~) Inv ops -> Q R (~~) Inv ops)
+Intros
+Unfold WB'
+Intros
+Apply H2 On RelY, InvY, H3 Then Try Assumption
+Apply H9
+Forward Sim_sym On H3
+Assumption
+Apply H1 On H11, H10 Then Try Assumption
+Apply IsZclosed_Inverse
+Assumption
+Exit
+
+Prove WB_Pred : @I:*s->*s. SimplyT I ->
+    @A:*s. @f: @R:*s. I R -> A. @P:A->*p.
+    WB' (\R:*s.\(~~):R->R->*p. \Inv:R->*p.\ops:I R. 
+                              P (f R ops))
+Intros
+Unfold WB'
+Intros
+First Sim (\X:*s. I X -> A) Y Z (~) (f Y) (f Z)
+Apply parPi
+Apply SimplyT_arrow
+Assumption
+Apply SimplyT_const
+Rewrite Sim_arrow
+Rewrite Sim_const
+Intros
+Forward H8 On H1
+Lewrite H9
+Assumption
+Exit
+
+Prove WB_Univ : @I:*s->*s.
+  @A:*s. @P:A->(@R:*s. (R->R->*p)->(R->*p)->I R->*p).
+  (@a:A. WB' (P a)) -> 
+  WB' (\R:*s.\(~~):R->R->*p.\Inv:R->*p.\ops:I R. 
+                    @a:A. P a R (~~) Inv ops)
+Intros
+Unfold WB'
+Intros
+Forward H7 On a
+Apply H On H1, H8 Then Assumption
+Exit
+
+Prove WB_Tw : @I:*s->*s. SimplyT I ->
+    @f,g: @R:*s. I R -> R.
+    WB I (\R:*s.\(~~):R->R->*p. \Inv:R->*p. \ops:I R.
+    f R ops ~~ g R ops)
+Intros
+Unfold WB
+Intros
+ExistsE H3
+Ande H5
+AndE H7
+AndE H9
+Forward parPi On f, (~)
+Apply SimplyT_arrow
+Assumption
+Apply SimplyT_id
+Rewrite Sim_arrow In H12
+Rewrite Sim_id In H13
+Forward H14 On H6
+Forward parPi On g, (~)
+Apply SimplyT_arrow
+Assumption
+Apply SimplyT_id
+Rewrite Sim_arrow In H16
+Forward H17 On H6
+Rewrite Sim_id In H18
+Hide H12,H13,H14,H16,H17,H18
+First LeftC (~) (f Y opsY) (f Y opsY)
+Unfold LeftC
+ExistsI f Z opsZ
+AndI Then Assumption
+Intro
+Lewrite H8 In H20
+Unfold Restr In H21 Then AndE H21
+First LeftC (~) (g Y opsY) (g Y opsY)
+Unfold LeftC
+ExistsI g Z opsZ
+AndI
+Assumption
+Assumption
+Intro
+Lewrite H8 In H24
+Unfold Restr In H25 Then AndE H25
+First LeftC (~) (f Y opsY) (g Y opsY)
+Lewrite H8
+Unfold Restr Then Repeat AndI Then Assumption
+Intro
+Unfold LeftC In H28 Then ExistsE H28
+AndE H29
+Forward H11 On H19, H31, H30
+First RightC (~) (f Z opsZ) (g Z opsZ)
+Unfold RightC
+ExistsI f Y opsY
+AndI Then Assumption
+Intro
+Lewrite H10 In H33
+Unfold Restr In H34
+AndE H34
+AndE H36
+Assumption
+Exit
+
+Prove WB_UnivRep : @I:*s->*s. SimplyT I ->
+     @P:(@R:*s. (R->R->*p)->(R->*p)->I R-> R->*p).
+     WB' (\R:*s.\(~~):R->R->*p. \Inv:R->*p.
+                       \ops: {|l:I R, r: R|}. 
+                               P R (~~) Inv ops`l ops`r) ->
+     WB' (\R:*s.\(~~):R->R->*p. \Inv:R->*p.\ops:I R. 
+                        @r:R. Inv r -> P R (~~) Inv ops r)
+Intros
+Unfold WB'
+Intros
+First Restr RelZ InvZ r r
+Unfold Restr
+Repeat AndI Then Try Assumption
+Unfold IsERon In H7 Then AndE H7
+Apply H10
+Assumption
+Intro
+Rewrite H5 In H10
+Unfold RightC In H11
+ExistsE H11
+Forward H1 On {l= opsY,r= y}, {l= opsZ,r= r}, H4, H5 Then Try Assumption
+Rewrite Sim_rec
+AndI
+Assumption
+Rewrite Sim_id
+AndE H12
+Assumption
+Apply H13 Then Try Assumption
+Apply H8
+AndE H12
+Forward rel_LeftC On H14, H14
+Lewrite H4 In H16
+Unfold Restr In H17
+AndE H17
+Assumption
+Exit
+
+
+----------------------------------
+----------------------------------
+--                              --
+--  6. M A I N   R E S U L T S  --
+--                              --
+----------------------------------
+----------------------------------
+
+Def MkUserSpec := \I:*s->*s.
+           \Spec:(@R:*s. (R->R->*p) -> (R->*p) -> I R -> *p).
+           \imp : (Sig X:*s. I X).
+                ExK R:*s. Ex ops:I R.
+                    imp = pack I R ops /\
+                    Spec R ((=) R) (\r:R.True) ops :
+           @I:*s->*s.(@R:*s. (R->R->*p) -> (R->*p) -> I R -> *p) ->
+           (Sig X:*s. I X) -> *p
+
+Def MkImplemSpec := \I:*s->*s.
+           \Spec:(@R:*s. (R->R->*p) -> (R->*p) -> I R -> *p).
+           \R:*s. \ops:I R.
+                           ExR (~~) : R->R->*p. ExQ Inv:R->*p.
+                                Spec R (~~) Inv ops /\ 
+                                Bisim I R (~~) ops /\
+                                IsInvar I R Inv ops /\
+                                IsERon (~~) Inv  : 
+           @I:*s->*s.(@R:*s. (R->R->*p) -> (R->*p) -> I R -> *p) ->
+           @R:*s. I R -> *p
+
+Prove Implem__UserSpec :
+     @I:*s->*s. FirstO I ->
+     @Spec: (@R:*s.(R->R->*p) -> (R->*p) -> I R -> *p). WB' I Spec ->
+     @Rep:*s.@ops:I Rep.
+     MkImplemSpec I Spec Rep ops ->
+     MkUserSpec I Spec (pack I Rep ops)
+Intros
+Unfold MkImplemSpec In H2
+ExistsE H2
+ExistsE H3
+AndE H4
+AndE H6
+AndE H8
+Forward exis_QuotSubsetAlg On H7, H9 Then Try Assumption
+ExistsE H11
+ExistsE H12
+Forward FirstO__SimplyT On H
+Forward WB__Sensible On H1
+Assumption
+Forward H15 On H13, H5
+Unfold MkUserSpec
+ExistsI Q
+ExistsI opsQ
+AndI
+Apply pack_QuotSubset On H13
+Assumption
+Assumption
+Exit
+
+Prove principle : @I:*s->*s.
+                  @Spec:(@Rep:*s. (Rep->Rep->*p) -> (Rep->*p) -> I Rep -> *p).
+                  @imp: (Sig X:*s. I X). MkUserSpec I Spec imp ->
+                  @A:*s. @Q:A->*p. @body:(@X:*s.I X -> A). 
+                  (@X:*s.@ops:I X. Spec X ((=) X) (\r:X. True) ops ->
+                                       Q (body X ops)) ->
+                 Q (unpack imp (\X:*s.\ops:I X. body X ops))
+Intros
+Unfold MkUserSpec In H
+ExistsE H
+ExistsE H2
+AndE H3
+Rewrite H4
+Convert Q (unpack I A (pack I R ops) (\Rep1:*s.\ops1:I Rep1. body Rep1 ops1))
+Rewrite beta_Sig
+Apply H1
+Assumption
+Exit
+

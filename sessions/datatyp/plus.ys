@@ -1,0 +1,73 @@
+-- plus
+-- Defines addition
+
+Path "../logic"
+Read "lambdaL"
+Load "nat"
+
+-- Name in lemmas: plus
+Def (+) := \m:Nat.\n:Nat. primrecnat n S m : Nat->Nat->Nat
+Infix 5 (+)
+
+Prove O_plus : @n:Nat. O+n = n
+Intro n
+Refl
+Exit
+
+Prove Sm_plus : @m,n:Nat. S m + n = S (m + n)
+Intro m, n
+Refl
+Exit
+    
+Prove plus_O : @n:Nat. n+O = n
+Apply indnat  
+
+Refl
+
+Intro n, H
+Rewrite Sm_plus
+Rewrite H
+Refl
+Exit
+
+Prove plus_Sn : @n,m:Nat. m + S n = S (m+n)
+Intro n
+Apply indnat
+
+Refl
+
+Intro m, H
+Repeat Rewrite Sm_plus
+Rewrite H
+Refl
+Exit
+
+Prove plus_comm : @n,m:Nat. m+n = n+m
+Intro n
+Apply indnat
+
+Rewrite plus_O
+Rewrite O_plus
+Refl
+
+Intro m, H
+Rewrite Sm_plus
+Rewrite plus_Sn
+Rewrite H
+Refl
+Exit
+
+Prove plus_assoc : @p,n,m:Nat. (m+n)+p = m+(n+p)
+Intro p, n
+Apply indnat
+
+Refl
+
+Intro m, H
+Repeat Rewrite Sm_plus
+Rewrite H
+Refl
+Exit
+
+InfixR 5 (+)
+

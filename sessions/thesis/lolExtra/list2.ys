@@ -1,0 +1,766 @@
+-- File: list2
+
+-- 1. Lemmas concerning existing functions/predicates
+--    exhaustion property, and lemmas about Perm, insert, concat, Elem
+-- 2. New functions with their properties.
+--    elem, null, genCount, count, snoc, length, init, last, reverse
+
+Path "../lol"
+Load "logic2"
+Load "bool2" 
+Load "nat2"  
+Load "list"
+Load "sort"  
+
+
+--------------------------------------------------------------------
+--------------------------------------------------------------------
+--                                                                --
+--  1. L E M M A S   F O R   E X I S T I N G   F U N C T I O N S  --
+--                                                                --
+--------------------------------------------------------------------
+--------------------------------------------------------------------
+
+-- exhaustion property --
+Prove exh_list: @A:*s. @l:List A. l = nil A \/ Ex hd:A. Ex tl:List A. l=hd;tl
+Intro
+Apply indlist
+OrIL
+Refl
+Intros
+OrIR
+ExistsI a
+ExistsI as
+Refl
+Exit
+
+-- Lemma about Perm --
+Prove Perm_cons_weak : @A:*s.@a,b:A.@l:List A. Perm (a;b;l) (b;a;l)
+Intros
+Cut Perm (nil A ++ (a;b;l)) (nil A ++ (b;a;l))
+Repeat Rewrite nil_concat
+Intro Then Assumption
+Apply Perm_swap
+Exit
+
+-- Two lemmas about insert --
+Prove lemma_insert_m_n_is_insert_n_m : @m,n:Nat. m<n -> 
+               (@l:List Nat. insert m (insert n l) = insert n (insert m l))
+Intros 3
+Apply indlist
+Repeat Rewrite insert_nil
+Unfold singleton
+Rewrite Le__insert
+Apply m_Lt_n__m_Le_n Then Assumption
+Rewrite Gt__insert Then Try Assumption
+Rewrite insert_nil
+Refl
+Intros
+OrE Le_Or_Gt On n, a
+Forward Lt_Le_trans On H, H3
+Rewrite Le__insert Then Try Assumption
+Rewrite Le__insert Then Try Assumption
+Apply m_Lt_n__m_Le_n On H
+Rewrite Le__insert
+Apply m_Lt_n__m_Le_n On H4
+Rewrite Gt__insert Then Try Assumption
+Rewrite Le__insert Then Try Assumption
+Refl
+Rewrite Gt__insert Then Try Assumption
+OrE Le_Or_Gt On m, a
+Rewrite Le__insert Then Try Assumption
+Rewrite Le__insert Then Try Assumption
+Rewrite Gt__insert Then Try Assumption
+Rewrite Gt__insert Then Try Assumption
+Refl
+Rewrite Gt__insert Then Try Assumption
+Rewrite Gt__insert Then Try Assumption
+Rewrite Gt__insert Then Try Assumption
+Rewrite H1
+Refl
+Exit
+
+Prove insert_m_n_is_insert_n_m : @m,n:Nat. @l:List Nat. 
+                                 insert m (insert n l) = insert n (insert m l)
+Intros 2
+OrE Le_Or_Gt On m, n
+OrE Le__Lt_Or_is On H1
+Apply lemma_insert_m_n_is_insert_n_m
+Assumption
+Intro
+Repeat Rewrite H3
+Refl
+Intro
+Apply is_sym
+Apply lemma_insert_m_n_is_insert_n_m
+Assumption
+Exit
+
+-- Lemma about concat
+Prove concat_is_nil_ : @A:*s. @as,bs:List A. as ++ bs = nil A -> 
+                       as = nil A /\ bs = nil A
+Intros
+OrE exh_list On as
+AndI
+Assumption
+Lewrite nil_concat
+Lewrite H2
+Assumption
+FalseE
+ExistsE H2
+ExistsE H3
+NotE cons_is_nil_ On tl++bs, hd
+Lewrite cons_concat
+Lewrite H4
+Assumption
+Exit
+
+-- Three lemmas about Elem
+Prove Elem_cons : @A:*s. @l:List A. @a,b:A.
+                       Elem a (b;l) <=> a=b  \/ Elem a l
+Intros
+Apply equiv_prop Then Intro
+Apply Elem_cons_
+Assumption
+OrE H
+Lewrite H1
+Apply Elem_a_a_cons
+Apply Elem_a_b_cons
+Assumption
+Exit
+
+Prove Elem_concat : @A:*s. @l,l':List A. @a:A.
+                       Elem a (l++l') <=> Elem a l \/ Elem a l'
+Intros
+Pattern l
+Apply indlist
+Repeat Rewrite nil_concat
+Apply equiv_prop Then Intro
+OrIR
+Assumption
+OrE H
+FalseE
+Apply Elem_nil_ On H1
+Assumption
+Intros
+Rewrite cons_concat
+Repeat Rewrite Elem_cons
+Rewrite H
+Rewrite Or_assoc2
+Apply Bimpl_refl
+Exit
+
+prove Perm__Elem_eq : @A:*s. @l,l':List A. Perm l l' -> @a:A.
+                       Elem a l -> Elem a l'
+Intros 5
+Convert (\m,m':List A. Elem a m -> Elem a m') l l'
+Apply H
+Intros
+Assumption
+Intros
+Apply H2
+Apply H1
+Assumption
+Intros
+Rewrite Elem_concat In H1
+OrE H2
+Rewrite Elem_concat
+OrIL
+Assumption
+Rewrite Elem_concat
+OrIR
+Rewrite Elem_cons In H3
+Repeat Rewrite Elem_cons
+Rewrite Elem_cons In H4
+OrE H5
+OrIR
+OrIL
+Assumption
+OrE H6
+OrIL
+Assumption
+OrIR
+OrIR
+Assumption
+Exit
+
+
+---------------------------------------------------------------------
+---------------------------------------------------------------------
+--                                                                 --
+--  2.  N E W   F U N C T I O N S   W I T H   P R O P E R T I E S  --
+--                                                                 --
+---------------------------------------------------------------------
+---------------------------------------------------------------------
+
+
+----------
+-- elem --
+----------
+
+Def elem := \m:Nat. iterlist false (\hd:Nat. \elem_tail:Bool. 
+                                    eq m hd || elem_tail) :
+            Nat -> List Nat -> Bool
+
+Prove elem_m_nil : @m:Nat. elem m (nil Nat) = false
+Intro
+Unfold elem
+Apply iterlist_nil
+Exit
+
+Prove elem_m_cons : @m,n:Nat.@ns:List Nat. elem m (n;ns) = eq m n || elem m ns
+Intros
+Unfold 1 elem
+Apply iterlist_cons
+Exit
+
+----------
+-- null --
+----------
+
+
+Def null := \A:*s. iterlist true (\hd:A. \null_tail:Bool. false) :
+            @A:*s. List A -> Bool
+Implicit 1 null
+
+Prove null_nil : @A:*s. null (nil A) = true
+Intro
+Unfold null
+Rewrite iterlist_nil
+Refl
+Exit
+
+Prove null_cons : @A:*s. @a:A. @as:List A. null (a;as) = false
+Intros
+Unfold null
+Rewrite iterlist_cons
+Refl
+Exit
+
+
+----------------------
+-- genCount & count --
+----------------------
+
+Def genCount := \A:*s.\p:A->Bool.\l:List A. iterlist O (\hd:A. \countTail:Nat. 
+                                        if (p hd) (S countTail) countTail) l :
+                @A:*s. (A->Bool) -> List A -> Nat
+Implicit 1 genCount
+
+Prove genCount_nil : @A:*s.@p:A->Bool. genCount p (nil A) = O
+Intros
+Unfold genCount
+Rewrite iterlist_nil
+Refl
+Exit
+
+Prove genCount_cons : @A:*s.@p:A->Bool. @a:A. @l:List A. 
+                  genCount p (a;l) = if (p a) (S (genCount p l)) (genCount p l)
+Intros
+Unfold 1 genCount
+Rewrite iterlist_cons
+Refl
+Exit
+
+
+
+Def count := \m:Nat. genCount (eq m) : Nat -> List Nat -> Nat
+
+Prove count_nil : @m:Nat. count m (nil Nat) = O
+Intros
+Unfold count
+Apply genCount_nil
+Exit
+
+Prove count_cons : @m,n:Nat. @l:List Nat. 
+                   count m (n;l) = if (eq m n) (S (count m l)) (count m l)
+Intros
+Unfold count
+Apply genCount_cons
+Exit
+
+
+Prove eq__count_cons : @m,n:Nat. @l:List Nat. eq m n = true ->
+                                              count m (n;l) = S (count m l)
+Intros
+Rewrite count_cons
+Rewrite H
+Rewrite if_true
+Refl
+Exit
+
+Prove neq__count_cons : @m,n:Nat. @l:List Nat. eq m n = false ->
+                                              count m (n;l) = count m l
+Intros
+Rewrite count_cons
+Rewrite H
+Rewrite if_false
+Refl
+Exit
+
+Prove count_m_m_cons : @m:Nat.@l:List Nat. count m (m;l) = S (count m l)
+Intros
+Rewrite eq__count_cons
+Rewrite eq_m_m
+Refl
+Refl
+Exit
+
+Prove count_m_n_cons : @m,n:Nat.@l:List Nat. Not (m=n) -> 
+                          count m (n;l) = count m l
+Intros
+Rewrite neq__count_cons
+Rewrite eq_m_n
+Assumption
+Refl
+Refl
+Exit
+
+
+Prove count_m_insert_m : @m:Nat.@l:List Nat. 
+                         count m (insert m l) = S (count m l)
+Intro
+Apply indlist
+Rewrite insert_nil
+Unfold singleton
+Rewrite count_m_m_cons
+Refl
+Intros
+OrE Le_Or_Gt On m, a
+Rewrite Le__insert
+Assumption
+Rewrite count_m_m_cons
+Refl
+Rewrite Gt__insert
+Assumption
+Forward Lt__nis On H2
+First Not (m=a)
+NotI
+NotE H3
+Rewrite H4
+Refl
+Intro
+Repeat Rewrite count_m_n_cons Then Try Assumption
+Exit
+
+Prove count_m_insert_n : @m,n:Nat.@l:List Nat. Not (m=n) -> 
+                         count m (insert n l) = count m l
+Intros 2
+Apply indlist
+Intro
+Rewrite insert_nil
+Unfold singleton
+Rewrite count_m_n_cons
+Assumption
+Refl
+Intros
+OrE Le_Or_Gt On n, a
+Rewrite Le__insert
+Assumption
+Rewrite count_m_n_cons
+Assumption
+Refl
+Rewrite Gt__insert Then Try Assumption
+OrE exm On m=a
+Repeat Lewrite H5
+Repeat Rewrite count_m_m_cons
+Rewrite H
+Assumption
+Refl
+Repeat Rewrite count_m_n_cons Then Try Assumption
+Apply H
+Assumption
+Exit
+
+Prove genCount_concat : @A:*s.@p:A->Bool.@l1,l2:List A.
+                        genCount p (l1++l2) = genCount p l1 + genCount p l2
+Intros
+Pattern l1
+Apply indlist
+Rewrite nil_concat
+Rewrite genCount_nil
+Rewrite O_plus
+Refl
+Intros
+Rewrite cons_concat
+Repeat Rewrite genCount_cons
+OrE exh_bool On p a
+Repeat Rewrite H2
+Repeat Rewrite if_true
+Rewrite H
+Rewrite Sm_plus
+Refl
+Repeat Rewrite H2
+Repeat Rewrite if_false
+Assumption
+Exit
+
+Prove Perm__genCount_equal : @A:*s.@p:A->Bool. @l1,l2:List A.
+                             Perm l1 l2 -> genCount p l1 = genCount p l2
+Intros
+Apply H
+Intro
+Refl
+Intros
+Rewrite H1
+Assumption
+Intros
+Repeat Rewrite genCount_concat
+Cut genCount p (x;y;ys) = genCount p (y;x;ys)
+Intro
+Rewrite H1
+Refl
+Repeat Rewrite genCount_cons
+OrE exh_bool On p x Then OrE exh_bool On p y
+Repeat Rewrite H2
+Repeat Rewrite H4
+Repeat Rewrite if_true
+Refl
+Repeat Rewrite H2
+Repeat Rewrite H4
+Repeat Rewrite if_true
+Repeat Rewrite if_false
+Refl
+Repeat Rewrite H2
+Repeat Rewrite H4
+Repeat Rewrite if_false
+Repeat Rewrite if_true
+Refl
+Repeat Rewrite H2
+Repeat Rewrite H4
+Repeat Rewrite if_false
+Refl
+Exit
+
+Prove Perm__count_equal : @m:Nat.@l1,l2:List Nat. Perm l1 l2 ->
+                                                  count m l1 = count m l2
+Intros 3
+Unfold count
+Apply Perm__genCount_equal
+Exit
+
+Prove SO_Le_count__Elem : @l:List Nat. @m:Nat. S O <= count m l -> Elem m l
+Apply indlist
+Intro
+Rewrite count_nil
+Intro
+FalseE
+Apply Sm_Le_m_ On H
+Intros
+OrE exm On m=a
+Rewrite H3
+Apply Elem_a_a_cons
+Apply Elem_a_b_cons
+Apply H
+Lewrite count_m_n_cons On m, a
+Assumption
+Assumption
+Exit
+
+
+----------
+-- snoc --
+----------
+
+Def snoc := \A:*s. \a:A. \l:List A. l ++ singleton a :
+            @A:*s. A -> List A -> List A
+Implicit 1 snoc
+
+Prove Perm_cons_snoc : @A:*s.@a:A.@l:List A. Perm (a;l) (snoc a l)
+Intros 2
+Apply indlist
+Unfold snoc
+Rewrite nil_concat
+Apply Perm_refl
+Unfold snoc
+Intros
+Rewrite cons_concat
+Apply Perm_trans On a1;a;as
+Apply Perm_cons_weak
+Apply Perm_cons
+Assumption
+Exit
+
+
+------------
+-- length --
+------------
+
+Def length := \A:*s. iterlist O (\hd:A.S) :
+              @A:*s. List A -> Nat
+implicit 1 length
+
+Prove length_nil : @A:*s. length (nil A) = O
+Intro
+Unfold length
+Apply iterlist_nil
+Exit
+
+Prove length_cons : @A:*s.@a:A.@l:List A. length (a;l) = S (length l)
+Intros
+Apply iterlist_cons
+Exit
+
+Prove length_insert : @m:Nat. @l:List Nat. length (insert m l) = S (length l)
+Intro
+Apply indlist
+Rewrite insert_nil
+Unfold singleton
+Rewrite length_cons
+Refl
+Intros
+OrE Le_Or_Gt On m, a
+Rewrite Le__insert
+Assumption
+Rewrite length_cons
+Refl
+Rewrite Gt__insert
+Assumption
+Repeat Rewrite length_cons
+Rewrite H
+Refl
+Exit
+
+
+----------
+-- init --
+----------
+
+-- init [] = []
+-- init [x:xs] = if null xs then [] else x : init xs
+Def init := \A:*s. primreclist (nil A) (\hd:A.\tl:List A.\init_tail:List A.
+                                        if (null tl) (nil A) (hd;init_tail)) :
+            @A:*s. List A -> List A
+implicit 1 init
+
+Prove init_nil : @A:*s. init (nil A) = nil A
+Intro
+Unfold init
+Rewrite primreclist_nil
+Refl
+Exit
+
+Prove init_singleton : @A:*s.@a:A. init (a;nil A) = nil A
+Intros
+Unfold 1 init
+Rewrite primreclist_cons
+Rewrite null_nil
+Rewrite if_true
+Refl
+Exit
+
+Prove init_cons2 : @A:*s.@a,b:A. @as:List A. init (a;b;as) = a; init (b;as)
+Intros
+Unfold 1 init
+Rewrite primreclist_cons
+Rewrite null_cons
+Rewrite if_false
+Refl
+Exit
+
+Prove Not_nil__init_cons : @A:*s.@a:A. @as:List A. Not (as=nil A) -> 
+                           init (a;as) = a; init as
+Intros
+OrE exh_list On as
+FalseE
+NotE H
+Assumption
+ExistsE H2
+ExistsE H3
+Rewrite H4
+Rewrite init_cons2
+Rewrite H4
+Refl
+Exit
+
+Prove init_concat : @A:*s.@as,bs:List A. Not (bs = nil A) ->
+                    init (as++bs) = as ++ init bs
+Intros
+Pattern as
+Apply indlist
+Repeat Rewrite nil_concat
+Refl
+Intros
+Repeat Rewrite cons_concat
+Lewrite H1
+Rewrite Not_nil__init_cons
+NotI
+NotE H
+Forward concat_is_nil_ On H2
+AndE H3
+Assumption
+Refl
+Exit
+
+----------
+-- last --
+----------
+
+-- last d nil = d
+-- last d (a;as) = last a as
+
+Def last := \A:*s.\Def:A.\l:List A. 
+   iterlist (\Def:A.Def) (\hd:A. \last_tail:A->A. \dummy:A. last_tail hd) l Def
+implicit 1 last
+
+Prove last_nil : @A:*s. @a:A. last a (nil A) = a
+Intros
+Unfold last
+Rewrite iterlist_nil
+Refl
+Exit
+
+Prove last_cons : @A:*s. @a,b:A. @as:List A. last a (b;as) = last b as
+Intros
+Unfold 1 last
+Rewrite iterlist_cons
+Refl
+Exit
+
+Prove Not_nil__last : @A:*s.@a1,a2:A.@as:List A. Not (as = nil A) -> 
+                      last a1 as = last a2 as
+Intros 3
+Apply indlist
+Intros
+FalseE
+NotE H
+Refl
+Intros
+Repeat Rewrite last_cons
+Refl
+Exit
+
+Prove Not_nil__last_cons : @A:*s.@a,b:A.@as:List A. Not (as = nil A) -> 
+                           last a (b;as) = last a as
+Intros
+Rewrite last_cons
+Apply Not_nil__last
+Assumption
+Exit
+
+Prove last_concat : @A:*s.@a:A.@as,bs:List A. Not (bs = nil A) -> 
+                    last a (as++bs) = last a bs
+Intros
+Pattern as
+Apply indlist
+Rewrite nil_concat
+Refl
+Intros
+Rewrite cons_concat
+Lewrite H1
+Apply Not_nil__last_cons
+NotI
+NotE H
+Forward concat_is_nil_ On H2
+AndE H3
+Assumption
+Exit
+
+Prove Elem_last : @A:*s.@l:List A.@a:A. Not (l = nil A) -> Elem (last a l) l
+Intro
+Apply indlist
+Intros
+FalseE
+Apply H
+Refl
+Intros
+Rewrite last_cons
+OrE exh_list On as
+Rewrite H3
+Rewrite last_nil
+Apply Elem_a_a_cons
+ExistsE H3
+ExistsE H4
+Apply Elem_a_b_cons
+Apply H
+Rewrite H5
+Apply cons_is_nil_
+Exit
+
+Prove Elem_Le_last : @l:List Nat. @m:Nat. Elem m l -> 
+                     @n:Nat. Ordered l -> m <= last n l
+Intros 3
+Pattern l
+Apply H
+Intros
+Rewrite last_cons
+AndE Ordered_cons_ On H1
+OrE exh_list On m1
+Rewrite H6
+Rewrite last_nil
+Apply Le_refl
+Apply H3
+Apply Elem_last
+ExistsE H6
+ExistsE H7
+Rewrite H8
+Apply cons_is_nil_
+Intros
+Rewrite last_cons
+Apply H1
+AndE Ordered_cons_ On H2
+Assumption
+Exit
+
+
+-------------
+-- reverse --
+-------------
+
+Def reverse := \A:*s. iterlist (nil A) (snoc A)
+Implicit 1 reverse
+
+Prove reverse_nil : @A:*s. reverse (nil A) = nil A
+Intro
+Unfold reverse
+Rewrite iterlist_nil
+Refl
+Exit
+
+Prove reverse_cons : @A:*s. @a:A. @as:List A.
+                             reverse (a;as) = snoc a (reverse as)
+Intros
+Unfold 1 reverse
+Rewrite iterlist_cons
+Refl
+Exit
+
+Prove reverse_tail : @A:*s. @as:List A.
+                              reverse (tail as) = init (reverse as)
+Intro
+Apply indlist
+Rewrite tail_nil
+Repeat Rewrite reverse_nil
+Rewrite init_nil
+Refl
+Intros
+Rewrite reverse_cons
+Rewrite tail_cons
+Unfold snoc
+Rewrite init_concat
+Apply cons_is_nil_
+Unfold singleton
+Rewrite init_singleton
+Rewrite concat_nil
+Refl
+Exit
+
+Prove last_reverse : @A:*s.@a:A.@as:List A.
+                            last a (reverse as) = head a as
+Intros 2
+Apply indlist
+Rewrite reverse_nil
+Rewrite last_nil
+Rewrite head_nil
+Refl
+Intros
+Rewrite head_cons
+Rewrite reverse_cons
+Unfold snoc
+Rewrite last_concat
+Apply cons_is_nil_
+Unfold singleton
+Rewrite last_cons
+Apply last_nil
+Exit
+

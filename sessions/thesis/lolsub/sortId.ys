@@ -1,0 +1,265 @@
+-- File: sort
+
+-- This file contains the example of sorting of records, as in Section 8.4.
+
+Path "../lol"
+Path "../lolplus"
+Load "lambdaLsubplus"
+Load "sort"  -- so we have Perm
+
+-----------------------
+-- PREDICATE Ordered --
+-----------------------
+
+Def OrderedId := \B<:{|id:Nat|}.
+                 \l:List B. 
+                 @P:List B -> *p.
+                 P (nil B) ->
+                 (@a:B.@m:List B. P m -> (@b:B. Elem b m -> a`id<=b`id) -> 
+                                  P (a;m)) ->
+                 P l :
+                 @B<:{|id:Nat|}. List B -> *p
+
+Implicit 1 OrderedId
+
+Prove OrderedId_nil : @B<:{|id:Nat|}. OrderedId (nil B)
+Unfold OrderedId
+Intros
+Assumption
+Exit
+
+Prove OrderedId_cons : @B<:{|id:Nat|}.@a:B.@m:List B. OrderedId m -> 
+                                        (@b:B. Elem b m -> a`id<=b`id) -> 
+                                        OrderedId (a;m)
+Intros
+Unfold OrderedId
+Intros
+Apply H3
+Apply H Then Assumption
+Assumption
+Exit
+
+Prove OrderedId_singleton : @B<:{|id:Nat|}. @m:B. OrderedId (singleton m)
+Intros
+Apply OrderedId_cons
+Apply OrderedId_nil
+Intros
+FalseE
+Apply Elem_nil_ On H
+Exit
+
+Prove OrderedId_exh : @B<:{|id:Nat|}. @l:List B. OrderedId l -> 
+                       l = nil B \/
+                       Ex a:B. Ex m:List B. l = a;m /\
+                                              (@b:B. Elem b m -> a`id<=b`id) /\
+                                              OrderedId m
+Intros
+Apply H
+OrIL
+Refl
+Intros
+OrIR
+ExistsI a
+ExistsI m
+AndI
+Refl
+AndI
+Assumption
+OrE H1
+Rewrite H3
+Apply OrderedId_nil
+ExistsE H3
+ExistsE H4
+AndE H5
+Rewrite H6
+AndE H7
+Apply OrderedId_cons
+Assumption
+Assumption
+Exit
+
+Prove OrderedId_cons_ : @B<:{|id:Nat|}. @a:B.@m:List B. OrderedId (a;m) -> 
+                                          (@b:B. Elem b m -> a`id<=b`id) /\
+                                          OrderedId m
+Intros 4
+OrE OrderedId_exh On H
+FalseE
+Apply cons_is_nil_ On H2
+ExistsE H2
+ExistsE H3
+AndE H4
+AndE cons_is_cons_ On H5
+Rewrite H8
+Repeat Rewrite H9
+Assumption
+Exit
+
+
+-----------------------
+-- FUNCTION insertId --
+-----------------------
+
+Def insertId := \B<:{|id:Nat|}. \n:B. primreclist (singleton n) (
+                      \head:B. \tail:List B. \insert_tail:List B. 
+                         if (leq n`id head`id) 
+                            (n;head;tail)
+                            (head;insert_tail)) : 
+              @B<:{|id:Nat|}. B -> List B -> List B
+implicit 1 insertId
+
+Prove insertId_nil : @B<:{|id:Nat|}. @m:B. insertId m (nil B) = singleton m
+Intros
+Unfold insertId
+Apply primreclist_nil
+Exit
+
+Prove Le__insertId : @B<:{|id:Nat|}. @m,n:B.@l:List B. m`id<=n`id -> 
+                                     insertId m (n;l) = m;n;l
+Intros
+Unfold insertId
+Rewrite primreclist_cons
+Rewrite Le__leq_true On H
+Rewrite if_true
+Refl
+Exit
+
+Prove Gt__insertId : @B<:{|id:Nat|}. @m,n:B.@l:List B. n`id<m`id -> 
+                                     insertId m (n;l) = n;(insertId m l)
+Intros
+Unfold 1 insertId
+Rewrite primreclist_cons
+Rewrite Gt__leq_false On H
+Rewrite if_false
+Refl
+Exit
+
+Prove Elem_insertId_ : @B<:{|id:Nat|}. @m,n:B.@ns:List B.
+                                           Elem m (insertId n ns) -> 
+                                           m=n \/ Elem m ns
+Intros 3
+Apply indlist
+Rewrite insertId_nil
+Unfold singleton
+Intro
+OrIL
+OrE Elem_cons_ On H Then Try Assumption
+FalseE
+Apply Elem_nil_ On H2
+Intros 2
+OrE Le_Or_Gt n`id a`id
+Rewrite Le__insertId
+Assumption
+Intros
+Apply Elem_cons_
+Assumption
+Rewrite Gt__insertId Then Try Assumption
+Intros
+OrE Elem_cons_ On H2
+OrIR
+Rewrite H4
+Apply Elem_a_a_cons
+OrE H1 On H4
+OrIL
+Assumption
+OrIR
+Apply Elem_a_b_cons
+Assumption
+Exit
+
+Prove OrderedId_insertId  : @B<:{|id:Nat|}. @m:B. @l:List B. OrderedId l ->
+                                             OrderedId (insertId m l)
+Intros 2
+Apply indlist
+Intro
+Rewrite insertId_nil
+Apply OrderedId_singleton
+Intros
+AndE OrderedId_cons_ On H1
+OrE Le_Or_Gt On m`id, a`id
+Rewrite Le__insertId Then Try Assumption
+Apply OrderedId_cons
+Assumption
+Intros
+Apply Le_trans On H6
+OrE Elem_cons_ On H7
+Rewrite H9
+Apply Le_refl
+Apply H3 Then Assumption
+Rewrite Gt__insertId Then Try Assumption
+Apply OrderedId_cons
+Apply H Then Assumption
+Intros
+OrE Elem_insertId_ On H7
+Rewrite H9
+Apply m_Lt_n__m_Le_n
+Assumption
+Apply H3
+Assumption
+Exit
+
+Prove Perm_insertId : @B<:{|id:Nat|}. @m:B. @l:List B.
+                               Perm (insertId m l) (m;l)
+Intros 2
+Apply indlist
+Rewrite insertId_nil
+Apply Perm_refl
+Intros
+OrE Le_Or_Gt On m`id, a`id
+Rewrite Le__insertId
+Assumption
+Apply Perm_refl
+Rewrite Gt__insertId
+Assumption
+Apply Perm_trans On a;m;as
+Apply Perm_cons
+Assumption
+First Perm (nil B ++ (a;m;as)) (nil B ++ (m;a;as))
+Apply Perm_swap
+Repeat Rewrite nil_concat
+Intro Then Assumption
+Exit
+
+------------
+-- sortId --
+------------
+
+Def sortId := \B<:{|id:Nat|}.
+              primreclist (nil B) (\head:B. \tail:List B. 
+                             \sort_tail:List B. insertId head sort_tail) :
+            @B<:{|id:Nat|}. List B -> List B
+Implicit 1 sortId
+
+Prove sortId_nil : @B<:{|id:Nat|}. sortId (nil B) = nil B
+Intro
+Unfold sortId
+Apply primreclist_nil
+Exit
+
+Prove sortId_cons : @B<:{|id:Nat|}. @m:B.@l:List B. sortId (m;l) = insertId m (sortId l)
+Intros
+Unfold 1 sortId
+Apply primreclist_cons
+Exit
+
+Prove OrderedId_sortId : @B<:{|id:Nat|}. @l:List B. OrderedId (sortId l)
+Intro
+Apply indlist
+Rewrite sortId_nil
+Apply OrderedId_nil
+Intros
+Rewrite sortId_cons
+Apply OrderedId_insertId
+Assumption
+Exit
+
+Prove Perm_sortId : @B<:{|id:Nat|}. @l:List B. Perm (sortId l) l
+Intro
+Apply indlist
+Rewrite sortId_nil
+Apply Perm_refl
+Intros
+Rewrite sortId_cons
+Forward Perm_cons On a, H
+Apply Perm_trans On H1                                               
+Apply Perm_insertId
+Exit

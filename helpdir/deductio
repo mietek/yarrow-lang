@@ -1,0 +1,29 @@
+<DL>
+ <DT>Syntax:
+ <DD>
+  <CODE>Deduction</CODE> <VAR>var</VAR> <VAR>num</VAR>
+ <DT>Effect:
+ <DD>Prints definition of <VAR>var</VAR> as a flag-proof. The number (which
+     may be left out) sets certain options. It is considered as a binary
+     number, the bits signify from least to most significant:
+     <OL>
+     <LI> Print proof terms?
+     <LI> Print separate line for variables?
+     <LI> Make subdeduction for types in flags? (Works only if option 10 set)
+     <LI> Print inhabitants of all sorts, or only proofterms?
+     <LI> Maximal one application at a time?
+     <LI> Keep cuts in the deduction?
+     <LI> Ignore beta-delta conversions? (Even if this is set to 0, some
+          conversions will be ignored!)
+     <LI> Print beta-only conversions? (Ignored if option 7 set) 
+     <LI> Print only terms in justification? (Ignored if option 4 set) 
+     <LI> Maximal one assumption in a flag?
+     </OL>
+     E.g. 000010010 means max. one application at a time and print a separate
+     line for variables. Default <VAR>num</VAR> is zero.
+ <DT>Prove-mode:
+ <DD>This command is also available in prove-mode. Then it is performed
+     in the context of the first goal.                   
+ <DT>NOTE:
+ <DD>THIS COMMAND IS EXPERIMENTAL.
+</DL>

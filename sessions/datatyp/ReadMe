@@ -1,0 +1,12 @@
+The files in this directory define datatypes or sets using the standard
+(impredicative) encoding.
+Of course most of the modules are devoted to establishing some
+properties about these types.
+
+Description of the files:
+ - bool     defines the booleans
+ - nat      defines the natural numbers 
+ - plus     defines addition on natural numbers
+ - list     defines the lists
+
+Jan Zwanenburg, 22-9-'97

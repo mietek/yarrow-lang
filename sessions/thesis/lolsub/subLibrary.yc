@@ -1,0 +1,10 @@
+(,*s,#s,*p,#p)(,*s:#s,*p:#p)(,#s:#s:#s,#s:*s:*s,*s:*s:*s,#s:#p:#p,*s:#p:#p,#p:#p:#p,#s:*p:*p,*s:*p:*p,#p:*p:*p,*p:*p:*p)(,#s)(,#s:*s:*s,#s:#p:#p,#s:*p:*p)
+s(,*s:R)
+(,"lambdaL"134378004,"logic"949585108,"lambdaLplus"596916011,"lambdaLsubplus"855581932)
+p()
+b()
+l()
+i()
+l()
+=(,L\N()B:BS*s:#s.L\S(,BVB)A:BS*s:#s.L\N()x:BVA:*s.L\N()y:BVA:*s.L\N()H:NA(,NA(,NA(,BV=,BVA),BVx),BVy):*p.BVH)Eq_sub__Eq_super2:L@N()B:BS*s:#s.L@S(,BVB)A:BS*s:#s.L@N()x:BVA:*s.L@N()y:BVA:*s.L@N()_:NA(,NA(,NA(,BV=,BVA),BVx),BVy):*p.NA(,NA(,NA(,BV=,BVB),BVx),BVy):*p.
+=(,L\N()B:BS*s:#s.L\S(,BVB)A:BS*s:#s.L\N()x:BVA:*s.L\N()y:BVA:*s.L\N()H:NA(,NA(,NA(,BV=,BVA),BVx),BVy):*p.L\N()P:L@N()_:BVB:*s.BS*p:#p.L=(,L\N()z:BVA:*s.NA(,BVP,BVz))Q:L@N()z:BVA:*s.BS*p:#p.NA(,BVH,BVQ))Eq_sub__Eq_super:L@N()B:BS*s:#s.L@S(,BVB)A:BS*s:#s.L@N()x:BVA:*s.L@N()y:BVA:*s.L@N()_:NA(,NA(,NA(,BV=,BVA),BVx),BVy):*p.NA(,NA(,NA(,BV=,BVB),BVx),BVy):*p.

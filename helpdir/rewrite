@@ -1,0 +1,45 @@
+<DL>
+ <DT>Syntax:
+ <DD>
+  <CODE>Rewrite</CODE> [<VAR>num</VAR>] <VAR>term</VAR> 
+      [<CODE>On</CODE> <VAR>term-list</VAR>] [<CODE>In</CODE> <CODE>var</CODE>]
+ <DT>Effect:
+ <DD><VAR>term</VAR> should be the proof of an equality. This 
+               tactic replaces in the goal one occurrence of 
+               the left-hand side of the equality by the 
+               right-hand side. The optional 
+               number selects the occurrence (otherwise the first).
+               The variant with the <CODE>On</CODE> clause are a combination
+               of 'Forward' and 'Rewrite' without <CODE>On</CODE> clause.
+               Finally, it is also possible to rewrite in an assumption, 
+               using the <CODE>In</CODE> clause.<BR>
+               This tactic needs an elimination lemma for Leibniz-equality of
+               the following form:<BR>
+               <CODE>@x1:t1. .. @xn:tn.@x,y:t. @P:t->sort. eq x1 .. xn x y -> P y -> P x</CODE><BR>
+               Note here the order of <CODE>y</CODE> and <CODE>x</CODE>! <BR>
+               The equality may be quantified and may have 
+               conditions, which will become new goals.
+ <DT>Example:
+ <DD>Suppose we have already typed:<BR>
+     <CODE>Var eq : @A:*. A -&gt; A -&gt; *<BR>
+           Var eq_elim_l : { as above }<BR>                      
+           Use Rewrite eq_elim_l<BR>
+           Var lemma : @x:Nat. eq Nat x (minus x zero)</CODE><BR>
+                and our goal is,<BR>
+                <CODE>Q two -&gt; R </CODE><BR>
+                then <CODE>Rewrite lemma</CODE> will yield as new goal<BR>
+                <CODE>Q (minus two zero) -&gt; R</CODE>
+ <DT>Shortcomings:
+ <DD><UL>
+     <LI> This tactic cannot replace expressions 
+      containing variables that are local in the goal.
+     <LI> If there are numbers in the list not
+          corresponding to an occurrence, no error is given. Do not use the
+          number 0, since that indicates a path
+         (see <A HREF="#paths"><CODE>paths</CODE></A>).
+     </UL> 
+ <DT>See also:
+ <DD><A HREF="#Forward"><CODE>Forward</CODE></A>,
+     <A HREF="#Lewrite"><CODE>Lewrite</CODE></A>,
+     <A HREF="#Use"><CODE>Use</CODE></A>
+</DL>

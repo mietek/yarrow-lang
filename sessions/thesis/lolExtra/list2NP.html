@@ -1,0 +1,245 @@
+<HTML>
+<HEAD>
+<TITLE>lolExtra/list2 (without proofs)</TITLE>
+</HEAD>
+<BODY BGCOLOR="#FFFFFF", TEXT="#000000">
+<PRE><FONT COLOR="#000000"></FONT><FONT COLOR="#000000">-- File: list2
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#000000">-- 1. Lemmas concerning existing functions/predicates
+</FONT><FONT COLOR="#000000">--    exhaustion property, and lemmas about Perm, insert, concat, Elem
+</FONT><FONT COLOR="#000000">-- 2. New functions with their properties.
+</FONT><FONT COLOR="#000000">--    elem, null, genCount, count, snoc, length, init, last, reverse
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#000000">Path "../lol"
+</FONT><FONT COLOR="#000000">Load "logic2"
+</FONT><FONT COLOR="#000000">Load "bool2" 
+</FONT><FONT COLOR="#000000">Load "nat2"  
+</FONT><FONT COLOR="#000000">Load "list"
+</FONT><FONT COLOR="#000000">Load "sort"  
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#000000">--------------------------------------------------------------------
+</FONT><FONT COLOR="#000000">--------------------------------------------------------------------
+</FONT><FONT COLOR="#000000">--                                                                --
+</FONT><FONT COLOR="#000000">--  1. L E M M A S   F O R   E X I S T I N G   F U N C T I O N S  --
+</FONT><FONT COLOR="#000000">--                                                                --
+</FONT><FONT COLOR="#000000">--------------------------------------------------------------------
+</FONT><FONT COLOR="#000000">--------------------------------------------------------------------
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#000000">-- exhaustion property --
+</FONT><FONT COLOR="#0000FF">Prove exh_list: @A:*s. @l:List A. l = nil A \/ Ex hd:A. Ex tl:List A. l=hd;tl
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#000000">-- Lemma about Perm --
+</FONT><FONT COLOR="#0000FF">Prove Perm_cons_weak : @A:*s.@a,b:A.@l:List A. Perm (a;b;l) (b;a;l)
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#000000">-- Two lemmas about insert --
+</FONT><FONT COLOR="#0000FF">Prove lemma_insert_m_n_is_insert_n_m : @m,n:Nat. m&lt;n -&gt; 
+</FONT><FONT COLOR="#0000FF">               (@l:List Nat. insert m (insert n l) = insert n (insert m l))
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#0000FF">Prove insert_m_n_is_insert_n_m : @m,n:Nat. @l:List Nat. 
+</FONT><FONT COLOR="#0000FF">                                 insert m (insert n l) = insert n (insert m l)
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#000000">-- Lemma about concat
+</FONT><FONT COLOR="#0000FF">Prove concat_is_nil_ : @A:*s. @as,bs:List A. as ++ bs = nil A -&gt; 
+</FONT><FONT COLOR="#0000FF">                       as = nil A /\ bs = nil A
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#000000">-- Three lemmas about Elem
+</FONT><FONT COLOR="#0000FF">Prove Elem_cons : @A:*s. @l:List A. @a,b:A.
+</FONT><FONT COLOR="#0000FF">                       Elem a (b;l) &lt;=&gt; a=b  \/ Elem a l
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#0000FF">Prove Elem_concat : @A:*s. @l,l':List A. @a:A.
+</FONT><FONT COLOR="#0000FF">                       Elem a (l++l') &lt;=&gt; Elem a l \/ Elem a l'
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#0000FF">prove Perm__Elem_eq : @A:*s. @l,l':List A. Perm l l' -&gt; @a:A.
+</FONT><FONT COLOR="#0000FF">                       Elem a l -&gt; Elem a l'
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#000000">---------------------------------------------------------------------
+</FONT><FONT COLOR="#000000">---------------------------------------------------------------------
+</FONT><FONT COLOR="#000000">--                                                                 --
+</FONT><FONT COLOR="#000000">--  2.  N E W   F U N C T I O N S   W I T H   P R O P E R T I E S  --
+</FONT><FONT COLOR="#000000">--                                                                 --
+</FONT><FONT COLOR="#000000">---------------------------------------------------------------------
+</FONT><FONT COLOR="#000000">---------------------------------------------------------------------
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#000000">----------
+</FONT><FONT COLOR="#000000">-- elem --
+</FONT><FONT COLOR="#000000">----------
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#0000FF">Def elem := \m:Nat. iterlist false (\hd:Nat. \elem_tail:Bool. 
+</FONT><FONT COLOR="#0000FF">                                    eq m hd || elem_tail) :
+</FONT><FONT COLOR="#0000FF">            Nat -&gt; List Nat -&gt; Bool
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#0000FF">Prove elem_m_nil : @m:Nat. elem m (nil Nat) = false
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#0000FF">Prove elem_m_cons : @m,n:Nat.@ns:List Nat. elem m (n;ns) = eq m n || elem m ns
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#000000">----------
+</FONT><FONT COLOR="#000000">-- null --
+</FONT><FONT COLOR="#000000">----------
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#0000FF">Def null := \A:*s. iterlist true (\hd:A. \null_tail:Bool. false) :
+</FONT><FONT COLOR="#0000FF">            @A:*s. List A -&gt; Bool
+</FONT><FONT COLOR="#000000">Implicit 1 null
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#0000FF">Prove null_nil : @A:*s. null (nil A) = true
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#0000FF">Prove null_cons : @A:*s. @a:A. @as:List A. null (a;as) = false
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#000000">----------------------
+</FONT><FONT COLOR="#000000">-- genCount &amp; count --
+</FONT><FONT COLOR="#000000">----------------------
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#0000FF">Def genCount := \A:*s.\p:A-&gt;Bool.\l:List A. iterlist O (\hd:A. \countTail:Nat. 
+</FONT><FONT COLOR="#0000FF">                                        if (p hd) (S countTail) countTail) l :
+</FONT><FONT COLOR="#0000FF">                @A:*s. (A-&gt;Bool) -&gt; List A -&gt; Nat
+</FONT><FONT COLOR="#000000">Implicit 1 genCount
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#0000FF">Prove genCount_nil : @A:*s.@p:A-&gt;Bool. genCount p (nil A) = O
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#0000FF">Prove genCount_cons : @A:*s.@p:A-&gt;Bool. @a:A. @l:List A. 
+</FONT><FONT COLOR="#0000FF">                  genCount p (a;l) = if (p a) (S (genCount p l)) (genCount p l)
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#0000FF">Def count := \m:Nat. genCount (eq m) : Nat -&gt; List Nat -&gt; Nat
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#0000FF">Prove count_nil : @m:Nat. count m (nil Nat) = O
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#0000FF">Prove count_cons : @m,n:Nat. @l:List Nat. 
+</FONT><FONT COLOR="#0000FF">                   count m (n;l) = if (eq m n) (S (count m l)) (count m l)
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#0000FF">Prove eq__count_cons : @m,n:Nat. @l:List Nat. eq m n = true -&gt;
+</FONT><FONT COLOR="#0000FF">                                              count m (n;l) = S (count m l)
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#0000FF">Prove neq__count_cons : @m,n:Nat. @l:List Nat. eq m n = false -&gt;
+</FONT><FONT COLOR="#0000FF">                                              count m (n;l) = count m l
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#0000FF">Prove count_m_m_cons : @m:Nat.@l:List Nat. count m (m;l) = S (count m l)
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#0000FF">Prove count_m_n_cons : @m,n:Nat.@l:List Nat. Not (m=n) -&gt; 
+</FONT><FONT COLOR="#0000FF">                          count m (n;l) = count m l
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#0000FF">Prove count_m_insert_m : @m:Nat.@l:List Nat. 
+</FONT><FONT COLOR="#0000FF">                         count m (insert m l) = S (count m l)
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#0000FF">Prove count_m_insert_n : @m,n:Nat.@l:List Nat. Not (m=n) -&gt; 
+</FONT><FONT COLOR="#0000FF">                         count m (insert n l) = count m l
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#0000FF">Prove genCount_concat : @A:*s.@p:A-&gt;Bool.@l1,l2:List A.
+</FONT><FONT COLOR="#0000FF">                        genCount p (l1++l2) = genCount p l1 + genCount p l2
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#0000FF">Prove Perm__genCount_equal : @A:*s.@p:A-&gt;Bool. @l1,l2:List A.
+</FONT><FONT COLOR="#0000FF">                             Perm l1 l2 -&gt; genCount p l1 = genCount p l2
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#0000FF">Prove Perm__count_equal : @m:Nat.@l1,l2:List Nat. Perm l1 l2 -&gt;
+</FONT><FONT COLOR="#0000FF">                                                  count m l1 = count m l2
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#0000FF">Prove SO_Le_count__Elem : @l:List Nat. @m:Nat. S O &lt;= count m l -&gt; Elem m l
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#000000">----------
+</FONT><FONT COLOR="#000000">-- snoc --
+</FONT><FONT COLOR="#000000">----------
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#0000FF">Def snoc := \A:*s. \a:A. \l:List A. l ++ singleton a :
+</FONT><FONT COLOR="#0000FF">            @A:*s. A -&gt; List A -&gt; List A
+</FONT><FONT COLOR="#000000">Implicit 1 snoc
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#0000FF">Prove Perm_cons_snoc : @A:*s.@a:A.@l:List A. Perm (a;l) (snoc a l)
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#000000">------------
+</FONT><FONT COLOR="#000000">-- length --
+</FONT><FONT COLOR="#000000">------------
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#0000FF">Def length := \A:*s. iterlist O (\hd:A.S) :
+</FONT><FONT COLOR="#0000FF">              @A:*s. List A -&gt; Nat
+</FONT><FONT COLOR="#000000">implicit 1 length
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#0000FF">Prove length_nil : @A:*s. length (nil A) = O
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#0000FF">Prove length_cons : @A:*s.@a:A.@l:List A. length (a;l) = S (length l)
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#0000FF">Prove length_insert : @m:Nat. @l:List Nat. length (insert m l) = S (length l)
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#000000">----------
+</FONT><FONT COLOR="#000000">-- init --
+</FONT><FONT COLOR="#000000">----------
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#000000">-- init [] = []
+</FONT><FONT COLOR="#000000">-- init [x:xs] = if null xs then [] else x : init xs
+</FONT><FONT COLOR="#0000FF">Def init := \A:*s. primreclist (nil A) (\hd:A.\tl:List A.\init_tail:List A.
+</FONT><FONT COLOR="#0000FF">                                        if (null tl) (nil A) (hd;init_tail)) :
+</FONT><FONT COLOR="#0000FF">            @A:*s. List A -&gt; List A
+</FONT><FONT COLOR="#000000">implicit 1 init
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#0000FF">Prove init_nil : @A:*s. init (nil A) = nil A
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#0000FF">Prove init_singleton : @A:*s.@a:A. init (a;nil A) = nil A
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#0000FF">Prove init_cons2 : @A:*s.@a,b:A. @as:List A. init (a;b;as) = a; init (b;as)
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#0000FF">Prove Not_nil__init_cons : @A:*s.@a:A. @as:List A. Not (as=nil A) -&gt; 
+</FONT><FONT COLOR="#0000FF">                           init (a;as) = a; init as
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#0000FF">Prove init_concat : @A:*s.@as,bs:List A. Not (bs = nil A) -&gt;
+</FONT><FONT COLOR="#0000FF">                    init (as++bs) = as ++ init bs
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#000000">----------
+</FONT><FONT COLOR="#000000">-- last --
+</FONT><FONT COLOR="#000000">----------
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#000000">-- last d nil = d
+</FONT><FONT COLOR="#000000">-- last d (a;as) = last a as
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#0000FF">Def last := \A:*s.\Def:A.\l:List A. 
+</FONT><FONT COLOR="#0000FF">   iterlist (\Def:A.Def) (\hd:A. \last_tail:A-&gt;A. \dummy:A. last_tail hd) l Def
+</FONT><FONT COLOR="#000000">implicit 1 last
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#0000FF">Prove last_nil : @A:*s. @a:A. last a (nil A) = a
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#0000FF">Prove last_cons : @A:*s. @a,b:A. @as:List A. last a (b;as) = last b as
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#0000FF">Prove Not_nil__last : @A:*s.@a1,a2:A.@as:List A. Not (as = nil A) -&gt; 
+</FONT><FONT COLOR="#0000FF">                      last a1 as = last a2 as
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#0000FF">Prove Not_nil__last_cons : @A:*s.@a,b:A.@as:List A. Not (as = nil A) -&gt; 
+</FONT><FONT COLOR="#0000FF">                           last a (b;as) = last a as
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#0000FF">Prove last_concat : @A:*s.@a:A.@as,bs:List A. Not (bs = nil A) -&gt; 
+</FONT><FONT COLOR="#0000FF">                    last a (as++bs) = last a bs
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#0000FF">Prove Elem_last : @A:*s.@l:List A.@a:A. Not (l = nil A) -&gt; Elem (last a l) l
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#0000FF">Prove Elem_Le_last : @l:List Nat. @m:Nat. Elem m l -&gt; 
+</FONT><FONT COLOR="#0000FF">                     @n:Nat. Ordered l -&gt; m &lt;= last n l
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#000000">-------------
+</FONT><FONT COLOR="#000000">-- reverse --
+</FONT><FONT COLOR="#000000">-------------
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#0000FF">Def reverse := \A:*s. iterlist (nil A) (snoc A)
+</FONT><FONT COLOR="#000000">Implicit 1 reverse
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#0000FF">Prove reverse_nil : @A:*s. reverse (nil A) = nil A
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#0000FF">Prove reverse_cons : @A:*s. @a:A. @as:List A.
+</FONT><FONT COLOR="#0000FF">                             reverse (a;as) = snoc a (reverse as)
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#0000FF">Prove reverse_tail : @A:*s. @as:List A.
+</FONT><FONT COLOR="#0000FF">                              reverse (tail as) = init (reverse as)
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#0000FF">Prove last_reverse : @A:*s.@a:A.@as:List A.
+</FONT><FONT COLOR="#0000FF">                            last a (reverse as) = head a as
+</FONT><FONT COLOR="#000000">
+</FONT></PRE>
+</BODY>
+</HTML>

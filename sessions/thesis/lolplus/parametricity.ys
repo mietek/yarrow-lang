@@ -1,0 +1,637 @@
+-- File: parametricity
+
+-- This file introduces parametricity and the notion of first-order interfaces.
+-- It follows the structure of Sections 6.7.2 through 6.7.3, and is hence
+-- divided in the following parts.
+--  2. Parametricity (Section 6.7.2)
+--  3. First-order interfaces (Section 6.7.3)
+
+Path "../lol"
+Path "../lolExtra"
+Load "lambdaLplus"
+Load "prelims"
+Load "LOLP_Axioms"
+
+------------------------------------
+------------------------------------
+--                                --
+--  2. P A R A M E T R I C I T Y  --
+--                                --
+------------------------------------
+------------------------------------
+
+Var Sim : @I:*s->*s. @Y:*s.@Z:*s. (Y->Z->*p) -> (I Y -> I Z -> *p)
+
+Var Sim_id : @Y,Z:*s.@(~):Y->Z->*p.
+                    Sim (\X:*s.X) Y Z (~) <===> (~)
+Var Sim_const : @T:*s.@Y,Z:*s.@(~):Y->Z->*p.
+                    Sim (\X:*s.T) Y Z (~) <===> ((=) T)
+Var Sim_arrow : @I1,I2:*s->*s.@Y,Z:*s.@(~):Y->Z->*p.
+                    Sim (\X:*s. I1 X -> I2 X) Y Z (~) <===>
+                    \opsY:I1 Y -> I2 Y.\opsZ:I1 Z -> I2 Z.            
+                    (@y:I1 Y.@z:I1 Z. Sim I1 Y Z (~) y z ->
+                                      Sim I2 Y Z (~) (opsY y) (opsZ z))
+Var Sim_rec : @I1,I2:*s->*s.@Y,Z:*s.@(~):Y->Z->*p.
+                    Sim (\X:*s. {|l:I1 X,r:I2 X|}) Y Z (~) <===>
+                \opsY:{|l:I1 Y,r:I2 Y|}.\opsZ:{|l:I1 Z,r:I2 Z|}.
+                    (Sim I1 Y Z (~) opsY`l opsZ`l /\
+                     Sim I2 Y Z (~) opsY`r opsZ`r)
+
+Def SimplyT := \I:*s->*s. @P:(*s->*s)->*p.
+              P (\X:*s.X) ->
+              (@T:*s. P (\X:*s. T)) ->
+              (@I1,I2:*s->*s. P I1 -> P I2 -> P (\X:*s. I1 X -> I2 X)) ->
+              (@I1,I2:*s->*s. P I1 -> P I2 -> P (\X:*s. {|l:I1 X,r:I2 X|}))->
+              P I
+
+Prove SimplyT_id : SimplyT (\X:*s.X)
+Unfold SimplyT
+Intros
+Assumption
+Exit
+
+Prove SimplyT_const : @T:*s. SimplyT (\X:*s.T)
+Unfold SimplyT
+Intros
+Apply H1
+Exit
+
+Prove SimplyT_arrow : @I1,I2:*s->*s. SimplyT I1 -> SimplyT I2 -> 
+                     SimplyT (\X:*s.I1 X -> I2 X)
+Intros
+Unfold SimplyT
+Intros
+Apply H4
+Apply H Then Assumption
+Apply H1 Then Assumption
+Exit
+
+Prove SimplyT_rec : @I1,I2:*s->*s. SimplyT I1 -> SimplyT I2 -> 
+                     SimplyT (\X:*s.{|l:I1 X,r: I2 X|})
+Intros
+Unfold SimplyT
+Intros
+Apply H5
+Apply H Then Assumption
+Apply H1 Then Assumption
+Exit
+
+Prove SimplyT_elim : @I:*s->*s. SimplyT I ->
+              @P:(*s->*s)->*p.
+              P (\X:*s.X) ->
+              (@T:*s. P (\X:*s. T)) ->
+              (@I1,I2:*s->*s. SimplyT I1 -> SimplyT I2 -> 
+                              P I1 -> P I2 -> P (\X:*s. I1 X -> I2 X)) ->
+              (@I1,I2:*s->*s. SimplyT I1 -> SimplyT I2 -> 
+                              P I1 -> P I2 -> P (\X:*s. {|l:I1 X,r:I2 X|}))->
+              P I
+Intros 2
+Intro
+Intros
+Cut P I /\ SimplyT I
+Intro
+AndE H5
+Assumption
+Pattern I
+Apply H
+AndI
+Assumption
+Apply SimplyT_id
+Intro
+AndI
+Apply H2
+Apply SimplyT_const
+Intros
+AndE H5
+AndE H6
+AndI
+Apply H3 Then Try Assumption
+Apply SimplyT_arrow Then Assumption
+Intros
+AndE H5
+AndE H6
+AndI
+Apply H4 Then Assumption
+Apply SimplyT_rec Then Assumption
+Exit
+
+Var parPi : @I:*s->*s. SimplyT I ->
+            @f:(@X:*s.I X). @Y,Z:*s. @(~):Y->Z->*p. Sim I Y Z (~) (f Y) (f Z)
+
+-- Parametricity for Sigma-types.
+Prove parSigma : @I:*s->*s. SimplyT I ->
+                   @Y,Z:*s.@(~):Y->Z->*p. @y:I Y. @z:I Z.
+                     Sim I Y Z (~) y z -> 
+                     (=) (Sig X:*s. I X) (pack I Y y) (pack I Z z)
+Intros 2
+Forward parPi On pack I
+Apply SimplyT_arrow
+Assumption
+Apply SimplyT_const
+Intros 3
+Forward H1 On (~)
+First Sim (\X:*s. I X -> (Sig X:*s. I X)) Y Z (~) (pack I Y) (pack I Z)
+Assumption
+Rewrite Sim_arrow
+Rewrite Sim_const
+Intro
+Assumption
+Exit
+
+Def Bisim := \I:*s->*s. \R:*s.\(~):R->R->*p.\opsR:I R. 
+             Sim I R R (~) opsR opsR
+
+Prove Sim_sym : @I:*s->*s.SimplyT I ->
+                @Y,Z:*s. @(~):Y->Z->*p. @opsY:I Y. @opsZ:I Z.
+                                 Sim I Y Z (~) opsY opsZ -> 
+                                 Sim I Z Y (Inverse (~)) opsZ opsY
+Intros 2
+Pattern I
+Apply H
+Intros 5
+Repeat Rewrite Sim_id
+Intros
+Assumption
+Intros 6
+Repeat Rewrite Sim_const
+Apply is_sym
+Intros 9
+Repeat Rewrite Sim_arrow
+Intros
+Apply H2
+Apply H3
+Lewrite 2 Inverse_Inverse
+Apply H1
+Assumption
+Intros 9
+Repeat Rewrite Sim_rec
+Intros
+AndE H3
+AndI
+Apply H1
+Assumption
+Apply H2
+Assumption
+Exit
+
+Prove Sim_is : @I:*s->*s. SimplyT I ->
+                  @R:*s.
+                  Sim I R R ((=) R) <===> ((=) (I R))
+Intros
+Apply SimplyT_elim On H
+Rewrite Sim_id
+Refl
+Intro
+Rewrite Sim_const
+Refl
+Intros
+Rewrite Sim_arrow
+Apply equiv_predR
+Intros
+Rewrite H3
+Rewrite H4
+Apply equiv_prop Then Intro
+Apply is_arrow
+Intro
+Apply H5
+Refl
+Rewrite H5
+Intros
+Rewrite H6
+Refl
+Intros
+Rewrite Sim_rec
+Apply equiv_predR
+Intros
+Apply equiv_prop Then Intro
+AndE H5
+Apply is_rec
+Lewrite H3
+Assumption
+Lewrite H4
+Assumption
+Repeat Rewrite H5
+AndI
+Rewrite H3
+Refl
+Rewrite H4
+Refl
+Exit
+
+Prove IsZclosed_Sim : @I:*s->*s. SimplyT I ->
+            @R,Q : *s.
+            @rel : R->Q->*p.
+            IsZclosed rel ->
+            IsZclosed (Sim I R Q rel)
+Intros
+Pattern I
+Apply SimplyT_elim On H
+Repeat Rewrite Sim_id
+Assumption
+Intro
+Repeat Rewrite Sim_const
+Unfold IsZclosed
+Intros
+Rewrite H4
+Lewrite H3
+Assumption
+Intros
+Rewrite Sim_arrow
+Unfold IsZclosed
+Intros
+Forward H6 On H9
+Forward H7 On H9
+Forward H8 On H9
+Apply H5 On H11 Then Try Assumption
+Intros
+Rewrite Sim_rec
+Unfold IsZclosed
+Intros
+AndE H6
+AndE H7
+AndE H8
+AndI
+Apply H4 On H11 Then Assumption
+Apply H5 On H12 Then Assumption
+Exit
+
+Var IsInvar : @I:*s->*s. @Rep:*s. (Rep->*p) -> I Rep -> *p
+
+Var IsInvar_id : @Rep:*s.@Inv:Rep->*p. IsInvar (\X:*s.X) Rep Inv <==> Inv
+
+Var IsInvar_const : @T:*s.@Rep:*s.@Inv:Rep->*p. 
+                    IsInvar (\X:*s.T) Rep Inv <==> \t:T. True
+
+Var IsInvar_arrow : @I1,I2:*s->*s. @Rep:*s.@Inv:Rep->*p. 
+                    IsInvar (\X:*s.I1 X -> I2 X) Rep Inv <==> 
+                    (\f:I1 Rep->I2 Rep. @x:I1 Rep. IsInvar I1 Rep Inv x ->
+                                                   IsInvar I2 Rep Inv (f x))
+
+Var IsInvar_rec : @I1,I2:*s->*s. @Rep:*s.@Inv:Rep->*p. 
+                    IsInvar (\X:*s.{|l:I1 X, r:I2 X|}) Rep Inv <==> 
+                    (\f:{|l:I1 Rep,r:I2 Rep|}. IsInvar I1 Rep Inv f`l /\
+                                                 IsInvar I2 Rep Inv f`r)
+
+
+------------------------------------------------------
+------------------------------------------------------
+--                                                  --
+--  3. F I R S T - O R D E R   I N T E R F A C E S  --
+--                                                  --
+------------------------------------------------------
+------------------------------------------------------
+
+-- Defines the first-order interfaces, and gives some properties about Sim and 
+-- IsInvar for these interfaces, namely those properties we need for
+-- developing general theory for ADTs
+
+
+-- Basic
+
+Def Basic := \I:*s->*s. @P:(*s->*s)->*p.
+              P (\X:*s.X) ->
+              (@T:*s. P (\X:*s. T)) ->
+              (@I1,I2:*s->*s. P I1 -> P I2 -> P (\X:*s. {|l:I1 X,r:I2 X|}))->
+              P I
+
+Prove Basic_id : Basic (\X:*s.X)
+Unfold Basic
+Intros
+Assumption
+Exit
+
+Prove Basic_const : @T:*s. Basic (\X:*s.T)
+Unfold Basic
+Intros
+Apply H1
+Exit
+
+Prove Basic_rec : @I1,I2:*s->*s. Basic I1 -> Basic I2 -> 
+                     Basic (\X:*s.{|l:I1 X,r: I2 X|})
+Intros
+Unfold Basic
+Intros
+Apply H4
+Apply H Then Assumption
+Apply H1 Then Assumption
+Exit
+
+Prove Basic_elim : @I:*s->*s. Basic I ->
+              @P:(*s->*s)->*p.
+              P (\X:*s.X) ->
+              (@T:*s. P (\X:*s. T)) ->
+              (@I1,I2:*s->*s. Basic I1 -> Basic I2 -> 
+                              P I1 -> P I2 -> P (\X:*s. {|l:I1 X,r:I2 X|}))->
+              P I
+Intros
+Cut P I /\ Basic I
+Intro
+AndE H4
+Assumption
+Pattern I
+Apply H
+AndI
+Assumption
+Apply Basic_id
+Intro
+AndI
+Apply H2
+Apply Basic_const
+Intros
+AndE H4
+AndE H5
+AndI
+Apply H3 Then Assumption
+Apply Basic_rec Then Assumption
+Exit
+
+
+-- FirstO
+
+Def FirstO := \I:*s->*s. @P:(*s->*s)->*p.
+              (@I:*s->*s. Basic I -> P I) ->
+              (@I1,I2:*s->*s. Basic I1 -> P I2 -> P (\X:*s. I1 X -> I2 X)) ->
+              (@I1,I2:*s->*s. P I1 -> P I2 -> P (\X:*s. {|l:I1 X,r:I2 X|}))->
+              P I
+
+Prove FirstO_Basic : @I:*s->*s. Basic I -> FirstO I
+Unfold FirstO
+Intros
+Apply H1
+Assumption
+Exit
+
+Prove FirstO_arrow : @I1,I2:*s->*s. Basic I1 -> FirstO I2 -> 
+                     FirstO (\X:*s.I1 X->I2 X)
+Intros
+Unfold FirstO
+Intros
+Apply H3
+Assumption
+Apply H1 Then Assumption
+Exit
+
+Prove FirstO_rec : @I1,I2:*s->*s. FirstO I1 -> FirstO I2 -> 
+                     FirstO (\X:*s.{|l:I1 X,r: I2 X|})
+Intros
+Unfold FirstO
+Intros
+Apply H4
+Apply H Then Assumption
+Apply H1 Then Assumption
+Exit
+
+Prove FirstO_elim : @I:*s->*s. FirstO I ->
+              @P:(*s->*s)->*p.
+              (@I:*s->*s. Basic I -> P I) ->
+              (@I1,I2:*s->*s. FirstO I2 -> 
+                              Basic I1 -> P I2 -> P (\X:*s. I1 X -> I2 X)) ->
+              (@I1,I2:*s->*s. FirstO I1 -> FirstO I2 ->
+                              P I1 -> P I2 -> P (\X:*s. {|l:I1 X,r:I2 X|}))->
+              P I
+Intros 2
+Intros
+Cut P I /\ FirstO I
+Intro
+AndE H4
+Assumption
+Pattern I
+Apply H
+Intros
+AndI
+Apply H1
+Assumption
+Apply FirstO_Basic
+Assumption
+Intros
+AndE H5
+AndI
+Apply H2 Then Assumption
+Apply FirstO_arrow Then Assumption
+Intros
+AndE H4
+AndE H5
+AndI
+Apply H3 Then Assumption
+Apply FirstO_rec Then Assumption
+Exit
+
+
+-- The next two lemmas are not stated in my thesis
+
+Prove Basic__SimplyT : @I:*s->*s. Basic I -> SimplyT I
+Intros
+Apply H
+Apply SimplyT_id
+Apply SimplyT_const
+Intros
+Apply SimplyT_rec Then Assumption
+Exit
+
+Prove FirstO__SimplyT : @I:*s->*s. FirstO I -> SimplyT I
+Intros
+Apply H
+Apply Basic__SimplyT
+Intros
+Apply SimplyT_arrow
+Apply Basic__SimplyT
+Assumption
+Assumption
+Apply SimplyT_rec
+Exit
+
+
+
+-- Properties Sim for FirstOrder interfaces. For each property, we need
+-- a similar (but often stronger) property for Basic interfaces.
+
+Prove SimBasic_Comp : @I:*s->*s. Basic I ->
+                       @X,Y,Z:*s. @(~):X->Y->*p.@(~~):Y->Z->*p.
+                       Comp (Sim I X Y (~)) (Sim I Y Z (~~))  <===>
+                       Sim I X Z (Comp (~) (~~))
+Intros 2
+Pattern I
+Apply Basic_elim
+Assumption
+Intros
+Repeat Rewrite Sim_id
+Refl
+Intros
+Repeat Rewrite Sim_const
+Apply equiv_predR
+Intros
+Unfold Comp
+Apply equiv_prop Then Intro
+ExistsE H1
+AndE H2
+Rewrite H3
+Assumption
+ExistsI a
+AndI
+Refl
+Assumption
+Intros
+Repeat Rewrite Sim_rec
+Lewrite H3
+Lewrite H4
+Apply equiv_predR
+Intros
+Unfold Comp
+Apply equiv_prop Then Intro
+ExistsE H5
+AndE H6
+AndE H7
+AndE H8
+AndI
+ExistsI b1`l
+AndI Then Assumption
+ExistsI b1`r
+AndI Then Assumption
+AndE H5
+ExistsE H6
+ExistsE H7
+AndE H8
+AndE H9
+ExistsI {l= b1,r= b2}
+Repeat AndI Then Assumption
+Exit
+
+Prove SimFirstO_Trans : @I:*s->*s. FirstO I ->
+                       @X,Y,Z:*s. @(~):X->Y->*p.@(~~):Y->Z->*p.
+                       @opsX:I X. @opsY: I Y. @opsZ: I Z.
+                       Sim I X Y (~) opsX opsY ->
+                       Sim I Y Z (~~) opsY opsZ  ->
+                       Sim I X Z (Comp (~) (~~)) opsX opsZ
+Intros 7
+Apply FirstO_elim On H
+Intros
+Lewrite SimBasic_Comp
+Assumption
+Unfold Comp
+ExistsI opsY
+AndI
+Assumption
+Assumption
+Intro I1,I2
+Intros 6
+Repeat Rewrite Sim_arrow
+Intros
+Lewrite SimBasic_Comp In H6
+Assumption
+Hide H6
+Unfold Comp In H7
+ExistsE H7
+AndE H8
+Apply H3 On opsY b
+Apply H4
+Assumption
+Apply H5
+Assumption
+Intro I1,I2
+Intros 7
+Repeat Rewrite Sim_rec
+Intros
+AndE H5
+AndE H6
+AndI
+Apply H3 On opsY`l
+Assumption
+Assumption
+Apply H4 On opsY`r
+Assumption
+Assumption
+Exit
+
+Prove Sim_Basic_Restr : @I:*s->*s. Basic I ->
+       @Y:*s. @(~):Y->Y->*p. @P:Y->*p.
+       Restr (Sim I Y Y (~)) (IsInvar I Y P) <===>
+       Sim I Y Y (Restr (~) P)
+Intros
+Apply Basic_elim On H
+Rewrite IsInvar_id
+Rewrite Sim_id
+Rewrite Sim_id
+Refl
+Intro
+Repeat Rewrite Sim_const
+Rewrite IsInvar_const
+Unfold Restr
+Apply equiv_predR
+Intros
+Apply equiv_prop Then Intro
+AndE H1
+AndE H3
+Assumption
+Repeat AndI Then (Assumption Else Exact true_True)
+Intro I1,I2
+Intros
+Rewrite IsInvar_rec
+Repeat Rewrite Sim_rec
+Apply equiv_predR
+Intros
+Lewrite H3
+Lewrite H4
+Unfold Restr
+Apply equiv_prop Then Intro
+AndE H5
+AndE H6
+AndE H7
+AndE H10
+AndE H11
+Repeat AndI Then Assumption
+AndE H5
+AndE H6
+AndE H7
+AndE H9
+AndE H11
+Repeat AndI Then Assumption
+Exit
+
+Prove Sim_FirstO_Restr : @I:*s->*s. FirstO I ->
+       @Y:*s. @(~):Y->Y->*p. @P:Y->*p.
+       @opsY,opsY': I Y.
+       Restr (Sim I Y Y (~)) (IsInvar I Y P) opsY opsY' ->
+       Sim I Y Y (Restr (~) P) opsY opsY'
+Intros 5
+Apply FirstO_elim On H
+Intros
+Lewrite Sim_Basic_Restr
+Assumption
+Assumption
+Intro I1,I2
+Rewrite IsInvar_arrow
+Repeat Rewrite Sim_arrow
+Intros
+Apply H3
+Unfold Restr In H4
+AndE H4
+AndE H7
+Unfold Restr
+Lewrite Sim_Basic_Restr In H5
+Assumption
+Unfold Restr In H10
+AndE H10
+AndE H12
+Repeat AndI
+Apply H6
+Assumption
+Apply H8
+Assumption
+Apply H9
+Assumption
+Intro I1,I2
+Rewrite IsInvar_rec
+Repeat Rewrite Sim_rec
+Intros
+Unfold Restr In H5
+AndE H5
+AndE H6
+AndE H7
+AndE H10
+AndE H11
+AndI
+Apply H3
+Unfold Restr Then Repeat AndI Then Assumption
+Apply H4
+Unfold Restr Then Repeat AndI Then Assumption
+Exit

@@ -1,0 +1,120 @@
+<!-- DON'T EDIT THIS FILE, SINCE IT IS GENERATED AUTOMATICALLY -->
+<HTML>
+<HEAD>
+<TITLE>
+Yarrow Installation Guide for binaries
+</TITLE>
+</HEAD>
+
+<BODY>
+<H2 ALIGN=CENTER>Yarrow Installation Guide for binaries</H2>
+<H3>Install Yarrow</H3>
+<P>This is easy:
+</P>
+<OL>
+<LI>Get the correct version for your system by ftp,
+    and place it in a directory, say <CODE>/usr/yarrow/</CODE>.
+    The filename is in the format
+    yarrow-<VAR>architecture</VAR>-<VAR>os</VAR>.<VAR>ext</VAR>.
+    <UL>
+    <LI><A HREF="yarrow-bin-sparc-sun-sunos4.tar.gz">
+    yarrow-bin-sparc-sun-sunos4.tar.gz</A> (approx. 900 K).<BR>
+    This versions seems to work under Solaris as well.
+    Try at your own risk...
+    </UL>   
+<LI>Go to that directory and unpack it.
+    <UL> 
+    <LI>For Unix-like systems:<BR>
+        <CODE>gzip -cd yarrow-bin-</CODE><VAR>architecture</VAR><CODE>-</CODE><VAR>os</VAR><CODE>.tar.gz | tar xf -</CODE>
+    </UL>
+<LI>Set the environment variable YARROW. (You should include this in your
+    <CODE>.login</CODE> file) <!--  or <CODE>autoexec.bat</CODE> file) -->
+    <UL> 
+    <LI>For Unix-like systems: e.g.<BR>
+        <CODE>setenv YARROW /usr/yarrow</CODE>
+<!--    <LI>For Windows 95: e.g.<BR>
+        <CODE>SET YARROW=C:\PROVERS\YARROW</CODE> -->
+    </UL>
+<LI>Add the directory containing the binaries to your path,
+    (you should include this in your
+    <CODE>.login</CODE> file) <!-- or <CODE>autoexec.bat</CODE> -->
+    <UL> 
+    <LI>For Unix-like systems: e.g.<BR>
+        <CODE>setenv PATH ${PATH}:/usr/yarrow/bin</CODE><BR>
+        Users of csh shells should type<BR>
+        <CODE>rehash</CODE><BR>
+        to make this path extension take effect.
+<!--    <LI>For Windows 95: e.g.<BR>
+        <CODE>PATH=...;C:\PROVERS\YARROW\BIN</CODE> -->
+    </UL>
+    Alternatively, place the binaries in a directory in your path.
+</OL>
+
+
+<H3>Run Yarrow</H3>
+<P>
+Now you can start yarrow with the command<BR>
+    <CODE>yarrow</CODE><BR>
+</P>
+
+<H3>Test Yarrow</H3>
+<P>
+Start it, and you should get something like
+<PRE>
+Welcome to Yarrow v0.99
+Type 'help introduction' for an introduction.
+> 
+</PRE>
+<P>
+then type the lines behind the prompt ("<CODE>&gt; </CODE>" and "<CODE>$ </CODE>")
+</P>
+<PRE>
+> prove test : @P:*. P -> P
+--------------------------------------------------
+@P:*. P->P
+
+$ intros
+P : *
+H : P
+--------------------------------------------------
+P
+
+$ assumption
+Goal proved!
+
+$ exit
+prove test : @P:*. P->P
+intros
+assumption
+exit
+
+test := .. : @P:*. P->P
+> help help
+Syntax: 1. help
+        2. help &lt;command&gt;
+Effect: The first variant ...
+</PRE>
+<P>
+If you get different output something has gone wrong.
+</P>
+<H3>That's it!</H3>
+<P>
+Please inform me that you installed Yarrow, both if it was succesful or
+if there are some problems. E-mail:
+    <A HREF="MAILTO:janz@cs.kun.nl">janz@cs.kun.nl</A>
+</P>
+<P>
+There are some example sessions in directory <CODE>sessions</CODE>;
+these examples are described <A HREF="sessions/index.html">here</A>.
+The <A HREF="userg.html">userguide</A> may also be helpful.
+All the documentation is also contained in 
+directory <CODE>/usr/yarrow/doc/</CODE>.
+</P><HR>
+
+<P>
+<A HREF="insta.html">Back to Yarrow Installation Page</A><BR>
+<A HREF="index.html">Back to Yarrow Home Page</A>
+</P>
+
+</BODY>
+</HTML>

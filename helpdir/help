@@ -1,0 +1,15 @@
+<DL>
+ <DT>Syntax:
+ <DD>
+  <OL>
+  <LI><CODE>Help</CODE>
+  <LI><CODE>Help</CODE> <VAR>command</VAR>
+  <LI><CODE>Help list</CODE>
+  </OL>
+ <DT>Effect:
+ <DD> The first variant gives a list of the most used
+      commands in this mode, with a short description.<BR>
+      Variant 2 gives complete help on one command or
+      notion. Variant 3 lists all commands and notions for which help
+      is available.
+</DL>

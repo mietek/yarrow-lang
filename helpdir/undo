@@ -1,0 +1,20 @@
+<DL>
+ <DT>Syntax:
+ <DD>
+  <OL>
+  <LI><CODE>Undo</CODE>
+  <LI><CODE>Undo</CODE> <VAR>num</VAR>
+  </OL>
+ <DT>Effect:
+ <DD>Makes the last tactic of the current goal undone (so this a local undo).
+     The second variant makes
+               the last <VAR>num</VAR> tactics undone. In case the number of
+               tactics you want to undo is unknown, this can be
+               looked up with the <CODE>History</CODE> command.<BR>
+               Note that this command doesn't make the effect of
+               COMMANDS (e.g. <CODE>Infix</CODE> or <CODE>Option</CODE>) undone.
+ <DT>See also:
+ <DD><A HREF="#Restart"><CODE>Restart</CODE></A>,
+     <A HREF="#History"><CODE>History</CODE></A>
+</DL>
+

@@ -1,0 +1,122 @@
+<HTML>
+<TITLE>
+Yarrow Home Page
+</TITLE>
+<BODY>
+<H1 ALIGN=CENTER>Yarrow Home Page</H1>
+<P>
+A <EM>proof-assistant</EM> is a computer program with which a user can
+construct completely formal mathematical proofs in some kind of logical
+system. In contrast to a
+<EM>theorem prover</EM>, a proof-assistant cannot find proofs on its own.
+
+<P>
+Yarrow is a proof-assistant for <EM>Pure Type Systems</EM> 
+(PTSs) with several extensions.
+A PTS is a particular kind of logical system, defined in 
+<A HREF="#Bar92">[Bar92]</A>. In Yarrow you can experiment with various
+pure type systems, representing different logics and programming languages.
+A basic knowledge of Pure Type Systems and the Curry-Howard-de Bruijn 
+isomorphism is required. (This isomorphism says how you can interpret types
+as propositions.) Experience with <A HREF="#similarassistants">similar
+proof-assistants</A> can be useful.
+
+<P>
+There are three extensions of PTSs implemented in Yarrow.
+First, we have definitions. Definitions are 
+indispensable for any practical use of PTSs.
+Pure Type Systems with definitions (DPTs) are defined in
+<A HREF="#SP93">[SP93]</A>; 
+the most important property of these systems is that apart from 
+<EM>global</EM> definitions definitions in the context, also <EM>local</EM>
+definitions within terms are admitted.
+<BR>
+Second, we have subtyping. Subtyping makes the type system more flexible.
+In particular, it can be used with records to allow formalization of 
+Object-Oriented Programming to a certain degree.
+Pure Type Systems with Subtyping are defined in
+<A HREF="#Zwa99">[Zwa99]</A>.
+<BR>
+Third, we have records. Records are useful for defining programs in a PTS,
+in particular Object-Oriented programs.
+</P>
+
+<P>
+The main features of Yarrow are:
+<UL>
+<LI> A particular pure type system (with subtyping) can be chosen at run-time.
+<LI> There are general tactics for proving theorems.
+<LI> Tactics for forward reasoning.
+<LI> Special rewriting tactics for the Leibniz-equality, and tactics for 
+     propositional and predicate logic.
+<LI> An easy-to-use system for infix notation, implicit arguments and binders.
+<LI> It is portable, because it runs on any platform on which 
+     Haskell runs. This includes 
+     <!--PC's and --> most Unix systems.
+<LI> It has a built-in help system.
+<!-- <LI> The implementation is well documented. There is extensive
+     documentation on how to add your own tactics.-->
+</UL>
+
+<P>
+This program has some disadvantages compared to other proof-assistants:
+<UL>
+<LI> No automatic proof-search tactics.
+<LI> No inductive types, since they do not belong to PTSs.
+<LI> No mouse-control, but some effort has been spent to make
+     the keyboard-interface user-friendly.
+</UL>
+
+<P>
+Yarrow is publicly available. Here follow links to more information.
+<UL>
+<LI><A HREF="userg.html">User Guide</A>
+<LI><A HREF="insta.html">Installation guide</A>
+<LI><A HREF="relea.html">Release notes</A>
+<LI><A HREF="sessions/index.html">Example sessions in Yarrow</A>, including
+a small tutorial.
+<LI><A HREF="liter.html">Articles about the implementation of Yarrow</A>
+<!-- <LI>Information for students: <A HREF="addTa.html">adding user-defined tactics </A> -->
+</UL>
+
+<P>
+This program was developed by
+<A HREF="http://www.cs.kun.nl/~janz/index.html">Jan Zwanenburg</A>.
+Questions and remarks will be gratefully received and answered.
+
+<P>
+<H3>Acknowledgments</H3>
+Thanks to Erik Poll and Martijn Oostdijk for suggestions concerning these
+web pages and the example sessions.
+</P>
+
+<P>
+<H3>References:</H3>
+<DL>
+<DT><A NAME="Bar92">[Bar92]</A>
+<DD>Henk Barendregt. Lambda Calculi with Types. In D.M. Gabbai, S. Abramsky,
+    and T.S.E. Maibaum, editors,
+    <EM>Handbook of Logic in Computer Science</EM>,
+    volume 1. Oxford University Press, 1992.
+<DT><A NAME="SP93">[SP93]</A>
+<DD>Paula Severi and Erik Poll. <EM>Pure Type Systems with 
+    Definitions</EM>.
+    Computing Science Note 93/24. Eindhoven 
+    University of Technology, 1993.
+<DT><A NAME="Zwa99">[Zwa99]</A>
+<DD>Jan Zwanenburg. <A HREF="../publications/index.html">
+    <EM>Object-Oriented Concepts and Proof Rules:
+    Formalization in Type Theory and Implementation in Yarrow</EM></A>.
+    Ph.D. thesis. Eindhoven University of Technology, 1999.
+</DL>  
+
+<P>
+<H3><A NAME="similarassistants">Similar proof-assistants:</A></H3>
+<UL> 
+<LI><A HREF="http://pauillac.inria.fr/coq/">Coq</A>
+<LI><A HREF="http://www.dcs.ed.ac.uk/home/lego">Lego</A>
+<LI><A HREF="http://www.informatik.uni-ulm.de/ki/typelab.html">Typelab</A>
+</UL>  
+
+</BODY>
+</HTML>

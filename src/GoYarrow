@@ -1,0 +1,57 @@
+-- This is a project file suitable for loading Yarrow (on Unix and DOS like
+-- systems).
+-- 
+-- Load into Gofer using the command:   :p Yarrow
+--        or from command line using:   gofer + Yarrow
+
+-- GENERAL STUFF
+GoTuple.hs
+General.hs
+Collect.hs
+
+-- TERM DATATYPES
+Basic.hs
+GoMonSt.hs
+Paths.hs
+SyntaxI.hs
+-- TERM I/O
+Scanner.hs
+Parser.hs
+Display.hs
+Printer.hs
+-- TERM ALGORITHMS
+PTSys.hs
+Reduce.hs
+Typing.hs
+Matchin.hs
+FancyTy.hs
+
+-- COMMAND DATATYPES
+ProvDat.hs
+MainSta.hs
+YarMsg.hs
+-- COMMAND I/O
+Command.hs
+ProvPar.hs
+ProvPri.hs
+MainPar.hs
+MainPri.hs
+-- COMMAND ALGORITHMS
+GenComs.hs
+Tactals.hs
+Tactics.hs
+TacSpec.hs
+ProvMod.hs
+Modules.hs
+MainMod.hs
+
+-- USER INTERFACE
+PlatJU.hs 
+HText.hs
+GoMonIO.hs
+Errors.hs
+LatexPr.hs
+Deduct.hs
+CLIMain.hs
+
+

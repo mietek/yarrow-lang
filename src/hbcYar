@@ -1,0 +1,53 @@
+# This script file is suitable for compiling Yarrow under the hbc Haskell
+# compiler.
+
+# general stuff
+hbc -c -1.3 -fno-syn-expand HaTuple.hs
+hbc -c -1.3 -fno-syn-expand General.hs
+hbc -c -1.3 -fno-syn-expand Collect.hs
+hbc -c -1.3 -fno-syn-expand Display.hs
+
+# the engine
+hbc -c -1.3 -fno-syn-expand Basic.hs
+hbc -c -1.3 -fno-syn-expand HaMonSt.hs
+hbc -c -1.3 -fno-syn-expand Paths.hs
+hbc -c -1.3 -fno-syn-expand SyntaxI.hs
+hbc -c -1.3 -fno-syn-expand PTSys.hs
+hbc -c -1.3 -fno-syn-expand Reduce.hs
+hbc -c -1.3 -fno-syn-expand Typing.hs
+hbc -c -1.3 -fno-syn-expand Matchin.hs
+hbc -c -1.3 -fno-syn-expand FancyTy.hs
+hbc -c -1.3 -fno-syn-expand ProvDat.hs
+hbc -c -1.3 -fno-syn-expand MainSta.hs
+hbc -c -1.3 -fno-syn-expand YarMsg.hs
+hbc -c -1.3 -fno-syn-expand GenComs.hs
+hbc -c -1.3 -fno-syn-expand Tactals.hs
+hbc -c -1.3 -H16Mg -fno-syn-expand Tactics.hs
+hbc -c -1.3 -H16Mg -fno-syn-expand TacSpec.hs
+hbc -c -1.3 -H16Mg -fno-syn-expand ProvMod.hs
+hbc -c -1.3 -H16Mg -fno-syn-expand Modules.hs
+hbc -c -1.3 -fno-syn-expand MainMod.hs
+hbc -c -1.3 -fno-syn-expand Engine.hs
+
+# the service routines
+hbc -c -1.3 -fno-syn-expand Scanner.hs
+hbc -c -1.3 -fno-syn-expand Printer.hs
+hbc -c -1.3 -fno-syn-expand Parser.hs
+hbc -c -1.3 -fno-syn-expand Command.hs
+hbc -c -1.3 -H16Mg -fno-syn-expand ProvPar.hs
+hbc -c -1.3 -fno-syn-expand ProvPri.hs
+hbc -c -1.3 -H16Mg -fno-syn-expand MainPar.hs
+hbc -c -1.3 -fno-syn-expand MainPri.hs
+hbc -c -1.3 -fno-syn-expand HText.hs
+hbc -c -1.3 -fno-syn-expand Errors.hs
+hbc -c -1.3 -fno-syn-expand Service.hs
+hbc -c -1.3 -H16Mg -fno-syn-expand LatexPr.hs
+hbc -c -1.3 -H16Mg -fno-syn-expand Deduct.hs
+
+
+# the command line interface
+hbc -c -1.3 -fno-syn-expand HaMonIO.hs
+hbc -c -1.3 -fno-syn-expand Platfor.hs
+hbc -c -1.3 -H16Mg -fno-syn-expand CLIMain.hs
+
+hbc *.o -o ../bin/yarrow

@@ -1,0 +1,26 @@
+<DL>
+ <DT>Syntax:
+ <DD><OL>
+     <LI><CODE>ExistsE</CODE> <VAR>term</VAR>
+     <LI><CODE>ExistsE</CODE> <VAR>term</VAR> <CODE>On</CODE> 
+                                            <VAR>term-list</VAR>
+     </OL>
+ <DT>Effect:
+ <DD>The conclusion of the type of <VAR>term</VAR> should be an existantial
+     quantification.
+     This tactic
+     generates a new goal, where the local context is extended with
+      a witness and a proof of the property for
+     the witness.                      
+     If <VAR>term</VAR> is a local variable, this variable is hidden.<BR>         The second variant is a combination of 'Forward' and 'ExistsE 1'.<BR>
+     This tactic needs an elimation lemma for existential quantification of
+     the following form:<BR>
+     <CODE>@x1:t1. ... @xn:tn. @P:t->s1. @R:s2. Ex x1 .. xn P -> 
+          (@x:t. P x -> R) -> R</CODE>
+ <DT>Shortcomings:
+ <DD> It is not possible to give the name of the new hypotheses.
+ <DT>See also:
+ <DD><A HREF="#Forward"><CODE>Forward</CODE></A>,
+     <A HREF="#Use"><CODE>Use</CODE></A>,
+     <A HREF="#Hide"><CODE>Hide</CODE></A>
+</DL>

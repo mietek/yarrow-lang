@@ -1,0 +1,50 @@
+-- classic
+-- adds an axiom for classical propositional logic, and establishes some
+-- consequences.
+
+System (*p,#p),(*p:#p),((*p,*p),(#p,*p),(#p,#p))
+
+Load "prop"
+
+
+Var classic : @P:*p. Not (Not P) -> P
+
+Prove exm : @P:*p. P \/ Not P
+Intro P
+Apply classic
+NotI
+NotE H
+OrIR
+NotI
+NotE H
+OrIL
+Assumption
+Exit
+   
+Prove contrapos : @P,Q:*p.(Not P -> Q) -> (Not Q -> P)
+Intro P, Q, H1, H2
+Apply classic
+NotI
+NotE H2
+Apply H1
+Assumption
+Exit
+
+Prove impl_or : @P,Q:*p. (Not P -> Q) -> P \/ Q
+Intro P, Q, H1
+OrE exm P
+OrIL
+Assumption
+OrIR
+Apply H1 Then Assumption
+Exit
+
+Prove add_negat : @P:*p. (Not P -> P) -> P
+Intro P, H1
+Apply classic
+NotI
+NotE H
+Apply H1
+Assumption
+Exit
+

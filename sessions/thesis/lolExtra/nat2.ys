@@ -1,0 +1,259 @@
+-- File: nat2
+
+-- defines eq, +, and max
+
+Path "../lol"
+Load "nat"
+
+--------
+-- eq --
+--------
+
+Def eq := iternat (\n:Nat. isZero n) (\eq_Pm:Nat->Bool. 
+          primrecnat false (\Pn:Nat. \dummy:Bool. eq_Pm Pn))
+
+Prove eq_O_O : eq O O = true
+Unfold eq
+Rewrite iternat_O
+Apply isZero_O
+Exit
+
+Prove eq_O_Sm : @m:Nat. eq O (S m) = false
+Intro
+Unfold eq
+Rewrite iternat_O
+Apply isZero_Sm
+Exit
+
+Prove eq_Sm_O : @m:Nat. eq (S m) O = false
+Intro
+Unfold eq
+Rewrite iternat_Sm
+Apply primrecnat_O
+Exit
+
+Prove eq_Sm_Sn : @m,n:Nat. eq (S m) (S n) = eq m n
+Intros
+Unfold 1 eq
+Rewrite iternat_Sm
+Rewrite primrecnat_Sm
+Refl
+Exit
+
+Prove eq__Eq : @m,n:Nat. eq m n = true -> m=n
+Apply nat_double_ind
+Apply indnat
+Intro
+Refl
+Intro
+Rewrite eq_O_Sm
+Intros
+FalseE
+NotE false_is_true_
+Exact H1
+Intro
+Rewrite eq_Sm_O
+Intro
+FalseE
+Apply false_is_true_ On H
+Intros 3
+Rewrite eq_Sm_Sn
+Intro
+Rewrite H
+Assumption
+Refl
+Exit
+
+Prove eq_m_m : @m:Nat. eq m m = true
+Apply indnat
+Apply eq_O_O
+Intros
+Rewrite eq_Sm_Sn
+Assumption
+Exit
+
+Prove eq_m_n : @m,n:Nat. Not (m=n) -> eq m n = false
+Intros
+OrE exh_bool (eq m n)
+Forward eq__Eq On H1
+FalseE
+NotE H
+Assumption
+Assumption
+Exit
+
+Prove Not_eq__Not_Eq : @m,n:Nat. eq m n = false -> Not (m=n)
+Intros
+NotI
+Cut eq m n = true
+Intro
+NotE false_is_true_
+Lewrite H
+Lewrite H2
+Refl
+Rewrite H1
+Apply eq_m_m
+Exit
+
+
+----------
+-- plus --
+----------
+
+-- Name in lemmas: plus
+Def (+) := \m:Nat.\n:Nat. iternat n S m : Nat->Nat->Nat
+Infix 5 (+)
+
+Prove O_plus : @n:Nat. O+n = n
+Intro n
+Unfold (+)
+Rewrite iternat_O
+Refl
+Exit
+
+Prove Sm_plus : @m,n:Nat. S m + n = S (m + n)
+Intro m, n
+Unfold (+)
+Rewrite iternat_Sm
+Refl
+Exit
+    
+Prove plus_O : @n:Nat. n+O = n
+Apply indnat  
+
+Rewrite O_plus
+Refl
+
+Intro n, H
+Rewrite Sm_plus
+Rewrite H
+Refl
+Exit
+
+Prove plus_Sm : @m,n:Nat. m + S n = S (m+n)
+Intros
+Pattern m
+Apply indnat
+Repeat Rewrite O_plus
+Refl
+Intros
+Repeat Rewrite Sm_plus
+Rewrite H
+Refl
+Exit
+
+
+Prove plus_comm : @m,n:Nat. m+n = n+m
+Intro
+Apply indnat
+Rewrite plus_O
+Rewrite O_plus
+Refl
+Intro n,H
+Rewrite Sm_plus
+Rewrite plus_Sm
+Rewrite H
+Refl
+Exit
+
+
+Prove plus_assoc : @m,n,p:Nat. (m+n)+p = m+(n+p)
+Intros
+Pattern m
+Apply indnat
+
+Repeat Rewrite O_plus
+Refl
+
+Intro m2, H
+Repeat Rewrite Sm_plus
+Rewrite H
+Refl
+Exit
+
+InfixR 5 (+)
+
+
+---------
+-- max --
+---------
+
+Def max := \m,n:Nat. if (leq n m) m n
+
+Prove Le_max1 : @m,n:Nat. m <= max m n 
+Intros
+Unfold max
+OrE exh_bool On leq n m
+Rewrite H1
+Rewrite if_true
+Apply Le_refl
+Rewrite H1
+Rewrite if_false
+Apply m_Lt_n__m_Le_n
+Apply leq_false__Gt
+Assumption
+Exit
+
+Prove max_comm : @m,n:Nat. max m n = max n m
+Intros
+Unfold max
+OrE Le_Or_Gt On m, n
+OrE Le__Lt_Or_is On H1
+Rewrite Le__leq_true On H1
+Rewrite if_true
+Rewrite Gt__leq_false On H3
+Rewrite if_false
+Refl
+Repeat Rewrite H3
+Refl
+Forward m_Lt_n__m_Le_n On H1
+Rewrite Le__leq_true On H2
+Rewrite if_true
+Rewrite Gt__leq_false On H1
+Rewrite if_false
+Refl
+Exit
+
+Prove Le_max2 : @m,n:Nat. n <= max m n 
+Intros
+Rewrite max_comm
+Apply Le_max1
+Exit
+
+Prove max_assoc : @m,n,p:Nat. max (max m n) p = max m (max n p)
+Intros
+Unfold max
+OrE exh_bool On leq n m
+Repeat Rewrite H1
+Repeat Rewrite if_true
+OrE exh_bool On leq p n
+Repeat Rewrite H3
+Repeat Rewrite if_true
+Rewrite H1
+Rewrite if_true
+Forward leq_true__Le On H1
+Forward leq_true__Le On H3
+Forward Le_trans On H5, H4
+Rewrite Le__leq_true On H6
+Rewrite if_true
+Refl
+Repeat Rewrite H3
+Repeat Rewrite if_false
+Refl
+Repeat Rewrite H1
+Repeat Rewrite if_false
+OrE exh_bool On leq p n
+Repeat Rewrite H3
+Repeat Rewrite if_true
+Rewrite H1
+Rewrite if_false
+Refl
+Repeat Rewrite H3
+Repeat Rewrite if_false
+Forward leq_false__Gt On H1
+Forward leq_false__Gt On H3
+Forward Lt_trans On H4, H5
+Rewrite Gt__leq_false On H6
+Rewrite if_false
+Refl
+Exit

@@ -1,0 +1,67 @@
+<HTML>
+<HEAD>
+<TITLE>models/pointDevelop1 (without proofs)</TITLE>
+</HEAD>
+<BODY BGCOLOR="#FFFFFF", TEXT="#000000">
+<PRE><FONT COLOR="#000000"></FONT><FONT COLOR="#000000">-- File: pointDevelop1
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#000000">-- This file shows how the OOP concept of aggregation is modelled in system
+</FONT><FONT COLOR="#000000">-- lambda-omega-L-plus. It corresponds with Section 9.1.
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#000000">Path "../lol"
+</FONT><FONT COLOR="#000000">Path "../lolExtra"
+</FONT><FONT COLOR="#000000">Path "../lolplus"
+</FONT><FONT COLOR="#000000">Load "lambdaLplus"
+</FONT><FONT COLOR="#000000">Load "nat"
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#000000">-------------------------
+</FONT><FONT COLOR="#000000">-- Step 1: Aggregation --
+</FONT><FONT COLOR="#000000">-------------------------
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#0000FF">Def PointRep := {|x:Nat|}
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#0000FF">Def pointInit := {x=O} : PointRep
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#0000FF">Def getX := \st:PointRep. st`x :
+</FONT><FONT COLOR="#0000FF">            PointRep -&gt; Nat
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#0000FF">Def setX := \st:PointRep. \n:Nat. {x=n} :
+</FONT><FONT COLOR="#0000FF">            PointRep -&gt; Nat -&gt; PointRep
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#0000FF">Def bump := \st:PointRep. {x= S st`x} :
+</FONT><FONT COLOR="#0000FF">            PointRep -&gt; PointRep
+</FONT><FONT COLOR="#000000">                 
+</FONT><FONT COLOR="#0000FF">Def pointMet := {getX = \st:PointRep. st`x,
+</FONT><FONT COLOR="#0000FF">                 setX = \st:PointRep. \n:Nat. {x=n},
+</FONT><FONT COLOR="#0000FF">                 bump = \st:PointRep. {x= S st`x}} :
+</FONT><FONT COLOR="#0000FF">                {|getX:PointRep-&gt;Nat, 
+</FONT><FONT COLOR="#0000FF">                  setX:PointRep-&gt;Nat-&gt;PointRep,
+</FONT><FONT COLOR="#0000FF">                  bump:PointRep-&gt;PointRep|}
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#0000FF">Def PointI := \R:*s. {|getX:R-&gt;Nat, 
+</FONT><FONT COLOR="#0000FF">                       setX:R-&gt;Nat-&gt;R,
+</FONT><FONT COLOR="#0000FF">                       bump:R-&gt;R|}
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#000000">-- Result: Yes
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#0000FF">Def newPoint := {state = pointInit,
+</FONT><FONT COLOR="#0000FF">                 met = pointMet} :
+</FONT><FONT COLOR="#0000FF">                {| state : PointRep, met : PointI PointRep |}
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#0000FF">Def Point := {| state : PointRep, met : PointI PointRep |}
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#0000FF">Def point'getX := \p:Point. p`met`getX p`state :
+</FONT><FONT COLOR="#0000FF">                  Point -&gt; Nat
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#0000FF">Def point'bump := \p:Point. {state = p`met`bump p`state,
+</FONT><FONT COLOR="#0000FF">                              met = p`met} :
+</FONT><FONT COLOR="#0000FF">                  Point -&gt; Point
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#0000FF">Def point'setX := \p:Point. \n:Nat. {state = p`met`setX p`state n,
+</FONT><FONT COLOR="#0000FF">                                      met = p`met} :
+</FONT><FONT COLOR="#0000FF">                  Point -&gt; Nat -&gt; Point
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#000000">-- Result: S O
+</FONT></PRE>
+</BODY>
+</HTML>

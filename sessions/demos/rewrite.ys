@@ -1,0 +1,175 @@
+-- rewrite
+
+-- This file demonstrates rewriting for an axiomatic presentation of the
+-- integers by proving the following law:
+--   For all x and y, (x+y)*(x-y) = x*x-y*y
+-- In particular, we show the advantage of the possibility of indicating
+-- which subterm has to be rewritten.
+                 
+
+path "../logic"
+
+-- Enter the proper PTS
+read "lambdaL"     
+            
+-- Load the definition of equality
+load "is"
+   
+
+-- Introduce the integers axiomatically
+
+-- First postulate the set and its operations
+var Int:*s                              
+-- O represents zero, E represents one
+var O,E : Int
+var minus : Int->Int                   
+-- Prefix notation for + is plus
+-- Prefix notation for & is mult (since it represents multiplication)
+var (+),(&) : Int -> Int -> Int
+infixr 5 (+)
+infixr 6 (&)
+                                             
+-- Then postulate the axioms
+var plus_comm : @x,y:Int. x+y = y+x
+var plus_assoc : @x,y,z:Int. (x+y)+z = x+(y+z)
+var plus_O : @x:Int. x+O = x
+var neg : @x:Int. x + minus x = O
+
+var mult_comm : @x,y:Int. x&y = y&x
+var mult_assoc : @x,y,z:Int. (x&y)&z = x&(y&z)
+var mult_E : @x:Int. x&E = x
+var dist_plus_l : @x,y,z:Int. (x+y)&z = x&z + y&z
+                            
+
+-- Prove lots of lemmas
+
+prove O_plus : @x:Int. O+x = x
+intro
+rewrite plus_comm
+apply plus_O
+exit
+
+prove E_mult : @x:Int. E&x = x
+intro
+rewrite mult_comm
+apply mult_E
+exit
+
+prove dist_plus_r : @x,y,z:Int. x&(y+z) = x&y + x&z
+intros
+rewrite 1 mult_comm
+rewrite 2 mult_comm
+rewrite 3 mult_comm
+apply dist_plus_l
+exit
+
+prove canc_plus_r : @x,y,z:Int. y+x = z+x -> y=z
+intros
+lewrite 2 plus_O
+lewrite 1 plus_O
+lewrite 2 neg x
+lewrite 1 neg x
+lewrite plus_assoc
+rewrite H
+rewrite plus_assoc
+refl
+exit
+
+prove canc_plus_l : @x,y,z:Int. x+y = x+z -> y=z
+intros
+apply canc_plus_r x
+rewrite 1 plus_comm
+rewrite 2 plus_comm
+assumption
+exit
+
+-- Define substraction
+def (-) := \x,y:Int. x + (minus y) : Int -> Int -> Int
+infixl 5 (-)
+
+prove x_minus_x : @x:Int. x-x = O
+intro
+unfold (-)
+apply neg
+exit
+
+prove x_plus__O_minus_y : @x,y:Int. x+(O-y) = x-y
+intros
+unfold (-)
+lewrite plus_assoc
+rewrite plus_O
+refl
+exit
+
+
+prove minus__x_plus_y : @x,y:Int. minus (x+y) = minus x + minus y
+intros
+apply canc_plus_l (x+y)
+rewrite neg
+rewrite plus_assoc
+rewrite 3 plus_comm
+lewrite 2 plus_assoc
+rewrite neg
+rewrite O_plus
+rewrite neg
+refl
+exit
+
+prove x_minus__y_plus_z : @x,y,z:Int. x-(y+z) = x-y-z
+intros
+unfold (-)
+rewrite minus__x_plus_y
+rewrite plus_assoc
+refl
+exit
+
+prove x_plus_y_minus_z : @x,y,z:Int. (x+y)-z = x+(y-z)
+intros
+unfold (-)
+apply plus_assoc
+exit
+
+
+
+prove O_mult : @x:Int. O&x = O
+intro
+cut O&x + E&x = O + x
+rewrite E_mult
+apply canc_plus_r
+lewrite dist_plus_l
+repeat rewrite O_plus
+apply E_mult
+exit
+
+
+prove minus_mult : @x,y:Int. minus x & y = minus (x & y)
+intros
+cut x&y + (minus x & y) = x&y + minus (x&y)
+apply canc_plus_l
+rewrite neg
+lewrite dist_plus_l
+rewrite neg
+apply O_mult
+exit
+
+prove dist_minus_r : @x,y,z:Int. x&(y-z)=x&y - x&z
+intros
+unfold (-)
+rewrite dist_plus_r
+rewrite 2 mult_comm
+rewrite minus_mult
+rewrite 2 mult_comm
+refl
+exit
+
+prove x_plus_y__mult__x_minus_y : @x,y:Int. (x+y)&(x-y) = x&x - y&y
+intros
+rewrite dist_minus_r
+repeat rewrite dist_plus_l
+rewrite x_plus_y_minus_z
+rewrite x_minus__y_plus_z
+rewrite 2 mult_comm
+rewrite x_minus_x
+rewrite x_plus__O_minus_y
+refl
+exit

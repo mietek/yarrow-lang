@@ -1,0 +1,149 @@
+-- prop
+-- a foundation of propositional logic
+-- We define False, True, /\ and \/ and some of their properties here.
+
+System (*p,#p),(*p:#p),((*p,*p),(#p,*p),(#p,#p))
+
+Def False := @P:*p.P
+
+Prove ex_falso : @P:*p. False->P
+Unfold False
+Intro P,H
+Apply H
+Exit
+
+-- Indicate that this lemma must used by the falsee tactic
+Use FalseE ex_falso                           
+  
+                                   
+Def Not := \P:*p. P->False
+      
+Prove Not_i : @P:*p. (P->False) -> Not P
+Intros
+Assumption
+Exit
+
+-- Indicate that this lemma must used by the noti tactic
+Use NotI Not_i
+
+Prove Not_e : @P:*p. Not P -> P -> False
+Intro P,H
+Assumption
+Exit
+
+-- Indicate that this lemma must used by the 'note' tactic
+Use NotE Not_e
+
+
+Def True := @P:*p.P->P
+
+Prove true_True : True
+Unfold True
+Intro P,H
+Apply H
+Exit
+
+
+-- Name in lemmas: And
+Def (/\) := \P,Q:*p. (@R:*p. (P->Q->R)->R)
+InfixR 3 (/\)
+           
+Prove And_i : @P,Q:*p. P -> Q -> P/\Q
+Unfold (/\)
+Intro P,Q,HP,HQ,R,HI
+Apply HI Then Assumption
+Exit
+
+-- Indicate that this lemma must used by the 'andi' tactic
+Use AndI And_i
+
+Prove And_el : @P,Q:*p. P/\Q -> P
+Intro P,Q,H
+Apply H Then Intro H2,H3
+Assumption
+Exit
+
+-- Indicate that this lemma must used by the 'andel' tactic
+Use AndEL And_el
+
+Prove And_er : @P,Q:*p. P/\Q -> Q
+Intro P,Q,H
+Apply H Then Intro H2,H3
+Assumption
+Exit
+
+-- Indicate that this lemma must used by the 'ander' tactic
+Use AndER And_er
+
+Prove And_sym : @P,Q:*p. P/\Q -> Q/\P
+Intro P,Q,H
+AndE H
+AndI Then Assumption
+Exit
+
+Prove And_assoc : @P,Q,R:*p. P/\Q/\R -> (P/\Q)/\R
+Intros
+AndE H
+AndE H2
+AndI Then Try Assumption
+AndI Then Try Assumption
+Exit
+
+
+
+-- Name in lemmas: Or
+Def (\/) := \P,Q:*p. (@R:*p.(P->R)->(Q->R)->R)
+InfixR 2 (\/)
+
+Prove Or_il : @P,Q:*p. P -> P\/Q
+Unfold (\/)
+Intro P,Q,HP,R,HPR,HQR
+Apply HPR
+Assumption
+Exit
+
+-- Indicate that this lemma must used by the 'oril' tactic
+Use OrIL Or_il
+
+Prove Or_ir : @P,Q:*p. Q -> P\/Q
+Unfold (\/)
+Intro P,Q,HP,R,HPR,HQR
+Apply HQR
+Assumption
+Exit
+
+-- Indicate that this lemma must used by the 'orir' tactic
+Use OrIR Or_ir
+
+Prove Or_e : @P,Q,R:*p. P\/Q -> (P->R) -> (Q->R) -> R
+Intros
+Apply H Then Intro
+Apply H1 Then Assumption
+Apply H2 Then Assumption
+Exit
+
+-- Indicate that this lemma must used by the 'ore' tactic
+Use OrE Or_e
+
+Prove Or_sym : @P,Q:*p. P\/Q -> Q\/P
+Intro P,Q,H
+OrE H
+OrIR
+Assumption
+OrIL
+Assumption
+Exit
+
+Prove Or_assoc : @P,Q,R:*p. P\/Q\/R -> (P\/Q)\/R
+Intros
+OrE H
+OrIL
+OrIL
+Assumption
+OrE H1
+OrIL
+OrIR
+Assumption
+OrIR
+Assumption
+Exit

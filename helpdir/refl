@@ -1,0 +1,12 @@
+<DL>
+ <DT>Syntax:
+ <DD><CODE>Refl</CODE>
+ <DT>Effect:
+ <DD>The goal should be of the form <CODE>eq A x x'</CODE>, where
+     <CODE>x</CODE> and <CODE>x'</CODE> are bd-convertible.
+     This tactic proofs the goal by using the corresponding reflexivity 
+     lemma. This lemma should be of the following form:<BR>
+     <CODE>@x1:t1. .. @xn:tn. @x:t. eq x1 .. xn x x</CODE><BR>
+ <DT>See also:
+ <DD><A HREF="#Use"><CODE>Use</CODE></A>
+</DL>

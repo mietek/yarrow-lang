@@ -1,0 +1,14 @@
+<DL>
+ <DT>Syntax:
+ <DD><CODE>First</CODE> <VAR>term</VAR>
+ <DT>Effect:
+ <DD> Prove the goal by using the cut rule for <VAR>term</VAR>.
+      That is, first prove <VAR>term</VAR>, and prove the current
+      goal later with assumption <VAR>term</VAR>.<BR>
+      The only difference with <CODE>Cut</CODE> is the order of the
+      generated subgoals. Indeed, it is the same as <CODE>Cut</CODE>
+      followed by <CODE>Focus 2</CODE>.
+ <DT>See also:
+ <DD><A HREF="#Cut"><CODE>Cut</CODE></A>,
+     <A HREF="#Focus"><CODE>Focus</CODE></A>
+</DL>

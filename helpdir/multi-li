@@ -1,0 +1,14 @@
+<P>
+There is a restricted to split terms over several lines: 
+If a line ends with '.' '-&gt;' ':' ',' ':=' or an operator, the term may be
+completed on the following line. This works also 
+if not enough closing parentheses ')' have been seen.
+</P>
+
+<P>Example:<BR>
+<CODE>Var complicated : @a,b,c,d:Nat. @f:Nat-&gt;Nat-&gt;Nat.</CODE><BR>
+<CODE>                  @P,Q:*.@R:Nat-&gt;*. (P-&gt;Q) \/</CODE><BR>
+<CODE>                                       R (</CODE><BR>
+<CODE>                                f a (f (f b c) d))</CODE>
+</P>
+                  

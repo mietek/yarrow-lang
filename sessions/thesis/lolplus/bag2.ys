@@ -1,0 +1,322 @@
+-- File: bag2
+
+-- This file treats implementation 2 of the example of bags. It follows the 
+-- structure of Section 6.5.2, and is hence divided in the following parts.
+-- 1.  Interface
+-- 2.  Specification
+-- 3.  Implementation
+-- 4c. Using a weaker specification
+-- 4d. Subset algebras
+
+Path "../lol"
+Path "../lolExtra"
+Load "lambdaLplus"
+Load "list2"
+Load "prelims"
+
+----------------------------
+--                        --
+--  1. I N T E R F A C E  --
+--                        --
+----------------------------
+
+Def BagI := \X:*s. {| empty : X,
+                      add : Nat -> X -> X,
+                      card : Nat -> X -> Nat,
+                      bound : X -> Nat |}
+
+Def BagImp := Sig X:*s. BagI X
+
+-- We introduce Sim, Bisim, and the parametricity axiom just for BagI;
+-- the general scheme cannot be formalized in Yarrow (see the discussion
+-- at the end of Section 6.7.6, on pages 190,191).
+
+Def SimBagI := \Rep1,Rep2:*s. \(~):Rep1 ->Rep2->*p.
+            \ops1:BagI Rep1. \ops2:BagI Rep2. 
+                ops1`empty ~ ops2`empty /\
+                (@x:Rep1.@y:Rep2. @m:Nat. x ~ y -> 
+                                          ops1`add m x ~ ops2`add m y) /\
+                (@x:Rep1.@y:Rep2. @m:Nat.  x ~ y -> 
+                                          ops1`card m x = ops2`card m y) /\ 
+                (@x:Rep1.@y:Rep2. x ~ y -> ops1`bound x = ops2`bound y) :
+            @Rep1,Rep2:*s. (Rep1->Rep2->*p) -> BagI Rep1 -> BagI Rep2 -> *p
+
+Def BisimBagI := \Bag:*s.\(~): Bag->Bag->*p.\ops:BagI Bag. 
+                    SimBagI Bag Bag (~) ops ops : 
+             @Bag:*s. (Bag->Bag->*p) -> BagI Bag -> *p
+
+Var parSigmaBagI : @X1:*s.@X2:*s.@x1:BagI X1. @x2:BagI X2.
+                       @(~) : X1->X2->*p.
+                       SimBagI X1 X2 (~) x1 x2 ->
+                       pack BagI X1 x1 = pack BagI X2 x2
+
+
+------------------------------------
+--                                --
+--  2. S P E C I F I C A T I O N  --
+--                                --
+------------------------------------
+
+Def NaiveSpec := \Bag:*s. \ops:BagI Bag.
+                 @m,n:Nat. @b:Bag. 
+                   ops`card m ops`empty = O /\
+                   ops`card m (ops`add m b) = S (ops`card m b) /\
+                   (Not (m=n) -> ops`card m (ops`add n b) = 
+                                                ops`card m b) /\
+                   ops`add m (ops`add n b) =
+                                   ops`add n (ops`add m b) /\
+                   (S O <= ops`card m b -> m <= ops`bound b) :
+              @Bag:*s. BagI Bag -> *p
+
+Def UserSpec := \imp:BagImp. ExK Rep:*s. Ex ops:BagI Rep.
+                      imp = pack BagI Rep ops /\ NaiveSpec Rep ops
+
+--------------------------------------
+--                                  --
+--  3. I M P L E M E N T A T I O N  --
+--                                  --
+--------------------------------------
+
+Def Rep2 := List Nat
+
+Def ops2 := {empty = nil Nat,
+             add = insert,
+             card = count,
+             bound = last O} : BagI Rep2
+Def imp2 := pack BagI Rep2 ops2 : BagImp
+
+-------------------------------------------------------------------
+--                                                               --
+--  4c. U S I N G   A   W E A K E R   S P E C I F I C A T I O N  --
+--                                                               --
+-------------------------------------------------------------------
+
+Def IsInvarBagI := \Rep:*s.\Inv:Rep->*p.\ops:BagI Rep.
+                       Inv (ops`empty) /\
+                       @m:Nat. @r:Rep. Inv r -> Inv (ops`add m r)
+
+Prove IsInvar_Ordered_ops2 : IsInvarBagI Rep2 Ordered ops2
+Unfold IsInvarBagI
+Unfold ops2
+AndI
+Exact Ordered_nil
+Intros
+Apply Ordered_insert
+Assumption
+Exit
+
+Def Spec := \Rep:*s. \Inv : Rep->*p. \ops:BagI Rep.
+      @m,n:Nat. @r:Rep. Inv r ->
+           ops`card m ops`empty = O /\
+           ops`card m (ops`add m r) = S (ops`card m r) /\
+           (Not (m=n) -> ops`card m (ops`add n r) = 
+                                               ops`card m r) /\
+           ops`add m (ops`add n r) =
+                                  ops`add n (ops`add m r) /\
+           (S O <= ops`card m r -> m <= ops`bound r) :
+            @Rep:*s. (Rep->*p) -> BagI Rep -> *p
+
+
+Def ImplemSpec := \Rep:*s. \ops:BagI Rep.
+                  ExQ Inv : Rep->*p. Spec Rep Inv ops /\ 
+                    IsInvarBagI Rep Inv ops
+
+Prove Spec_True__NaiveSpec : @R:*s.@opsR:BagI R. Spec R (\r:R. True) opsR ->
+                                                 NaiveSpec R opsR
+Intros
+Unfold NaiveSpec
+Intros
+Apply H
+Exact true_True
+Exit
+
+Prove NaiveSpec__Spec_True : @Rep:*s. @ops:BagI Rep. NaiveSpec Rep ops ->
+                                                    Spec Rep (\r:Rep. True) ops
+Intros
+Unfold Spec
+Intros
+Apply H
+Exit
+
+Def WeakUserSpec := \bagImp : BagImp. 
+                    ExK Rep:*s. Ex ops:BagI Rep. ExQ Inv : Rep->*p.
+                    bagImp = pack BagI Rep ops /\ Spec Rep Inv ops /\ 
+                    IsInvarBagI Rep Inv ops
+
+
+Prove Spec_Ordered_ops2 : Spec Rep2 Ordered ops2
+Unfold Spec
+Intros
+Unfold ops2
+Repeat AndI
+Apply count_nil
+Apply count_m_insert_m
+Intro
+Apply count_m_insert_n
+Assumption
+Apply insert_m_n_is_insert_n_m
+Intro
+Apply Elem_Le_last
+Apply SO_Le_count__Elem
+Assumption
+Assumption
+Exit
+
+Prove ImplemSpec_ops2 : ImplemSpec Rep2 ops2
+Unfold ImplemSpec
+ExistsI Ordered
+AndI
+Exact Spec_Ordered_ops2
+Exact IsInvar_Ordered_ops2
+Exit
+
+Prove Implem__WeakUserSpec : @Rep:*s. @ops:BagI Rep.
+                                 ImplemSpec Rep ops -> 
+                                 WeakUserSpec (pack BagI Rep ops)
+Intros
+Unfold WeakUserSpec
+Unfold ImplemSpec In H
+ExistsI Rep
+ExistsI ops
+ExistsE H
+ExistsI Inv
+AndI
+Refl
+Assumption
+Exit
+
+Prove WeakUserSpec_imp2 : WeakUserSpec imp2
+Apply Implem__WeakUserSpec
+Exact ImplemSpec_ops2
+Exit
+
+
+-----------------------------------------
+--                                     --
+--  4d. S U B S E T   A L G E B R A S  --
+--                                     --
+-----------------------------------------
+
+Def IsSubsetAlg :=\R:*s. \opsR : BagI R. \Inv:R->*p. \S:*s. \opsS : BagI S.
+               Ex inj:S->R.
+                IsInjection inj /\
+                (Inv <==> Image inj) /\
+                SimBagI R S (\r:R.\s:S. r = inj s) opsR opsS  :
+              @R:*s. BagI R -> (R->*p) -> @S:*s. BagI S -> *p
+
+Var exis_SubsetAlg : @R:*s. @opsR:BagI R. @Inv:R->*p.
+                     IsInvarBagI R Inv opsR ->
+                     ExK S:*s. Ex opsS: BagI S. 
+                     IsSubsetAlg R opsR Inv S opsS
+
+-- (i)
+prove pack_Subset : @R:*s. @opsR:BagI R. @Inv:R->*p.
+                    @S:*s. @opsS: BagI S. IsSubsetAlg R opsR Inv S opsS ->
+                    (=) BagImp (pack BagI R opsR) (pack BagI S opsS)
+Intros
+Unfold IsSubsetAlg In H
+ExistsE H
+AndE H1
+AndE H3
+Apply parSigmaBagI On H5
+Exit
+
+-- (ii)
+Prove Spec_Sens :
+                @R:*s. @opsR:BagI R. @Inv:R->*p. @S:*s. @opsS: BagI S. 
+                IsSubsetAlg R opsR Inv S opsS -> Spec R Inv opsR ->
+                Spec S (\s:S. True) opsS
+Intros
+Unfold IsSubsetAlg In H
+ExistsE H
+AndE H2
+AndE H4
+Unfold SimBagI In H6
+AndE H6
+AndE H8
+AndE H10
+First @y:S1.@m:Nat. opsR`add m (inj y) = inj (opsS`add m y)
+Intros
+Apply H9
+Refl
+First @y:S1.@m:Nat. opsR`card m (inj y) = opsS`card m y
+Intros
+Apply H11
+Refl
+Intros
+Hide H11,H12
+Unfold Spec
+Intro m,n,s,H15
+AndE H1 On m, n, inj s
+Rewrite H5
+Apply Image_f_f_x
+AndE H18
+AndE H20
+AndE H22
+Repeat AndI
+Lewrite H13
+Lewrite H7
+Assumption
+Repeat Lewrite H13
+Lewrite H14
+Assumption
+Repeat Lewrite H13
+Lewrite H14
+Assumption
+Apply H3
+Repeat Lewrite H14
+Assumption
+Unhide H11
+Unhide H12
+Hide H9,H11
+Lewrite H12 On inj s
+Refl
+Lewrite H13
+Assumption
+Exit
+
+Prove Implem__UserSpec : @Rep:*s. @ops:BagI Rep.
+                             ImplemSpec Rep ops -> 
+                             UserSpec (pack BagI Rep ops)
+Intros
+Unfold UserSpec
+Unfold ImplemSpec In H
+ExistsE H
+AndE H1
+Forward exis_SubsetAlg On H3
+ExistsE H4
+ExistsE H5
+ExistsI S1
+ExistsI opsS
+AndI
+Apply pack_Subset On H6
+Apply Spec_True__NaiveSpec
+Apply Spec_Sens On H6
+Assumption
+Exit
+
+Prove UserSpec_imp2 : UserSpec imp2
+Apply Implem__UserSpec
+Apply ImplemSpec_ops2
+Exit
+
+
+
+Prove principle : @imp:BagImp. UserSpec imp ->
+              @A:*s.@Q:A->*p.@body:@X:*s. BagI X -> A.
+              (@X:*s.@ops:BagI X. Spec X (\r:X.True) ops -> Q (body X ops)) -> 
+              Q (unpack imp (\X:*s.\ops:BagI X. body X ops))
+Intros
+Unfold UserSpec In H
+ExistsE H
+ExistsE H2
+AndE H3
+Rewrite H4
+Convert Q (unpack BagI A (pack BagI Rep ops) 
+                  (\Rep1:*s.\ops1:BagI Rep1. body Rep1 ops1))
+Rewrite beta_Sig
+Apply H1
+Apply NaiveSpec__Spec_True
+Assumption
+Exit
+

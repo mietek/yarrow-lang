@@ -1,0 +1,52 @@
+<DL>
+ <DT>Syntax:
+ <DD><OL>
+     <LI><CODE>Apply</CODE> <VAR>term</VAR>
+     <LI><CODE>Apply</CODE> <VAR>term</VAR> <CODE>On</CODE> 
+                                            <VAR>term-list</VAR>
+     </OL>
+ <DT>Effect 1:
+ <DD> <P> Find an inhabitant of the current goal by applying
+                <VAR>term</VAR> to some other terms. Some of these arguments
+                can be inferred, the others become new goals.</P>
+      <P> This tactic tries first to apply <VAR>term</VAR> to zero arguments,
+                then to apply to one argument, then to two, and so on.
+                For n arguments, this means that the type of <VAR>term</VAR>
+                should be of the form <CODE>@x1:T1.@x2:T2. ... @xn:Tn. U</CODE>
+                (after unfolding of definitions, if neccesary).
+                The type <CODE>U</CODE> is then matched against the current goal
+                to determine the type of the arguments. If the matching
+                fails, or some type
+                <CODE>Ti</CODE> cannot be determined, this number of
+                arguments fails. Otherwise it succeeds, and all types
+                corresponding to arguments that cannot be determined
+                become new goals.</P>
+ <DT>Example:
+ <DD>Suppose we have in the context<BR>
+                <CODE> H : @x:Nat. P x -&gt; Q x</CODE><BR>
+                and the goal is<BR>
+                <CODE> Q zero</CODE><BR>
+                then the tactic <CODE>Apply H</CODE> succeeds with as
+                new goal<BR>
+                <CODE>P zero</CODE><BR>
+                Here <CODE>H</CODE> is applied to two arguments. The first
+                is <CODE>zero</CODE> and is determined by matching. The
+                second argument is of type <CODE>P zero</CODE> and could
+                not be determined by matching, so becomes a new hole.
+ <DT>Effect 2:
+ <DD><P>The second variant is a combination of the Forward tactic and the 
+        Apply 1 tactic.
+     </P>   
+ <DT>Example 2:
+ <DD>Suppose our goal is<BR>
+     <CODE>lem : @x,y,z : Int. x&lt;y -&gt; y&lt;z -&gt; x&lt;z</CODE><BR>
+     <CODE>H : b&lt;c</CODE><BR>
+     <CODE>---------</CODE><BR>
+     <CODE>a&lt;c</CODE><BR>
+     Then the tactic <CODE>Apply lem On H</CODE> results in the goal<BR>
+     <CODE>---------</CODE><BR>
+     <CODE>a&lt;b</CODE><BR>
+ <DT>See also:
+ <DD><A HREF="#matching">matching</A>,
+     <A HREF="#Forward">Forward</A>
+</DL>

@@ -1,0 +1,29 @@
+<DL>
+ <DT>Syntax:
+ <DD>
+  <OL>
+  <LI><VAR>tactic</VAR> <CODE>Then (</CODE> <VAR>tactic1</VAR> 
+      <CODE>|</CODE> <VAR>tactic2</VAR> <CODE>|</CODE> ...
+     <CODE>|</CODE> <VAR>tacticn</VAR> <CODE>)</CODE>
+  <LI><VAR>tactic</VAR> <CODE>Then</CODE> <VAR>tactic1</VAR>
+  </OL>
+ <DT>Effect:
+ <DD><P> The tactical first performs <VAR>tactic</VAR> and then
+      <VAR>tactic1</VAR> on the first of the generated subgoals,
+      <VAR>tactic2</VAR> on the second of the generated subgoals,
+      etc. If there are more new subgoals than tactics, the last tactic
+      in the list is applied to the rest of the subgoals.
+      If there are fewer new subgoals than tactics, the rest of the tactics
+      is ignored.
+      If any application
+      of a tactic fails, the combination fails as a whole,
+      meaning it has no effect.</P>
+     <P>The second variant is just an instance of the first variant, where
+         <VAR>n</VAR> equals one, and the parentheses have been left out.
+        So <VAR>tactic1</VAR> is performed on all generated subgoals.
+     </P>
+ <DT>See also:
+ <DD><A HREF="#Try"><CODE>Try</CODE></A>,
+     <A HREF="#Repeat"><CODE>Repeat</CODE></A>,
+     <A HREF="#Else"><CODE>Else</CODE></A>
+</DL>

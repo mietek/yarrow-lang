@@ -1,0 +1,10 @@
+<DL>
+ <DT>Syntax:
+ <DD>
+  <CODE>Print </CODE> <VAR>var</VAR>
+ <DT>Effect:
+ <DD>Prints definition/declaration of <VAR>var</VAR>.
+ <DT>Prove-mode:
+ <DD>This command is also available in prove-mode. Then it is performed
+     in the context of the first goal.
+</DL>

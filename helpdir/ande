@@ -1,0 +1,24 @@
+<DL>
+ <DT>Syntax:
+ <DD><OL>
+     <LI><CODE>AndE</CODE> <VAR>term</VAR>
+     <LI><CODE>AndE</CODE> <VAR>term</VAR> <CODE>On</CODE> 
+                                            <VAR>term-list</VAR>
+     </OL>
+ <DT>Effect:
+ <DD>The conclusion of the type of <VAR>term</VAR> should be a conjunction.
+     This tactic adds
+     both conjuncts to the local context, and if <VAR>term</VAR> is a local
+     variable, this variable is hidden.<BR>                    
+     The second variant is a combination of 'Forward' and 'AndE 1'.<BR>
+     'AndE' is a combination of the special tactics 'AndEL' and 'AndER'; so
+     both have to be made available by 'Use', before 'AndE' can be used.     
+ <DT>Shortcomings:
+ <DD>It is not possible to give the name of the new hypotheses.
+ <DT>See also:
+ <DD><A HREF="#Forward"><CODE>Forward</CODE></A>,
+     <A HREF="#AndEL"><CODE>AndEL</CODE></A>,
+     <A HREF="#AndER"><CODE>AndER</CODE></A>,
+     <A HREF="#Use"><CODE>Use</CODE></A>,
+     <A HREF="#Hide"><CODE>Hide</CODE></A>
+</DL>

@@ -1,0 +1,252 @@
+<HTML>
+<HEAD>
+<TITLE>lolExtra/logic2 (with proofs)</TITLE>
+</HEAD>
+<BODY BGCOLOR="#FFFFFF", TEXT="#000000">
+<PRE><FONT COLOR="#000000"></FONT><FONT COLOR="#000000">-- File: logic2
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#000000">-- This file introduces more lemmas for predicate logic.
+</FONT><FONT COLOR="#000000">-- These lemmas are not included in the thesis, and are divided into three
+</FONT><FONT COLOR="#000000">-- groups.
+</FONT><FONT COLOR="#000000">-- 1) Introduction and elimination principles for ExP, ExQ, ExR, ExK
+</FONT><FONT COLOR="#000000">-- 2) Reflexivity, elimination, symmetry and transitivity for &lt;=&gt;, &lt;==&gt;, &lt;===&gt; 
+</FONT><FONT COLOR="#000000">-- 3) Miscellaneous
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#000000">Path "../lol"
+</FONT><FONT COLOR="#000000">Load "logic"
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#000000">--------------------------------------------------------------------
+</FONT><FONT COLOR="#000000">-- Introduction and elimination principles for ExP, ExQ, ExR, ExK --
+</FONT><FONT COLOR="#000000">--------------------------------------------------------------------
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#000000">-- The next lemma is used by the ExistsI tactic.
+</FONT><FONT COLOR="#0000FF">Prove ExK_i : @X:*s.@P:*s-&gt;*p. P X -&gt; (ExK) P
+</FONT><FONT COLOR="#000000">Unfold ExK
+</FONT><FONT COLOR="#000000">Intro X,P,HPx,Q,H
+</FONT><FONT COLOR="#000000">Apply H X
+</FONT><FONT COLOR="#000000">Assumption
+</FONT><FONT COLOR="#000000">Exit
+</FONT><FONT COLOR="#000000">Use ExistsI ExK_i
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#000000">-- The next lemma is used by the ExistsE tactic.
+</FONT><FONT COLOR="#0000FF">Prove ExK_e : @P:*s-&gt;*p.@R:*p. (ExK) P -&gt; (@X:*s. P X -&gt; R) -&gt; R
+</FONT><FONT COLOR="#000000">Unfold ExK
+</FONT><FONT COLOR="#000000">Intro P,R,H
+</FONT><FONT COLOR="#000000">Apply H
+</FONT><FONT COLOR="#000000">Exit
+</FONT><FONT COLOR="#000000">Use ExistsE ExK_e
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#000000">-- The next lemma is used by the ExistsI tactic.
+</FONT><FONT COLOR="#0000FF">Prove ExP_i : @X:*p.@P:*p-&gt;*p. P X -&gt; (ExP) P
+</FONT><FONT COLOR="#000000">Unfold ExP
+</FONT><FONT COLOR="#000000">Intro X,P,HPx,Q,H
+</FONT><FONT COLOR="#000000">Apply H X
+</FONT><FONT COLOR="#000000">Assumption
+</FONT><FONT COLOR="#000000">Exit
+</FONT><FONT COLOR="#000000">Use ExistsI ExP_i
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#000000">-- The next lemma is used by the ExistsE tactic.
+</FONT><FONT COLOR="#0000FF">Prove ExP_e : @P:*p-&gt;*p.@R:*p. (ExP) P -&gt; (@X:*p. P X -&gt; R) -&gt; R
+</FONT><FONT COLOR="#000000">Unfold ExP
+</FONT><FONT COLOR="#000000">Intro P,R,H
+</FONT><FONT COLOR="#000000">Apply H
+</FONT><FONT COLOR="#000000">Exit
+</FONT><FONT COLOR="#000000">Use ExistsE ExP_e
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#000000">-- The next lemma is used by the ExistsI tactic.
+</FONT><FONT COLOR="#0000FF">Prove ExQ_i : @A:*s.@X:A-&gt;*p.@P:(A-&gt;*p)-&gt;*p. P X -&gt; (ExQ) P
+</FONT><FONT COLOR="#000000">Unfold ExQ
+</FONT><FONT COLOR="#000000">Intro A,X,P,HPx,Q,H
+</FONT><FONT COLOR="#000000">Apply H X
+</FONT><FONT COLOR="#000000">Assumption
+</FONT><FONT COLOR="#000000">Exit
+</FONT><FONT COLOR="#000000">Use ExistsI ExQ_i
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#000000">-- The next lemma is used by the ExistsE tactic.
+</FONT><FONT COLOR="#0000FF">Prove ExQ_e : @A:*s.@P:(A-&gt;*p)-&gt;*p.@R:*p. (ExQ) P -&gt; (@X:A-&gt;*p. P X -&gt; R) -&gt; R
+</FONT><FONT COLOR="#000000">Unfold ExQ
+</FONT><FONT COLOR="#000000">Intro A,P,R,H
+</FONT><FONT COLOR="#000000">Apply H
+</FONT><FONT COLOR="#000000">Exit
+</FONT><FONT COLOR="#000000">Use ExistsE ExQ_e
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#000000">-- The next lemma is used by the ExistsI tactic.
+</FONT><FONT COLOR="#0000FF">Prove ExR_i : @A,B:*s.@X:A-&gt;B-&gt;*p.@P:(A-&gt;B-&gt;*p)-&gt;*p. P X -&gt; (ExR) P
+</FONT><FONT COLOR="#000000">Unfold ExR
+</FONT><FONT COLOR="#000000">Intro A,B,X,P,HPx,Q,H
+</FONT><FONT COLOR="#000000">Apply H X
+</FONT><FONT COLOR="#000000">Assumption
+</FONT><FONT COLOR="#000000">Exit
+</FONT><FONT COLOR="#000000">Use ExistsI ExR_i
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#000000">-- The next lemma is used by the ExistsE tactic.
+</FONT><FONT COLOR="#0000FF">Prove ExR_e : @A,B:*s.@P:(A-&gt;B-&gt;*p)-&gt;*p.@R:*p. (ExR) P -&gt; 
+</FONT><FONT COLOR="#0000FF">                      (@X:A-&gt;B-&gt;*p. P X -&gt; R) -&gt; R
+</FONT><FONT COLOR="#000000">Unfold ExR
+</FONT><FONT COLOR="#000000">Intro A,B,P,R,H
+</FONT><FONT COLOR="#000000">Apply H
+</FONT><FONT COLOR="#000000">Exit
+</FONT><FONT COLOR="#000000">Use ExistsE ExR_e
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#000000">-------------------------------------------------------------------------------
+</FONT><FONT COLOR="#000000">-- Reflexivity, elimination, symmetry and transitivity for &lt;=&gt;, &lt;==&gt;, &lt;===&gt;  --
+</FONT><FONT COLOR="#000000">-------------------------------------------------------------------------------
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#0000FF">Prove Bimpl_refl : @P:*p. P&lt;=&gt;P
+</FONT><FONT COLOR="#000000">Intro
+</FONT><FONT COLOR="#000000">Unfold (&lt;=&gt;)
+</FONT><FONT COLOR="#000000">Intros
+</FONT><FONT COLOR="#000000">Assumption
+</FONT><FONT COLOR="#000000">Exit
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#000000">Use Refl Bimpl_refl
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#0000FF">Prove Bimpl_elim_r : @P,Q:*p.@R:*p-&gt;*p. P&lt;=&gt;Q -&gt; R P -&gt; R Q
+</FONT><FONT COLOR="#000000">Intros
+</FONT><FONT COLOR="#000000">Apply H
+</FONT><FONT COLOR="#000000">Assumption
+</FONT><FONT COLOR="#000000">Exit
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#000000">Use Lewrite Bimpl_elim_r
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#0000FF">Prove Bimpl_elim_l : @P,Q:*p.@R:*p-&gt;*p. P&lt;=&gt;Q -&gt; R Q -&gt; R P
+</FONT><FONT COLOR="#000000">Intros 4
+</FONT><FONT COLOR="#000000">Lewrite H
+</FONT><FONT COLOR="#000000">Intro
+</FONT><FONT COLOR="#000000">Assumption
+</FONT><FONT COLOR="#000000">Exit
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#000000">Use Rewrite Bimpl_elim_l
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#0000FF">Prove Bimpl_sym : @P,Q:*p. (P&lt;=&gt;Q) -&gt; (Q&lt;=&gt;P)
+</FONT><FONT COLOR="#000000">Intros
+</FONT><FONT COLOR="#000000">Rewrite H
+</FONT><FONT COLOR="#000000">Refl
+</FONT><FONT COLOR="#000000">Exit
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#0000FF">Prove Bimpl_trans : @P,Q,R:*p. (P&lt;=&gt;Q) -&gt; (Q&lt;=&gt;R) -&gt; (P&lt;=&gt;R)
+</FONT><FONT COLOR="#000000">Intros
+</FONT><FONT COLOR="#000000">Rewrite H
+</FONT><FONT COLOR="#000000">Assumption
+</FONT><FONT COLOR="#000000">Exit
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#0000FF">Prove BimplQ_refl : @A:*s.@P:A-&gt;*p. P&lt;==&gt;P
+</FONT><FONT COLOR="#000000">Intros
+</FONT><FONT COLOR="#000000">Unfold (&lt;==&gt;)
+</FONT><FONT COLOR="#000000">Intros
+</FONT><FONT COLOR="#000000">Assumption
+</FONT><FONT COLOR="#000000">Exit
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#000000">Use Refl BimplQ_refl
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#0000FF">Prove BimplQ_elim_r : @A:*s. @P,Q:A-&gt;*p.@R:(A-&gt;*p)-&gt;*p. P&lt;==&gt;Q -&gt; R P -&gt; R Q
+</FONT><FONT COLOR="#000000">Intros
+</FONT><FONT COLOR="#000000">Apply H
+</FONT><FONT COLOR="#000000">Assumption
+</FONT><FONT COLOR="#000000">Exit
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#000000">Use Lewrite BimplQ_elim_r
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#0000FF">Prove BimplQ_elim_l : @A:*s. @P,Q:A-&gt;*p.@R:(A-&gt;*p)-&gt;*p. P&lt;==&gt;Q -&gt; R Q -&gt; R P
+</FONT><FONT COLOR="#000000">Intros 5
+</FONT><FONT COLOR="#000000">Lewrite H
+</FONT><FONT COLOR="#000000">Intro
+</FONT><FONT COLOR="#000000">Assumption
+</FONT><FONT COLOR="#000000">Exit
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#000000">Use Rewrite BimplQ_elim_l
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#0000FF">Prove BimplQ_sym : @A:*s. @P,Q:A-&gt;*p. (P&lt;==&gt;Q) -&gt; (Q&lt;==&gt;P)
+</FONT><FONT COLOR="#000000">Intros
+</FONT><FONT COLOR="#000000">Rewrite H
+</FONT><FONT COLOR="#000000">Refl
+</FONT><FONT COLOR="#000000">Exit
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#0000FF">Prove BimplQ_trans : @A:*s.@P,Q,R:A-&gt;*p. (P&lt;==&gt;Q) -&gt; (Q&lt;==&gt;R) -&gt; (P&lt;==&gt;R)
+</FONT><FONT COLOR="#000000">Intros
+</FONT><FONT COLOR="#000000">Rewrite H
+</FONT><FONT COLOR="#000000">Assumption
+</FONT><FONT COLOR="#000000">Exit
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#0000FF">Prove BimplR_refl : @A,B:*s.@P:A-&gt;B-&gt;*p. P&lt;===&gt;P
+</FONT><FONT COLOR="#000000">Intros
+</FONT><FONT COLOR="#000000">Unfold (&lt;===&gt;)
+</FONT><FONT COLOR="#000000">Intros
+</FONT><FONT COLOR="#000000">Assumption
+</FONT><FONT COLOR="#000000">Exit
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#000000">Use Refl BimplR_refl
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#0000FF">Prove BimplR_elim_r : @A,B:*s. @P,Q:A-&gt;B-&gt;*p.@R:(A-&gt;B-&gt;*p)-&gt;*p. 
+</FONT><FONT COLOR="#0000FF">                      P&lt;===&gt;Q -&gt; R P -&gt; R Q
+</FONT><FONT COLOR="#000000">Intros
+</FONT><FONT COLOR="#000000">Apply H
+</FONT><FONT COLOR="#000000">Assumption
+</FONT><FONT COLOR="#000000">Exit
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#000000">Use Lewrite BimplR_elim_r
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#0000FF">Prove BimplR_elim_l : @A,B:*s. @P,Q:A-&gt;B-&gt;*p.@R:(A-&gt;B-&gt;*p)-&gt;*p. 
+</FONT><FONT COLOR="#0000FF">                      P&lt;===&gt;Q -&gt; R Q -&gt; R P
+</FONT><FONT COLOR="#000000">Intros 6
+</FONT><FONT COLOR="#000000">Lewrite H
+</FONT><FONT COLOR="#000000">Intro
+</FONT><FONT COLOR="#000000">Assumption
+</FONT><FONT COLOR="#000000">Exit
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#000000">Use Rewrite BimplR_elim_l
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#0000FF">Prove BimplR_sym : @A,B:*s. @P,Q:A-&gt;B-&gt;*p. (P&lt;===&gt;Q) -&gt; (Q&lt;===&gt;P)
+</FONT><FONT COLOR="#000000">Intros
+</FONT><FONT COLOR="#000000">Rewrite H
+</FONT><FONT COLOR="#000000">Refl
+</FONT><FONT COLOR="#000000">Exit
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#0000FF">Prove BimplR_trans : @A,B:*s.@P,Q,R:A-&gt;B-&gt;*p. 
+</FONT><FONT COLOR="#0000FF">                     (P&lt;===&gt;Q) -&gt; (Q&lt;===&gt;R) -&gt; (P&lt;===&gt;R)
+</FONT><FONT COLOR="#000000">Intros
+</FONT><FONT COLOR="#000000">Rewrite H
+</FONT><FONT COLOR="#000000">Assumption
+</FONT><FONT COLOR="#000000">Exit
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#000000">-------------------
+</FONT><FONT COLOR="#000000">-- Miscellaneous --
+</FONT><FONT COLOR="#000000">-------------------
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#0000FF">Prove is_arrow_ : @A,B:*s.@f,g:A-&gt;B. f=g -&gt; @x:A. f x = g x
+</FONT><FONT COLOR="#000000">Intros
+</FONT><FONT COLOR="#000000">Rewrite H
+</FONT><FONT COLOR="#000000">Refl
+</FONT><FONT COLOR="#000000">Exit
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#0000FF">Prove Or_assoc2 : @P,Q,R:*p. (P\/Q)\/R &lt;=&gt; P\/Q\/R
+</FONT><FONT COLOR="#000000">Intros
+</FONT><FONT COLOR="#000000">Apply equiv_prop Then Intros
+</FONT><FONT COLOR="#000000">OrE H
+</FONT><FONT COLOR="#000000">OrE H1
+</FONT><FONT COLOR="#000000">OrIL
+</FONT><FONT COLOR="#000000">Assumption
+</FONT><FONT COLOR="#000000">OrIR
+</FONT><FONT COLOR="#000000">OrIL
+</FONT><FONT COLOR="#000000">Assumption
+</FONT><FONT COLOR="#000000">OrIR
+</FONT><FONT COLOR="#000000">OrIR
+</FONT><FONT COLOR="#000000">Assumption
+</FONT><FONT COLOR="#000000">OrE H
+</FONT><FONT COLOR="#000000">OrIL
+</FONT><FONT COLOR="#000000">OrIL
+</FONT><FONT COLOR="#000000">Assumption
+</FONT><FONT COLOR="#000000">OrE H1
+</FONT><FONT COLOR="#000000">OrIL
+</FONT><FONT COLOR="#000000">OrIR
+</FONT><FONT COLOR="#000000">Assumption
+</FONT><FONT COLOR="#000000">OrIR
+</FONT><FONT COLOR="#000000">Assumption
+</FONT><FONT COLOR="#000000">Exit
+</FONT><FONT COLOR="#000000">
+</FONT></PRE>
+</BODY>
+</HTML>

@@ -1,0 +1,23 @@
+<DL>
+ <DT>Syntax:
+ <DD><OL>
+     <LI><CODE>AndER</CODE> <VAR>term</VAR>
+     <LI><CODE>AndER</CODE> <VAR>term</VAR> <CODE>On</CODE> 
+                                            <VAR>term-list</VAR>
+     </OL>
+ <DT>Effect:
+ <DD>The conclusion of the type of <VAR>term</VAR> should be a conjunction.
+     This tactic adds
+     the right conjunct to the local context.
+     The second variant is a combination of 'Forward' and 'AndER 1'.<BR>
+     This tactic needs an elimation lemma for conjunction of the
+     following form:<BR>
+     <CODE>@P,Q:s. and P Q -> Q</CODE>
+ <DT>Shortcomings:
+ <DD>It is not possible to give the name of the new hypothesis.
+ <DT>See also:
+ <DD><A HREF="#Forward"><CODE>Forward</CODE></A>,
+     <A HREF="#AndEL"><CODE>AndEL</CODE></A>,
+     <A HREF="#AndE"><CODE>AndE</CODE></A>,
+     <A HREF="#Use"><CODE>Use</CODE></A>
+</DL>

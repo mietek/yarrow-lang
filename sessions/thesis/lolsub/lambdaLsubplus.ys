@@ -1,0 +1,15 @@
+-- System lambda-omega-l with subtyping and records
+
+System (*s->records,#s, *p,#p),
+       (*s:#s, *p:#p),
+       ((#s,#s),
+        (#s,*s), (*s,*s),
+        (#s,#p), (*s,#p), (#p,#p), 
+        (#s,*p),(*s,*p),(#p,*p),(*p,*p)),
+       (#s),
+       ((#s,*s),(#s,#p),(#s,*p))
+
+-- Existential types and axioms for records.
+Path "../lol"
+Path "../lolplus"
+Load "lambdaLplus"

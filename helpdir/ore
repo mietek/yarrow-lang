@@ -1,0 +1,27 @@
+<DL>
+ <DT>Syntax:
+ <DD><OL>
+     <LI><CODE>OrE</CODE> <VAR>term</VAR>
+     <LI><CODE>OrE</CODE> <VAR>term</VAR> <CODE>On</CODE> 
+                                            <VAR>term-list</VAR>
+     </OL>
+ <DT>Effect:
+ <DD>The conclusion of the type of <VAR>term</VAR> should be a disjunction.
+     This tactic
+     generates (at least) two new goals.
+     The two new goals have the same conclusion as
+     the old goal, but the local context of the first goal is augmented by
+     the disjunct on the left hand side, and likewise for the second goal
+     and the disjunct on the right hand side.   
+     If <VAR>term</VAR> is a local variable, this variable is hidden.<BR>                    
+     The second variant is a combination of 'Forward' and 'OrE 1'.<BR>
+     This tactic needs an elimation lemma for disjunction of the
+     following form:<BR>
+     <CODE>@P,Q:s1. @R:s2. or P Q -> (P->R) -> (Q->R) -> R</CODE>
+ <DT>Shortcomings:
+ <DD>It is not possible to give the name of the new hypotheses.
+ <DT>See also:
+ <DD><A HREF="#Forward"><CODE>Forward</CODE></A>,
+     <A HREF="#Use"><CODE>Use</CODE></A>,
+     <A HREF="#Hide"><CODE>Hide</CODE></A>
+</DL>

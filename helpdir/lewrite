@@ -1,0 +1,28 @@
+<DL>
+ <DT>Syntax:
+ <DD>
+  <CODE>Lewrite</CODE> [<VAR>num</VAR>] <VAR>term</VAR> 
+      [<CODE>On</CODE> <VAR>term-list</VAR>] [<CODE>In</CODE> <CODE>var</CODE>]
+ <DT>Effect:
+ <DD><VAR>term</VAR> should be the proof of an equality. This
+               tactic replaces in the goal one occurrence of
+               the RIGHT-hand side of the equality by the
+               LEFT-hand side.<BR>
+               This tactic needs an elimination lemma for Leibniz-equality of
+               the following form:<BR>
+               <CODE>@x1:t1. .. @xn:tn.@x,y:t. @P:t->sort. eq x1 .. xn x y -> P x -> P y</CODE><BR>
+               Note here the order of <CODE>y</CODE> and <CODE>x</CODE>! <BR>
+               For more information we refer to 'Rewrite'.
+ <DT>Shortcomings:
+ <DD><UL>
+     <LI> This tactic cannot replace expressions 
+      containing variables that are local in the goal.
+     <LI> If there are numbers in the list not
+          corresponding to an occurrence, no error is given. Do not use the
+          number 0, since that indicates a path
+         (see <A HREF="#paths"><CODE>paths</CODE></A>).
+     </UL> 
+ <DT>See also:
+ <DD><A HREF="#Rewrite"><CODE>Rewrite</CODE></A>,
+     <A HREF="#Use"><CODE>Use</CODE></A>
+</DL>

@@ -1,0 +1,110 @@
+-- File: pointDevelop2
+
+-- This file shows how the OOP concept of encapsulation is modelled in system
+-- lambda-omega-L-plus. It corresponds with Section 9.2.
+
+Path "../lol"
+Path "../lolExtra"
+Path "../lolplus"
+Load "lambdaLplus"
+Load "nat"
+
+-------------------------
+-- Step 1: Aggregation --
+-------------------------
+
+-- We retain PointRep, pointInt, PointI and pointMet from pointDevelop1
+
+Def PointRep := {|x:Nat|}
+
+Def pointInit := {x=O} : PointRep
+
+Def PointI := \R:*s. {|getX:R->Nat, 
+                       setX:R->Nat->R,
+                       bump:R->R|}
+
+Def pointMet := {getX = \st:PointRep. st`x,
+                 setX = \st:PointRep. \n:Nat. {x=n},
+                 bump = \st:PointRep. {x= S st`x}} :
+                PointI PointRep
+
+---------------------------
+-- Step 2: Encapsulation --
+---------------------------
+
+Def newPoint := (pack (\X:*s. {| state : X, met : PointI X |}) PointRep 
+                       {state = pointInit,
+                                        met = pointMet}) :
+                Sig X:*s. {| state : X, met : PointI X |}
+
+Def Point := Sig X:*s. {| state : X, met : PointI X |}
+
+Check newPoint : Point
+-- Result: Yes.
+
+Def Object := \I:*s->*s. Sig X:*s. {| state : X, met : I X |}
+Check Object PointI :=: Point
+-- Result: Yes.
+
+-- method invocation:
+
+Def point'getX := \p:Point. unpack p (\X:*s.\x:{|state:X,met : PointI X|}.
+                            x`met`getX x`state) :
+                  Point -> Nat
+
+Def point'bump := \p:Point. unpack p (\X:*s.\x:{|state:X,met : PointI X|}.
+                            pack (\X:*s. {| state : X, met : PointI X |})
+                                 X {state= x`met`bump x`state,
+                                    met = x`met}) :
+                  Point -> Point
+
+Def point'setX := 
+          \p:Point. \n:Nat. unpack p (\X:*s.\x:{|state:X,met : PointI X|}.
+                            pack (\X:*s. {| state : X, met : PointI X |})
+                                 X {state= x`met`setX x`state n,
+                                    met = x`met}) :
+                  Point -> Nat -> Point
+
+bdRed point'getX (point'setX newPoint (S O))
+-- Result: S O
+
+-- Another implementation
+Def PointRep2 := {|x:Nat, bumped : Bool|}
+
+Def pointInit2 := {x=O,bumped=false} : PointRep2
+
+Def pointMet2 := {getX = \st:PointRep2. st`x,
+                  setX = \st:PointRep2. \n:Nat. {x=n,bumped=st`bumped},
+                  bump = \st:PointRep2. {x= S st`x,bumped=true}} :
+                PointI PointRep2
+
+Def newPoint2 := (pack (\X:*s. {| state : X, met : PointI X |}) PointRep2
+                       {state = pointInit2,
+                                        met = pointMet2}) :
+                 Point
+
+
+-- preparation step 3.
+
+Var Colour : *s
+Var red,white, blue : Colour
+
+Def ColPointI := \R:*s. {|getX:R->Nat, 
+                          setX:R->Nat->R,
+                          bump:R->R,
+                          getC:R->Colour, 
+                          setC:R->Colour->R|}
+
+Def ColPoint := Object ColPointI
+
+Def newColPoint := (pack (\X:*s. {| state : X, met : ColPointI X |}) {||} 
+                       {state = {},
+                        met = {getX= \r:{||}.O, 
+                               setX= \r:{||}.\n:Nat. r,
+                               bump= \r:{||}.r,
+                               getC= \r:{||}.red,
+                               setC= \r:{||}.\c:Colour.r}}) :
+                ColPoint
+
+Check newColPoint : Point
+-- Result: No.

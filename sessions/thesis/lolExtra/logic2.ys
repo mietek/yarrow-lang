@@ -1,0 +1,244 @@
+-- File: logic2
+
+-- This file introduces more lemmas for predicate logic.
+-- These lemmas are not included in the thesis, and are divided into three
+-- groups.
+-- 1) Introduction and elimination principles for ExP, ExQ, ExR, ExK
+-- 2) Reflexivity, elimination, symmetry and transitivity for <=>, <==>, <===> 
+-- 3) Miscellaneous
+
+Path "../lol"
+Load "logic"
+
+--------------------------------------------------------------------
+-- Introduction and elimination principles for ExP, ExQ, ExR, ExK --
+--------------------------------------------------------------------
+
+-- The next lemma is used by the ExistsI tactic.
+Prove ExK_i : @X:*s.@P:*s->*p. P X -> (ExK) P
+Unfold ExK
+Intro X,P,HPx,Q,H
+Apply H X
+Assumption
+Exit
+Use ExistsI ExK_i
+
+-- The next lemma is used by the ExistsE tactic.
+Prove ExK_e : @P:*s->*p.@R:*p. (ExK) P -> (@X:*s. P X -> R) -> R
+Unfold ExK
+Intro P,R,H
+Apply H
+Exit
+Use ExistsE ExK_e
+
+-- The next lemma is used by the ExistsI tactic.
+Prove ExP_i : @X:*p.@P:*p->*p. P X -> (ExP) P
+Unfold ExP
+Intro X,P,HPx,Q,H
+Apply H X
+Assumption
+Exit
+Use ExistsI ExP_i
+
+-- The next lemma is used by the ExistsE tactic.
+Prove ExP_e : @P:*p->*p.@R:*p. (ExP) P -> (@X:*p. P X -> R) -> R
+Unfold ExP
+Intro P,R,H
+Apply H
+Exit
+Use ExistsE ExP_e
+
+-- The next lemma is used by the ExistsI tactic.
+Prove ExQ_i : @A:*s.@X:A->*p.@P:(A->*p)->*p. P X -> (ExQ) P
+Unfold ExQ
+Intro A,X,P,HPx,Q,H
+Apply H X
+Assumption
+Exit
+Use ExistsI ExQ_i
+
+-- The next lemma is used by the ExistsE tactic.
+Prove ExQ_e : @A:*s.@P:(A->*p)->*p.@R:*p. (ExQ) P -> (@X:A->*p. P X -> R) -> R
+Unfold ExQ
+Intro A,P,R,H
+Apply H
+Exit
+Use ExistsE ExQ_e
+
+
+-- The next lemma is used by the ExistsI tactic.
+Prove ExR_i : @A,B:*s.@X:A->B->*p.@P:(A->B->*p)->*p. P X -> (ExR) P
+Unfold ExR
+Intro A,B,X,P,HPx,Q,H
+Apply H X
+Assumption
+Exit
+Use ExistsI ExR_i
+
+-- The next lemma is used by the ExistsE tactic.
+Prove ExR_e : @A,B:*s.@P:(A->B->*p)->*p.@R:*p. (ExR) P -> 
+                      (@X:A->B->*p. P X -> R) -> R
+Unfold ExR
+Intro A,B,P,R,H
+Apply H
+Exit
+Use ExistsE ExR_e
+
+
+-------------------------------------------------------------------------------
+-- Reflexivity, elimination, symmetry and transitivity for <=>, <==>, <===>  --
+-------------------------------------------------------------------------------
+
+Prove Bimpl_refl : @P:*p. P<=>P
+Intro
+Unfold (<=>)
+Intros
+Assumption
+Exit
+
+Use Refl Bimpl_refl
+
+Prove Bimpl_elim_r : @P,Q:*p.@R:*p->*p. P<=>Q -> R P -> R Q
+Intros
+Apply H
+Assumption
+Exit
+
+Use Lewrite Bimpl_elim_r
+
+Prove Bimpl_elim_l : @P,Q:*p.@R:*p->*p. P<=>Q -> R Q -> R P
+Intros 4
+Lewrite H
+Intro
+Assumption
+Exit
+
+Use Rewrite Bimpl_elim_l
+
+Prove Bimpl_sym : @P,Q:*p. (P<=>Q) -> (Q<=>P)
+Intros
+Rewrite H
+Refl
+Exit
+
+Prove Bimpl_trans : @P,Q,R:*p. (P<=>Q) -> (Q<=>R) -> (P<=>R)
+Intros
+Rewrite H
+Assumption
+Exit
+
+Prove BimplQ_refl : @A:*s.@P:A->*p. P<==>P
+Intros
+Unfold (<==>)
+Intros
+Assumption
+Exit
+
+Use Refl BimplQ_refl
+
+Prove BimplQ_elim_r : @A:*s. @P,Q:A->*p.@R:(A->*p)->*p. P<==>Q -> R P -> R Q
+Intros
+Apply H
+Assumption
+Exit
+
+Use Lewrite BimplQ_elim_r
+
+Prove BimplQ_elim_l : @A:*s. @P,Q:A->*p.@R:(A->*p)->*p. P<==>Q -> R Q -> R P
+Intros 5
+Lewrite H
+Intro
+Assumption
+Exit
+
+Use Rewrite BimplQ_elim_l
+
+Prove BimplQ_sym : @A:*s. @P,Q:A->*p. (P<==>Q) -> (Q<==>P)
+Intros
+Rewrite H
+Refl
+Exit
+
+Prove BimplQ_trans : @A:*s.@P,Q,R:A->*p. (P<==>Q) -> (Q<==>R) -> (P<==>R)
+Intros
+Rewrite H
+Assumption
+Exit
+
+Prove BimplR_refl : @A,B:*s.@P:A->B->*p. P<===>P
+Intros
+Unfold (<===>)
+Intros
+Assumption
+Exit
+
+Use Refl BimplR_refl
+
+Prove BimplR_elim_r : @A,B:*s. @P,Q:A->B->*p.@R:(A->B->*p)->*p. 
+                      P<===>Q -> R P -> R Q
+Intros
+Apply H
+Assumption
+Exit
+
+Use Lewrite BimplR_elim_r
+
+Prove BimplR_elim_l : @A,B:*s. @P,Q:A->B->*p.@R:(A->B->*p)->*p. 
+                      P<===>Q -> R Q -> R P
+Intros 6
+Lewrite H
+Intro
+Assumption
+Exit
+
+Use Rewrite BimplR_elim_l
+
+Prove BimplR_sym : @A,B:*s. @P,Q:A->B->*p. (P<===>Q) -> (Q<===>P)
+Intros
+Rewrite H
+Refl
+Exit
+
+Prove BimplR_trans : @A,B:*s.@P,Q,R:A->B->*p. 
+                     (P<===>Q) -> (Q<===>R) -> (P<===>R)
+Intros
+Rewrite H
+Assumption
+Exit
+
+
+-------------------
+-- Miscellaneous --
+-------------------
+
+Prove is_arrow_ : @A,B:*s.@f,g:A->B. f=g -> @x:A. f x = g x
+Intros
+Rewrite H
+Refl
+Exit
+
+Prove Or_assoc2 : @P,Q,R:*p. (P\/Q)\/R <=> P\/Q\/R
+Intros
+Apply equiv_prop Then Intros
+OrE H
+OrE H1
+OrIL
+Assumption
+OrIR
+OrIL
+Assumption
+OrIR
+OrIR
+Assumption
+OrE H
+OrIL
+OrIL
+Assumption
+OrE H1
+OrIL
+OrIR
+Assumption
+OrIR
+Assumption
+Exit
+

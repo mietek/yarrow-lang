@@ -1,0 +1,73 @@
+-- infix
+
+-- This file demonstrates infix notation in Yarrow.
+
+
+-- First load an appropriate PTS
+
+path "../logic"
+read "lambdaL"
+                              
+
+-- Introduce some operations 
+
+var (\/) : *p -> *p -> *p
+infixl 1 (\/)
+
+var (/\) : *p -> *p -> *p
+infix 2 (/\)
+
+var False,True : *p
+
+var Nat : *s
+var O : Nat
+var S : Nat -> Nat
+
+var Bool : *s
+var true : Bool
+var false : Bool
+
+var (=) : Bool -> Bool -> *p
+infix 3 (=)
+                             
+var (||) : Bool -> Bool -> Bool
+infix 4 (||)
+
+var (==) : Nat -> Nat -> Bool
+infix 5 (==)
+
+var (+) : Nat -> Nat -> Nat
+infix 6 (+)
+
+var (/) : Nat -> Nat -> Nat
+infix 7 (/)
+
+var (^) : Nat -> Nat -> Nat 
+infix 8 (^)
+                
+
+-- Now show how an expression with lots of infix operations is printed
+var v1 : @x,y,z:Nat. x^y/z+O==S O = true || false /\ True\/False\/True->
+                     x^(y/(z+O))==O = false
+
+
+
+-- Here we show how infix-operators with 0 to 3 arguments are printed
+var (%) : *p ->*p ->*p ->*p ->*p
+type (%)
+type (%) False
+type (%) False False
+type (%) False False False
+
+
+-- Finally, show how associativity and priorities help in reducing the
+-- number of parentheses
+infixl 5 (/\)
+infixl 4 (\/)
+var a,b,c,d,e,f : *p
+-- Compare the following line:
+var v2 : a/\b/\c \/ d/\e \/ f
+infix 5 (/\)
+infix 5 (\/)                  
+-- With this line:
+type v2

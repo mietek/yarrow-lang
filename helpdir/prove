@@ -1,0 +1,19 @@
+<DL>
+ <DT>Syntax:
+ <DD><CODE>Prove</CODE> <VAR>var</VAR> <CODE>: </CODE> <VAR>term</VAR>
+ <DT>Effect:
+ <DD> Enter the prove-mode to find an inhabitant of
+      <VAR>term</VAR>, which will be assigned to <VAR>var</VAR>.
+      When the prove-mode is left, the inhabitant will be
+      type-checked so that correctness of the proof depends
+      only on the type-checking algorithm. A summary of all
+      used tactics is displayed, for the convenience of the user.<BR>
+      <VAR>term</VAR> must be typable with a sort.
+ <DT>Note:
+ <DD>This command is also available in prove-mode. In other words, you
+     can have multiple proof-tasks at one time. For switching between
+     them, use <CODE>Task</CODE>.
+ <DT>See also:
+ <DD><A HREF="#Def"><CODE>Def</CODE></A>,
+     <A HREF="#Task"><CODE>Task</CODE></A>
+</DL>

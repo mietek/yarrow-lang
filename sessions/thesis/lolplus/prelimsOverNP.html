@@ -1,0 +1,171 @@
+<HTML>
+<HEAD>
+<TITLE>prelimsOver (without proofs)</TITLE>
+</HEAD>
+<BODY BGCOLOR="#FFFFFF", TEXT="#000000">
+<PRE><FONT COLOR="#000000"></FONT><FONT COLOR="#000000">-- File: prelimsOver
+</FONT><FONT COLOR="#000000">-- hoort niet in cleaned up versie thuis.
+
+
+</FONT><FONT COLOR="#000000">-- Wat feitjes over bisimulatie-relaties e.d.
+</FONT><FONT COLOR="#000000">-- 1. De reflexieve, symmetrische en transitieve afsluiting is weer een
+</FONT><FONT COLOR="#000000">--    bisimulatie-relatie.
+
+</FONT><FONT COLOR="#000000">Path "../lol"
+</FONT><FONT COLOR="#000000">Read "lambdaL"
+</FONT><FONT COLOR="#000000">Load "logic2"
+
+
+</FONT><FONT COLOR="#0000FF">def IsPER := \Y:*s. \R:Y-&gt;Y-&gt;*p.
+                    (@y1,y2:Y. R y1 y2 -&gt; R y2 y1) /\
+                    (@y1,y2,y3:Y. R y1 y2 -&gt; R y2 y3 -&gt; R y1 y3)
+</FONT><FONT COLOR="#000000">implicit 1 IsPER
+
+</FONT><FONT COLOR="#0000FF">def MakePER := \Y:*s. \R:Y-&gt;Y-&gt;*p. \y1,y2:Y.
+                   @E:Y-&gt;Y-&gt;*p.
+                       (@z1,z2:Y. R z1 z2 -&gt; E z1 z2) -&gt;
+                       IsPER E -&gt;
+                       E y1 y2 :
+              @Y:*s. (Y-&gt;Y-&gt;*p) -&gt; (Y-&gt;Y-&gt;*p)
+</FONT><FONT COLOR="#000000">implicit 1 MakePER
+              
+</FONT><FONT COLOR="#0000FF">prove MakePER_ext : @Y:*s. @R:Y-&gt;Y-&gt;*p. @y1,y2:Y. R y1 y2 -&gt; MakePER R y1 y2
+
+</FONT><FONT COLOR="#0000FF">prove MakePER_sym : @Y:*s. @R:Y-&gt;Y-&gt;*p. @y1,y2:Y. 
+                          MakePER R y1 y2 -&gt; MakePER R y2 y1
+
+
+</FONT><FONT COLOR="#0000FF">prove MakePER_trans : @Y:*s. @R:Y-&gt;Y-&gt;*p. @y1,y2,y3:Y. 
+                       MakePER R y1 y2 -&gt;  MakePER R y2 y3 -&gt; MakePER R y1 y3
+
+</FONT><FONT COLOR="#0000FF">Prove MakePER_PER : @Y:*s.@R:Y-&gt;Y-&gt;*p. IsPER (MakePER R)
+
+
+</FONT><FONT COLOR="#0000FF">Prove IsPER_closed_function : @A,B:*s.@f:A-&gt;B.@(~):B-&gt;B-&gt;*p.
+                              IsPER (~) -&gt; IsPER (\a1,a2:A. f a1 ~ f a2)
+
+
+
+
+
+</FONT><FONT COLOR="#0000FF">prove IsER__IsPER : @Y:*s. @R:Y-&gt;Y-&gt;*p. IsER R -&gt; IsPER R
+
+
+</FONT><FONT COLOR="#0000FF">prove IsER_is : @A:*s. IsER ((=) A)
+
+
+
+
+</FONT><FONT COLOR="#0000FF">def MakeER := \Y:*s. \R:Y-&gt;Y-&gt;*p. \y1,y2:Y.
+                   @E:Y-&gt;Y-&gt;*p.
+                       (@z1,z2:Y. R z1 z2 -&gt; E z1 z2) -&gt;
+                       IsER E -&gt;
+                       E y1 y2 :
+              @Y:*s. (Y-&gt;Y-&gt;*p) -&gt; (Y-&gt;Y-&gt;*p)
+</FONT><FONT COLOR="#000000">implicit 1 MakeER
+
+</FONT><FONT COLOR="#0000FF">prove MakeER_ext : @Y:*s. @R:Y-&gt;Y-&gt;*p. @y1,y2:Y. R y1 y2 -&gt; MakeER R y1 y2
+
+</FONT><FONT COLOR="#0000FF">prove MakeER_refl : @Y:*s. @R:Y-&gt;Y-&gt;*p. @y:Y. MakeER R y y
+
+
+</FONT><FONT COLOR="#0000FF">prove MakeER_sym : @Y:*s. @R:Y-&gt;Y-&gt;*p. @y1,y2:Y. 
+                          MakeER R y1 y2 -&gt; MakeER R y2 y1
+
+</FONT><FONT COLOR="#0000FF">prove MakeER_trans : @Y:*s. @R:Y-&gt;Y-&gt;*p. @y1,y2,y3:Y. 
+                       MakeER R y1 y2 -&gt;  MakeER R y2 y3 -&gt; MakeER R y1 y3
+
+
+
+
+</FONT><FONT COLOR="#0000FF">Prove rel_LeftC : @A,B:*s. @(~):A-&gt;B-&gt;*p. 
+                  @a1,a2:A.@b:B. a1~b -&gt; a2~b -&gt; LeftC (~) a1 a2
+
+
+
+</FONT><FONT COLOR="#0000FF">prove LeftC_sym : @Y,Z:*s. @(~):Y-&gt;Z-&gt;*p. @y1,y2:Y. LeftC (~) y1 y2 -&gt;
+                                                    LeftC (~) y2 y1
+
+</FONT><FONT COLOR="#0000FF">Prove LeftC_trans : @A,B:*s. @(~):A-&gt;B-&gt;*p. IsZclosed (~) -&gt;
+                    @x,y,z:A. LeftC (~) x y -&gt; LeftC (~) y z -&gt; LeftC (~) x z
+
+</FONT><FONT COLOR="#0000FF">prove LeftC_semirefl : @Y,Z:*s. @(~):Y-&gt;Z-&gt;*p. @y1,y2:Y. LeftC (~) y1 y2 -&gt;
+                                                    LeftC (~) y1 y1
+
+
+</FONT><FONT COLOR="#0000FF">Prove rel_RightC : @A,B:*s. @(~):A-&gt;B-&gt;*p. 
+                  @a:A.@b1,b2:B. a~b1 -&gt; a~b2 -&gt; RightC (~) b1 b2
+
+</FONT><FONT COLOR="#0000FF">prove IsZclosed__IsPER_LeftC : @Y,Z:*s. @R:Y-&gt;Z-&gt;*p.
+                    IsZclosed R -&gt; IsPER (LeftC R)
+
+
+
+</FONT><FONT COLOR="#0000FF">prove IsZclosed__IsPER_RightC : @Y,Z:*s. @R:Y-&gt;Z-&gt;*p.
+                    IsZclosed R -&gt; IsPER (RightC R)
+
+                  
+</FONT><FONT COLOR="#0000FF">def MakeZclosed := \Y,Z:*s. \R:Y-&gt;Z-&gt;*p. \y:Y.\z:Z.
+                     @sim:Y-&gt;Z-&gt;*p.
+                        (@y1:Y.@z1:Z. R y1 z1 -&gt; sim y1 z1) -&gt;
+                        IsZclosed sim -&gt;
+                        sim y z :
+                  @Y,Z:*s. (Y-&gt;Z-&gt;*p) -&gt; (Y-&gt;Z-&gt;*p)
+</FONT><FONT COLOR="#000000">implicit 2 MakeZclosed
+
+</FONT><FONT COLOR="#0000FF">prove MakeZclosed_ext : @Y,Z:*s. @R:Y-&gt;Z-&gt;*p.
+                          @y:Y.@z:Z. R y z -&gt; MakeZclosed R y z
+
+</FONT><FONT COLOR="#0000FF">prove MakeZclosed_Zclosed : @Y,Z:*s. @R:Y-&gt;Z-&gt;*p.
+                            IsZclosed (MakeZclosed R)
+
+
+</FONT><FONT COLOR="#0000FF">Prove IsERon_is : @A:*s. @P:A-&gt;*p. IsERon ((=) A) P
+
+
+</FONT><FONT COLOR="#000000">-- deelverzameling
+</FONT><FONT COLOR="#0000FF">Def (==&gt;) := \A:*s. \P,Q:A-&gt;*p. @x:A. P x -&gt; Q x :
+              @A:*s. (A-&gt;*p) -&gt; (A-&gt;*p) -&gt; *p
+</FONT><FONT COLOR="#000000">Implicit 1 (==&gt;)
+
+</FONT><FONT COLOR="#0000FF">Prove Inverse_Inverse : @A,B:*s. @R:A-&gt;B-&gt;*p. Inverse (Inverse R) &lt;===&gt; R
+
+
+
+</FONT><FONT COLOR="#000000">-- Deelrelatie
+</FONT><FONT COLOR="#0000FF">Def (===&gt;) := \A,B:*s. \P,Q:A-&gt;B-&gt;*p. @x:A.@y:B. P x y -&gt; Q x y :
+              @A,B:*s. (A-&gt;B-&gt;*p) -&gt; (A-&gt;B-&gt;*p) -&gt; *p
+</FONT><FONT COLOR="#000000">Implicit 2 (===&gt;)
+
+
+</FONT><FONT COLOR="#0000FF">Def Range := \A,B:*s. \P:A-&gt;B-&gt;*p. \b:B. Ex a:A. P a b :
+             @A,B:*s. (A-&gt;B-&gt;*p) -&gt; B-&gt;*p
+</FONT><FONT COLOR="#000000">Implicit 2 Range
+
+
+</FONT><FONT COLOR="#0000FF">Prove IsER_fun_rel : @A,B : *s. @f : B-&gt;A. @(~):A-&gt;A-&gt;*p.
+                     IsERon (~) (Image f) -&gt;
+                     IsER (\b1,b2:B. f b1 ~ f b2)
+
+</FONT><FONT COLOR="#0000FF">Prove IsERon_Dom_restr : @A:*s. @(~):A-&gt;A-&gt;*p. @P:A-&gt;*p.
+                         IsERon (~) P -&gt; IsERon (\y,z:A. P y /\ y~z /\ P z) P
+
+
+</FONT><FONT COLOR="#0000FF">prove LeftC_Inverse : @A,B:*s.@(~):A-&gt;B-&gt;*p.
+                      LeftC (Inverse (~)) &lt;===&gt; RightC (~)
+
+</FONT><FONT COLOR="#0000FF">prove RightC_Inverse : @A,B:*s.@(~):A-&gt;B-&gt;*p.
+                      RightC (Inverse (~)) &lt;===&gt; LeftC (~)
+
+</FONT><FONT COLOR="#0000FF">prove IsZclosed_Inverse :  @A,B:*s.@(~):A-&gt;B-&gt;*p.
+                           IsZclosed (~) -&gt; IsZclosed (Inverse (~))
+
+
+</FONT><FONT COLOR="#0000FF">Prove IsERon_Dom : @A:*s. @(~):A-&gt;A-&gt;*p. IsPER (~) -&gt;
+                   IsERon (~) (Dom (~))
+
+
+
+</FONT></PRE>
+</BODY>
+</HTML>

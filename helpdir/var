@@ -1,0 +1,22 @@
+<DL>
+ <DT>Syntax:
+ <DD>
+  <OL>
+  <LI><CODE>Var</CODE> <VAR>var-list</VAR> <CODE>:</CODE> <VAR>term</VAR>
+  <LI><CODE>Var</CODE> <VAR>var-list</VAR> <CODE>&lt;:</CODE> <VAR>term</VAR>
+      <CODE>:</CODE> <VAR>term</VAR>
+  </OL>
+ <DT>Effect:
+ <DD>Adds variables of type <VAR>term</VAR> to the global context.
+     The variables are separated by a comma.
+     The first variant is for ordinary declarations. The second variant is
+     for bounded declarations, and is only available for systems with
+     subtyping. Here the typing part '<CODE>:</CODE> <VAR>term</VAR>'
+     is optional.
+ <DT>Example:
+ <DD><CODE>Var Nat : *<BR>
+           Var mult,(+) : Nat-&gt;Nat-&gt;Nat</CODE>
+ <DT>See also:
+ <DD><A HREF="#Def"><CODE>Def</CODE></A>,
+     <A HREF="#subtyping"><CODE>subtyping</CODE></A>
+</DL>

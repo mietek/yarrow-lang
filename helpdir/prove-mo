@@ -1,0 +1,56 @@
+Common commands ('help list' for a complete list):
+<DL COMPACT>
+<DT><A HREF="#Exit">Exit</A>
+    <DD>exits the assistant with the proof
+<DT><A HREF="#Abort">Abort</A>
+    <DD>aborts the assistant without the proof
+<DT><A HREF="#Show">Show n</A>
+    <DD>shows goal n with its context
+<DT><A HREF="#Undo">Undo</A>
+    <DD>undoes the last tactic on the current goal
+<DT><A HREF="#Restart">Restart</A>
+    <DD>return to original goal
+<DT><A HREF="#History">History</A>
+    <DD>shows all performed tactics
+<DT><A HREF="#Type">Type t</A>
+    <DD>gives the type of term t
+<DT><A HREF="#bdRed">bdRed t</A>
+    <DD>reduces term t to bd-normal form
+<DT><A HREF="#Print">Print v</A>
+    <DD>print definition of v
+<DT><A HREF="#Help">Help com</A>
+    <DD>gives help on com
+<DT><A HREF="#Context">Context</A>
+    <DD>displays the global context
+<DT><A HREF="#Option">Option +-o</A>
+    <DD>sets option o on or off
+<DT><A HREF="#Infix">Infix n v</A>
+    <DD>sets the precedence of operator v
+<DT><A HREF="#Implicit">Implicit n v</A>
+    <DD>sets the number of arguments that are implicit
+<DT><A HREF="#Read">Read "string"</A>
+    <DD>reads file
+</DL>
+Common tactics:
+<DL COMPACT>
+<DT><A HREF="#Intro">Intro v</A>
+    <DD>introduces variable with name v
+<DT><A HREF="#Intros">Intros</A>
+    <DD>introduces as many variables as possible
+<DT><A HREF="#Apply">Apply t</A>
+    <DD>applies term t
+<DT><A HREF="#Assumption">Assumption</A>
+    <DD>proof is in context
+<DT><A HREF="#Unfold">Unfold v</A>
+    <DD>unfolds all definitions of v and simplifies
+<DT><A HREF="#Convert">Convert t</A>
+    <DD>converts goal to t
+<DT><A HREF="#Cut">Cut t</A>
+    <DD>suppose t, which becomes another goal
+<DT><A HREF="#First">First t</A>
+    <DD>suppose t, which becomes the first goal
+<DT><A HREF="#Rewrite">Rewrite t</A>
+    <DD>uses equation t to rewrite first subterm of goal
+<DT>tac1<A HREF="#Then"> Then </A>tac2
+    <DD>first tac1, then tac2 on all new goals
+</DL>

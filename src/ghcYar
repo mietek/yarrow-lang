@@ -1,0 +1,53 @@
+# This script file is suitable for compiling Yarrow under the ghc Haskell
+# compiler.
+
+# general stuff
+ghc -c HaTuple.hs
+ghc -c General.hs
+ghc -c Collect.hs
+ghc -c Display.hs
+
+# the engine
+ghc -c Basic.hs
+ghc -c HaMonSt.hs
+ghc -c Paths.hs
+ghc -c SyntaxI.hs
+ghc -c PTSys.hs
+ghc -c Reduce.hs
+ghc -c Typing.hs
+ghc -c Matchin.hs
+ghc -c FancyTy.hs
+ghc -c ProvDat.hs
+ghc -c MainSta.hs
+ghc -c YarMsg.hs
+ghc -c GenComs.hs
+ghc -c Tactals.hs
+ghc -H16M -c Tactics.hs
+ghc -H16M -c TacSpec.hs
+ghc -H16M -c ProvMod.hs
+ghc -H16M -c Modules.hs
+ghc -c MainMod.hs
+ghc -c Engine.hs
+
+# the service routines
+ghc -c Scanner.hs
+ghc -c Printer.hs
+ghc -c Parser.hs
+ghc -c Command.hs
+ghc -c -H16M ProvPar.hs
+ghc -c ProvPri.hs
+ghc -c -H16M MainPar.hs
+ghc -c MainPri.hs
+ghc -c HText.hs
+ghc -c Errors.hs
+ghc -c Service.hs
+ghc -c -H16M LatexPr.hs
+ghc -c -H16M Deduct.hs
+
+
+# the command line interface
+ghc -c HaMonIO.hs
+ghc -c Platfor.hs
+ghc -c -H16M CLIMain.hs
+
+ghc *.o -o ../bin/yarrow

@@ -1,0 +1,33 @@
+<DL>
+ <DT>Syntax:
+ <DD>
+   <OL>
+   <LI><CODE>Use</CODE> <VAR>tacticname</VAR> <VAR>var</VAR>
+   <LI><CODE>Use</CODE>
+   </OL>
+ <DT>Effect:
+ <DD><VAR>tacticname</VAR> should be the name of a special tactic, and
+     <VAR>var</VAR> should be the proof of a lemma that is used by this
+     tactic. This command records the name of this lemma, so that if
+     the indicated tactic is used, this lemma is automatically invoked.
+     Which form of lemma is used by a tactic, is indicated in the
+     description of the tactic.<BR>
+     More than one lemma can be associated with one tactic.<BR>
+     The command without parameters gives an overview that shows which 
+     special tactics are associated with which lemmas.
+ <DT>See also:
+ <DD><A HREF="#AndI"><CODE>AndI</CODE></A>,
+     <A HREF="#AndEL"><CODE>AndEL</CODE></A>,
+     <A HREF="#AndER"><CODE>AndER</CODE></A>,
+     <A HREF="#OrIL"><CODE>OrIL</CODE></A>,
+     <A HREF="#OrIR"><CODE>OrIR</CODE></A>,
+     <A HREF="#OrE"><CODE>OrE</CODE></A>,
+     <A HREF="#NotI"><CODE>NotI</CODE></A>,
+     <A HREF="#NotE"><CODE>NotE</CODE></A>,
+     <A HREF="#FalseE"><CODE>FalseE</CODE></A>,
+     <A HREF="#ExistsI"><CODE>ExistsI</CODE></A>,
+     <A HREF="#ExistsE"><CODE>ExistsE</CODE></A>,
+     <A HREF="#Rewrite"><CODE>Rewrite</CODE></A>,
+     <A HREF="#Lewrite"><CODE>Lewrite</CODE></A>,
+     <A HREF="#Refl"><CODE>Refl</CODE></A>   
+</DL>

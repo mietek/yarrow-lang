@@ -1,0 +1,65 @@
+<DL>
+ <DT>Description:
+ <DD>Records are a variant of cartesian products, where each part has a
+     label. They are also termed labeled products. A part (or field) of
+     a record may be selected by giving a field. Records are an important
+     feature of programming languages.
+ <DT>Activation:
+ <DD>Records are activitated by suffixing a sort with <CODE>->records</CODE>
+     in the command <CODE>System</CODE>. E.g.<BR>
+     <CODE>System (*->records,#),(*:#),((*,*), (#,*))</CODE><BR>
+     Now all record-types will have type <CODE>*</CODE>, and record-values
+     will have as sort <CODE>*</CODE>. Records may only be activated for
+     one sort.
+ <DT>Syntax:
+ <DD>There are three additional constructions for records:
+     <DL COMPACT>
+     <DT><CODE>{|l1:T1, .. ln:Tn|}</CODE><DD> for a record-type . 
+     <DT><CODE>{l1=t1, .. ln=tn}  </CODE><DD> for a record-value.
+     <DT><CODE>t`l</CODE><DD> for selection of a field from record.
+         The character separating the term and the label is a backquote,
+         usually on some obscure place on the keyboard.
+     </DL>                                                        
+     Note that <CODE>n</CODE> may be zero.<BR>
+     For labels all ordinary identifiers may be used. A label is not
+     related in any way to a variable with the same name.     
+ <DT>Typing:
+ <DD>For each construction there is a typing rule:
+     <UL>
+     <LI><CODE>{|l1:T1, .. ln:Tn|} : s</CODE><BR>
+         if <CODE>s</CODE> is the sort for which records are activated
+         and all labels are different
+     <LI><CODE>{l1=t1, .. ln=tn} : {|l1:T1, .. ln:Tn|}</CODE><BR>
+         if for each <CODE>i</CODE> we have <CODE>ti : Ti</CODE>
+         and all labels are different
+     <LI><CODE>t`li : Ti</CODE><BR>
+         if <CODE>t : {|l1:T1, .. ln:Tn|}</CODE>
+     </UL>                                                         
+ <DT>Reduction:
+ <DD>There is one reduction rule:
+     <UL>
+     <LI><CODE>{l1=t1, .. ln=tn}`li</CODE> reduces to <CODE>ti</CODE>
+     </UL>
+ <DT>Notes:
+ <DD>The records in Yarrow do depend on the order of the fields. E.g.
+     <CODE>{l= one, m= true}</CODE> and <CODE>{m= true, l= one}</CODE> are
+     not considered syntactically equal terms. (But they have identical
+     reduction behaviour.)
+ <DT>Subtyping:
+ <DD><P>
+     When both records and subtyping are selected there is subtyping on
+     records. The subtyping rule for records is:
+     <CODE>{|l1:T1 .. ln:Tn|} &lt;: {|k1:U1 .. km : Um|}</CODE> if for every 
+     <CODE>j &lt;= m</CODE> there
+     is an <CODE>i</CODE> with <CODE>li=kj</CODE> and <CODE>Ti &lt;: Uj</CODE>.
+     </P>
+     <P>
+     For example:<BR>
+    <CODE>System (*->records,#),(*:#),((*,*), (#,*)), (#), ((#,*))</CODE><BR>
+     gives the usual second order lambda calculus with records and subtyping.
+     A term in this calculus is<BR>
+     <CODE>(\X &lt;: {|id:Int|}. \x:X. x`id) {|id:Int, n:S|} {id=two, n=h}</CODE><BR>
+     assuming proper declarations for <CODE>Int, S, two, h</CODE> have been
+     made.
+     </P>
+</DL>

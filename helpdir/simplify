@@ -1,0 +1,10 @@
+<DL>
+ <DT>Syntax:
+ <DD><CODE>Simplify</CODE>
+ <DT>Effect:
+ <DD>The goal is reduced to beta normal form.
+ <DT>See also:
+ <DD><A HREF="#Convert"><CODE>Convert</CODE></A>,
+     <A HREF="#Unfold"><CODE>Unfold</CODE></A>,
+     <A HREF="#Pattern"><CODE>Pattern</CODE></A>
+</DL>

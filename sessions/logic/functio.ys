@@ -1,0 +1,42 @@
+-- functio
+-- This file defines some basic operations on functions
+        
+Read "lambdaL"
+Load "is"
+
+-- Naming convention for variables of function-type (from set to set): f,g,h
+
+Def id := \A:*s. \x:A. x
+Implicit 1 id
+
+-- prefix name: comp
+Def (&) := \A,B,C:*s.\f:B->C.\g:A->B.\x:A. f (g x)
+Implicit 3 (&)
+
+prove comp_id : @A,B:*s.@f:A->B. f & (id A) = f
+Intro A,B,f
+Apply is_Set
+Intro x
+Unfold (&)
+Unfold id
+Refl
+Exit
+
+Prove id_comp : @A,B:*s.@f:A->B. (id B) & f = f
+Intro A,B,f
+Apply is_Set
+Intro x
+Unfold (&)
+Unfold id
+Refl
+Exit
+
+prove comp_assoc : @A,B,C,D : *s.@f:C->D.@g:B->C.@h:A->B. (f&g)&h = f&(g&h)
+Intro A,B,C,D,f,g,h
+Apply is_Set
+Intro x
+Unfold (&)
+Refl
+Exit
+
+InfixR 9 (&)

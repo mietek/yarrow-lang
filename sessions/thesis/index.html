@@ -1,0 +1,180 @@
+<HTML>
+<HEAD>
+<TITLE>Formal Theory in my Thesis</TITLE>
+</HEAD>
+<BODY BGCOLOR="#FFFFFF", TEXT="#000000">
+<H1>Formal Theory in my Thesis</H1>
+<!-- thesis linken -->
+<P>
+This page presents the formal theory given in my 
+<A HREF="../../publications">thesis</A>.
+This presentation is only scarcely documented; for explanation I refer to
+my thesis.
+The theory is given in the format of Yarrow script files, i.e. files which
+can serve as input to Yarrow.
+In fact, the
+<A HREF="../../yarrow/index.html">Yarrow distribution</A> comes with
+all these script files.
+</P>
+
+<H2>Syntax of Yarrow script files</H2>
+<P>
+A Yarrow script file consists of a sequence of commands. The main commands
+are:
+<DL COMPACT>
+<DT><CODE>Var x:T</CODE><DD>Adds variable <CODE>x</CODE> of type <CODE>T</CODE>
+   to the context. These variable declarations are printed in
+   <FONT COLOR="#FF0000">red</FONT>.
+<DT><CODE>Def x:=t:T</CODE><DD>Adds the definition of <CODE>x</CODE> as <CODE>t</CODE> of type <CODE>T</CODE> to the context (the <CODE>:T</CODE> part is optional).
+These definitions are printed in
+   <FONT COLOR="#0000FF">blue</FONT>.
+<DT><CODE>Prove x:T</CODE><DD>Enters interactive proof mode to find an
+inhabitant of <CODE>T</CODE> which will be given name <CODE>x</CODE>.
+This command is printed in <FONT COLOR="#0000FF">blue</FONT>.
+After such a command, Yarrow files contain several commands to construct this
+inhabitant. These commands are printed in black.
+<DT><CODE>Load</CODE><DD> This instructs Yarrow to load another file first.
+<DT><CODE>Infix</CODE>, <CODE>Implicit</CODE> and <CODE>Binder</CODE> <DD>
+These are instructions on how to print and parse certain constructions.
+<DT><CODE>--</CODE> <DD> This signals the rest of the line is comment.
+</DL>
+</P>
+
+<H2>Syntax of Terms</H2>
+<P>
+The Yarrow syntax of terms is as follows:
+<DL COMPACT>
+<DT><CODE>\x:T.e       </CODE><DD> for a lambda abstraction
+<DT><CODE>@x:T.e       </CODE><DD> for a pi-type
+<DT><CODE>let x:=e:T.f </CODE><DD> for a local definition
+<DT><CODE>f e          </CODE><DD> for application (left-associative)
+<DT><CODE>(e)          </CODE><DD> to deviate from standard-precedence
+</DL>
+</P>
+
+<P>
+Precedence goes from lowest to highest, so <CODE>\x:T.x x</CODE> means 
+      <CODE>\x:T.(x x)</CODE> and not <CODE>(\x:T.x) x</CODE>.
+The lambda, pi and let terms do extend to right as far as possible.
+</P>
+
+<P>    
+We use the following shorthands:
+</P>
+<DL COMPACT>
+<DT><CODE>\x1,x2,..xn:T.e       </CODE><DD> for a repeated abstraction
+<DT><CODE>@x1,x2,..xn:T.e       </CODE><DD> for a repeated pi-type 
+<DT><CODE>T-&gt;U      </CODE><DD> as a short-hand for <CODE>@x:T.U</CODE> if <C
+ODE>x</CODE> does not occur 
+                        in <CODE>U</CODE> (the <CODE>-&gt;</CODE> is right-assoc
+iative)
+</DL>
+</P>
+
+<H2>The Theory</H2>
+<P>
+Now for the theory itself. It is structured here according to my thesis.
+For a better overview, many script files come also in a version without
+the commands that form the proofs.
+</P>
+
+<H2>Chapter 4: lambda-omega-L, a Programming Logic</H2>
+<UL>
+<LI> The definition</A> of the DPTS lambda-omega-L (Section 4.3).<BR>
+     <A HREF="lol/lambdaL.html"><CODE>lambdaL</CODE></A>
+<LI> The axioms and library for predicate logic
+     (in Section 4.4 and 4.5 respectively).<BR>
+      <CODE>logic</CODE> <A HREF="lol/logic.html">full</A> or
+     <A HREF="lol/logicNP.html">without proofs</A>.
+<LI> The axioms and library for booleans
+     (in Section 4.4 and 4.5 respectively).<BR>
+     <CODE>bool</CODE> <A HREF="lol/bool.html">full</A> or
+     <A HREF="lol/boolNP.html">without proofs</A>.
+<LI> The axioms and library for natural numbers
+     (in Section 4.4 and 4.5 respectively).<BR>
+     <CODE>nat</CODE> <A HREF="lol/nat.html">full</A> or
+     <A HREF="lol/natNP.html">without proofs</A>.
+<LI> The axioms and library for lists
+     (in Section 4.4 and 4.5 respectively).<BR>
+     <CODE>list</CODE> <A HREF="lol/list.html">full</A> or
+     <A HREF="lol/listNP.html">without proofs</A>.
+<LI> The example of sorting
+     (Section 4.6).<BR>
+     <CODE>sort</CODE> <A HREF="lol/sort.html">full</A> or
+     <A HREF="lol/sortNP.html">without proofs</A>.
+</UL>
+
+<H2>More theory in lambda-omega-L (not in thesis)</H2>
+<UL>
+<LI> More library for predicate logic.<BR>
+     <CODE>logic2</CODE> <A HREF="lolExtra/logic2.html">full</A> or
+     <A HREF="lolExtra/logic2NP.html">without proofs</A>.
+<LI> More library for booleans.<BR>
+     <CODE>bool2</CODE> <A HREF="lolExtra/bool2.html">full</A> or
+     <A HREF="lolExtra/bool2NP.html">without proofs</A>.
+<LI> More library for natural numbers.<BR>
+     <CODE>nat2</CODE> <A HREF="lolExtra/nat2.html">full</A> or
+     <A HREF="lolExtra/nat2NP.html">without proofs</A>.
+<LI> More library for lists.<BR>
+     <CODE>list2</CODE> <A HREF="lolExtra/list2.html">full</A> or
+     <A HREF="lolExtra/list2NP.html">without proofs</A>.
+</UL>
+
+<H2>Chapter 6: lambda-omega-L-plus and Modelling Abstract Datatypes</H2>
+<UL>
+<LI> The definition</A> of the DPTS lambda-omega-L-plus (Section 6.1).<BR>
+    <CODE>lambdaLplus</CODE> <A HREF="lolplus/lambdaLplus.html">full</A>
+    or <A HREF="lolplus/lambdaLplusNP.html">without proofs</A>.
+<LI> Axioms for lambda-omega-L-plus (Section 6.2).<BR>
+    <CODE>LOLP_Axioms</CODE> <A HREF="lolplus/LOLP_Axioms.html">full</A>
+    or <A HREF="lolplus/LOLP_AxiomsNP.html">without proofs</A>.
+<LI> The example of stacks (Section 6.3).<BR>
+     <CODE>stack</CODE> <A HREF="lolplus/stack.html">full</A> or
+     <A HREF="lolplus/stackNP.html">without proofs</A>.
+<LI> Some preliminary definitions (Section 6.7.1).
+     We need these definitions for the example of bags.<BR>
+     <CODE>prelims</CODE> <A HREF="lolplus/prelims.html">full</A> or
+     <A HREF="lolplus/prelimsNP.html">without proofs</A>.
+<LI> The example of bags: implementation 1 (Section 6.5.1).<BR>
+     <CODE>bag1</CODE> <A HREF="lolplus/bag1.html">full</A> or
+     <A HREF="lolplus/bag1NP.html">without proofs</A>.
+<LI> The example of bags: implementation 2 (Section 6.5.2).<BR>
+     <CODE>bag2</CODE> <A HREF="lolplus/bag2.html">full</A> or
+     <A HREF="lolplus/bag2NP.html">without proofs</A>.
+<LI> The example of bags: implementation 3 (Section 6.5.3).<BR>
+     <CODE>bag3</CODE> <A HREF="lolplus/bag3.html">full</A> or
+     <A HREF="lolplus/bag3NP.html">without proofs</A>.
+<LI> Parametricity and first-order interfaces (Section 6.7.2 and 6.7.3).<BR>
+     <CODE>parametricity</CODE> <A HREF="lolplus/parametricity.html">full</A> or
+     <A HREF="lolplus/parametricityNP.html">without proofs</A>.
+<LI> The library leading to the main theorems (Section 6.7.4 up to 6.7.6).<BR>
+     <CODE>library</CODE> <A HREF="lolplus/library.html">full</A> or
+     <A HREF="lolplus/libraryNP.html">without proofs</A>.
+<LI> The main results about axiomatizing quotients and subsets (Section 6.8).<BR>
+     <CODE>axiomatizing</CODE> <A HREF="lolplus/axiomatizing.html">full</A> or
+     <A HREF="lolplus/axiomatizingNP.html">without proofs</A>.
+</UL>
+
+<H2>Chapter 8: System lambda-omega-L-plus-sub, Subtyping Added</H2>
+<UL>
+<LI> The definition</A> of the DPTS lambda-omega-L-plus-sub (Section 8.1.2).<BR>
+     <A HREF="lolsub/lambdaLsubplus.html"><CODE>lambdaLsubplus</CODE></A>
+<LI> The (very small) library (Section 8.3.1).<BR>
+      <CODE>subLibrary</CODE> <A HREF="lolsub/subLibrary.html">full</A> or
+     <A HREF="lolsub/subLibraryNP.html">without proofs</A>.
+<LI> The example of sorting of records
+     (Section 8.4).<BR>
+     <CODE>sortId</CODE> <A HREF="lolsub/sortId.html">full</A> or
+     <A HREF="lolsub/sortIdNP.html">without proofs</A>.
+</UL>
+<H2>Chapter 9: Encoding Objects</H2>
+<UL>
+<LI> Aggregation (Section 9.1).<BR>
+     <A HREF="models/pointDevelop1.html"><CODE>pointDevelop1</CODE></A>
+<LI> Encapsulation (Section 9.2).<BR>
+     <A HREF="models/pointDevelop2.html"><CODE>pointDevelop2</CODE></A>
+<LI> Subtyping (Section 9.3).<BR>
+     <A HREF="models/pointDevelop3.html"><CODE>pointDevelop3</CODE></A>
+</UL>
+</BODY>
+</HTML>

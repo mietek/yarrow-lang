@@ -1,0 +1,174 @@
+<HTML>
+<HEAD>
+<TITLE>lol/list (without proofs)</TITLE>
+</HEAD>
+<BODY BGCOLOR="#FFFFFF", TEXT="#000000">
+<PRE><FONT COLOR="#000000"></FONT><FONT COLOR="#000000">-- File: list
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#000000">-- This file introduces lists.
+</FONT><FONT COLOR="#000000">-- It consists of two parts.
+</FONT><FONT COLOR="#000000">-- 1. Axioms, corresponding to Section 4.5
+</FONT><FONT COLOR="#000000">-- 2. Library, corresponding to Section 4.6
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#000000">-- naming conventions for lemmas:
+</FONT><FONT COLOR="#000000">-- variables for Lists are always ending in s
+</FONT><FONT COLOR="#000000">-- e.g. as,xs,ys
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#000000">Load "bool"
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#000000">-----------------------
+</FONT><FONT COLOR="#000000">-----------------------
+</FONT><FONT COLOR="#000000">--                   --
+</FONT><FONT COLOR="#000000">--  1.  A X I O M S  --
+</FONT><FONT COLOR="#000000">--                   --
+</FONT><FONT COLOR="#000000">-----------------------
+</FONT><FONT COLOR="#000000">-----------------------
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#FF0000">Var List : *s -&gt; *s
+</FONT><FONT COLOR="#FF0000">Var nil : @A:*s. List A
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#000000">-- Name in lemmas: cons
+</FONT><FONT COLOR="#FF0000">Var (;) : @A:*s. A -&gt; List A -&gt; List A
+</FONT><FONT COLOR="#000000">Implicit 1 (;)    
+</FONT><FONT COLOR="#000000">InfixR 5 (;)   
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#FF0000">Var primreclist : @A,B:*s. B-&gt; (A -&gt; List A -&gt; B -&gt; B) -&gt; List A -&gt; B
+</FONT><FONT COLOR="#000000">Implicit 2 primreclist
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#FF0000">Var primreclist_nil : @A,B:*s. @nv:B. @sv: A -&gt; List A -&gt; B -&gt; B.
+</FONT><FONT COLOR="#FF0000">                                 primreclist nv sv (nil A) = nv
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#FF0000">Var primreclist_cons : @A,B:*s. @nv:B. @sv: A -&gt; List A -&gt; B -&gt; B.
+</FONT><FONT COLOR="#FF0000">                         @head:A. @tail:List A.
+</FONT><FONT COLOR="#FF0000">                                  primreclist nv sv (head;tail) = 
+</FONT><FONT COLOR="#FF0000">                                  sv head tail (primreclist nv sv tail)
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#FF0000">Var indlist : @A:*s. @P:List A-&gt;*p. P (nil A) -&gt;
+</FONT><FONT COLOR="#FF0000">                                    (@a:A. @as:List A. P as -&gt; P (a;as)) -&gt;
+</FONT><FONT COLOR="#FF0000">                                    (@as:List A. P as)
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#000000">-------------------------
+</FONT><FONT COLOR="#000000">-------------------------
+</FONT><FONT COLOR="#000000">--                     --
+</FONT><FONT COLOR="#000000">--  2.  L I B R A R Y  --
+</FONT><FONT COLOR="#000000">--                     --
+</FONT><FONT COLOR="#000000">-------------------------
+</FONT><FONT COLOR="#000000">-------------------------
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#000000">--------------
+</FONT><FONT COLOR="#000000">-- iterlist --
+</FONT><FONT COLOR="#000000">--------------
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#000000">-- iterlist is also known as foldr
+</FONT><FONT COLOR="#0000FF">Def iterlist := \A,B:*s. \nv:B. \sv:A-&gt;B-&gt;B.
+</FONT><FONT COLOR="#0000FF">                primreclist nv (\a:A. \dummy:List A. sv a) :
+</FONT><FONT COLOR="#0000FF">                @A,B:*s. B-&gt; (A -&gt; B -&gt; B) -&gt; List A -&gt; B
+</FONT><FONT COLOR="#000000">Implicit 2 iterlist
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#0000FF">Prove iterlist_nil : @A,B:*s. @nv:B. @sv: A -&gt; B -&gt; B.
+</FONT><FONT COLOR="#0000FF">                                iterlist nv sv (nil A) = nv
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#0000FF">Prove iterlist_cons : @A,B:*s. @nv:B. @sv: A -&gt; B -&gt; B.
+</FONT><FONT COLOR="#0000FF">                         @head:A. @tail:List A.
+</FONT><FONT COLOR="#0000FF">                                  iterlist nv sv (head;tail) = 
+</FONT><FONT COLOR="#0000FF">                                  sv head (iterlist nv sv tail)
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#000000">----------
+</FONT><FONT COLOR="#000000">-- tail --
+</FONT><FONT COLOR="#000000">----------
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#0000FF">Def tail := \A:*s. primreclist (nil A) (\hd:A.\tl:List A.\p:List A.tl)
+</FONT><FONT COLOR="#000000">Implicit 1 tail
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#0000FF">Prove tail_nil : @A:*s. tail (nil A) = nil A
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#0000FF">Prove tail_cons : @A:*s. @a:A. @l:List A. tail (a;l) = l
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#000000">----------
+</FONT><FONT COLOR="#000000">-- head --
+</FONT><FONT COLOR="#000000">----------
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#0000FF">Def head := \A:*s. \a:A. iterlist a (\a':A. \prev:A.a') :
+</FONT><FONT COLOR="#0000FF">            @A:*s. A -&gt; List A -&gt; A
+</FONT><FONT COLOR="#000000">Implicit 1 head
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#0000FF">Prove head_nil : @A:*s. @a:A. head a (nil A) = a
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#0000FF">Prove head_cons : @A:*s. @a,b:A. @l:List A. head a (b;l) = b
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#000000">-------------------------------------------
+</FONT><FONT COLOR="#000000">-- nil and cons are different injections --
+</FONT><FONT COLOR="#000000">-------------------------------------------
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#0000FF">Prove nil_is_cons_ : @A:*s. @l:List A. @a:A. Not (nil A = a;l)
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#0000FF">Prove cons_is_nil_ : @A:*s. @l:List A. @a:A. Not (a;l = nil A)
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#0000FF">Prove cons_is_cons_ : @A:*s. @l1,l2:List A. @a1,a2:A. 
+</FONT><FONT COLOR="#0000FF">                             a1;l1 = a2;l2 -&gt; a1 = a2 /\ l1=l2
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#000000">------------
+</FONT><FONT COLOR="#000000">-- concat --
+</FONT><FONT COLOR="#000000">------------
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#000000">-- Name in lemmas: concat
+</FONT><FONT COLOR="#0000FF">Def (++) := \A:*s. \as,as' : List A. iterlist as' (
+</FONT><FONT COLOR="#0000FF">                  \hd:A. \concat_tail : List A. hd;concat_tail) as :
+</FONT><FONT COLOR="#0000FF">            @A:*s. List A -&gt; List A -&gt; List A
+</FONT><FONT COLOR="#000000">Implicit 1 (++)
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#0000FF">Prove nil_concat : @A:*s. @as:List A. (nil A)++as = as
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#0000FF">Prove cons_concat : @A:*s. @a:A. @as,as': List A. 
+</FONT><FONT COLOR="#0000FF">                    (a;as) ++ as' = a ; (as++as')
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#0000FF">Prove concat_assoc : @A:*s. @bs,cs,as : List A. (as++bs)++cs = as++(bs++cs)
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#0000FF">Prove concat_nil : @A:*s. @as:List A. as ++ (nil A) = as
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#000000">---------------
+</FONT><FONT COLOR="#000000">-- singleton --
+</FONT><FONT COLOR="#000000">---------------
+</FONT><FONT COLOR="#000000">                                          
+</FONT><FONT COLOR="#0000FF">Def singleton := \A:*s. \a:A. a ; (nil A) : @A:*s. A -&gt; List A
+</FONT><FONT COLOR="#000000">Implicit 1 singleton
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#000000">-------------------
+</FONT><FONT COLOR="#000000">-- RELATION Elem --
+</FONT><FONT COLOR="#000000">-------------------
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#0000FF">Def Elem := \A:*s.\a:A.\l:List A. 
+</FONT><FONT COLOR="#0000FF">                 @P:List A -&gt; *p. (@m:List A. P (a;m)) -&gt;
+</FONT><FONT COLOR="#0000FF">                                  (@m:List A.@b:A. P m -&gt; P (b;m)) -&gt;
+</FONT><FONT COLOR="#0000FF">                                  P l :
+</FONT><FONT COLOR="#0000FF">            @A:*s. A -&gt; List A -&gt; *p
+</FONT><FONT COLOR="#000000">Implicit 1 Elem
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#0000FF">Prove Elem_a_a_cons : @A:*s.@a:A.@l:List A. Elem a (a;l)
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#0000FF">Prove Elem_a_b_cons : @A:*s.@a,b:A.@l:List A. Elem a l -&gt; Elem a (b;l)
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#0000FF">Prove Elem_strong_ind : @A:*s.@a:A.@l:List A. Elem a l -&gt;
+</FONT><FONT COLOR="#0000FF">                           @P:List A -&gt; *p.
+</FONT><FONT COLOR="#0000FF">                           (@m:List A. P (a;m)) -&gt;
+</FONT><FONT COLOR="#0000FF">                           (@m:List A. @b:A. Elem a m -&gt; P m -&gt; P (b;m)) -&gt;
+</FONT><FONT COLOR="#0000FF">                           P l
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#0000FF">Prove Elem_exh : @A:*s.@a:A.@l:List A. 
+</FONT><FONT COLOR="#0000FF">                     Elem a l -&gt; 
+</FONT><FONT COLOR="#0000FF">                     (Ex m:List A. l = a;m) \/
+</FONT><FONT COLOR="#0000FF">                     (Ex m:List A. Ex b:A. l = b;m /\ Elem a m) 
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#0000FF">Prove Elem_nil_ : @A:*s. @a:A. Not (Elem a (nil A))
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#0000FF">Prove Elem_cons_ : @A:*s.@a,b:A. @l:List A. Elem a (b;l) -&gt; a=b \/ Elem a l
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#000000">
+</FONT></PRE>
+</BODY>
+</HTML>

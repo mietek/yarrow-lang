@@ -1,0 +1,15 @@
+<DL>
+ <DT>Syntax:
+ <DD><CODE>InfixL</CODE> <VAR>num</VAR> <VAR>var</VAR>
+ <DT>Effect:
+ <DD> Sets the precedence of operator <VAR>var</VAR> to <VAR>num</VAR>, 
+               and makes it left-associative.
+ <DT>Example:
+ <DD><CODE>InfixL 5 (-)</CODE><BR>
+     After this, <CODE>x-y-z</CODE> will be interpreted as
+     <CODE>(x-y)-z</CODE>
+ <DT>See also:
+ <DD><A HREF="#Infix"><CODE>Infix</CODE></A>,
+     <A HREF="#InfixR"><CODE>InfixR</CODE></A>,
+     <A HREF="#infix-notation"><CODE>infix-notation</CODE></A>
+</DL>

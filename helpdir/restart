@@ -1,0 +1,9 @@
+<DL>
+ <DT>Syntax:
+ <DD><CODE>Restart</CODE>
+ <DT>Effect:
+ <DD>Returns to the goal you started with.
+ <DT>See also:
+ <DD><A HREF="#Undo"><CODE>Undo</CODE></A>,
+     <A HREF="#History"><CODE>History</CODE></A>
+</DL>

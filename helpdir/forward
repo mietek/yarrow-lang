@@ -1,0 +1,78 @@
+<DL>
+ <DT>Syntax:
+ <DD><OL>
+     <LI><CODE>Forward</CODE> <VAR>term</VAR>
+     <LI><CODE>Forward</CODE> <VAR>term</VAR> <CODE>On</CODE> 
+                                              <VAR>term-list</VAR>
+     </OL>
+ <DT>Effect 1:
+ <DD> <P>      
+      Introduce a variable with the same type as <VAR>term</VAR>.
+      Suppose <VAR>term</VAR> is of type <VAR>T</VAR>.
+      Then this tactic is a shortcut for the consecutive tactics<BR>
+      <CODE>First</CODE> <VAR>T</VAR><BR>
+      <CODE>Exact</CODE> <VAR>term</VAR><BR>
+      <CODE>Intro</CODE><BR>
+      So <CODE>First</CODE> uses the cut-rule, and immediately solves
+      one of the goals by the proof-term <VAR>term</VAR>.
+      </P>
+      <P>
+      In practice, this tactic is used to support forward-reasoning,
+      i.e. combine the propositions we already have in a new proposition,
+      without referring to the goal.
+      </P>
+ <DT>Example 1:
+ <DD>Suppose our goal is<BR>
+     <CODE>H2 : @x:Nat. P x -&gt; Q x</CODE><BR>
+     <CODE>H3 : P y  </CODE><BR>
+     <CODE>---------</CODE><BR>
+     <CODE>R</CODE><BR>
+     Then the tactic <CODE>Forward H2 y H3</CODE> results in<BR>
+     <CODE>H2 : @x:Nat. P x -&gt; Q x</CODE><BR>
+     <CODE>H3 : P y  </CODE><BR>
+     <CODE>H4 : Q y  </CODE><BR>
+     <CODE>---------</CODE><BR>
+     <CODE>R</CODE><BR>
+ <DT>Effect 2:
+ <DD> <P>      
+      The disadvantage of Forward 1 is that often big applications have
+      to be typed in, with many arguments that are clear from the context.
+      In example 1 above, the argument y of H2 is clear from the context.
+      The second variant of Forward solves this problem; in the example
+      above we can just type<BR>
+      <CODE>Forward H2 On H3</CODE><BR>
+      which gives the same effect.
+      </P>
+
+      <P>
+      The second variant of Forward tries to make a proof-term of the
+      form<BR>
+      <VAR>term</VAR> .. <VAR>term1</VAR> .. <VAR>term2</VAR> .. etc. .. 
+      <VAR>termn</VAR><BR>
+      where on each place with dots zero or more terms are inserted, to
+      make the term well-typed. The terms that are inserted are either
+      found by matching, or become new goals.
+      In this way, forward reasoning is much easier.
+      </P>
+
+      <P> 
+      If <VAR>term</VAR> is a local variable <VAR>v</VAR>,
+      and we use only 'arrow-elimination' to obtain the new assumption,
+      this variable <VAR>v</VAR> is hidden.<BR> 
+      </P>
+ <DT>Example 2:
+ <DD>Suppose our goal is<BR>
+     <CODE>lem : @x,y,z : Int. x&lt;y -&gt; y&lt;z -&gt; x&lt;z</CODE><BR>
+     <CODE>H1 : a&lt;b</CODE><BR>
+     <CODE>H2 : b&lt;c</CODE><BR>
+     <CODE>---------</CODE><BR>
+     <CODE>R</CODE><BR>
+     Then the tactic <CODE>Forward lem On H1, H2</CODE> results in a new
+     assumption<BR>
+     <CODE>H3 : a&lt;c</CODE><BR>
+ <DT>See also:
+ <DD><A HREF="#First"><CODE>First</CODE></A>,
+     <A HREF="#Exact"><CODE>Exact</CODE></A>,
+     <A HREF="#Intro"><CODE>Intro</CODE></A>,
+     <A HREF="#Hide"><CODE>Hide</CODE></A>
+</DL>

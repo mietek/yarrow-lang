@@ -1,0 +1,344 @@
+-- File: logic
+
+-- This file introduces predicate logic.
+-- It consists of two parts.
+-- 1. Axioms, corresponding to Section 4.5
+-- 2. Library, corresponding to Section 4.6
+
+Load "lambdaL"
+
+-----------------------
+-----------------------
+--                   --
+--  1.  A X I O M S  --
+--                   --
+-----------------------
+-----------------------
+
+Def False := @P:*p.P
+                                   
+Def True := @P:*p.P->P
+
+Def Not := \P:*p. P->False
+      
+Def (/\) := \P,Q:*p. (@R:*p. (P->Q->R)->R)
+InfixR 3 (/\)
+-- Name in lemmas: And
+
+Def (\/) := \P,Q:*p. (@R:*p.(P->R)->(Q->R)->R)
+InfixR 2 (\/)
+-- Name in lemmas: Or
+
+-- Existential quantification over a datatype
+Def Ex := \A:*s.\P:A->*p.@Q:*p. (@x:A.P x->Q) -> Q
+Implicit 1 Ex
+Binder Ex
+
+-- We define existential quantifications over propkinds for three categories
+-- of propkinds, viz. over propkinds of the form
+--    *p       (exis. quant. over propositions, denoted by ExP), 
+--    A->*p    (exis. quant. over predicates, denoted by ExQ,
+--              which is polymorphic in A:*s), and
+--    A->B->*p (exis. quant. over relations, denoted by ExR, 
+--              which is polymorphic in A,B:*s)
+-- (See Remark 4.5.2 on page 88)
+
+-- existential quantification over propositions
+Def ExP := \P:*p->*p. @Q:*p. (@X:*p. P X -> Q) -> Q
+Binder ExP
+
+-- existential quantification over predicates
+Def ExQ := \A:*s.\P:(A->*p)->*p. @Q:*p. (@X:(A->*p). P X -> Q) -> Q
+Implicit 1 ExQ
+Binder ExQ
+
+-- existential quantification over relations
+Def ExR := \A,B:*s.\P:(A->B->*p)->*p. @Q:*p. (@X:A->B->*p. P X -> Q) -> Q
+Implicit 2 ExR
+Binder ExR
+
+-- existential quantification over kind *s
+Def ExK := \P:*s->*p. @Q:*p. (@X:*s. P X -> Q) -> Q
+Binder ExK
+
+-- Leibniz' equality
+Def (=) := \A:*s.\x,y:A. @P:A->*p. P x -> P y
+Infix 4 (=)
+Implicit 1 (=)
+-- prefix name: is
+
+Var classic : @P:*p. Not (Not P) -> P
+
+-- the axiom of extensionality for ordinary functions
+Var is_arrow :  @A,B:*s.@f,g:A->B. (@x:A. f x = g x) -> f = g
+
+-- the axiom of extensionality for polymorphic functions
+-- We introduce this axiom only for kind *s.
+-- (See Remark 4.5.2 on page 88.)
+Var is_pi1 : @A:*s->*s. @f,g:(@X:*s. A X). (@X:*s. f X = g X) -> f = g
+
+-- We define Leibniz' equality for prop-constructors for three categories
+-- of propkinds, viz. over propkinds of the form
+--    *p       (equality of propositions, denoted by <=>),
+--    A->*p    (equality of predicates, denoted by <==>,
+--              which is polymorphic in A:*s), and
+--    A->B->*p (equality of relations, denoted by <===>, 
+--              which is polymorphic in A,B:*s).
+-- (See Remark 4.5.2 on page 88.)
+
+Def (<=>) := \P,Q:*p. @R:*p->*p. R P -> R Q
+Infix 1 (<=>)
+
+Var equiv_prop : @P,Q:*p. (P->Q) -> (Q->P) -> (P<=>Q)
+
+-- Equiv met K = A->*p.
+Def (<==>) := \A:*s. \P,Q:A->*p. @R:(A->*p)->*p. R P -> R Q
+Implicit 1 (<==>)
+Infix 1 (<==>)
+
+-- Equiv met K = A->B->*p.
+Def (<===>) := \A,B:*s. \P,Q:A->B->*p. @R:(A->B->*p)->*p. R P -> R Q
+Implicit 2 (<===>)
+Infix 1 (<===>)
+
+-- The axiom scheme equiv_pred for propkinds is only introduced for
+-- unary predicates and relations.
+-- (See Remark 4.5.2 on page 88.)
+Var equiv_predQ : @A:*s. @P,Q:A->*p. (@a:A. P a <=> Q a) -> P <==> Q
+
+Var equiv_predR : @A,B:*s. @P,Q:A->B->*p. (@a:A.@b:B. P a b <=> Q a b) -> 
+                                          P <===> Q
+
+
+-------------------------
+-------------------------
+--                     --
+--  2.  L I B R A R Y  --
+--                     --
+-------------------------
+-------------------------
+
+Prove ex_falso : @P:*p. False->P
+Unfold False
+Intro P,H
+Apply H
+Exit
+
+-- Indicate that this lemma must used by the FalseE tactic
+Use FalseE ex_falso                           
+  
+Prove Not_i : @P:*p. (P->False) -> Not P
+Intros
+Assumption
+Exit
+
+-- Indicate that this lemma must used by the NotI tactic
+Use NotI Not_i
+
+Prove Not_e : @P:*p. Not P -> P -> False
+Intro P,H
+Assumption
+Exit
+
+-- Indicate that this lemma must used by the NotE tactic
+Use NotE Not_e
+
+Prove true_True : True
+Unfold True
+Intro P,H
+Apply H
+Exit
+           
+Prove And_i : @P,Q:*p. P -> Q -> P/\Q
+Unfold (/\)
+Intro P,Q,HP,HQ,R,HI
+Apply HI Then Assumption
+Exit
+
+-- Indicate that this lemma must used by the AndI tactic
+Use AndI And_i
+
+Prove And_el : @P,Q:*p. P/\Q -> P
+Intro P,Q,H
+Apply H Then Intro H2,H3
+Assumption
+Exit
+
+-- Indicate that this lemma must used by the AndEL tactic
+Use AndEL And_el
+
+Prove And_er : @P,Q:*p. P/\Q -> Q
+Intro P,Q,H
+Apply H Then Intro H2,H3
+Assumption
+Exit
+
+-- Indicate that this lemma must used by the AndER tactic
+Use AndER And_er
+
+Prove And_sym : @P,Q:*p. P/\Q -> Q/\P
+Intro P,Q,H
+AndE H
+AndI Then Assumption
+Exit
+
+Prove And_assoc : @P,Q,R:*p. P/\(Q/\R) -> (P/\Q)/\R
+Intros
+AndE H
+AndE H2
+AndI Then Try Assumption
+AndI Then Try Assumption
+Exit
+
+Prove Or_il : @P,Q:*p. P -> P\/Q
+Unfold (\/)
+Intro P,Q,HP,R,HPR,HQR
+Apply HPR
+Assumption
+Exit
+
+-- Indicate that this lemma must used by the OrIL tactic
+Use OrIL Or_il
+
+Prove Or_ir : @P,Q:*p. Q -> P\/Q
+Unfold (\/)
+Intro P,Q,HP,R,HPR,HQR
+Apply HQR
+Assumption
+Exit
+
+-- Indicate that this lemma must used by the OrIR tactic
+Use OrIR Or_ir
+
+Prove Or_e : @P,Q,R:*p. P\/Q -> (P->R) -> (Q->R) -> R
+Intros
+Apply H Then Intro
+Apply H1 Then Assumption
+Apply H2 Then Assumption
+Exit
+
+-- Indicate that this lemma must used by the OrE tactic
+Use OrE Or_e
+
+Prove Or_sym : @P,Q:*p. P\/Q -> Q\/P
+Intro P,Q,H
+OrE H
+OrIR
+Assumption
+OrIL
+Assumption
+Exit
+
+Prove Or_assoc : @P,Q,R:*p. P\/Q\/R -> (P\/Q)\/R
+Intros
+OrE H
+OrIL
+OrIL
+Assumption
+OrE H1
+OrIL
+OrIR
+Assumption
+OrIR
+Assumption
+Exit
+
+-- The next lemma is used by the ExistsI tactic. Therefore we should not
+-- write Ex x:A. P x, this is not the correct form for this tactic.
+Prove Ex_i : @A:*s.@x:A.@P:A->*p. P x -> (Ex) P
+Unfold Ex
+Intro A,x,P,HPx,Q,H
+Apply H x
+Assumption
+Exit
+
+Use ExistsI Ex_i
+
+-- The next lemma is used by the ExistsE tactic.
+Prove Ex_e : @A:*s.@P:A->*p.@R:*p. (Ex) P -> (@x:A. P x -> R) -> R
+Unfold Ex
+Intro A,P,R,H
+Apply H
+Exit
+Use ExistsE Ex_e
+
+Prove is_refl : @A:*s.@x:A. x=x
+Unfold (=)
+Intro A,x,P,H
+Assumption
+Exit
+
+-- Indicate that this lemma must used by the Refl tactic
+Use Refl is_refl
+
+Prove is_elim_r : @A:*s.@x,y:A.@P:A->*p. x=y -> P x -> P y
+Intros
+Apply H
+Assumption
+Exit
+
+-- Indicate that this lemma must used by the Lewrite tactic
+Use Lewrite is_elim_r
+
+Prove is_elim_l : @A:*s.@x,y:A.@P:A->*p. x=y -> P y -> P x
+Intros 5
+Lewrite H
+Intro
+Assumption
+Exit
+
+-- Indicate that this lemma must used by the Rewrite tactic
+Use Rewrite is_elim_l
+
+             
+Prove is_sym : @A:*s.@x,y:A. x=y -> y=x
+Intros
+Rewrite H
+Refl
+Exit
+
+Prove is_trans : @A:*s.@x,y,z:A. x=y -> y=z -> x=z
+Intro A,x,y,z,H1,H2
+Rewrite H1
+Assumption
+Exit
+
+
+Prove exm : @P:*p. P \/ Not P
+Intro P
+Apply classic
+NotI
+NotE H
+OrIR
+NotI
+NotE H
+OrIL
+Assumption
+Exit
+   
+Prove contrapos : @P,Q:*p.(Not P -> Q) -> (Not Q -> P)
+Intro P, Q, H1, H2
+Apply classic
+NotI
+NotE H2
+Apply H1
+Assumption
+Exit
+
+Prove impl__Or : @P,Q:*p. (Not P -> Q) -> P \/ Q
+Intro P, Q, H1
+OrE exm P
+OrIL
+Assumption
+OrIR
+Apply H1 Then Assumption
+Exit
+
+Prove add_negat : @P:*p. (Not P -> P) -> P
+Intro P, H1
+Apply classic
+NotI
+NotE H
+Apply H1
+Assumption
+Exit

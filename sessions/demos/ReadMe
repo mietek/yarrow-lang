@@ -1,0 +1,7 @@
+This directory contains demonstrations of features of Yarrow.
+There are the following files:
+ - infix    demonstrates infix notation.
+ - rewrite  demonstrates the rewrite tactic.
+
+Jan Zwanenburg, 19-1-'97
+

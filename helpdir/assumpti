@@ -1,0 +1,9 @@
+<DL>
+ <DT>Syntax:
+ <DD><CODE>Assumption</CODE>
+ <DT>Effect:
+ <DD> This tactic directly proves the goal if a variable
+               with this type is in the local or global context.
+ <DT>See also:
+ <DD><A HREF="#Exact"><CODE>Exact</CODE></A>
+</DL>

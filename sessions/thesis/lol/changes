@@ -1,0 +1,38 @@
+
+Directory thesis/lol
+* the part of logic that was not in my thesis is now in lolExtra/logic2
+* less and less_p are now in nat
+* list2 is now in list
+* laterUsed/plus is now in lolExtra/nat2
+
+Directory thesis/lolplus
+* sigma is now included in lambdaLplus
+* bag1,2,3 ipv exampleBag*
+* Heel veel uit PERs gehaald, en totaal omgegooid, resultaat heet prelims.
+
+
+
+
+
+Notes for Yarrow:
+
+***********************************************
+In file sort:
+
+Prove Perm_sort : @l:List Nat. Perm (sort l) l
+Apply indlist
+Rewrite sort_nil
+Apply Perm_refl
+Intros
+Rewrite sort_cons
+Forward Perm_cons On a, H
+-- volgende commando duurt superlang! Omdat er een falende match
+-- (a ; sort as)  met  (insert a (sort as))
+-- geprobeerd wordt
+Apply Perm_trans On H1                                               
+-- Dit commando duurt ook vrij lang. Onduidelijk waarom.
+Apply Perm_insert
+Exit
+***********************************************
+
+

@@ -1,0 +1,16 @@
+* Bij Sim
+   Sim inductief? Nee, het is dan heel moeilijk (onmogelijk) iets over
+   Sim te bewijzen, omdat Sim inductief over de datatypen is.
+   Beschouw als veel eenvoudiger voorbeeld met hetzelfde probleem:
+   
+   Var Nat:*s
+   Var O:Nat
+   
+   Def Test := \T:*s. \t:T. @P:(@T:*s.T->*p). P Nat O -> P T t
+   
+   prove Test_Nat_O : Test Nat O
+      Geen probleem
+   Prove Test_Nat_ : @n:Nat. Test Nat n -> n=O
+   Ik zie niet in hoe dit zou moeten
+
+* Uit Parametricity.ys gegooid: examples.  

@@ -1,0 +1,52 @@
+-- File: bool
+
+-- This file introduces the booleans.
+-- It consists of two parts.
+-- 1. Axioms, corresponding to Section 4.5
+-- 2. Library, corresponding to Section 4.6
+
+
+Load "lambdaL"
+Load "logic"
+
+-----------------------
+-----------------------
+--                   --
+--  1.  A X I O M S  --
+--                   --
+-----------------------
+-----------------------
+
+Var Bool : *s
+Var true : Bool
+Var false : Bool
+Var if : @A:*s. Bool -> A -> A -> A
+Implicit 1 if
+
+Var if_true  : @A:*s. @x,y:A. if true x y = x
+Var if_false : @A:*s. @x,y:A. if false x y = y
+
+Var indbool : @P:Bool->*p. P true -> P false -> (@b:Bool. P b)
+
+Var true_is_false_ : Not (true=false)
+
+-------------------------
+-------------------------
+--                     --
+--  2.  L I B R A R Y  --
+--                     --
+-------------------------
+-------------------------
+
+Prove false_is_true_ : Not (false=true)
+NotI
+NotE true_is_false_
+Apply is_sym
+Assumption
+Exit
+
+Prove exh_bool : @b:Bool. b=true \/ b=false
+Apply indbool
+OrIL Then Refl
+OrIR Then Refl
+Exit

@@ -1,0 +1,604 @@
+<HTML>
+<HEAD>
+<TITLE>lol/nat (with proofs)</TITLE>
+</HEAD>
+<BODY BGCOLOR="#FFFFFF", TEXT="#000000">
+<PRE><FONT COLOR="#000000"></FONT><FONT COLOR="#000000">-- File: nat
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#000000">-- This file introduces the natural numbers.
+</FONT><FONT COLOR="#000000">-- It consists of two parts.
+</FONT><FONT COLOR="#000000">-- 1. Axioms, corresponding to Section 4.5
+</FONT><FONT COLOR="#000000">-- 2. Library, corresponding to Section 4.6
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#000000">-- naming conventions for lemmas:
+</FONT><FONT COLOR="#000000">-- variables for Nats are m,n,p
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#000000">Load "lambdaL"
+</FONT><FONT COLOR="#000000">Load "logic"
+</FONT><FONT COLOR="#000000">Load "bool"
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#000000">-----------------------
+</FONT><FONT COLOR="#000000">-----------------------
+</FONT><FONT COLOR="#000000">--                   --
+</FONT><FONT COLOR="#000000">--  1.  A X I O M S  --
+</FONT><FONT COLOR="#000000">--                   --
+</FONT><FONT COLOR="#000000">-----------------------
+</FONT><FONT COLOR="#000000">-----------------------
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#FF0000">Var Nat : *s
+</FONT><FONT COLOR="#FF0000">Var O : Nat
+</FONT><FONT COLOR="#FF0000">Var S : Nat -&gt; Nat
+</FONT><FONT COLOR="#FF0000">Var primrecnat : @B:*s.B-&gt;(Nat-&gt;B-&gt;B)-&gt; Nat -&gt; B
+</FONT><FONT COLOR="#000000">Implicit 1 primrecnat
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#FF0000">Var primrecnat_O : @B:*s.@nv:B.@sv:Nat-&gt;B-&gt;B. primrecnat nv sv O = nv
+</FONT><FONT COLOR="#FF0000">Var primrecnat_Sm : @B:*s.@nv:B.@sv:Nat-&gt;B-&gt;B.@m:Nat. 
+</FONT><FONT COLOR="#FF0000">                       primrecnat nv sv (S m) = sv m (primrecnat nv sv m)
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#FF0000">Var indnat : @P:Nat-&gt;*p. (P O) -&gt; (@m:Nat.P m -&gt; P (S m)) -&gt; (@m:Nat.P m)
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#000000">-------------------------
+</FONT><FONT COLOR="#000000">-------------------------
+</FONT><FONT COLOR="#000000">--                     --
+</FONT><FONT COLOR="#000000">--  2.  L I B R A R Y  --
+</FONT><FONT COLOR="#000000">--                     --
+</FONT><FONT COLOR="#000000">-------------------------
+</FONT><FONT COLOR="#000000">-------------------------
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#000000">-----------------
+</FONT><FONT COLOR="#000000">-- predecessor --
+</FONT><FONT COLOR="#000000">-----------------
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#0000FF">Def pred := primrecnat O (\m,n:Nat.m)
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#0000FF">Prove pred_O : pred O = O
+</FONT><FONT COLOR="#000000">Unfold pred
+</FONT><FONT COLOR="#000000">Rewrite primrecnat_O
+</FONT><FONT COLOR="#000000">Refl
+</FONT><FONT COLOR="#000000">Exit
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#0000FF">Prove pred_Sm : @m:Nat. pred (S m) = m
+</FONT><FONT COLOR="#000000">Intro m
+</FONT><FONT COLOR="#000000">Unfold pred
+</FONT><FONT COLOR="#000000">Rewrite primrecnat_Sm
+</FONT><FONT COLOR="#000000">Refl
+</FONT><FONT COLOR="#000000">Exit
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#000000">--------------------------------------
+</FONT><FONT COLOR="#000000">-- O and S are different injections --
+</FONT><FONT COLOR="#000000">--------------------------------------
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#0000FF">Prove O_is_Sm_ : @m:Nat. Not (O=S m)
+</FONT><FONT COLOR="#000000">Intro
+</FONT><FONT COLOR="#000000">NotI
+</FONT><FONT COLOR="#000000">Let f := primrecnat false (\dummy:Nat.\b:Bool. true)
+</FONT><FONT COLOR="#000000">NotE false_is_true_
+</FONT><FONT COLOR="#000000">First f O = f (S m)
+</FONT><FONT COLOR="#000000">Rewrite H
+</FONT><FONT COLOR="#000000">Refl
+</FONT><FONT COLOR="#000000">Unfold f
+</FONT><FONT COLOR="#000000">Rewrite primrecnat_O
+</FONT><FONT COLOR="#000000">Rewrite primrecnat_Sm
+</FONT><FONT COLOR="#000000">Intro
+</FONT><FONT COLOR="#000000">Assumption
+</FONT><FONT COLOR="#000000">Exit
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#0000FF">Prove Sm_is_O_ : @m:Nat. Not (S m=O)
+</FONT><FONT COLOR="#000000">Intros
+</FONT><FONT COLOR="#000000">NotI
+</FONT><FONT COLOR="#000000">NotE O_is_Sm_ On m
+</FONT><FONT COLOR="#000000">Apply is_sym
+</FONT><FONT COLOR="#000000">Assumption
+</FONT><FONT COLOR="#000000">Exit
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#0000FF">Prove Sm_is_Sn_ : @m,n:Nat. S m = S n -&gt; m = n
+</FONT><FONT COLOR="#000000">Intro m, n, H
+</FONT><FONT COLOR="#000000">Lewrite 2 pred_Sm
+</FONT><FONT COLOR="#000000">Lewrite 1 pred_Sm
+</FONT><FONT COLOR="#000000">Rewrite H
+</FONT><FONT COLOR="#000000">Refl
+</FONT><FONT COLOR="#000000">Exit
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#0000FF">Prove m_is_Sm_ : @m:Nat. Not (m= S m)
+</FONT><FONT COLOR="#000000">Apply indnat
+</FONT><FONT COLOR="#000000">Apply O_is_Sm_
+</FONT><FONT COLOR="#000000">Intro m, H
+</FONT><FONT COLOR="#000000">Unfold Not
+</FONT><FONT COLOR="#000000">Intro H1
+</FONT><FONT COLOR="#000000">Apply H
+</FONT><FONT COLOR="#000000">Apply Sm_is_Sn_
+</FONT><FONT COLOR="#000000">Assumption
+</FONT><FONT COLOR="#000000">Exit
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#000000">-------------
+</FONT><FONT COLOR="#000000">-- iternat --
+</FONT><FONT COLOR="#000000">-------------
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#0000FF">Def iternat := \B:*s. \nv:B. \sv: B-&gt;B. primrecnat nv (\dummy:Nat. sv) :
+</FONT><FONT COLOR="#0000FF">               @B:*s.B-&gt;(B-&gt;B)-&gt; Nat -&gt; B
+</FONT><FONT COLOR="#000000">Implicit 1 iternat
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#0000FF">Prove iternat_O : @B:*s.@nv:B.@sv: B-&gt;B. iternat nv sv O = nv
+</FONT><FONT COLOR="#000000">Intros
+</FONT><FONT COLOR="#000000">Unfold iternat
+</FONT><FONT COLOR="#000000">Apply primrecnat_O
+</FONT><FONT COLOR="#000000">Exit
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#0000FF">Prove iternat_Sm : @B:*s.@nv:B.@sv:B-&gt;B.@m:Nat. 
+</FONT><FONT COLOR="#0000FF">                       iternat nv sv (S m) = sv (iternat nv sv m)
+</FONT><FONT COLOR="#000000">Intros
+</FONT><FONT COLOR="#000000">Unfold iternat
+</FONT><FONT COLOR="#000000">Apply primrecnat_Sm
+</FONT><FONT COLOR="#000000">Exit
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#000000">----------------------------
+</FONT><FONT COLOR="#000000">-- double induction lemma --
+</FONT><FONT COLOR="#000000">----------------------------
+</FONT><FONT COLOR="#000000">  
+</FONT><FONT COLOR="#000000">-- This lemma of double induction will be very useful for proving properties
+</FONT><FONT COLOR="#000000">-- about functions that compare two natural numbers in some way.
+</FONT><FONT COLOR="#0000FF">Prove nat_double_ind : @R:Nat-&gt;Nat-&gt;*p. (@m:Nat.R O m) -&gt; 
+</FONT><FONT COLOR="#0000FF">                                        (@m:Nat. R (S m) O) -&gt; 
+</FONT><FONT COLOR="#0000FF">                                        (@m,n:Nat. R m n -&gt; R (S m) (S n)) -&gt;
+</FONT><FONT COLOR="#0000FF">                                        (@m,n:Nat. R m n)
+</FONT><FONT COLOR="#000000">Intro R, H, H1, H2
+</FONT><FONT COLOR="#000000">Apply indnat
+</FONT><FONT COLOR="#000000">Assumption
+</FONT><FONT COLOR="#000000">Intro m, H3
+</FONT><FONT COLOR="#000000">Apply indnat
+</FONT><FONT COLOR="#000000">Apply H1
+</FONT><FONT COLOR="#000000">Intros
+</FONT><FONT COLOR="#000000">Apply H2
+</FONT><FONT COLOR="#000000">Apply H3
+</FONT><FONT COLOR="#000000">Exit
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#000000">-------------------
+</FONT><FONT COLOR="#000000">-- less or equal --
+</FONT><FONT COLOR="#000000">-------------------
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#000000">-- Name in lemmas: Le
+</FONT><FONT COLOR="#0000FF">Def (&lt;=) := \m,n:Nat. @R:Nat-&gt;*p. R m -&gt; (@p:Nat. R p -&gt; R (S p)) -&gt; R n
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#0000FF">Prove Le_refl : @m:Nat. m&lt;=m
+</FONT><FONT COLOR="#000000">Unfold (&lt;=)
+</FONT><FONT COLOR="#000000">Intro m, R, H1, H2 Then Assumption
+</FONT><FONT COLOR="#000000">Exit
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#0000FF">Prove m_Le_Sn : @m,n:Nat. m&lt;=n -&gt; m&lt;= S n
+</FONT><FONT COLOR="#000000">Intro m, n, H
+</FONT><FONT COLOR="#000000">Unfold (&lt;=)
+</FONT><FONT COLOR="#000000">Intro R, H1, H2
+</FONT><FONT COLOR="#000000">Apply H2
+</FONT><FONT COLOR="#000000">Apply H Then Assumption
+</FONT><FONT COLOR="#000000">Exit
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#0000FF">Prove Le_ind : @m:Nat. @P:Nat-&gt;*p. P m -&gt; (@n:Nat. m&lt;=n -&gt; P n -&gt; P (S n)) -&gt;
+</FONT><FONT COLOR="#0000FF">                                     @n:Nat. m&lt;=n -&gt; P n
+</FONT><FONT COLOR="#000000">Intros
+</FONT><FONT COLOR="#000000">Apply H2 (\q:Nat. m&lt;=q /\ P q)
+</FONT><FONT COLOR="#000000">Focus 3 
+</FONT><FONT COLOR="#000000">Intros Then Assumption
+</FONT><FONT COLOR="#000000">AndI
+</FONT><FONT COLOR="#000000">Apply Le_refl
+</FONT><FONT COLOR="#000000">Assumption
+</FONT><FONT COLOR="#000000">Intros
+</FONT><FONT COLOR="#000000">AndE H3
+</FONT><FONT COLOR="#000000">AndI
+</FONT><FONT COLOR="#000000">Apply m_Le_Sn
+</FONT><FONT COLOR="#000000">Assumption
+</FONT><FONT COLOR="#000000">Apply H1
+</FONT><FONT COLOR="#000000">Assumption
+</FONT><FONT COLOR="#000000">Assumption
+</FONT><FONT COLOR="#000000">Exit
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#0000FF">Prove O_Le_m : @m:Nat. O &lt;= m
+</FONT><FONT COLOR="#000000">Apply indnat
+</FONT><FONT COLOR="#000000">Apply Le_refl
+</FONT><FONT COLOR="#000000">Intro n, H
+</FONT><FONT COLOR="#000000">Apply m_Le_Sn
+</FONT><FONT COLOR="#000000">Assumption
+</FONT><FONT COLOR="#000000">Exit
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#0000FF">Prove Sm_Le_Sn : @m,n:Nat. m &lt;= n -&gt; S m &lt;= S n
+</FONT><FONT COLOR="#000000">Intro m, n, H
+</FONT><FONT COLOR="#000000">Pattern n
+</FONT><FONT COLOR="#000000">Apply H
+</FONT><FONT COLOR="#000000">Apply Le_refl
+</FONT><FONT COLOR="#000000">Intro p, H1
+</FONT><FONT COLOR="#000000">Apply m_Le_Sn
+</FONT><FONT COLOR="#000000">Assumption
+</FONT><FONT COLOR="#000000">Exit
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#0000FF">Prove Le_trans : @m,n,p:Nat. m&lt;=n -&gt; n&lt;=p -&gt; m&lt;=p
+</FONT><FONT COLOR="#000000">Intro m, n, p, H1, H2
+</FONT><FONT COLOR="#000000">Apply H2
+</FONT><FONT COLOR="#000000">Assumption
+</FONT><FONT COLOR="#000000">Intro p', H3
+</FONT><FONT COLOR="#000000">Apply m_Le_Sn
+</FONT><FONT COLOR="#000000">Assumption
+</FONT><FONT COLOR="#000000">Exit
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#0000FF">Prove m_Le_Sm : @m:Nat. m &lt;= S m
+</FONT><FONT COLOR="#000000">Intro m
+</FONT><FONT COLOR="#000000">Apply m_Le_Sn
+</FONT><FONT COLOR="#000000">Apply Le_refl
+</FONT><FONT COLOR="#000000">Exit
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#0000FF">Prove predm_Le_m : @m:Nat. pred m &lt;= m
+</FONT><FONT COLOR="#000000">Apply indnat
+</FONT><FONT COLOR="#000000">Rewrite pred_O
+</FONT><FONT COLOR="#000000">Apply Le_refl
+</FONT><FONT COLOR="#000000">Intro m, H
+</FONT><FONT COLOR="#000000">Rewrite pred_Sm
+</FONT><FONT COLOR="#000000">Apply m_Le_Sm
+</FONT><FONT COLOR="#000000">Exit
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#0000FF">Prove Sm_Le_Sn_ : @m,n:Nat. S m &lt;= S n -&gt; m &lt;= n
+</FONT><FONT COLOR="#000000">Intro m,n,H
+</FONT><FONT COLOR="#000000">Lewrite 2 pred_Sm
+</FONT><FONT COLOR="#000000">Lewrite pred_Sm
+</FONT><FONT COLOR="#000000">Pattern S n
+</FONT><FONT COLOR="#000000">Apply H
+</FONT><FONT COLOR="#000000">Apply Le_refl
+</FONT><FONT COLOR="#000000">Intro p,H1
+</FONT><FONT COLOR="#000000">Apply Le_trans On H1
+</FONT><FONT COLOR="#000000">Rewrite pred_Sm
+</FONT><FONT COLOR="#000000">Apply predm_Le_m
+</FONT><FONT COLOR="#000000">Exit
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#0000FF">Prove Sm_Le_n_ : @m,n:Nat. S m &lt;= n -&gt; m &lt;= n
+</FONT><FONT COLOR="#000000">Intro m, n, H
+</FONT><FONT COLOR="#000000">Apply Le_trans On H
+</FONT><FONT COLOR="#000000">Apply m_Le_Sm
+</FONT><FONT COLOR="#000000">Exit
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#0000FF">Prove Sm_Le_O_ : @m:Nat. Not (S m &lt;= O)
+</FONT><FONT COLOR="#000000">Intro Then NotI
+</FONT><FONT COLOR="#000000">Let R := \m:Nat. Not (O=m)
+</FONT><FONT COLOR="#000000">Cut R O
+</FONT><FONT COLOR="#000000">Unfold R Then Intro H1
+</FONT><FONT COLOR="#000000">NotE H1
+</FONT><FONT COLOR="#000000">Refl
+</FONT><FONT COLOR="#000000">Apply H
+</FONT><FONT COLOR="#000000">Unfold R
+</FONT><FONT COLOR="#000000">Apply O_is_Sm_
+</FONT><FONT COLOR="#000000">Intro p, H1
+</FONT><FONT COLOR="#000000">Unfold R
+</FONT><FONT COLOR="#000000">Apply O_is_Sm_
+</FONT><FONT COLOR="#000000">Exit
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#0000FF">Prove Sm_Le_m_ : @m:Nat. Not (S m &lt;= m)
+</FONT><FONT COLOR="#000000">Apply indnat
+</FONT><FONT COLOR="#000000">Apply Sm_Le_O_
+</FONT><FONT COLOR="#000000">Intro m, H
+</FONT><FONT COLOR="#000000">NotI
+</FONT><FONT COLOR="#000000">Apply H
+</FONT><FONT COLOR="#000000">Apply Sm_Le_Sn_
+</FONT><FONT COLOR="#000000">Assumption
+</FONT><FONT COLOR="#000000">Exit
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#0000FF">Prove Le_antisym : @m,n:Nat. m&lt;=n -&gt; n&lt;=m -&gt; m=n
+</FONT><FONT COLOR="#000000">Intro m,n,H
+</FONT><FONT COLOR="#000000">Apply H
+</FONT><FONT COLOR="#000000">Intro Then Refl
+</FONT><FONT COLOR="#000000">Intro p,H1,H2
+</FONT><FONT COLOR="#000000">FalseE
+</FONT><FONT COLOR="#000000">Apply Sm_Le_m_ p
+</FONT><FONT COLOR="#000000">Apply Le_trans On H2
+</FONT><FONT COLOR="#000000">Forward Sm_Le_n_ On H2
+</FONT><FONT COLOR="#000000">Forward H1 On H3
+</FONT><FONT COLOR="#000000">Rewrite H4
+</FONT><FONT COLOR="#000000">Apply Le_refl
+</FONT><FONT COLOR="#000000">Exit
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#0000FF">Prove m_Le_O_ : @m:Nat. m &lt;= O -&gt; m=O
+</FONT><FONT COLOR="#000000">Intro m, H
+</FONT><FONT COLOR="#000000">Apply Le_antisym Then Try Assumption
+</FONT><FONT COLOR="#000000">Apply O_Le_m
+</FONT><FONT COLOR="#000000">Exit
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#000000">---------------
+</FONT><FONT COLOR="#000000">-- Less than --
+</FONT><FONT COLOR="#000000">---------------
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#000000">-- Name in lemmas: Lt
+</FONT><FONT COLOR="#0000FF">Def (&lt;) := \m,n:Nat. S m &lt;= n
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#0000FF">Prove m_Lt_n__Sm_Le_n : @m,n:Nat. m&lt;n -&gt; S m &lt;= n
+</FONT><FONT COLOR="#000000">Intros
+</FONT><FONT COLOR="#000000">Assumption
+</FONT><FONT COLOR="#000000">Exit
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#0000FF">Prove Sm_Le_n__m_Lt_n : @m,n:Nat. S m &lt;= n -&gt; m&lt;n
+</FONT><FONT COLOR="#000000">Intros
+</FONT><FONT COLOR="#000000">Assumption
+</FONT><FONT COLOR="#000000">Exit
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#000000">-- We try to define the same lemmas, in the same order, as for &lt;=.
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#0000FF">Prove m_Lt_Sm : @m:Nat. m &lt; S m
+</FONT><FONT COLOR="#000000">Unfold (&lt;)
+</FONT><FONT COLOR="#000000">Intro
+</FONT><FONT COLOR="#000000">Apply Sm_Le_Sn
+</FONT><FONT COLOR="#000000">Apply Le_refl
+</FONT><FONT COLOR="#000000">Exit
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#0000FF">Prove m_Lt_Sn : @m,n:Nat. m &lt; n -&gt; m &lt; S n
+</FONT><FONT COLOR="#000000">Intros
+</FONT><FONT COLOR="#000000">Unfold (&lt;)
+</FONT><FONT COLOR="#000000">Apply m_Le_Sn
+</FONT><FONT COLOR="#000000">Assumption
+</FONT><FONT COLOR="#000000">Exit
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#0000FF">Prove O_Lt_Sm : @m:Nat. O &lt; S m
+</FONT><FONT COLOR="#000000">Unfold (&lt;)
+</FONT><FONT COLOR="#000000">Intro
+</FONT><FONT COLOR="#000000">Apply Sm_Le_Sn
+</FONT><FONT COLOR="#000000">Apply O_Le_m
+</FONT><FONT COLOR="#000000">Exit
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#0000FF">Prove Sm_Lt_Sn : @m,n:Nat. m &lt; n -&gt; S m &lt; S n
+</FONT><FONT COLOR="#000000">Unfold (&lt;)
+</FONT><FONT COLOR="#000000">Intros
+</FONT><FONT COLOR="#000000">Apply Sm_Le_Sn
+</FONT><FONT COLOR="#000000">Assumption
+</FONT><FONT COLOR="#000000">Exit
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#0000FF">Prove Sm_Lt_Sn_ :  @m,n:Nat. S m &lt; S n -&gt; m &lt; n
+</FONT><FONT COLOR="#000000">Unfold (&lt;)
+</FONT><FONT COLOR="#000000">Intros
+</FONT><FONT COLOR="#000000">Apply Sm_Le_Sn_
+</FONT><FONT COLOR="#000000">Assumption
+</FONT><FONT COLOR="#000000">Exit
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#0000FF">Prove m_Lt_O_ : @m:Nat. Not (m&lt;O)
+</FONT><FONT COLOR="#000000">Intro
+</FONT><FONT COLOR="#000000">Unfold (&lt;)
+</FONT><FONT COLOR="#000000">Apply Sm_Le_O_
+</FONT><FONT COLOR="#000000">Exit
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#0000FF">Prove m_Lt_m_ : @m:Nat. Not (m&lt;m)
+</FONT><FONT COLOR="#000000">Exact Sm_Le_m_
+</FONT><FONT COLOR="#000000">Exit
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#0000FF">Prove m_Lt_Sn__m_Le_n : @m,n:Nat. m &lt; S n -&gt; m &lt;= n
+</FONT><FONT COLOR="#000000">Intros
+</FONT><FONT COLOR="#000000">Apply Sm_Le_Sn_
+</FONT><FONT COLOR="#000000">Assumption
+</FONT><FONT COLOR="#000000">Exit
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#0000FF">Prove m_Le_n__m_Lt_Sn : @m,n:Nat. m&lt;=n -&gt; m &lt; S n
+</FONT><FONT COLOR="#000000">Intros
+</FONT><FONT COLOR="#000000">Unfold (&lt;)
+</FONT><FONT COLOR="#000000">Apply Sm_Le_Sn
+</FONT><FONT COLOR="#000000">Assumption
+</FONT><FONT COLOR="#000000">Exit
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#0000FF">Prove m_Lt_n__m_Le_n : @m,n:Nat. m&lt;n -&gt; m&lt;=n
+</FONT><FONT COLOR="#000000">Intros
+</FONT><FONT COLOR="#000000">Apply Sm_Le_n_
+</FONT><FONT COLOR="#000000">Assumption
+</FONT><FONT COLOR="#000000">Exit
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#0000FF">Prove O_nis_m__O_Lt_m : @m:Nat. Not (O=m) -&gt; O&lt;m
+</FONT><FONT COLOR="#000000">Apply indnat
+</FONT><FONT COLOR="#000000">Intro
+</FONT><FONT COLOR="#000000">FalseE
+</FONT><FONT COLOR="#000000">Apply H
+</FONT><FONT COLOR="#000000">Refl
+</FONT><FONT COLOR="#000000">Intros
+</FONT><FONT COLOR="#000000">Apply O_Lt_Sm
+</FONT><FONT COLOR="#000000">Exit
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#0000FF">Prove Lt__nis : @m,n:Nat. m&lt;n -&gt; Not (m=n)
+</FONT><FONT COLOR="#000000">Intros
+</FONT><FONT COLOR="#000000">NotI
+</FONT><FONT COLOR="#000000">Unfold (&lt;) In H
+</FONT><FONT COLOR="#000000">NotE Sm_Le_m_ On m
+</FONT><FONT COLOR="#000000">Rewrite 2 H1
+</FONT><FONT COLOR="#000000">Assumption
+</FONT><FONT COLOR="#000000">Exit
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#0000FF">Prove Lt_trans : @n,m,p:Nat. m&lt;n -&gt; n&lt;p -&gt; m&lt;p
+</FONT><FONT COLOR="#000000">Unfold (&lt;)
+</FONT><FONT COLOR="#000000">Intros
+</FONT><FONT COLOR="#000000">Apply Le_trans On H
+</FONT><FONT COLOR="#000000">Apply Sm_Le_n_
+</FONT><FONT COLOR="#000000">Assumption
+</FONT><FONT COLOR="#000000">Exit
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#0000FF">Prove Lt_Le_trans : @n,m,p:Nat. m&lt;n -&gt; n&lt;=p -&gt; m&lt;p
+</FONT><FONT COLOR="#000000">Unfold (&lt;)
+</FONT><FONT COLOR="#000000">Intros
+</FONT><FONT COLOR="#000000">Apply Le_trans On H
+</FONT><FONT COLOR="#000000">Assumption
+</FONT><FONT COLOR="#000000">Exit
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#0000FF">Prove Le_Lt_trans : @n,m,p:Nat. m&lt;=n -&gt; n&lt;p -&gt; m&lt;p
+</FONT><FONT COLOR="#000000">Unfold (&lt;)
+</FONT><FONT COLOR="#000000">Intros
+</FONT><FONT COLOR="#000000">Apply Le_trans On H1
+</FONT><FONT COLOR="#000000">Apply Sm_Le_Sn
+</FONT><FONT COLOR="#000000">Assumption
+</FONT><FONT COLOR="#000000">Exit
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#0000FF">Prove Le__Lt_Or_is : @m,n:Nat. m&lt;=n -&gt; m&lt;n \/ m=n
+</FONT><FONT COLOR="#000000">Intro
+</FONT><FONT COLOR="#000000">Apply Le_ind
+</FONT><FONT COLOR="#000000">OrIR
+</FONT><FONT COLOR="#000000">Refl
+</FONT><FONT COLOR="#000000">Intros
+</FONT><FONT COLOR="#000000">OrIL
+</FONT><FONT COLOR="#000000">OrE H1
+</FONT><FONT COLOR="#000000">Apply m_Lt_Sn
+</FONT><FONT COLOR="#000000">Assumption
+</FONT><FONT COLOR="#000000">Rewrite H2
+</FONT><FONT COLOR="#000000">Apply m_Lt_Sm
+</FONT><FONT COLOR="#000000">Exit
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#0000FF">Prove Le_Or_Gt : @m,n:Nat. m&lt;=n \/ n&lt;m
+</FONT><FONT COLOR="#000000">Apply nat_double_ind
+</FONT><FONT COLOR="#000000">Intro
+</FONT><FONT COLOR="#000000">OrIL
+</FONT><FONT COLOR="#000000">Apply O_Le_m
+</FONT><FONT COLOR="#000000">Intro
+</FONT><FONT COLOR="#000000">OrIR
+</FONT><FONT COLOR="#000000">Apply O_Lt_Sm
+</FONT><FONT COLOR="#000000">Intros
+</FONT><FONT COLOR="#000000">OrE H
+</FONT><FONT COLOR="#000000">OrIL
+</FONT><FONT COLOR="#000000">Apply Sm_Le_Sn
+</FONT><FONT COLOR="#000000">Assumption
+</FONT><FONT COLOR="#000000">OrIR
+</FONT><FONT COLOR="#000000">Apply Sm_Lt_Sn
+</FONT><FONT COLOR="#000000">Assumption
+</FONT><FONT COLOR="#000000">Exit
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#0000FF">Prove Le__Not_Gt : @m,n:Nat. m&lt;=n -&gt; Not (n&lt;m)
+</FONT><FONT COLOR="#000000">Apply nat_double_ind
+</FONT><FONT COLOR="#000000">Intros
+</FONT><FONT COLOR="#000000">Apply m_Lt_O_
+</FONT><FONT COLOR="#000000">Intros
+</FONT><FONT COLOR="#000000">FalseE
+</FONT><FONT COLOR="#000000">Apply Sm_Le_O_ On H
+</FONT><FONT COLOR="#000000">Intros
+</FONT><FONT COLOR="#000000">NotI
+</FONT><FONT COLOR="#000000">NotE H
+</FONT><FONT COLOR="#000000">Apply Sm_Le_Sn_
+</FONT><FONT COLOR="#000000">Assumption
+</FONT><FONT COLOR="#000000">Apply Sm_Lt_Sn_
+</FONT><FONT COLOR="#000000">Assumption
+</FONT><FONT COLOR="#000000">Exit
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#0000FF">Prove Not_Gt__Le : @m,n:Nat.  Not (n&lt;m) -&gt; m&lt;=n
+</FONT><FONT COLOR="#000000">Apply nat_double_ind
+</FONT><FONT COLOR="#000000">Intros
+</FONT><FONT COLOR="#000000">Apply O_Le_m
+</FONT><FONT COLOR="#000000">Intros
+</FONT><FONT COLOR="#000000">FalseE
+</FONT><FONT COLOR="#000000">NotE H
+</FONT><FONT COLOR="#000000">Apply O_Lt_Sm
+</FONT><FONT COLOR="#000000">Intros
+</FONT><FONT COLOR="#000000">Apply Sm_Le_Sn
+</FONT><FONT COLOR="#000000">Apply H
+</FONT><FONT COLOR="#000000">NotI
+</FONT><FONT COLOR="#000000">NotE H1
+</FONT><FONT COLOR="#000000">Apply Sm_Lt_Sn
+</FONT><FONT COLOR="#000000">Assumption
+</FONT><FONT COLOR="#000000">Exit
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#000000">-----------------------------------
+</FONT><FONT COLOR="#000000">-- boolean comparison of numbers --
+</FONT><FONT COLOR="#000000">-----------------------------------
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#000000">-- is_zero
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#0000FF">Def isZero := iternat true (\b:Bool. false) : Nat -&gt; Bool
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#0000FF">Prove isZero_O : isZero O = true
+</FONT><FONT COLOR="#000000">Unfold isZero
+</FONT><FONT COLOR="#000000">Apply iternat_O
+</FONT><FONT COLOR="#000000">Exit
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#0000FF">Prove isZero_Sm : @m:Nat. isZero (S m) = false
+</FONT><FONT COLOR="#000000">Intro
+</FONT><FONT COLOR="#000000">Unfold isZero
+</FONT><FONT COLOR="#000000">Apply iternat_Sm
+</FONT><FONT COLOR="#000000">Exit
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#000000">-- leq
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#0000FF">Def leq := \m,n:Nat. iternat (\m:Nat.isZero m) (
+</FONT><FONT COLOR="#0000FF">                         \le_Pn:Nat-&gt;Bool. \m:Nat.le_Pn (pred m)) n m: 
+</FONT><FONT COLOR="#0000FF">           Nat -&gt; Nat -&gt; Bool
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#0000FF">Prove leq_O_m : @m:Nat. leq O m = true
+</FONT><FONT COLOR="#000000">Unfold leq
+</FONT><FONT COLOR="#000000">Apply indnat
+</FONT><FONT COLOR="#000000">Rewrite iternat_O
+</FONT><FONT COLOR="#000000">Apply isZero_O
+</FONT><FONT COLOR="#000000">Intros
+</FONT><FONT COLOR="#000000">Rewrite iternat_Sm
+</FONT><FONT COLOR="#000000">Rewrite pred_O
+</FONT><FONT COLOR="#000000">Assumption
+</FONT><FONT COLOR="#000000">Exit
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#0000FF">Prove leq_Sm_O : @m:Nat. leq (S m) O = false
+</FONT><FONT COLOR="#000000">Intro
+</FONT><FONT COLOR="#000000">Unfold leq
+</FONT><FONT COLOR="#000000">Rewrite iternat_O
+</FONT><FONT COLOR="#000000">Apply isZero_Sm
+</FONT><FONT COLOR="#000000">Exit
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#0000FF">Prove leq_Sm_Sn : @m,n:Nat. leq (S m) (S n) = leq m n
+</FONT><FONT COLOR="#000000">Intros
+</FONT><FONT COLOR="#000000">Unfold 1 leq
+</FONT><FONT COLOR="#000000">Rewrite iternat_Sm
+</FONT><FONT COLOR="#000000">Rewrite pred_Sm
+</FONT><FONT COLOR="#000000">Refl
+</FONT><FONT COLOR="#000000">Exit
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#0000FF">Prove leq_true__Le : @m,n:Nat. leq m n = true -&gt; m &lt;= n
+</FONT><FONT COLOR="#000000">Apply nat_double_ind
+</FONT><FONT COLOR="#000000">Intros
+</FONT><FONT COLOR="#000000">Apply O_Le_m
+</FONT><FONT COLOR="#000000">Intros
+</FONT><FONT COLOR="#000000">FalseE
+</FONT><FONT COLOR="#000000">NotE false_is_true_
+</FONT><FONT COLOR="#000000">Lewrite H
+</FONT><FONT COLOR="#000000">Rewrite leq_Sm_O
+</FONT><FONT COLOR="#000000">Refl
+</FONT><FONT COLOR="#000000">Intros
+</FONT><FONT COLOR="#000000">Apply Sm_Le_Sn
+</FONT><FONT COLOR="#000000">Apply H
+</FONT><FONT COLOR="#000000">Lewrite H1
+</FONT><FONT COLOR="#000000">Rewrite leq_Sm_Sn
+</FONT><FONT COLOR="#000000">Refl
+</FONT><FONT COLOR="#000000">Exit
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#0000FF">Prove Le__leq_true : @m,n:Nat. m &lt;= n -&gt; leq m n = true
+</FONT><FONT COLOR="#000000">Apply nat_double_ind
+</FONT><FONT COLOR="#000000">Intros
+</FONT><FONT COLOR="#000000">Apply leq_O_m
+</FONT><FONT COLOR="#000000">Intros
+</FONT><FONT COLOR="#000000">FalseE
+</FONT><FONT COLOR="#000000">Apply Sm_Le_O_ On H
+</FONT><FONT COLOR="#000000">Intros
+</FONT><FONT COLOR="#000000">Rewrite leq_Sm_Sn
+</FONT><FONT COLOR="#000000">Apply H
+</FONT><FONT COLOR="#000000">Apply Sm_Le_Sn_
+</FONT><FONT COLOR="#000000">Assumption
+</FONT><FONT COLOR="#000000">Exit
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#0000FF">Prove Gt__leq_false : @m,n:Nat. n &lt; m -&gt; leq m n = false
+</FONT><FONT COLOR="#000000">Intros
+</FONT><FONT COLOR="#000000">OrE exh_bool On leq m n Then Try Assumption
+</FONT><FONT COLOR="#000000">Forward leq_true__Le On H2
+</FONT><FONT COLOR="#000000">FalseE
+</FONT><FONT COLOR="#000000">Apply Le__Not_Gt On H3
+</FONT><FONT COLOR="#000000">Assumption
+</FONT><FONT COLOR="#000000">Exit
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#0000FF">Prove leq_false__Gt : @m,n:Nat. leq m n = false -&gt; n &lt; m
+</FONT><FONT COLOR="#000000">Intros
+</FONT><FONT COLOR="#000000">Apply classic
+</FONT><FONT COLOR="#000000">NotI
+</FONT><FONT COLOR="#000000">Forward Not_Gt__Le On H1
+</FONT><FONT COLOR="#000000">Forward Le__leq_true On H2
+</FONT><FONT COLOR="#000000">NotE false_is_true_
+</FONT><FONT COLOR="#000000">Lewrite H
+</FONT><FONT COLOR="#000000">Lewrite H3
+</FONT><FONT COLOR="#000000">Refl
+</FONT><FONT COLOR="#000000">Exit
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#000000">
+</FONT></PRE>
+</BODY>
+</HTML>

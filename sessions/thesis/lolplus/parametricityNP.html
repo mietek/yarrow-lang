@@ -1,0 +1,215 @@
+<HTML>
+<HEAD>
+<TITLE>lolplus/parametricity (without proofs)</TITLE>
+</HEAD>
+<BODY BGCOLOR="#FFFFFF", TEXT="#000000">
+<PRE><FONT COLOR="#000000"></FONT><FONT COLOR="#000000">-- File: parametricity
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#000000">-- This file introduces parametricity and the notion of first-order interfaces.
+</FONT><FONT COLOR="#000000">-- It follows the structure of Sections 6.7.2 through 6.7.3, and is hence
+</FONT><FONT COLOR="#000000">-- divided in the following parts.
+</FONT><FONT COLOR="#000000">--  2. Parametricity (Section 6.7.2)
+</FONT><FONT COLOR="#000000">--  3. First-order interfaces (Section 6.7.3)
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#000000">Path "../lol"
+</FONT><FONT COLOR="#000000">Path "../lolExtra"
+</FONT><FONT COLOR="#000000">Load "lambdaLplus"
+</FONT><FONT COLOR="#000000">Load "prelims"
+</FONT><FONT COLOR="#000000">Load "LOLP_Axioms"
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#000000">------------------------------------
+</FONT><FONT COLOR="#000000">------------------------------------
+</FONT><FONT COLOR="#000000">--                                --
+</FONT><FONT COLOR="#000000">--  2. P A R A M E T R I C I T Y  --
+</FONT><FONT COLOR="#000000">--                                --
+</FONT><FONT COLOR="#000000">------------------------------------
+</FONT><FONT COLOR="#000000">------------------------------------
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#FF0000">Var Sim : @I:*s-&gt;*s. @Y:*s.@Z:*s. (Y-&gt;Z-&gt;*p) -&gt; (I Y -&gt; I Z -&gt; *p)
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#FF0000">Var Sim_id : @Y,Z:*s.@(~):Y-&gt;Z-&gt;*p.
+</FONT><FONT COLOR="#FF0000">                    Sim (\X:*s.X) Y Z (~) &lt;===&gt; (~)
+</FONT><FONT COLOR="#FF0000">Var Sim_const : @T:*s.@Y,Z:*s.@(~):Y-&gt;Z-&gt;*p.
+</FONT><FONT COLOR="#FF0000">                    Sim (\X:*s.T) Y Z (~) &lt;===&gt; ((=) T)
+</FONT><FONT COLOR="#FF0000">Var Sim_arrow : @I1,I2:*s-&gt;*s.@Y,Z:*s.@(~):Y-&gt;Z-&gt;*p.
+</FONT><FONT COLOR="#FF0000">                    Sim (\X:*s. I1 X -&gt; I2 X) Y Z (~) &lt;===&gt;
+</FONT><FONT COLOR="#FF0000">                    \opsY:I1 Y -&gt; I2 Y.\opsZ:I1 Z -&gt; I2 Z.            
+</FONT><FONT COLOR="#FF0000">                    (@y:I1 Y.@z:I1 Z. Sim I1 Y Z (~) y z -&gt;
+</FONT><FONT COLOR="#FF0000">                                      Sim I2 Y Z (~) (opsY y) (opsZ z))
+</FONT><FONT COLOR="#FF0000">Var Sim_rec : @I1,I2:*s-&gt;*s.@Y,Z:*s.@(~):Y-&gt;Z-&gt;*p.
+</FONT><FONT COLOR="#FF0000">                    Sim (\X:*s. {|l:I1 X,r:I2 X|}) Y Z (~) &lt;===&gt;
+</FONT><FONT COLOR="#FF0000">                \opsY:{|l:I1 Y,r:I2 Y|}.\opsZ:{|l:I1 Z,r:I2 Z|}.
+</FONT><FONT COLOR="#FF0000">                    (Sim I1 Y Z (~) opsY`l opsZ`l /\
+</FONT><FONT COLOR="#FF0000">                     Sim I2 Y Z (~) opsY`r opsZ`r)
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#0000FF">Def SimplyT := \I:*s-&gt;*s. @P:(*s-&gt;*s)-&gt;*p.
+</FONT><FONT COLOR="#0000FF">              P (\X:*s.X) -&gt;
+</FONT><FONT COLOR="#0000FF">              (@T:*s. P (\X:*s. T)) -&gt;
+</FONT><FONT COLOR="#0000FF">              (@I1,I2:*s-&gt;*s. P I1 -&gt; P I2 -&gt; P (\X:*s. I1 X -&gt; I2 X)) -&gt;
+</FONT><FONT COLOR="#0000FF">              (@I1,I2:*s-&gt;*s. P I1 -&gt; P I2 -&gt; P (\X:*s. {|l:I1 X,r:I2 X|}))-&gt;
+</FONT><FONT COLOR="#0000FF">              P I
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#0000FF">Prove SimplyT_id : SimplyT (\X:*s.X)
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#0000FF">Prove SimplyT_const : @T:*s. SimplyT (\X:*s.T)
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#0000FF">Prove SimplyT_arrow : @I1,I2:*s-&gt;*s. SimplyT I1 -&gt; SimplyT I2 -&gt; 
+</FONT><FONT COLOR="#0000FF">                     SimplyT (\X:*s.I1 X -&gt; I2 X)
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#0000FF">Prove SimplyT_rec : @I1,I2:*s-&gt;*s. SimplyT I1 -&gt; SimplyT I2 -&gt; 
+</FONT><FONT COLOR="#0000FF">                     SimplyT (\X:*s.{|l:I1 X,r: I2 X|})
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#0000FF">Prove SimplyT_elim : @I:*s-&gt;*s. SimplyT I -&gt;
+</FONT><FONT COLOR="#0000FF">              @P:(*s-&gt;*s)-&gt;*p.
+</FONT><FONT COLOR="#0000FF">              P (\X:*s.X) -&gt;
+</FONT><FONT COLOR="#0000FF">              (@T:*s. P (\X:*s. T)) -&gt;
+</FONT><FONT COLOR="#0000FF">              (@I1,I2:*s-&gt;*s. SimplyT I1 -&gt; SimplyT I2 -&gt; 
+</FONT><FONT COLOR="#0000FF">                              P I1 -&gt; P I2 -&gt; P (\X:*s. I1 X -&gt; I2 X)) -&gt;
+</FONT><FONT COLOR="#0000FF">              (@I1,I2:*s-&gt;*s. SimplyT I1 -&gt; SimplyT I2 -&gt; 
+</FONT><FONT COLOR="#0000FF">                              P I1 -&gt; P I2 -&gt; P (\X:*s. {|l:I1 X,r:I2 X|}))-&gt;
+</FONT><FONT COLOR="#0000FF">              P I
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#FF0000">Var parPi : @I:*s-&gt;*s. SimplyT I -&gt;
+</FONT><FONT COLOR="#FF0000">            @f:(@X:*s.I X). @Y,Z:*s. @(~):Y-&gt;Z-&gt;*p. Sim I Y Z (~) (f Y) (f Z)
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#000000">-- Parametricity for Sigma-types.
+</FONT><FONT COLOR="#0000FF">Prove parSigma : @I:*s-&gt;*s. SimplyT I -&gt;
+</FONT><FONT COLOR="#0000FF">                   @Y,Z:*s.@(~):Y-&gt;Z-&gt;*p. @y:I Y. @z:I Z.
+</FONT><FONT COLOR="#0000FF">                     Sim I Y Z (~) y z -&gt; 
+</FONT><FONT COLOR="#0000FF">                     (=) (Sig X:*s. I X) (pack I Y y) (pack I Z z)
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#0000FF">Def Bisim := \I:*s-&gt;*s. \R:*s.\(~):R-&gt;R-&gt;*p.\opsR:I R. 
+</FONT><FONT COLOR="#0000FF">             Sim I R R (~) opsR opsR
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#0000FF">Prove Sim_sym : @I:*s-&gt;*s.SimplyT I -&gt;
+</FONT><FONT COLOR="#0000FF">                @Y,Z:*s. @(~):Y-&gt;Z-&gt;*p. @opsY:I Y. @opsZ:I Z.
+</FONT><FONT COLOR="#0000FF">                                 Sim I Y Z (~) opsY opsZ -&gt; 
+</FONT><FONT COLOR="#0000FF">                                 Sim I Z Y (Inverse (~)) opsZ opsY
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#0000FF">Prove Sim_is : @I:*s-&gt;*s. SimplyT I -&gt;
+</FONT><FONT COLOR="#0000FF">                  @R:*s.
+</FONT><FONT COLOR="#0000FF">                  Sim I R R ((=) R) &lt;===&gt; ((=) (I R))
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#0000FF">Prove IsZclosed_Sim : @I:*s-&gt;*s. SimplyT I -&gt;
+</FONT><FONT COLOR="#0000FF">            @R,Q : *s.
+</FONT><FONT COLOR="#0000FF">            @rel : R-&gt;Q-&gt;*p.
+</FONT><FONT COLOR="#0000FF">            IsZclosed rel -&gt;
+</FONT><FONT COLOR="#0000FF">            IsZclosed (Sim I R Q rel)
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#FF0000">Var IsInvar : @I:*s-&gt;*s. @Rep:*s. (Rep-&gt;*p) -&gt; I Rep -&gt; *p
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#FF0000">Var IsInvar_id : @Rep:*s.@Inv:Rep-&gt;*p. IsInvar (\X:*s.X) Rep Inv &lt;==&gt; Inv
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#FF0000">Var IsInvar_const : @T:*s.@Rep:*s.@Inv:Rep-&gt;*p. 
+</FONT><FONT COLOR="#FF0000">                    IsInvar (\X:*s.T) Rep Inv &lt;==&gt; \t:T. True
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#FF0000">Var IsInvar_arrow : @I1,I2:*s-&gt;*s. @Rep:*s.@Inv:Rep-&gt;*p. 
+</FONT><FONT COLOR="#FF0000">                    IsInvar (\X:*s.I1 X -&gt; I2 X) Rep Inv &lt;==&gt; 
+</FONT><FONT COLOR="#FF0000">                    (\f:I1 Rep-&gt;I2 Rep. @x:I1 Rep. IsInvar I1 Rep Inv x -&gt;
+</FONT><FONT COLOR="#FF0000">                                                   IsInvar I2 Rep Inv (f x))
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#FF0000">Var IsInvar_rec : @I1,I2:*s-&gt;*s. @Rep:*s.@Inv:Rep-&gt;*p. 
+</FONT><FONT COLOR="#FF0000">                    IsInvar (\X:*s.{|l:I1 X, r:I2 X|}) Rep Inv &lt;==&gt; 
+</FONT><FONT COLOR="#FF0000">                    (\f:{|l:I1 Rep,r:I2 Rep|}. IsInvar I1 Rep Inv f`l /\
+</FONT><FONT COLOR="#FF0000">                                                 IsInvar I2 Rep Inv f`r)
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#000000">------------------------------------------------------
+</FONT><FONT COLOR="#000000">------------------------------------------------------
+</FONT><FONT COLOR="#000000">--                                                  --
+</FONT><FONT COLOR="#000000">--  3. F I R S T - O R D E R   I N T E R F A C E S  --
+</FONT><FONT COLOR="#000000">--                                                  --
+</FONT><FONT COLOR="#000000">------------------------------------------------------
+</FONT><FONT COLOR="#000000">------------------------------------------------------
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#000000">-- Defines the first-order interfaces, and gives some properties about Sim and 
+</FONT><FONT COLOR="#000000">-- IsInvar for these interfaces, namely those properties we need for
+</FONT><FONT COLOR="#000000">-- developing general theory for ADTs
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#000000">-- Basic
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#0000FF">Def Basic := \I:*s-&gt;*s. @P:(*s-&gt;*s)-&gt;*p.
+</FONT><FONT COLOR="#0000FF">              P (\X:*s.X) -&gt;
+</FONT><FONT COLOR="#0000FF">              (@T:*s. P (\X:*s. T)) -&gt;
+</FONT><FONT COLOR="#0000FF">              (@I1,I2:*s-&gt;*s. P I1 -&gt; P I2 -&gt; P (\X:*s. {|l:I1 X,r:I2 X|}))-&gt;
+</FONT><FONT COLOR="#0000FF">              P I
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#0000FF">Prove Basic_id : Basic (\X:*s.X)
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#0000FF">Prove Basic_const : @T:*s. Basic (\X:*s.T)
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#0000FF">Prove Basic_rec : @I1,I2:*s-&gt;*s. Basic I1 -&gt; Basic I2 -&gt; 
+</FONT><FONT COLOR="#0000FF">                     Basic (\X:*s.{|l:I1 X,r: I2 X|})
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#0000FF">Prove Basic_elim : @I:*s-&gt;*s. Basic I -&gt;
+</FONT><FONT COLOR="#0000FF">              @P:(*s-&gt;*s)-&gt;*p.
+</FONT><FONT COLOR="#0000FF">              P (\X:*s.X) -&gt;
+</FONT><FONT COLOR="#0000FF">              (@T:*s. P (\X:*s. T)) -&gt;
+</FONT><FONT COLOR="#0000FF">              (@I1,I2:*s-&gt;*s. Basic I1 -&gt; Basic I2 -&gt; 
+</FONT><FONT COLOR="#0000FF">                              P I1 -&gt; P I2 -&gt; P (\X:*s. {|l:I1 X,r:I2 X|}))-&gt;
+</FONT><FONT COLOR="#0000FF">              P I
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#000000">-- FirstO
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#0000FF">Def FirstO := \I:*s-&gt;*s. @P:(*s-&gt;*s)-&gt;*p.
+</FONT><FONT COLOR="#0000FF">              (@I:*s-&gt;*s. Basic I -&gt; P I) -&gt;
+</FONT><FONT COLOR="#0000FF">              (@I1,I2:*s-&gt;*s. Basic I1 -&gt; P I2 -&gt; P (\X:*s. I1 X -&gt; I2 X)) -&gt;
+</FONT><FONT COLOR="#0000FF">              (@I1,I2:*s-&gt;*s. P I1 -&gt; P I2 -&gt; P (\X:*s. {|l:I1 X,r:I2 X|}))-&gt;
+</FONT><FONT COLOR="#0000FF">              P I
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#0000FF">Prove FirstO_Basic : @I:*s-&gt;*s. Basic I -&gt; FirstO I
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#0000FF">Prove FirstO_arrow : @I1,I2:*s-&gt;*s. Basic I1 -&gt; FirstO I2 -&gt; 
+</FONT><FONT COLOR="#0000FF">                     FirstO (\X:*s.I1 X-&gt;I2 X)
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#0000FF">Prove FirstO_rec : @I1,I2:*s-&gt;*s. FirstO I1 -&gt; FirstO I2 -&gt; 
+</FONT><FONT COLOR="#0000FF">                     FirstO (\X:*s.{|l:I1 X,r: I2 X|})
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#0000FF">Prove FirstO_elim : @I:*s-&gt;*s. FirstO I -&gt;
+</FONT><FONT COLOR="#0000FF">              @P:(*s-&gt;*s)-&gt;*p.
+</FONT><FONT COLOR="#0000FF">              (@I:*s-&gt;*s. Basic I -&gt; P I) -&gt;
+</FONT><FONT COLOR="#0000FF">              (@I1,I2:*s-&gt;*s. FirstO I2 -&gt; 
+</FONT><FONT COLOR="#0000FF">                              Basic I1 -&gt; P I2 -&gt; P (\X:*s. I1 X -&gt; I2 X)) -&gt;
+</FONT><FONT COLOR="#0000FF">              (@I1,I2:*s-&gt;*s. FirstO I1 -&gt; FirstO I2 -&gt;
+</FONT><FONT COLOR="#0000FF">                              P I1 -&gt; P I2 -&gt; P (\X:*s. {|l:I1 X,r:I2 X|}))-&gt;
+</FONT><FONT COLOR="#0000FF">              P I
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#000000">-- The next two lemmas are not stated in my thesis
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#0000FF">Prove Basic__SimplyT : @I:*s-&gt;*s. Basic I -&gt; SimplyT I
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#0000FF">Prove FirstO__SimplyT : @I:*s-&gt;*s. FirstO I -&gt; SimplyT I
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#000000">-- Properties Sim for FirstOrder interfaces. For each property, we need
+</FONT><FONT COLOR="#000000">-- a similar (but often stronger) property for Basic interfaces.
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#0000FF">Prove SimBasic_Comp : @I:*s-&gt;*s. Basic I -&gt;
+</FONT><FONT COLOR="#0000FF">                       @X,Y,Z:*s. @(~):X-&gt;Y-&gt;*p.@(~~):Y-&gt;Z-&gt;*p.
+</FONT><FONT COLOR="#0000FF">                       Comp (Sim I X Y (~)) (Sim I Y Z (~~))  &lt;===&gt;
+</FONT><FONT COLOR="#0000FF">                       Sim I X Z (Comp (~) (~~))
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#0000FF">Prove SimFirstO_Trans : @I:*s-&gt;*s. FirstO I -&gt;
+</FONT><FONT COLOR="#0000FF">                       @X,Y,Z:*s. @(~):X-&gt;Y-&gt;*p.@(~~):Y-&gt;Z-&gt;*p.
+</FONT><FONT COLOR="#0000FF">                       @opsX:I X. @opsY: I Y. @opsZ: I Z.
+</FONT><FONT COLOR="#0000FF">                       Sim I X Y (~) opsX opsY -&gt;
+</FONT><FONT COLOR="#0000FF">                       Sim I Y Z (~~) opsY opsZ  -&gt;
+</FONT><FONT COLOR="#0000FF">                       Sim I X Z (Comp (~) (~~)) opsX opsZ
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#0000FF">Prove Sim_Basic_Restr : @I:*s-&gt;*s. Basic I -&gt;
+</FONT><FONT COLOR="#0000FF">       @Y:*s. @(~):Y-&gt;Y-&gt;*p. @P:Y-&gt;*p.
+</FONT><FONT COLOR="#0000FF">       Restr (Sim I Y Y (~)) (IsInvar I Y P) &lt;===&gt;
+</FONT><FONT COLOR="#0000FF">       Sim I Y Y (Restr (~) P)
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#0000FF">Prove Sim_FirstO_Restr : @I:*s-&gt;*s. FirstO I -&gt;
+</FONT><FONT COLOR="#0000FF">       @Y:*s. @(~):Y-&gt;Y-&gt;*p. @P:Y-&gt;*p.
+</FONT><FONT COLOR="#0000FF">       @opsY,opsY': I Y.
+</FONT><FONT COLOR="#0000FF">       Restr (Sim I Y Y (~)) (IsInvar I Y P) opsY opsY' -&gt;
+</FONT><FONT COLOR="#0000FF">       Sim I Y Y (Restr (~) P) opsY opsY'
+</FONT></PRE>
+</BODY>
+</HTML>

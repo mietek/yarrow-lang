@@ -1,0 +1,165 @@
+<HTML>
+<HEAD>
+<TITLE>lolplus/stack (with proofs)</TITLE>
+</HEAD>
+<BODY BGCOLOR="#FFFFFF", TEXT="#000000">
+<PRE><FONT COLOR="#000000"></FONT><FONT COLOR="#000000">-- File: stack
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#000000">-- Gives the example of the ADT of stacks.
+</FONT><FONT COLOR="#000000">-- This file is divided into two parts.
+</FONT><FONT COLOR="#000000">-- 1) Without existential types.
+</FONT><FONT COLOR="#000000">-- 2) With existential types.
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#000000">Path "../lol"
+</FONT><FONT COLOR="#000000">Path "../lolExtra"
+</FONT><FONT COLOR="#000000">Load "lambdaLplus"
+</FONT><FONT COLOR="#000000">Load "logic2"
+</FONT><FONT COLOR="#000000">Load "list2"
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#000000">------------------------------------------------------------
+</FONT><FONT COLOR="#000000">------------------------------------------------------------
+</FONT><FONT COLOR="#000000">--                                                        --
+</FONT><FONT COLOR="#000000">--  1. W I T H O U T   E X I S T E N T I A L   T Y P E S  --
+</FONT><FONT COLOR="#000000">--                                                        --
+</FONT><FONT COLOR="#000000">------------------------------------------------------------
+</FONT><FONT COLOR="#000000">------------------------------------------------------------
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#0000FF">Def StackI := \Rep:*s. {| empty : Rep, 
+</FONT><FONT COLOR="#0000FF">                          push : Nat -&gt; Rep -&gt; Rep,
+</FONT><FONT COLOR="#0000FF">                          pop : Rep -&gt; Rep,
+</FONT><FONT COLOR="#0000FF">                          top : Rep -&gt; Nat,
+</FONT><FONT COLOR="#0000FF">                          isEmpty : Rep -&gt; Bool |}
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#0000FF">Def Rep1 := List Nat
+</FONT><FONT COLOR="#0000FF">Def ops1 := {empty = nil Nat,
+</FONT><FONT COLOR="#0000FF">              push = (;) Nat,
+</FONT><FONT COLOR="#0000FF">              pop = tail Nat,
+</FONT><FONT COLOR="#0000FF">              top = head O,
+</FONT><FONT COLOR="#0000FF">              isEmpty = null Nat} :
+</FONT><FONT COLOR="#0000FF">             StackI Rep1
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#0000FF">Def Spec := \Rep:*s. \ops:StackI Rep.
+</FONT><FONT COLOR="#0000FF">                   ops`isEmpty ops`empty = true /\
+</FONT><FONT COLOR="#0000FF">                   (@s:Rep. @n:Nat. ops`isEmpty (ops`push n s) = false) /\
+</FONT><FONT COLOR="#0000FF">                   (@s:Rep. @n:Nat. ops`top (ops`push n s) = n) /\
+</FONT><FONT COLOR="#0000FF">                   (@s:Rep. @n:Nat. ops`pop (ops`push n s) = s) :
+</FONT><FONT COLOR="#0000FF">            @Rep:*s. StackI Rep -&gt; *p
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#0000FF">Prove Spec_ops1 : Spec Rep1 ops1
+</FONT><FONT COLOR="#000000">Unfold Spec
+</FONT><FONT COLOR="#000000">Repeat AndI
+</FONT><FONT COLOR="#000000">Unfold ops1
+</FONT><FONT COLOR="#000000">Apply null_nil
+</FONT><FONT COLOR="#000000">Intros
+</FONT><FONT COLOR="#000000">Unfold ops1
+</FONT><FONT COLOR="#000000">Apply null_cons
+</FONT><FONT COLOR="#000000">Intros
+</FONT><FONT COLOR="#000000">Unfold ops1
+</FONT><FONT COLOR="#000000">Apply head_cons
+</FONT><FONT COLOR="#000000">Intros
+</FONT><FONT COLOR="#000000">Unfold ops1
+</FONT><FONT COLOR="#000000">Apply tail_cons
+</FONT><FONT COLOR="#000000">Exit
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#000000">-- 'wprinciple' is called 'principle' in my thesis
+</FONT><FONT COLOR="#0000FF">Prove wprinciple : @Rep1:*s. @ops1: StackI Rep1. Spec Rep1 ops1 -&gt;
+</FONT><FONT COLOR="#0000FF">                   @A:*s. @body:(@X:*s.StackI X -&gt; A). @Q:A-&gt;*p.
+</FONT><FONT COLOR="#0000FF">                 (@X:*s.@ops:StackI X. Spec X ops -&gt; Q (body X ops)) -&gt;
+</FONT><FONT COLOR="#0000FF">                 Q ((\X:*s.\ops:StackI X. body X ops) Rep1 ops1)
+</FONT><FONT COLOR="#000000">Intros
+</FONT><FONT COLOR="#000000">Simplify
+</FONT><FONT COLOR="#000000">Apply H1
+</FONT><FONT COLOR="#000000">Assumption
+</FONT><FONT COLOR="#000000">Exit
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#0000FF">Def prog1 := (\X:*s.\ops : StackI X.
+</FONT><FONT COLOR="#0000FF">                  ops`isEmpty (ops`pop (ops`push O ops`empty))) Rep1 ops1
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#0000FF">Prove prog1_is_true : prog1 = true
+</FONT><FONT COLOR="#000000">Convert (\b:Bool. b= true) ((\X:*s.\ops : StackI X.
+</FONT><FONT COLOR="#000000">                  ops`isEmpty (ops`pop (ops`push O ops`empty))) Rep1 ops1)
+</FONT><FONT COLOR="#000000">Apply wprinciple
+</FONT><FONT COLOR="#000000">Exact Spec_ops1
+</FONT><FONT COLOR="#000000">Intros
+</FONT><FONT COLOR="#000000">Unfold Spec In H
+</FONT><FONT COLOR="#000000">AndE H
+</FONT><FONT COLOR="#000000">AndE H2
+</FONT><FONT COLOR="#000000">AndE H4
+</FONT><FONT COLOR="#000000">Rewrite H6
+</FONT><FONT COLOR="#000000">Apply H1
+</FONT><FONT COLOR="#000000">Exit
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#000000">------------------------------------------------------
+</FONT><FONT COLOR="#000000">------------------------------------------------------
+</FONT><FONT COLOR="#000000">--                                                  --
+</FONT><FONT COLOR="#000000">--  2. W I T H   E X I S T E N T I A L   T Y P E S  --
+</FONT><FONT COLOR="#000000">--                                                  --
+</FONT><FONT COLOR="#000000">------------------------------------------------------
+</FONT><FONT COLOR="#000000">------------------------------------------------------
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#0000FF">Def imp1 := pack StackI Rep1 ops1 : Sig Rep:*s. StackI Rep
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#0000FF">Def StackImp := Sig Rep:*s. StackI Rep
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#0000FF">Def prog1' := unpack imp1 (\X:*s. \ops:StackI X.
+</FONT><FONT COLOR="#0000FF">                              ops`isEmpty (ops`pop (ops`push O ops`empty))) :
+</FONT><FONT COLOR="#0000FF">              Bool
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#0000FF">Def Rep2 := List Nat
+</FONT><FONT COLOR="#0000FF">Def ops2 := {empty = nil Nat,
+</FONT><FONT COLOR="#0000FF">              push = snoc Nat,
+</FONT><FONT COLOR="#0000FF">              pop = init Nat,
+</FONT><FONT COLOR="#0000FF">              top = last O,
+</FONT><FONT COLOR="#0000FF">              isEmpty = null Nat} :
+</FONT><FONT COLOR="#0000FF">             StackI Rep2
+</FONT><FONT COLOR="#0000FF">Def imp2 := pack StackI Rep2 ops2 : StackImp
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#0000FF">Def UserSpec := \imp:StackImp. ExK Rep:*s. Ex ops:StackI Rep.
+</FONT><FONT COLOR="#0000FF">                     imp = pack StackI Rep ops /\ Spec Rep ops :
+</FONT><FONT COLOR="#0000FF">                StackImp -&gt; *p
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#0000FF">Prove UserSpec_imp1 : UserSpec imp1
+</FONT><FONT COLOR="#000000">Unfold UserSpec
+</FONT><FONT COLOR="#000000">Unfold imp1
+</FONT><FONT COLOR="#000000">ExistsI Rep1
+</FONT><FONT COLOR="#000000">ExistsI ops1
+</FONT><FONT COLOR="#000000">AndI
+</FONT><FONT COLOR="#000000">Refl
+</FONT><FONT COLOR="#000000">Apply Spec_ops1
+</FONT><FONT COLOR="#000000">Exit
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#0000FF">Prove principle : @imp:StackImp. UserSpec imp -&gt;
+</FONT><FONT COLOR="#0000FF">                  @A:*s. @body:(@X:*s.StackI X -&gt; A). @Q:A-&gt;*p.
+</FONT><FONT COLOR="#0000FF">                 (@X:*s.@ops:StackI X. Spec X ops -&gt; Q (body X ops)) -&gt;
+</FONT><FONT COLOR="#0000FF">                 Q (unpack imp (\X:*s.\ops:StackI X. body X ops))
+</FONT><FONT COLOR="#000000">Intros
+</FONT><FONT COLOR="#000000">Unfold UserSpec In H
+</FONT><FONT COLOR="#000000">ExistsE H
+</FONT><FONT COLOR="#000000">ExistsE H2
+</FONT><FONT COLOR="#000000">AndE H3
+</FONT><FONT COLOR="#000000">Rewrite H4
+</FONT><FONT COLOR="#000000">Unfold StackI
+</FONT><FONT COLOR="#000000">Rewrite beta_Sig
+</FONT><FONT COLOR="#000000">Apply H1
+</FONT><FONT COLOR="#000000">Assumption
+</FONT><FONT COLOR="#000000">Exit
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#0000FF">Prove prog1'_is_true : prog1'=true
+</FONT><FONT COLOR="#000000">Unfold prog1'
+</FONT><FONT COLOR="#000000">Apply principle On \b:Bool. b=true
+</FONT><FONT COLOR="#000000">Exact UserSpec_imp1
+</FONT><FONT COLOR="#000000">Intros
+</FONT><FONT COLOR="#000000">Unfold Spec In H
+</FONT><FONT COLOR="#000000">AndE H
+</FONT><FONT COLOR="#000000">AndE H2
+</FONT><FONT COLOR="#000000">AndE H4
+</FONT><FONT COLOR="#000000">Rewrite H6
+</FONT><FONT COLOR="#000000">Apply H1
+</FONT><FONT COLOR="#000000">Exit
+</FONT><FONT COLOR="#000000">
+</FONT></PRE>
+</BODY>
+</HTML>

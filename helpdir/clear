@@ -1,0 +1,24 @@
+<DL>
+ <DT>Syntax:
+ <DD>
+   <CODE>Clear</CODE>
+ <DT>Effect:
+ <DD>Clears the last module from the list of loaded modules. This has no
+     effect on the context, but means Yarrow has 'forgotten' the last
+     module is loaded. In this way parts of the context coming from a
+     module can be saved in another module.
+ <DT>Example:
+ <DD><CODE>Load "int1"<BR>
+           Load "int2"<BR>
+           Clear<BR>
+           Clear<BR>
+           Save "int1and2"</CODE><BR>
+     Now module <CODE>int1and2</CODE> contains all declarations of both 
+     <CODE>int1</CODE> and <CODE>int2</CODE>. Without the <CODE>clear</CODE>
+     commands, <CODE>int1and2</CODE> would be empty.
+ <DT>Prove-mode:
+ <DD>This command is not available in prove-mode.
+ <DT>See also:                          
+ <DD><A HREF="#Load"><CODE>Load</CODE></A>,
+     <A HREF="#Save"><CODE>Save</CODE></A>
+</DL>  

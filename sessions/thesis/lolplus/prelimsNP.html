@@ -1,0 +1,98 @@
+<HTML>
+<HEAD>
+<TITLE>lolplus/prelims (without proofs)</TITLE>
+</HEAD>
+<BODY BGCOLOR="#FFFFFF", TEXT="#000000">
+<PRE><FONT COLOR="#000000"></FONT><FONT COLOR="#000000">-- File: prelims
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#000000">-- This file contains some preliminary definitions and results for the
+</FONT><FONT COLOR="#000000">-- theory of ADTs.
+</FONT><FONT COLOR="#000000">-- It is divided into two parts
+</FONT><FONT COLOR="#000000">-- 1. Definitions and results printed in the thesis (Section 6.7.1)
+</FONT><FONT COLOR="#000000">-- 2. Results not printed in the thesis.
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#000000">Path "../lol"
+</FONT><FONT COLOR="#000000">Path "../lolExtra"
+</FONT><FONT COLOR="#000000">Load "lambdaLplus"
+</FONT><FONT COLOR="#000000">Load "logic2"
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#000000">--------------------------------------------------------------
+</FONT><FONT COLOR="#000000">--  1. D E F S   A N D   R E S U L T S   I N   T H E S I S  --
+</FONT><FONT COLOR="#000000">--------------------------------------------------------------
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#0000FF">Def IsInjection := \A,B:*s. \f:A-&gt;B. @a1,a2:A. f a1=f a2 -&gt; a1=a2
+</FONT><FONT COLOR="#000000">Implicit 2 IsInjection
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#0000FF">Def IsSurjection := \A,B:*s. \f:A-&gt;B. @b:B. Ex a:A. f a = b
+</FONT><FONT COLOR="#000000">Implicit 2 IsSurjection
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#0000FF">Def Image := \A,B:*s. \f:A-&gt;B. \b:B. Ex a:A. f a = b
+</FONT><FONT COLOR="#000000">Implicit 2 Image
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#0000FF">Def Dom := \A,B:*s. \P:A-&gt;B-&gt;*p. \a:A. Ex b:B. P a b :
+</FONT><FONT COLOR="#0000FF">           @A,B:*s. (A-&gt;B-&gt;*p) -&gt; A-&gt;*p
+</FONT><FONT COLOR="#000000">Implicit 2 Dom
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#0000FF">def Inverse := \Y,Z:*s. \R:Y-&gt;Z-&gt;*p. \z:Z.\y:Y. R y z :
+</FONT><FONT COLOR="#0000FF">               @Y,Z:*s. (Y-&gt;Z-&gt;*p) -&gt; (Z-&gt;Y-&gt;*p)
+</FONT><FONT COLOR="#000000">Implicit 2 Inverse
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#0000FF">Def IsER := \Y:*s. \R:Y-&gt;Y-&gt;*p.
+</FONT><FONT COLOR="#0000FF">                    (@y:Y. R y y) /\
+</FONT><FONT COLOR="#0000FF">                    (@y1,y2:Y. R y1 y2 -&gt; R y2 y1) /\
+</FONT><FONT COLOR="#0000FF">                    (@y1,y2,y3:Y. R y1 y2 -&gt; R y2 y3 -&gt; R y1 y3)
+</FONT><FONT COLOR="#000000">Implicit 1 IsER
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#0000FF">Def IsERon := 
+</FONT><FONT COLOR="#0000FF">     \Y:*s.\R:Y-&gt;Y-&gt;*p. \P:Y-&gt;*p.
+</FONT><FONT COLOR="#0000FF">         (@y:Y. P y -&gt; R y y) /\
+</FONT><FONT COLOR="#0000FF">         (@y1,y2:Y. P y1 -&gt; P y2 -&gt; R y1 y2 -&gt; R y2 y1) /\
+</FONT><FONT COLOR="#0000FF">         (@y1,y2,y3:Y. P y1 -&gt; P y2 -&gt; P y3 -&gt; R y1 y2 -&gt; R y2 y3 -&gt; R y1 y3) :
+</FONT><FONT COLOR="#0000FF">     @Y:*s. (Y-&gt;Y-&gt;*p) -&gt; (Y-&gt;*p) -&gt; *p
+</FONT><FONT COLOR="#000000">Implicit 1 IsERon
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#0000FF">Def Comp := \A,B,C:*s. \(~):A-&gt;B-&gt;*p. \(~~):B-&gt;C-&gt;*p.
+</FONT><FONT COLOR="#0000FF">                 \a:A.\c:C. Ex b:B. a~b /\ b~~c
+</FONT><FONT COLOR="#000000">Implicit 3 Comp
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#0000FF">def LeftC := \Y,Z:*s. \(~):Y-&gt;Z-&gt;*p.
+</FONT><FONT COLOR="#0000FF">                   \y1,y2:Y. Ex z:Z. y1 ~ z /\ y2 ~ z :
+</FONT><FONT COLOR="#0000FF">             @Y,Z:*s. (Y-&gt;Z-&gt;*p) -&gt; (Y-&gt;Y-&gt;*p)
+</FONT><FONT COLOR="#000000">Implicit 2 LeftC
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#0000FF">Def RightC := \Y,Z:*s. \(~):Y-&gt;Z-&gt;*p.
+</FONT><FONT COLOR="#0000FF">                   \z1,z2:Z. Ex y:Y. y ~ z1 /\ y ~ z2 :
+</FONT><FONT COLOR="#0000FF">              @Y,Z:*s. (Y-&gt;Z-&gt;*p) -&gt; (Z-&gt;Z-&gt;*p)
+</FONT><FONT COLOR="#000000">Implicit 2 RightC
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#0000FF">Def Restr := \A:*s. \R:A-&gt;A-&gt;*p.\P:A-&gt;*p.
+</FONT><FONT COLOR="#0000FF">               \a,a':A. P a /\ R a a' /\ P a' :
+</FONT><FONT COLOR="#0000FF">            @A:*s. (A-&gt;A-&gt;*p)-&gt;(A-&gt;*p) -&gt; (A-&gt;A-&gt;*p)
+</FONT><FONT COLOR="#000000">Implicit 1 Restr
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#0000FF">Def IsZclosed := \Y,Z:*s. \R:Y-&gt;Z-&gt;*p.
+</FONT><FONT COLOR="#0000FF">                  @y1,y2:Y. @z1,z2:Z. R y1 z1 -&gt; R y1 z2 -&gt; R y2 z2 -&gt; R y2 z1
+</FONT><FONT COLOR="#000000">Implicit 2 IsZclosed
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#000000">------------------------------------
+</FONT><FONT COLOR="#000000">--  2. N O T   I N   T H E S I S  --
+</FONT><FONT COLOR="#000000">------------------------------------
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#0000FF">Prove Image_f_f_x : @A,B:*s. @f:A-&gt;B. @x:A. Image f (f x)
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#0000FF">Prove IsER__IsERon : @A:*s. @R:A-&gt;A-&gt;*p. @P:A-&gt;*p.
+</FONT><FONT COLOR="#0000FF">                      IsER R -&gt; IsERon R P
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#0000FF">Prove Inverse_Inverse : @A,B:*s. @R:A-&gt;B-&gt;*p. Inverse (Inverse R) &lt;===&gt; R
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#0000FF">prove IsER_is : @A:*s. IsER ((=) A)
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#0000FF">prove IsZclosed_Inverse :  @A,B:*s.@(~):A-&gt;B-&gt;*p.
+</FONT><FONT COLOR="#0000FF">                           IsZclosed (~) -&gt; IsZclosed (Inverse (~))
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#0000FF">Prove rel_LeftC : @A,B:*s. @(~):A-&gt;B-&gt;*p. 
+</FONT><FONT COLOR="#0000FF">                  @a1,a2:A.@b:B. a1~b -&gt; a2~b -&gt; LeftC (~) a1 a2
+</FONT></PRE>
+</BODY>
+</HTML>

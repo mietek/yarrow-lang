@@ -1,0 +1,12 @@
+<P>
+In Yarrow certain extensions to Pure Type Systems may be selected.
+These extensions are not automatically active; they have to be selected
+with the command <CODE>System</CODE>.
+</P>
+<P>                                                                          
+At the moment we have the following extensions:
+</P>
+<UL>
+<LI><A HREF="#subtyping">subtyping</A>
+<LI><A HREF="#records">records</A>
+</UL>

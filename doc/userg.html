@@ -1,0 +1,2299 @@
+<!-- DON'T EDIT THIS FILE, SINCE IT IS GENERATED AUTOMATICALLY -->
+<HTML>
+<HEAD>
+<title>
+Yarrow User Guide
+</title>
+</HEAD>
+<BODY>
+<H1 ALIGN=CENTER>Yarrow User Guide</H1>                    
+<H2>Contents</H2>                      
+<UL>
+<LI><A HREF="#index">Index</A>
+<LI><A HREF="#background">Background</A>
+<LI><A HREF="#introduction">Introduction</A>
+<LI><A HREF="#mainmode">Main-mode</A>
+<LI><A HREF="#provemode">Prove-mode</A>
+</UL>
+<H2><A NAME="index">Index</A></H2>
+<UL>
+<LI><A HREF="#background">Background</A>
+<LI><A HREF="#introduction">Introduction</A>
+    <UL>
+    <LI><A HREF="#syntax">Syntax</A>
+    <LI><A HREF="#multi-line">Multi-line input</A>
+    <LI><A HREF="#infix-notation">Infix notation</A>
+    <LI><A HREF="#extensions">Extensions</A>
+        <UL>
+        <LI><A HREF="#subtyping">Subtyping</A>
+        <LI><A HREF="#records">Records</A>
+        </UL>
+    </UL>
+<LI><A HREF="#mainmode">Main-mode</A>
+    <UL>
+    <LI><A HREF="#contextcommands">The context</A><BR>
+        <A HREF="#var">Var</A><BR>
+        <A HREF="#def">Def</A><BR>
+        <A HREF="#context">Context</A><BR>
+        <A HREF="#reset">Reset</A><BR>
+        <A HREF="#print">Print</A><BR>
+        <A HREF="#prove">Prove</A><BR>
+        <A HREF="#deduction">Deduction</A><BR>
+    <LI><A HREF="#typing">Typing and reduction</A><BR>
+        <A HREF="#type">Type</A><BR>
+        <A HREF="#check">Check</A><BR>
+        <A HREF="#bred">bRed</A><BR>
+        <A HREF="#dred">dRed</A><BR>
+        <A HREF="#bdred">bdRed</A><BR>
+    <LI><A HREF="#metacommands">Meta-commands</A><BR>
+        <A HREF="#quit">Quit</A><BR>
+        <A HREF="#help">Help</A><BR>
+        <A HREF="#system">System</A><BR>
+        <A HREF="#read">Read</A><BR>
+        <A HREF="#option">Option</A><BR>
+    <LI><A HREF="#readablesyntax">Readable syntax</A><BR>
+        <A HREF="#infix">Infix</A><BR>
+        <A HREF="#infixl">InfixL</A><BR>
+        <A HREF="#infixr">InfixR</A><BR>
+        <A HREF="#implicit">Implicit</A><BR>
+        <A HREF="#binder">Binder</A><BR>
+    <LI><A HREF="#modules">Modules</A><BR>
+        <A HREF="#save">Save</A><BR>
+        <A HREF="#load">Load</A><BR>
+        <A HREF="#clear">Clear</A><BR>
+        <A HREF="#path">Path</A><BR>
+    </UL>
+<LI><A HREF="#provemode">Prove-mode</A>
+    <UL>
+    <LI><A HREF="#tactics">Tactics</A>
+        <UL>
+        <LI><A HREF="#basictactics">Basic tactics</A><BR>
+            <A HREF="#intro">Intro</A><BR>
+            <A HREF="#intros">Intros</A><BR>
+            <A HREF="#apply">Apply</A><BR>
+            <A HREF="#exact">Exact</A><BR>
+            <A HREF="#assumption">Assumption</A><BR>
+            <A HREF="#cut">Cut</A><BR>
+            <A HREF="#first">First</A><BR>
+            <A HREF="#forward">Forward</A><BR>
+            <A HREF="#let">Let</A><BR>
+        <LI><A HREF="#tacticspres">Tactics for presentation</A><BR>
+            <A HREF="#hide">Hide</A><BR>
+            <A HREF="#unhide">Unhide</A><BR>            
+        <LI><A HREF="#transtactics">Transforming tactics</A><BR>
+            <A HREF="#unfold">Unfold</A><BR>
+            <A HREF="#simplify">Simplify</A><BR>
+            <A HREF="#convert">Convert</A><BR>
+            <A HREF="#pattern">Pattern</A><BR>
+        <LI><A HREF="#specialtactics">Special tactics</A><BR>
+            <A HREF="#use">Use</A><BR>
+            <A HREF="#andi">AndI</A><BR>
+            <A HREF="#andel">AndEL</A><BR>
+            <A HREF="#ander">AndER</A><BR>
+            <A HREF="#ande">AndE</A><BR>
+            <A HREF="#oril">OrIL</A><BR>
+            <A HREF="#orir">OrIR</A><BR>
+            <A HREF="#ore">OrE</A><BR>
+            <A HREF="#noti">NotI</A><BR>
+            <A HREF="#note">NotE</A><BR>
+            <A HREF="#falsee">FalseE</A><BR>
+            <A HREF="#existsi">ExistsI</A><BR>
+            <A HREF="#existse">ExistsE</A><BR>
+            <A HREF="#rewrite">Rewrite</A><BR>
+            <A HREF="#lewrite">Lewrite</A><BR>
+            <A HREF="#refl">Refl</A><BR>
+        <LI><A HREF="#tacticals">Tacticals</A><BR>
+            <A HREF="#then">Then</A><BR>
+            <A HREF="#try">Try</A><BR>
+            <A HREF="#repeat">Repeat</A><BR>
+            <A HREF="#else">Else</A><BR>
+        </UL>
+    <LI><A HREF="#commandsprovemode">Commands</A><BR>
+        <A HREF="#exit">Exit</A><BR>
+        <A HREF="#abort">Abort</A><BR>
+        <A HREF="#show">Show</A><BR>
+        <A HREF="#undo">Undo</A><BR>
+        <A HREF="#restart">Restart</A><BR>
+        <A HREF="#history">History</A><BR>
+        <A HREF="#focus">Focus</A><BR>
+        <A HREF="#task">Task</A><BR>
+        <A HREF="#othercommands">other commands</A><BR>
+    <LI><A HREF="#matching">Matching</A>
+    <LI><A HREF="#paths">Paths</A>
+    </UL>
+</UL>
+<HR>
+<HR>
+
+<H1><A NAME="background">Background</A></H1>
+<P>
+Yarrow started off as an implementation of a typing algorithm for PTSs.
+      Over the time it evolved into a simple proof-assistant.
+      Its main features are:
+</P>
+<UL>
+<LI> A particular pure type system (with subtyping) can be chosen at run-time.
+<LI> There are general tactics for proving propositions.
+<LI> Tactics for forward reasoning.
+<LI> Special rewriting tactics for the Leibniz-equality, and tactics for 
+     propositional and predicate logic.
+<LI> An easy-to-use system for infix notation, implicit arguments and binders.
+<LI> It is portable, because it runs on any platform on which 
+     Haskell runs. This includes <!--PC's and--> most Unix systems.
+<LI> It has a built-in help system.
+<!-- <LI> The implementation is well documented. There is extensive
+     documentation on how to add your own tactics.-->
+</UL>
+
+<P>
+This program has some disadvantages compared to other proof-assistants:
+</P>
+<UL>
+<LI> No automatic proof-search tactics.
+<LI> No inductive types, since they do not belong to PTSs.
+<LI> No mouse-control, but some effort has been spent to make
+     the keyboard-interface user-friendly.
+</UL>
+
+<P>
+This program was developed by Jan Zwanenburg. 
+Questions and remarks will be gratefully received and answered.
+You can reach the author at the following address.
+</P>
+
+<P>
+Jan Zwanenburg<BR>
+Computing Science Department<BR>
+University of Nijmegen<BR>
+Postbus 9010<BR>
+650 Gl Nijmegen<BR>
+The Netherlands<BR>
+e-mail: <A HREF="mailto:janz@cs.kun.nl">janz@cs.kun.nl</A><BR>
+Homepage: <A HREF="http://www.cs.kun.nl/~janz/">
+     http://www.cs.kun.nl/~janz/</A><BR>
+Yarrow homepage: 
+     <A HREF="http://www.cs.kun.nl/~janz/yarrow/index.html">
+     http://www.cs.kun.nl/~janz/yarrow/index.html</A><BR>
+</P><HR>                                  
+<HR>
+<H1><A NAME="introduction">Introduction</A></H1>
+<P>
+Yarrow is an implementation of Pure Type Systems
+(see <A HREF="#Bar92">[Bar92]</A>) with several extensions.
+In Yarrow you can experiment with various pure type systems, 
+with emphasis on using a type system as a logic.  
+A basic knowledge on type systems and the Curry-Howard-de Bruijn 
+isomorphism is required. Experience with proof-assistants 
+is useful for proving theorems.
+</P>
+
+<P>
+There are three extensions of PTSs implemented in Yarrow.
+First, we have definitions. Definitions are 
+indispensable for any practical use of PTSs.
+Pure Type Systems with definitions (DPTs) are defined in
+<A HREF="#SP93">[SP93]</A>; 
+the most important property of these systems is that apart from 
+GLOBAL definitions definitions in the context, also LOCAL
+definitions within terms are admitted.
+<BR>
+Second, we have subtyping. Subtyping makes the type system more flexible.
+In particular, it can be used with records to allow formalization of 
+Object-Oriented Programming to a certain degree.
+Pure Type Systems with Subtyping are defined in
+<A HREF="#Zwa99">[Zwa99]</A>.
+<BR>
+Third, we have records. Records are useful for defining programs in a PTS,
+in particular Object-Oriented programs.
+</P>
+
+<P>
+Yarrow has two modes. It starts in the MAIN-mode, where you can 
+get the type of a term, reduce terms and extend the context. 
+From the main-mode you can get to the PROVE-mode by the 'prove'-
+command. In the prove-mode a term for a certain type is 
+interactively constructed with tactics. When this is done, the program 
+returns to the main-mode.
+</P>
+
+<P>
+The next section describes the  <A HREF="#syntax">syntax</A> used in Yarrow.
+The other two chapters describe the <A HREF="#mainmode">main-mode</A> and
+<A HREF="#provemode">prove-mode</A> in more detail.
+</P>
+
+<P>
+Happy typing!
+</P>
+
+<P>
+References:
+<DL>
+<DT><A NAME="Bar92">[Bar92]</A>
+<DD>Henk Barendregt. Lambda Calculi with Types. In D.M. Gabbai, S. Abramsky,
+    and T.S.E. Maibaum, editors,
+    <EM>Handbook of Logic in Computer Science</EM>,
+    volume 1. Oxford University Press, 1992.
+<DT><A NAME="SP93">[SP93]</A>
+<DD>Paula Severi and Erik Poll. <EM>Pure Type Systems with 
+    Definitions</EM>.
+    Computing Science Note 93/24. Eindhoven 
+    University of Technology, 1993.
+<DT><A NAME="Zwa99">[Zwa99]</A>
+<DD>Jan Zwanenburg. <A HREF="../publications/index.html">
+    <EM>Object-Oriented Concepts and Proof Rules:
+    Formalization in Type Theory and Implementation in Yarrow</EM></A>.
+    Ph.D. thesis. Eindhoven University of Technology, 1999.
+</DL>
+</P>
+<HR>
+<H2><A NAME="syntax">Syntax</A></H2>
+<P>
+The syntax is quite close to the standard syntax of the typed 
+lambda calculus. We write 
+</P>       
+<DL COMPACT>
+<DT><CODE>\x:T.e       </CODE><DD> for a lambda abstraction
+<DT><CODE>@x:T.e       </CODE><DD> for a pi-type (in this program also called
+                        @-type)
+<DT><CODE>let x:=e:T.f </CODE><DD> for a local definition
+<DT><CODE>f e          </CODE><DD> for application (left-associative)
+<DT><CODE>(e)          </CODE><DD> to deviate from standard-precedence
+</DL>
+
+<P>
+Precedence goes from lowest to highest, so <CODE>\x:T.x x</CODE> means 
+      <CODE>\x:T.(x x)</CODE> and not <CODE>(\x:T.x) x</CODE>.
+The lambda, pi and let terms do extend to right as far as possible.
+</P>
+
+<P>    
+We use the following shorthands:
+</P>
+<DL COMPACT>
+<DT><CODE>\x1,x2,..xn:T.e       </CODE><DD> for a repeated abstraction
+<DT><CODE>@x1,x2,..xn:T.e       </CODE><DD> for a repeated pi-type 
+<DT><CODE>T-&gt;U      </CODE><DD> as a short-hand for <CODE>@x:T.U</CODE> if <CODE>x</CODE> does not occur 
+                        in <CODE>U</CODE> (the <CODE>-&gt;</CODE> is right-associative)
+<DT><CODE>let x:=e.f   </CODE><DD> for a local definition
+</DL>
+
+<P>
+Variables and sorts can consists of the following characters:<BR>
+<CODE>a..z  A..Z  0..9  * # ' _</CODE><BR>
+They may not start with a digit, underline or apostroph however. 
+The words <CODE>let</CODE>, <CODE>then</CODE>, <CODE>else</CODE>, 
+<CODE>in</CODE> and <CODE>on</CODE> are keywords (independent of case).
+Variables can also be used infix, see
+<A HREF="#infix-notation"><CODE>infix-notation</CODE></A>.
+</P>
+
+<P>
+In the name of commands, the case of the letters is ignored.
+Two dash signes '--' signal the rest of the line is comment.
+</P>
+<H2><A NAME="multi-line">Multi-line input</A></H2>
+<P>
+There is a restricted to split terms over several lines: 
+If a line ends with '.' '-&gt;' ':' ',' ':=' or an operator, the term may be
+completed on the following line. This works also 
+if not enough closing parentheses ')' have been seen.
+</P>
+
+<P>Example:<BR>
+<CODE>Var complicated : @a,b,c,d:Nat. @f:Nat-&gt;Nat-&gt;Nat.</CODE><BR>
+<CODE>                  @P,Q:*.@R:Nat-&gt;*. (P-&gt;Q) \/</CODE><BR>
+<CODE>                                       R (</CODE><BR>
+<CODE>                                f a (f (f b c) d))</CODE>
+</P>
+                  <H2><A NAME="infix-notation">Infix notation</A></H2>
+<P>
+Variables can also be notated as OPERATORS, consisting of a sequence of the
+following characters:<BR>
+<CODE>+ &lt; &gt; / \  &amp; ! $ % ^ ~ | @ ; = [ ] - _ ' 0..9</CODE><BR>
+They may not start with a digit, underline or apostroph either.
+The single backslash '\', the arrow '-&gt;', the single bar '|'
+and the single at '@' are reserved.
+So '-&gt;@' is scanned as one infix operator, and not as the
+symbols arrow and at!
+</P>
+
+<P>
+An operator must be used infix. Sometimes you wish to use it in 
+a prefix-way, or without two arguments. Then you have to enclose 
+the operator in parentheses. Some examples:<BR>
+<CODE>
+Var (+) : Nat -&gt; Nat -&gt; Nat<BR>
+Def double := \x:Nat. x+x<BR>
+Def S := (+) one<BR>
+</CODE>
+</P>
+
+<P>
+An infix operator binds weaker than application, but stronger 
+than -&gt;. For information concerning associativity and precedence 
+between operators see
+<A HREF ="#Infix"><CODE>Infix</CODE></A>,
+<A HREF ="#InfixL"><CODE>InfixL</CODE></A> and
+<A HREF ="#InfixR"><CODE>InfixR</CODE></A>.
+This infix system is quite similar to that 
+used in the functional programming languages Gofer and Haskell.
+</P>
+
+<H2><A NAME="extensions">Extensions</A></H2>
+<P>
+In Yarrow certain extensions to Pure Type Systems may be selected.
+These extensions are not automatically active; they have to be selected
+with the command <CODE>System</CODE>.
+</P>
+<P>                                                                          
+At the moment we have the following extensions:
+</P>
+<UL>
+<LI><A HREF="#subtyping">subtyping</A>
+<LI><A HREF="#records">records</A>
+</UL>
+<H3><A NAME="subtyping">Subtyping</A></H3>
+<DL>
+  <DT>Description:
+  <DD>Pure Type Systems with Subtyping are described in my thesis.
+  <DT>Activation:
+  <DD>Subtyping is activitated by giving two additional
+      parameters to the 'System' command:
+      the list of subtyping sorts and the list of subtyping rules.
+      For example:<BR>  
+      <CODE>System (*,#),(*:#),((*,*),(#,*)),(#),((#,*))</CODE>
+      for the second order lambda calculus with subtyping and
+      bounded quantification.
+  <DT>Syntax:
+  <DD>There are two additional constructions:
+      <DL COMPACT>
+      <DT><CODE>\x &lt;: t : T. e</CODE><DD> for a bounded abstraction. 
+      <DT><CODE>@x &lt;: t : T. e</CODE><DD> for a bounded quantification.
+      </DL>          
+      We use <CODE>\x &lt;: t. e</CODE> as shorthand for
+      <CODE>\x &lt;: t : T. e</CODE> if <CODE>t : T</CODE>. This shorthand is
+      also available for bounded quantifications.
+  <DT>Commands:
+  <DD>There are two additional commands available for systems with subtyping.
+      <UL>
+      <LI><CODE>Check </CODE> <VAR>term</VAR> <CODE>&lt;: </CODE> <VAR>term</VAR>
+          checks if the first term is a subtype of the second term.
+      <LI><CODE>Var</CODE> <VAR>var-list</VAR> <CODE>&lt;:</CODE>
+          <VAR>term</VAR> <CODE>:</CODE> <VAR>term</VAR> declares a bounded
+          variable.
+      </UL>
+      All other commands are adapted to handle subtyping as well.
+      For example, <CODE>Type</CODE> gives a minimal type, and 
+      <CODE>Intro</CODE> and <CODE>Apply</CODE> work also for bounded
+      quantifications.
+</DL>
+
+
+
+<H3><A NAME="records">Records</A></H3>
+<DL>
+ <DT>Description:
+ <DD>Records are a variant of cartesian products, where each part has a
+     label. They are also termed labeled products. A part (or field) of
+     a record may be selected by giving a field. Records are an important
+     feature of programming languages.
+ <DT>Activation:
+ <DD>Records are activitated by suffixing a sort with <CODE>->records</CODE>
+     in the command <CODE>System</CODE>. E.g.<BR>
+     <CODE>System (*->records,#),(*:#),((*,*), (#,*))</CODE><BR>
+     Now all record-types will have type <CODE>*</CODE>, and record-values
+     will have as sort <CODE>*</CODE>. Records may only be activated for
+     one sort.
+ <DT>Syntax:
+ <DD>There are three additional constructions for records:
+     <DL COMPACT>
+     <DT><CODE>{|l1:T1, .. ln:Tn|}</CODE><DD> for a record-type . 
+     <DT><CODE>{l1=t1, .. ln=tn}  </CODE><DD> for a record-value.
+     <DT><CODE>t`l</CODE><DD> for selection of a field from record.
+         The character separating the term and the label is a backquote,
+         usually on some obscure place on the keyboard.
+     </DL>                                                        
+     Note that <CODE>n</CODE> may be zero.<BR>
+     For labels all ordinary identifiers may be used. A label is not
+     related in any way to a variable with the same name.     
+ <DT>Typing:
+ <DD>For each construction there is a typing rule:
+     <UL>
+     <LI><CODE>{|l1:T1, .. ln:Tn|} : s</CODE><BR>
+         if <CODE>s</CODE> is the sort for which records are activated
+         and all labels are different
+     <LI><CODE>{l1=t1, .. ln=tn} : {|l1:T1, .. ln:Tn|}</CODE><BR>
+         if for each <CODE>i</CODE> we have <CODE>ti : Ti</CODE>
+         and all labels are different
+     <LI><CODE>t`li : Ti</CODE><BR>
+         if <CODE>t : {|l1:T1, .. ln:Tn|}</CODE>
+     </UL>                                                         
+ <DT>Reduction:
+ <DD>There is one reduction rule:
+     <UL>
+     <LI><CODE>{l1=t1, .. ln=tn}`li</CODE> reduces to <CODE>ti</CODE>
+     </UL>
+ <DT>Notes:
+ <DD>The records in Yarrow do depend on the order of the fields. E.g.
+     <CODE>{l= one, m= true}</CODE> and <CODE>{m= true, l= one}</CODE> are
+     not considered syntactically equal terms. (But they have identical
+     reduction behaviour.)
+ <DT>Subtyping:
+ <DD><P>
+     When both records and subtyping are selected there is subtyping on
+     records. The subtyping rule for records is:
+     <CODE>{|l1:T1 .. ln:Tn|} &lt;: {|k1:U1 .. km : Um|}</CODE> if for every 
+     <CODE>j &lt;= m</CODE> there
+     is an <CODE>i</CODE> with <CODE>li=kj</CODE> and <CODE>Ti &lt;: Uj</CODE>.
+     </P>
+     <P>
+     For example:<BR>
+    <CODE>System (*->records,#),(*:#),((*,*), (#,*)), (#), ((#,*))</CODE><BR>
+     gives the usual second order lambda calculus with records and subtyping.
+     A term in this calculus is<BR>
+     <CODE>(\X &lt;: {|id:Int|}. \x:X. x`id) {|id:Int, n:S|} {id=two, n=h}</CODE><BR>
+     assuming proper declarations for <CODE>Int, S, two, h</CODE> have been
+     made.
+     </P>
+</DL>
+<HR>
+<HR>
+
+<H1><A NAME="mainmode">Main-mode</A></H1>
+<P>
+In the main-mode of Yarrow you can extend the context, get the type of terms,
+reduce terms and enter the prove-mode with a certain goal. 
+The commands available here fall in 5 categories:
+</P>
+<OL>
+<LI><A HREF="#contextcommands">The context</A><BR>
+<LI><A HREF="#typing">Typing and reduction</A><BR>
+<LI><A HREF="#metacommands">Meta-commands</A><BR>
+<LI><A HREF="#readablesyntax">Readable syntax</A><BR>
+<LI><A HREF="#modules">Modules</A><BR>
+</OL>
+
+<H2><A NAME="contextcommands">The context</A></H2>
+<P>
+The following commands extend or examine the context.
+</P>
+
+<H3><A NAME="var">Var</A></H3>
+<DL>
+ <DT>Syntax:
+ <DD>
+  <OL>
+  <LI><CODE>Var</CODE> <VAR>var-list</VAR> <CODE>:</CODE> <VAR>term</VAR>
+  <LI><CODE>Var</CODE> <VAR>var-list</VAR> <CODE>&lt;:</CODE> <VAR>term</VAR>
+      <CODE>:</CODE> <VAR>term</VAR>
+  </OL>
+ <DT>Effect:
+ <DD>Adds variables of type <VAR>term</VAR> to the global context.
+     The variables are separated by a comma.
+     The first variant is for ordinary declarations. The second variant is
+     for bounded declarations, and is only available for systems with
+     subtyping. Here the typing part '<CODE>:</CODE> <VAR>term</VAR>'
+     is optional.
+ <DT>Example:
+ <DD><CODE>Var Nat : *<BR>
+           Var mult,(+) : Nat-&gt;Nat-&gt;Nat</CODE>
+ <DT>See also:
+ <DD><A HREF="#Def"><CODE>Def</CODE></A>,
+     <A HREF="#subtyping"><CODE>subtyping</CODE></A>
+</DL>
+
+<H3><A NAME="def">Def</A></H3>
+<DL>
+ <DT>Syntax:
+ <DD>
+   <OL>
+   <LI><CODE>Def</CODE> <VAR>var</VAR> <CODE>:=</CODE> <VAR>term</VAR>
+   <LI><CODE>Def</CODE> <VAR>var</VAR> <CODE>:=</CODE> <VAR>term</VAR>
+                                       <CODE>:</CODE> <VAR>term2</VAR>
+   </OL>
+ <DT>Effect:
+ <DD>Adds the definition of <VAR>var</VAR> to be equal to <VAR>term</VAR>
+     to the global context. In the second variant the recorded
+     type is <VAR>term2</VAR>.
+ <DT>Example:
+ <DD><CODE>Def Bool := @A:*.A-&gt;A-&gt;A <BR>
+           Def true := \A:*.\a1:A.\a2:A.a1 : Bool</CODE>
+ <DT>See also:
+ <DD><A HREF="#Var"><CODE>Var</CODE></A>
+</DL>
+
+<H3><A NAME="context">Context</A></H3>
+<DL>
+ <DT>Syntax:
+ <DD>
+   <OL>
+   <LI><CODE>Context</CODE> [: <VAR>sort-list</VAR>] [On <VAR>filename</VAR>]
+   <LI><CODE>Context</CODE> "<VAR>modulename</VAR>" [: <VAR>sort-list</VAR>]
+                            [On <VAR>filename</VAR>]
+   <LI><CODE>Context</CODE> <VAR>var</VAR> .. <VAR>var</VAR>
+                            [: <VAR>sort-list</VAR>] [On <VAR>filename</VAR>]
+   <LI><CODE>Context</CODE> <VAR>var</VAR>
+                            [: <VAR>sort-list</VAR>] [On <VAR>filename</VAR>]
+   </OL>
+ <DT>Effect:
+ <DD><P>This command displays the global context. With option
+     s set, also all corresponding sorts are shown. The piece of the context
+     defined in modules is only indicated by the first and last name
+     of each module.
+     </P>
+     <P>The second variant displays the part of a context as defined in the
+        named module.
+     </P>
+     <P>The third variant displays only the variables in the indicated range,
+        and the fourth variant displays only the given variable.
+     </P>
+     <P>The optional <VAR>sort-list</VAR> indicates the sorts
+     for which all definitions will be printed in full. Defining terms
+     belonging to other sorts are abbreviated to ".." .
+     </P>
+     <P>Optionally, a filename may be given, to which the output is redirected.
+     </P>
+ <DT>See also:
+ <DD><A HREF="#Option"><CODE>Option</CODE></A>
+</DL>
+
+
+<H3><A NAME="reset">Reset</A></H3>
+<DL>
+ <DT>Syntax:
+ <DD><CODE>Reset</CODE> <VAR>var</VAR>
+ <DT>Effect:
+ <DD>Removes all entries in the context, starting from <VAR>var</VAR>.<BR>
+               Implicit declarations for these variables are also reset,
+               but infix declarations are not.<BR>
+     Variables occurring in loaded modules cannot be removed. If the
+     context starting with this variable has to be deleted anyway, the
+     modules should be cleared first. 
+ <DT>Prove-mode:
+ <DD>This command is not available in prove-mode.
+ <DT>See also:
+ <DD><A HREF="#Clear"><CODE>Clear</CODE></A>
+</DL>
+                               
+
+<H3><A NAME="print">Print</A></H3>
+<DL>
+ <DT>Syntax:
+ <DD>
+  <CODE>Print </CODE> <VAR>var</VAR>
+ <DT>Effect:
+ <DD>Prints definition/declaration of <VAR>var</VAR>.
+ <DT>Prove-mode:
+ <DD>This command is also available in prove-mode. Then it is performed
+     in the context of the first goal.
+</DL>
+
+<H3><A NAME="prove">Prove</A></H3>
+<DL>
+ <DT>Syntax:
+ <DD><CODE>Prove</CODE> <VAR>var</VAR> <CODE>: </CODE> <VAR>term</VAR>
+ <DT>Effect:
+ <DD> Enter the prove-mode to find an inhabitant of
+      <VAR>term</VAR>, which will be assigned to <VAR>var</VAR>.
+      When the prove-mode is left, the inhabitant will be
+      type-checked so that correctness of the proof depends
+      only on the type-checking algorithm. A summary of all
+      used tactics is displayed, for the convenience of the user.<BR>
+      <VAR>term</VAR> must be typable with a sort.
+ <DT>Note:
+ <DD>This command is also available in prove-mode. In other words, you
+     can have multiple proof-tasks at one time. For switching between
+     them, use <CODE>Task</CODE>.
+ <DT>See also:
+ <DD><A HREF="#Def"><CODE>Def</CODE></A>,
+     <A HREF="#Task"><CODE>Task</CODE></A>
+</DL>
+
+<H3><A NAME="deduction">Deduction</A></H3>
+<DL>
+ <DT>Syntax:
+ <DD>
+  <CODE>Deduction</CODE> <VAR>var</VAR> <VAR>num</VAR>
+ <DT>Effect:
+ <DD>Prints definition of <VAR>var</VAR> as a flag-proof. The number (which
+     may be left out) sets certain options. It is considered as a binary
+     number, the bits signify from least to most significant:
+     <OL>
+     <LI> Print proof terms?
+     <LI> Print separate line for variables?
+     <LI> Make subdeduction for types in flags? (Works only if option 10 set)
+     <LI> Print inhabitants of all sorts, or only proofterms?
+     <LI> Maximal one application at a time?
+     <LI> Keep cuts in the deduction?
+     <LI> Ignore beta-delta conversions? (Even if this is set to 0, some
+          conversions will be ignored!)
+     <LI> Print beta-only conversions? (Ignored if option 7 set) 
+     <LI> Print only terms in justification? (Ignored if option 4 set) 
+     <LI> Maximal one assumption in a flag?
+     </OL>
+     E.g. 000010010 means max. one application at a time and print a separate
+     line for variables. Default <VAR>num</VAR> is zero.
+ <DT>Prove-mode:
+ <DD>This command is also available in prove-mode. Then it is performed
+     in the context of the first goal.                   
+ <DT>NOTE:
+ <DD>THIS COMMAND IS EXPERIMENTAL.
+</DL>
+<HR>
+
+<H2><A NAME="typing">Typing and reduction</A></H2>
+<P>
+The following commands implement miscellaneous typing and reduction routines.
+</P>
+
+<H3><A NAME="type">Type</A></H3>
+<DL>
+ <DT>Syntax:
+ <DD>
+  <CODE>Type </CODE> <VAR>term</VAR>
+ <DT>Effect:
+ <DD> Gives the type of <VAR>term</VAR>.
+ <DT>Prove-mode:
+ <DD>This command is also available in prove-mode. Then it is performed
+     in the context of the first goal.
+</DL>
+
+<H3><A NAME="check">Check</A></H3>
+<DL>
+ <DT>Syntax:
+ <DD>
+  <OL>
+  <LI><CODE>Check </CODE> <VAR>term</VAR> <CODE>: </CODE> <VAR>term</VAR>
+  <LI><CODE>Check </CODE> <VAR>term</VAR> <CODE>:=: </CODE> <VAR>term</VAR>
+  <LI><CODE>Check </CODE> <VAR>term</VAR> <CODE>&lt;: </CODE> <VAR>term</VAR>
+  </OL>
+ <DT>Effect:
+ <DD> The first variant checks that the typing judgment holds.
+      The second variant checks whether or not the two terms are
+      beta-delta convertable. 
+      The third variant checks if the first term is a subtype of the second
+      term (for systems with subtyping).
+ <DT>Prove-mode:
+ <DD>This command is also available in prove-mode. Then it is performed
+     in the context of the first goal.
+ <DT>See also:
+ <DD><A HREF="#subtyping"><CODE>subtyping</CODE></A>
+</DL>
+
+<H3><A NAME="bred">bRed</A></H3>
+<DL>
+ <DT>Syntax:
+ <DD><CODE>bRed</CODE> <VAR>term</VAR>
+ <DT>Effect:
+ <DD>Gives the b-normal form of <VAR>term</VAR>.
+ <DT>Prove-mode:
+ <DD>This command is also available in prove-mode. Then it is performed
+     in the context of the first goal.
+ <DT>See also:
+ <DD><A HREF="#bdRed"><CODE>bdRed</CODE></A>,
+     <A HREF="#dRed"><CODE>dRed</CODE></A>
+</DL>
+
+<H3><A NAME="dred">dRed</A></H3>
+<DL>
+ <DT>Syntax:
+ <DD><CODE>dRed</CODE> <VAR>term</VAR>
+ <DT>Effect:
+ <DD>Gives the d-normal form of <VAR>term</VAR>.
+ <DT>Prove-mode:
+ <DD>This command is also available in prove-mode. Then it is performed
+     in the context of the first goal.
+ <DT>See also:
+ <DD><A HREF="#bdRed"><CODE>bdRed</CODE></A>,
+     <A HREF="#bRed"><CODE>bRed</CODE></A>
+</DL>
+
+<H3><A NAME="bdred">bdRed</A></H3>
+<DL>
+ <DT>Syntax:
+ <DD><CODE>bdRed</CODE> <VAR>term</VAR>
+ <DT>Effect:
+ <DD>Gives the bd-normal form of <VAR>term</VAR>.
+ <DT>Prove-mode:
+ <DD>This command is also available in prove-mode. Then it is performed
+     in the context of the first goal.
+ <DT>See also:
+ <DD><A HREF="#dRed"><CODE>dRed</CODE></A>,
+     <A HREF="#bRed"><CODE>bRed</CODE></A>
+</DL>
+<HR>
+
+<H2><A NAME="metacommands">Meta-commands</A></H2>
+<P>
+Some of these commands allow you to set parameters of the system, and others
+implement auxilary functions.
+</P>
+
+<H3><A NAME="quit">Quit</A></H3>
+<DL>
+ <DT>Syntax:
+ <DD><CODE>Quit</CODE>
+ <DT>Effect:
+ <DD>Quits Yarrow immediately.
+ <DT>Prove-mode:
+ <DD>This command is not available in prove-mode. Exit prove-mode first.
+</DL>
+
+<H3><A NAME="help">Help</A></H3>
+<DL>
+ <DT>Syntax:
+ <DD>
+  <OL>
+  <LI><CODE>Help</CODE>
+  <LI><CODE>Help</CODE> <VAR>command</VAR>
+  <LI><CODE>Help list</CODE>
+  </OL>
+ <DT>Effect:
+ <DD> The first variant gives a list of the most used
+      commands in this mode, with a short description.<BR>
+      Variant 2 gives complete help on one command or
+      notion. Variant 3 lists all commands and notions for which help
+      is available.
+</DL>
+
+<H3><A NAME="system">System</A></H3>
+<DL>
+ <DT>Syntax:
+ <DD>
+  <OL>
+  <LI><CODE>System</CODE> <VAR>sys</VAR>
+  <LI><CODE>System</CODE>
+  </OL>
+ <DT>Effect:
+ <DD><P>Changes the type system used to <VAR>sys</VAR>. The context is
+        cleared, unless the old system is a part of <VAR>sys</VAR>.<BR>
+        If <VAR>sys</VAR> can be mapped to \C it is terminating,
+        and if \U- can be mapped to <VAR>sys</VAR> it is non-terminating.
+        This is verified by this program and a corresponding
+        message is issued. If the system is not terminating,
+        typing may not terminate, so this program can hang or
+        crash. On top of that, if the type system is considered as
+        a logic, it is inconsistent.<BR>
+        <VAR>sys</VAR> consists of the list of sorts, the list of
+        axioms and the list of rules, all seperated by a
+        comma, and enclosed by parentheses. Every list
+        consists of a number of items seperated by commas.<BR>
+        A sort is a just an identifier.<BR>
+        An axiom consists of two sorts seperated by
+        a colon.<BR>
+        A rule consists of a triple of sorts seperated by
+        commas, and is enclosed by parentheses. The third sort
+        may be omitted, in which case it is assumed to be
+        equal to the second sort.
+        </P>     
+     <P>The <CODE>System</CODE> command is also used to select
+        extensions of Pure Type Systems available in Yarrow, e.g. subtyping.
+        See 'extensions'.</P>
+     <P>The second variant displays the current type system.</P>
+ <DT>Examples:
+ <DD><CODE>System (Set,Type),(Set:Type),((Set,Set),(Set,Type))</CODE>
+                 for \P.<BR>
+     <CODE>System (*,#,##),(*:#,#:##),((*,*),(*,#,##))</CODE><BR>
+ <DT>Note:
+ <DD>The typing algorithm may not be able to handle some
+             systems. In this situation an error will be issued.
+ <DT>Prove-mode:
+ <DD>This command is not available in prove-mode.
+ <DT>See also:
+ <DD><A HREF="#extensions"><CODE>extensions</CODE></A>
+</DL>
+
+<H3><A NAME="read">Read</A></H3>
+<DL>
+ <DT>Syntax:
+ <DD><CODE>Read</CODE> "<VAR>filename</VAR>"
+ <DT>Effect:
+ <DD>Reads script file <VAR>filename</VAR>.
+     This command has the same effect as entering the
+     contents of the file by keyboard. However, if an error occurs, all
+     input after the error is ignored.
+ <DT>Prove-mode:
+ <DD>This command is also available in prove-mode.
+ <DT>See also:                          
+ <DD><A HREF="#Path"><CODE>Path</CODE></A>
+</DL>
+
+
+<H3><A NAME="option">Option</A></H3>
+<DL>
+ <DT>Syntax:
+ <DD>
+  <OL>
+  <LI><CODE>Option +</CODE><VAR>opt</VAR>
+  <LI><CODE>Option -</CODE><VAR>opt</VAR>
+  <LI><CODE>Option</CODE>
+  </OL>
+ <DT>Effect:
+ <DD>The first variant sets option <VAR>opt</VAR> on, the
+               second sets it off.<BR>
+               The options are:
+               <DL>
+               <DT>i<DD> parameters of variables may be implicit
+                            (see implicit)
+               <DT>s<DD> print after the types in contexts also the
+                            sorts
+               <DT>p<DD> print the proofterm with its holes when in
+                          prover mode
+               <DT>r<DD> show reduction path for commands 
+                     <CODE>bdRed</CODE>, <CODE>bRed</CODE>, <CODE>dRed</CODE>
+               </DL>
+               The third variant displays the current values of 
+               the options.
+</DL>
+<HR>
+
+<H2><A NAME="readablesyntax">Readable syntax</A></H2>
+<P>
+There are three mechanisms for keeping terms readable. The first is
+infix-notation, the second is permitting arguments to be implicit in
+some circumstances and the third is declaring certain variables as binders.
+</P>
+
+<H3><A NAME="infix">Infix</A></H3>
+<DL>
+ <DT>Syntax:
+ <DD><CODE>Infix</CODE> <VAR>num</VAR> <VAR>var</VAR>
+ <DT>Effect:
+ <DD> Sets the precedence of operator <VAR>var</VAR> to <VAR>num</VAR>, 
+               and makes it non-associative. 
+               The precedence runs from 1 to 9, operators with a 
+               higher precedence bind stronger. In this way many 
+               parentheses can be avoided.<BR>
+               Note that this command affects only parsing and 
+               printing of expressions; the termed operator does 
+               not have to be defined yet.<BR>
+               Standard precedence is 5. Note that application binds 
+               always stronger and -&gt; always weaker than operators.
+ <DT>Examples:
+ <DD><CODE>Infix 2 (=)<BR>
+           Infix 5 (+)</CODE>
+ <DT>See also:
+ <DD><A HREF="#InfixR"><CODE>InfixR</CODE></A>,
+     <A HREF="#InfixL"><CODE>InfixL</CODE></A>,
+     <A HREF="#infix-notation"><CODE>infix-notation</CODE></A>
+</DL>
+
+<H3><A NAME="infixl">InfixL</A></H3>
+<DL>
+ <DT>Syntax:
+ <DD><CODE>InfixL</CODE> <VAR>num</VAR> <VAR>var</VAR>
+ <DT>Effect:
+ <DD> Sets the precedence of operator <VAR>var</VAR> to <VAR>num</VAR>, 
+               and makes it left-associative.
+ <DT>Example:
+ <DD><CODE>InfixL 5 (-)</CODE><BR>
+     After this, <CODE>x-y-z</CODE> will be interpreted as
+     <CODE>(x-y)-z</CODE>
+ <DT>See also:
+ <DD><A HREF="#Infix"><CODE>Infix</CODE></A>,
+     <A HREF="#InfixR"><CODE>InfixR</CODE></A>,
+     <A HREF="#infix-notation"><CODE>infix-notation</CODE></A>
+</DL>
+
+<H3><A NAME="infixr">InfixR</A></H3>
+<DL>
+ <DT>Syntax:
+ <DD><CODE>InfixR</CODE> <VAR>num</VAR> <VAR>var</VAR>
+ <DT>Effect:
+ <DD> Sets the precedence of operator <VAR>var</VAR> to <VAR>num</VAR>, 
+               and makes it right-associative.
+ <DT>Example:
+ <DD><CODE>InfixR 7 (^)</CODE><BR>
+     After this, <CODE>x^y^z</CODE> will be interpreted as
+     <CODE>x^(y^z)</CODE>.
+ <DT>See also:
+ <DD><A HREF="#Infix"><CODE>Infix</CODE></A>,
+     <A HREF="#InfixL"><CODE>InfixL</CODE></A>,
+     <A HREF="#infix-notation"><CODE>infix-notation</CODE></A>
+</DL>
+
+<H3><A NAME="implicit">Implicit</A></H3>
+<DL>
+ <DT>Syntax:
+ <DD><CODE>Implicit</CODE> <VAR>num</VAR> <VAR>var</VAR>
+ <DT>Effect:
+ <DD><P>
+     Often a number of type-arguments are superfluous, 
+     in the sense that they can be derived from the 
+     context. Yarrow has a simple way of suppressing most 
+     useless arguments. Arguments to a variable can be 
+     suppressed in Yarrow, if they can be derived by 
+     inspecting following arguments. In most cases, this 
+     is good enough. Internally, always all parameters are 
+     represented.
+     </P>
+     <P>
+     This command is only allowed if <VAR>var</VAR> has been 
+     defined. It expresses that you want to suppress the 
+     first <VAR>num</VAR> arguments of <VAR>var</VAR>.
+     After this command, the first <VAR>num</VAR> arguments may be 
+     all left out, but this is not compulsory; otherwise 
+     all of them must be given. In order to be able 
+     to decide whether or not some arguments are implicit, 
+     the restriction is made that the first argument of <VAR>var</VAR>
+     has an other sort than the <VAR>num</VAR>+1th argument.
+     </P>
+     <P>
+     If option i is turned off, implicit arguments are no 
+     longer admitted, and all arguments are printed. 
+     Turning this option on again will re-allow implicit 
+     arguments in exactly the same way as before.
+     </P>
+ <DT>Examples:
+ <DD>Assume the following declarations have been made:<BR>
+     <CODE>id : @A:*.A-&gt;A<BR>
+           comp : @A,B,C:*. (B-&gt;C) -&gt; (A-&gt;B) -&gt; (A-&gt;C)<BR>
+           (=) : @A:*. A-&gt;A-&gt;Prop<BR>
+     </CODE>      Then the following commands define these 
+                  variables to have the usual number of 
+                  implicit arguments:<BR>
+     <CODE>Implicit 1 id<BR>
+           Implicit 3 comp<BR>
+           Implicit 1 (=)</CODE><BR>
+     And so the following expressions are admitted:<BR>
+     <CODE>id O</CODE> (means <CODE>id Nat O</CODE>)<BR>
+     <CODE>comp not even</CODE>  
+                       (means <CODE>comp Nat Bool Bool not even</CODE>)<BR>
+     <CODE>O=O</CODE> (means <CODE>(=) Nat O O</CODE>)
+ <DT>Shortcomings:
+ <DD>Sometimes arguments are not printed while they cannot be inferred.
+ <DT>See also:
+ <DD><A HREF="#Option"><CODE>Option</CODE></A>
+</DL>
+
+<H3><A NAME="binder">Binder</A></H3>
+<DL>
+ <DT>Syntax:
+ <DD><CODE>Binder</CODE> <VAR>var</VAR>
+ <DT>Effect:
+ <DD><VAR>var</VAR> is declared as a binder,
+     so applications of  <VAR>var</VAR> to an abstraction are parsed and
+     printed in
+     an abbreviated form,
+     i.e. the lambda is left out.<BR>
+    After a variable is declared as binder, it is always interpreted by
+    the parser as a binder; only if parenthesized, it can be used as an
+    ordinary variable.
+<DT>Example:
+ <DD>Assume the following declaration has been made:<BR>
+     <CODE>Ex : (Nat-&gt;*) -&gt; *<BR>
+     </CODE>and <CODE>Ex</CODE> is declared as a binder:<BR>
+     <CODE>Binder Ex</CODE><BR>
+     then the expression <CODE>Ex x:Nat. x=x</CODE> stands for
+    <CODE>Ex (\x:Nat. x=x)</CODE>.<BR>
+    <BR>
+    The application
+    of <CODE>Ex</CODE> to <CODE>P</CODE> is now written as
+    <CODE>(Ex) P</CODE>.
+ <DT>See also:
+ <DD><A HREF="#Implicit"><CODE>Implicit</CODE></A>
+</DL>
+<HR>
+
+<H2><A NAME="modules">Modules</A></H2>
+<P>
+Yarrow has a module system that allows pieces of contexts to be loaded
+without repeating type-checking. A module is a file, consisting of:
+</P>
+<OL>
+<LI>a segment of context
+<LI>a type-system in which this segment is valid
+<LI>an import list of modules that contain variables
+    needed for this segment
+<LI>infix and implicit declarations for variables in the segment
+</OL>
+<P>
+A module is created by the command <A HREF="#Save"><CODE>Save</CODE></A>
+<VAR>name</VAR>. In this module all new variables are saved; new variables
+are not contained in a loaded module.
+In a following session, all definitions and declarations in the module can be
+regained quickly by the command <A HREF="#Load"><CODE>Load</CODE></A>
+<VAR>name</VAR>.
+</P>
+
+<P>
+A module <VAR>m</VAR> can depend on other modules.
+This is automatically registered
+when saving: all modules loaded on that moment form the import list of
+module <VAR>m</VAR>. When <VAR>m</VAR> is loaded, any imported modules are
+also loaded. If any of the imported modules has changed since
+it was included in the import-list of <VAR>m</VAR>, the context defined in
+<VAR>m</VAR> is type-checked again. In this way consistency is guaranteed.
+</P>
+
+<P>
+Yarrow always keeps the context ordered in such a way, that it can be split
+in two pieces. The first piece corresponds to loaded modules, and the
+second piece contains new variables. The <CODE>Save</CODE> command will only
+save the second piece, and <CODE>Load</CODE> will insert the
+new variables between the two pieces.
+</P>
+
+<P>
+The <A HREF="#Clear"><CODE>Clear</CODE></A> command makes Yarrow forget
+that it has loaded the last module. This is necessary if modules have to be
+concatenated in a bigger module or if some definitions have to be deleted
+from a module.
+</P>
+<P>We illustrate the use of modules with an example. We assume the user 
+wants to build a theory of natural numbers, and already has defined some
+logical primitives in <CODE>"logic"</CODE>. A first session typically looks
+like this:
+</P>
+<P>
+<CODE>system ..<BR>
+      load "logic"<BR>
+      var natural := ..</CODE><BR>
+      (some more definitions and lemmas)<BR>
+<CODE>save "natural"</CODE>
+</P>
+<P>                                                      
+Now a module <CODE>natural</CODE> is created, with
+<CODE>logic</CODE> in the import list, but the logic primitives themselves
+are not included in <CODE>natural</CODE>.
+On the next session, the user wants to extend <CODE>natural</CODE>
+with more theory:
+</P>
+<P>
+<CODE>system ..<BR>
+      load "natural"<BR>
+      prove mult_symmetric : ..</CODE><BR>
+      (still more definitions and lemmas)<BR>
+<CODE>save "natural"</CODE>
+</P>
+<P>
+The module <CODE>logic</CODE> has been loaded automatically, since it is
+in the import list of <CODE>natural</CODE>. Now this module is
+extended with still more definitions. The user discovers that he needs
+another logical theorem. He shouldn't prove it right away, since then
+it is impossible to get them in the logic module. The course he should take
+is:
+</P>
+<P>
+<CODE>clear<BR>
+      reset natural<BR>
+      prove another_logical_theorem : ..<BR>
+      save "logic"<BR>
+      load "natural"
+</CODE>
+</P>
+<P>
+Module <CODE>natural</CODE> is type-checked again to see if it is still
+valid.
+Now he can continue his quest for a formal proof of Fermat's theorem, and
+we conclude the example here.
+</P>
+<P>
+Now we describe the commands for modules in more detail.
+
+<H3><A NAME="save">Save</A></H3>
+<DL>
+ <DT>Syntax:
+ <DD>
+   <CODE>Save</CODE> "<VAR>filename</VAR>"
+ <DT>Effect:
+ <DD>Saves the piece of the context not belonging to existing modules in
+     module <VAR>filename</VAR><CODE>.yc</CODE>. The type system used,
+     the import list and infix and implicit declarations are also stored.
+     The import list for this module is the list of all modules currently
+     loaded.<BR>
+     However, if <VAR>filename</VAR> is the most recent module, it is
+     updated. That means that the piece of the context added since this 
+     module was loaded is added to the module.<BR>
+     If <VAR>filename</VAR> is another loaded module, it can't be updated.
+ <DT>Example:
+ <DD><CODE>Save "integer"</CODE>
+ <DT>See also:                          
+ <DD><A HREF="#Load"><CODE>Load</CODE></A>,
+     <A HREF="#Clear"><CODE>Clear</CODE></A>
+</DL>  
+
+<H3><A NAME="load">Load</A></H3>
+<DL>
+ <DT>Syntax:
+ <DD>
+   <OL>
+   <LI><CODE>Load</CODE> "<VAR>filename</VAR>"
+   <LI><CODE>Load</CODE>
+   </OL>
+ <DT>Effect:
+ <DD><P>Loads module with name <VAR>filename</VAR><CODE>.yc</CODE>, and all
+     modules on the import list of this module.<BR>
+     It is checked that the module is valid in the current type system.
+     (If the context is empty, the type system is changed to the type system
+     of the module).
+     Furthermore, if any of the imported modules are changed,
+     <VAR>filename</VAR> is type-checked again to ensure consistency.<BR>
+     The declarations of the module are inserted in the context just after
+     the last declaration of the last module.</P>
+     <P>The second variant gives a list of all modules currently loaded,
+        with the first and last variable that every module contains.</P>
+ <DT>Example:
+ <DD><CODE>Load "integer"</CODE>
+ <DT>See also:                          
+ <DD><A HREF="#Save"><CODE>Save</CODE></A>,
+     <A HREF="#Clear"><CODE>Clear</CODE></A>,
+     <A HREF="#Read"><CODE>Read</CODE></A>,
+     <A HREF="#Path"><CODE>Path</CODE></A>
+</DL>  
+
+<H3><A NAME="clear">Clear</A></H3>
+<DL>
+ <DT>Syntax:
+ <DD>
+   <CODE>Clear</CODE>
+ <DT>Effect:
+ <DD>Clears the last module from the list of loaded modules. This has no
+     effect on the context, but means Yarrow has 'forgotten' the last
+     module is loaded. In this way parts of the context coming from a
+     module can be saved in another module.
+ <DT>Example:
+ <DD><CODE>Load "int1"<BR>
+           Load "int2"<BR>
+           Clear<BR>
+           Clear<BR>
+           Save "int1and2"</CODE><BR>
+     Now module <CODE>int1and2</CODE> contains all declarations of both 
+     <CODE>int1</CODE> and <CODE>int2</CODE>. Without the <CODE>clear</CODE>
+     commands, <CODE>int1and2</CODE> would be empty.
+ <DT>Prove-mode:
+ <DD>This command is not available in prove-mode.
+ <DT>See also:                          
+ <DD><A HREF="#Load"><CODE>Load</CODE></A>,
+     <A HREF="#Save"><CODE>Save</CODE></A>
+</DL>  
+
+<H3><A NAME="path">Path</A></H3>
+<DL>
+ <DT>Syntax:
+ <DD>
+   <OL>
+   <LI><CODE>Path</CODE> "<VAR>pathname</VAR>"
+   <LI><CODE>Path</CODE>
+   </OL>
+ <DT>Effect:
+ <DD><P>Adds <VAR>filename</VAR> to the current path. This means that
+     every <CODE>Load</CODE> and <CODE>Read</CODE> operation will also look
+     in this directory for files. On start-up only the current directory
+     is in the path. Note that modules are always <EM>saved</EM> in the
+     current directory.</P>
+     <P>You can use both <CODE>/</CODE> and <CODE>\</CODE> as separation
+     between directory names, this is automatically corrected for the
+     platform, if necessary. Use <CODE>..</CODE> for the parent directory,
+     and <CODE>.</CODE> for the current directory.</P>
+     <P>The second variant displays all paths.</P>
+ <DT>Example:
+ <DD><CODE>Path "theories/lists"</CODE>
+ <DT>Prove-mode:
+ <DD>This command is not available in prove-mode.
+ <DT>Shortcoming:
+ <DD>You cannot delete entries from the path.
+ <DT>See also:                          
+ <DD><A HREF="#Load"><CODE>Load</CODE></A>,
+     <A HREF="#Read"><CODE>Read</CODE></A>
+</DL>  
+<HR>
+<HR>  
+
+
+
+<H1><A NAME="provemode">Prove-mode</A></H1>
+<P> 
+In the prove-mode a term of a given type is interactively constructed.
+You enter the prove-mode with the <A HREF="#prove"><CODE>prove</CODE></A>
+command from the main-mode. Tactics are the commands that direct the
+construction process, but sometimes also some commands are needed
+that don't contribute to the proof-term, e.g. to undo some tactics, to
+leave the prove-mode or to get some information. The distinction between
+tactics and other commands is important, since only tactics can be combined
+or undone.
+</P>
+<P>This chapter is divided into three sections. The first section describes
+all <A HREF="#tactics">tactics</A>, the second section describes the
+<A HREF="#commandsprovemode">other commands</A> available in prove-mode,
+and the last section describes the <A HREF="#matching">matching</A>
+procedure we use (this is used in the common <CODE>apply</CODE>-tactic).
+</P>
+<HR>
+
+<H2><A NAME="tactics">Tactics</A></H2>
+<P>
+In the prove-mode a term of a given type is interactively constructed.
+Tactics are the commands that direct this process. We call the term that
+is being constructed the proof-term.
+</P>                            
+<P>
+More specifically, at every moment during the construction, the proof-term
+is a lambda-term with some <EM>holes</EM> in it. Every hole has a type,
+which is called the <EM>goal</EM>.
+At the beginning, the proof-term is just one hole, and its type is the
+type given in the <CODE>prove</CODE>-command.
+By tactics this hole is gradually filled in, refining the corresponding goal.
+Typically, new holes are constructed during this process. The proof-term
+is complete when there are no holes left. Then the prove-mode can be exited
+and the constructed term is included as a definition in the context.
+</P>
+<P>
+A hole can occur inside a lambda-abstraction. This means that every hole has
+a <EM>local context</EM>, listing the abstracted variables with their types.
+In the prove-mode the first goal is shown under its local context, seperated
+by a line. The other goals are shown without their context. An example:
+</P>
+<P><CODE>
+2 goals<BR>
+<BR>
+P : *<BR>
+Q : *<BR>
+R : *<BR>
+H : P->Q->R<BR>
+H1 : Q<BR>
+H2 : P<BR>
+--------------------------------------------------<BR>
+P<BR>
+<BR>
+2) Q<BR>
+</CODE></P>
+<P>
+This shows two goals, <CODE>P</CODE> and <CODE>Q</CODE>, and the local
+context of the first goal. Holes themselves are not shown, unless the
+corresponding option is turned on. Then the whole process of constructing
+proof-term is made explicit
+(see <A HREF="#Option"><CODE>Option</CODE></A>).
+Normally tactics work on the first goal. Another goal can be selected with
+the <A HREF="#Focus"><CODE>Focus</CODE></A> tactic.
+</P>
+<P>
+What follows is a list of tactics. They are divided into 4 categories:
+</P>
+<OL>
+<LI><A HREF="#basictactics">Basic tactics</A>
+<LI><A HREF="#transtactics">Transforming tactics</A>
+<LI><A HREF="#specialtactics">Special tactics</A> for the Leibniz-equality
+    and propositional logic
+<LI><A HREF="#tacticals">Tacticals</A>
+</OL>
+<HR>
+
+<H3><A NAME="basictactics">Basic tactics</A></H3>
+<P>
+These tactics are shown in order of frequency of use.
+</P>
+
+<H3><A NAME="intro">Intro</A></H3>
+<DL>
+ <DT>Syntax:
+ <DD>
+   <OL>
+   <LI><CODE>Intro</CODE> <VAR>var-list</VAR>
+   <LI><CODE>Intro</CODE>
+   </OL>
+ <DT>Effect:
+ <DD>If the goal is a <CODE>@</CODE>-type or a <CODE>let</CODE>-type, this tactic
+     introduces one variable or definition. In variant 1
+     the given variable name is used, otherwise a name will
+     be chosen (usually the name already occurring in the
+     type).                            
+ <DT>Example:
+ <DD><CODE>Intro A,x,H1,H2</CODE>
+ <DT>See also:                          
+ <DD><A HREF="#Intros"><CODE>Intros</CODE></A>
+</DL>  
+
+<H3><A NAME="intros">Intros</A></H3>
+<DL>
+ <DT>Syntax:
+ <DD>
+   <OL>
+   <LI><CODE>Intros</CODE>
+   <LI><CODE>Intros</CODE> <VAR>num</VAR>
+   </OL>
+ <DT>Effect:
+ <DD>The first variant repeats <CODE>Intro</CODE> as often as possible.
+     The second variant repeats <CODE>Intro</CODE> <VAR>num</VAR> times.
+ <DT>See also:
+ <DD><A HREF="#Intro"><CODE>Intro</CODE></A>, 
+     <A HREF="#Repeat"><CODE>Repeat</CODE></A>
+</DL>
+
+<H3><A NAME="apply">Apply</A></H3>
+<DL>
+ <DT>Syntax:
+ <DD><OL>
+     <LI><CODE>Apply</CODE> <VAR>term</VAR>
+     <LI><CODE>Apply</CODE> <VAR>term</VAR> <CODE>On</CODE> 
+                                            <VAR>term-list</VAR>
+     </OL>
+ <DT>Effect 1:
+ <DD> <P> Find an inhabitant of the current goal by applying
+                <VAR>term</VAR> to some other terms. Some of these arguments
+                can be inferred, the others become new goals.</P>
+      <P> This tactic tries first to apply <VAR>term</VAR> to zero arguments,
+                then to apply to one argument, then to two, and so on.
+                For n arguments, this means that the type of <VAR>term</VAR>
+                should be of the form <CODE>@x1:T1.@x2:T2. ... @xn:Tn. U</CODE>
+                (after unfolding of definitions, if neccesary).
+                The type <CODE>U</CODE> is then matched against the current goal
+                to determine the type of the arguments. If the matching
+                fails, or some type
+                <CODE>Ti</CODE> cannot be determined, this number of
+                arguments fails. Otherwise it succeeds, and all types
+                corresponding to arguments that cannot be determined
+                become new goals.</P>
+ <DT>Example:
+ <DD>Suppose we have in the context<BR>
+                <CODE> H : @x:Nat. P x -&gt; Q x</CODE><BR>
+                and the goal is<BR>
+                <CODE> Q zero</CODE><BR>
+                then the tactic <CODE>Apply H</CODE> succeeds with as
+                new goal<BR>
+                <CODE>P zero</CODE><BR>
+                Here <CODE>H</CODE> is applied to two arguments. The first
+                is <CODE>zero</CODE> and is determined by matching. The
+                second argument is of type <CODE>P zero</CODE> and could
+                not be determined by matching, so becomes a new hole.
+ <DT>Effect 2:
+ <DD><P>The second variant is a combination of the Forward tactic and the 
+        Apply 1 tactic.
+     </P>   
+ <DT>Example 2:
+ <DD>Suppose our goal is<BR>
+     <CODE>lem : @x,y,z : Int. x&lt;y -&gt; y&lt;z -&gt; x&lt;z</CODE><BR>
+     <CODE>H : b&lt;c</CODE><BR>
+     <CODE>---------</CODE><BR>
+     <CODE>a&lt;c</CODE><BR>
+     Then the tactic <CODE>Apply lem On H</CODE> results in the goal<BR>
+     <CODE>---------</CODE><BR>
+     <CODE>a&lt;b</CODE><BR>
+ <DT>See also:
+ <DD><A HREF="#matching">matching</A>,
+     <A HREF="#Forward">Forward</A>
+</DL>
+
+<H3><A NAME="exact">Exact</A></H3>
+<DL>
+ <DT>Syntax:
+ <DD><CODE>Exact</CODE> <VAR>term</VAR>
+ <DT>Effect:
+ <DD>This tactic directly proves the goal, if
+               <VAR>term</VAR> is an inhabitant of the goal.
+ <DT>See also:
+ <DD><A HREF="#Assumption"><CODE>Assumption</CODE></A>
+</DL>
+
+<H3><A NAME="assumption">Assumption</A></H3>
+<DL>
+ <DT>Syntax:
+ <DD><CODE>Assumption</CODE>
+ <DT>Effect:
+ <DD> This tactic directly proves the goal if a variable
+               with this type is in the local or global context.
+ <DT>See also:
+ <DD><A HREF="#Exact"><CODE>Exact</CODE></A>
+</DL>
+
+<H3><A NAME="cut">Cut</A></H3>
+<DL>
+ <DT>Syntax:
+ <DD><CODE>Cut</CODE> <VAR>term</VAR>
+ <DT>Effect:
+ <DD> Prove the goal by using the cut rule for <VAR>term</VAR>.
+               That is, first prove the goal assuming <VAR>term</VAR>,
+               and prove <VAR>term</VAR> later.
+ <DT>See also:
+ <DD><A HREF="#First"><CODE>First</CODE></A>
+</DL>
+
+<H3><A NAME="first">First</A></H3>
+<DL>
+ <DT>Syntax:
+ <DD><CODE>First</CODE> <VAR>term</VAR>
+ <DT>Effect:
+ <DD> Prove the goal by using the cut rule for <VAR>term</VAR>.
+      That is, first prove <VAR>term</VAR>, and prove the current
+      goal later with assumption <VAR>term</VAR>.<BR>
+      The only difference with <CODE>Cut</CODE> is the order of the
+      generated subgoals. Indeed, it is the same as <CODE>Cut</CODE>
+      followed by <CODE>Focus 2</CODE>.
+ <DT>See also:
+ <DD><A HREF="#Cut"><CODE>Cut</CODE></A>,
+     <A HREF="#Focus"><CODE>Focus</CODE></A>
+</DL>
+
+<H3><A NAME="forward">Forward</A></H3>
+<DL>
+ <DT>Syntax:
+ <DD><OL>
+     <LI><CODE>Forward</CODE> <VAR>term</VAR>
+     <LI><CODE>Forward</CODE> <VAR>term</VAR> <CODE>On</CODE> 
+                                              <VAR>term-list</VAR>
+     </OL>
+ <DT>Effect 1:
+ <DD> <P>      
+      Introduce a variable with the same type as <VAR>term</VAR>.
+      Suppose <VAR>term</VAR> is of type <VAR>T</VAR>.
+      Then this tactic is a shortcut for the consecutive tactics<BR>
+      <CODE>First</CODE> <VAR>T</VAR><BR>
+      <CODE>Exact</CODE> <VAR>term</VAR><BR>
+      <CODE>Intro</CODE><BR>
+      So <CODE>First</CODE> uses the cut-rule, and immediately solves
+      one of the goals by the proof-term <VAR>term</VAR>.
+      </P>
+      <P>
+      In practice, this tactic is used to support forward-reasoning,
+      i.e. combine the propositions we already have in a new proposition,
+      without referring to the goal.
+      </P>
+ <DT>Example 1:
+ <DD>Suppose our goal is<BR>
+     <CODE>H2 : @x:Nat. P x -&gt; Q x</CODE><BR>
+     <CODE>H3 : P y  </CODE><BR>
+     <CODE>---------</CODE><BR>
+     <CODE>R</CODE><BR>
+     Then the tactic <CODE>Forward H2 y H3</CODE> results in<BR>
+     <CODE>H2 : @x:Nat. P x -&gt; Q x</CODE><BR>
+     <CODE>H3 : P y  </CODE><BR>
+     <CODE>H4 : Q y  </CODE><BR>
+     <CODE>---------</CODE><BR>
+     <CODE>R</CODE><BR>
+ <DT>Effect 2:
+ <DD> <P>      
+      The disadvantage of Forward 1 is that often big applications have
+      to be typed in, with many arguments that are clear from the context.
+      In example 1 above, the argument y of H2 is clear from the context.
+      The second variant of Forward solves this problem; in the example
+      above we can just type<BR>
+      <CODE>Forward H2 On H3</CODE><BR>
+      which gives the same effect.
+      </P>
+
+      <P>
+      The second variant of Forward tries to make a proof-term of the
+      form<BR>
+      <VAR>term</VAR> .. <VAR>term1</VAR> .. <VAR>term2</VAR> .. etc. .. 
+      <VAR>termn</VAR><BR>
+      where on each place with dots zero or more terms are inserted, to
+      make the term well-typed. The terms that are inserted are either
+      found by matching, or become new goals.
+      In this way, forward reasoning is much easier.
+      </P>
+
+      <P> 
+      If <VAR>term</VAR> is a local variable <VAR>v</VAR>,
+      and we use only 'arrow-elimination' to obtain the new assumption,
+      this variable <VAR>v</VAR> is hidden.<BR> 
+      </P>
+ <DT>Example 2:
+ <DD>Suppose our goal is<BR>
+     <CODE>lem : @x,y,z : Int. x&lt;y -&gt; y&lt;z -&gt; x&lt;z</CODE><BR>
+     <CODE>H1 : a&lt;b</CODE><BR>
+     <CODE>H2 : b&lt;c</CODE><BR>
+     <CODE>---------</CODE><BR>
+     <CODE>R</CODE><BR>
+     Then the tactic <CODE>Forward lem On H1, H2</CODE> results in a new
+     assumption<BR>
+     <CODE>H3 : a&lt;c</CODE><BR>
+ <DT>See also:
+ <DD><A HREF="#First"><CODE>First</CODE></A>,
+     <A HREF="#Exact"><CODE>Exact</CODE></A>,
+     <A HREF="#Intro"><CODE>Intro</CODE></A>,
+     <A HREF="#Hide"><CODE>Hide</CODE></A>
+</DL>
+
+<H3><A NAME="let">Let</A></H3>
+<DL>
+ <DT>Syntax:
+ <DD>
+  <OL><LI><CODE>Let</CODE> <VAR>var</VAR> <CODE>:=</CODE> <VAR>term</VAR>
+      <LI><CODE>Let</CODE> <VAR>var</VAR> <CODE>:=</CODE> <VAR>term</VAR>
+                                          <CODE>:</CODE> <VAR>term2</VAR>
+  </OL> 
+ <DT>Effect:
+ <DD>Adds a definition to the local context.
+</DL><HR>
+
+
+<H3><A NAME="tacticspres">Tactics for presentation</A></H3>
+<P>
+These tactics do not change the goal or the local context, but
+only change the way the local context is printed.
+</P>
+
+<H3><A NAME="hide">Hide</A></H3>
+<DL>
+ <DT>Syntax:
+ <DD><CODE>Hide</CODE> <VAR>var-list</VAR>
+ <DT>Effect:                   
+ <DD>This tactic suppresses printing of the local variables named in
+     <VAR>var-list</VAR>.
+ <DT>See also:                          
+ <DD><A HREF="#Unhide"><CODE>Unhide</CODE></A>
+</DL>  
+
+<H3><A NAME="unhide">Unhide</A></H3>
+<DL>
+ <DT>Syntax:
+ <DD>
+   <OL>
+   <LI><CODE>Unhide</CODE> <VAR>var-list</VAR>
+   <LI><CODE>Unhide</CODE>
+   </OL>
+ <DT>Effect:                   
+ <DD>The first variant makes the suppression of printing of the local 
+     variables named in <VAR>var-list</VAR> undone.<BR>
+     The second variant makes sure all local variables are printed.
+ <DT>See also:                          
+ <DD><A HREF="#Hide"><CODE>Hide</CODE></A>
+</DL>  
+<HR>
+
+<H3><A NAME="transtactics">Transforming tactics</A></H3>
+<P>
+These tactics convert the goal (or sometimes, a hypothesis), into
+a beta-delta convertible one.
+</P>
+
+<H3><A NAME="unfold">Unfold</A></H3>
+<DL>
+ <DT>Syntax:
+ <DD>
+  <OL>
+  <LI><CODE>Unfold</CODE> <VAR>var</VAR> 
+  <LI><CODE>Unfold</CODE> <VAR>num-list</VAR> <VAR>var</VAR>
+  <LI><CODE>Unfold</CODE> <VAR>var</VAR> <CODE>In</CODE> <VAR>var2</VAR>
+  <LI><CODE>Unfold</CODE> <VAR>num-list</VAR> <VAR>var</VAR> <CODE>In</CODE> <VAR>var2</VAR>
+  </OL>
+ <DT>Effect:
+ <DD>The given variable is unfolded; in variants 1 and 2
+               in the goal, and for variants 3 and 4 in the type of
+               <VAR>var2</VAR>, which should be in the local context.<BR>
+               In variants 1 and 3 all occurrences are unfolded,
+               in variant 2 and 4 only the numbered
+               occurrences of the variable are unfolded.
+               Here the explicit prefix order is used,
+               this can be different from the order in the text if infix 
+               operators or implicit arguments are used!<BR>
+               After the unfolding the term is simplified.
+ <DT>Example:
+ <DD><CODE>Unfold 1,3 plus</CODE><BR>
+     unfolds the first and third occurrence of plus
+ <DT>Shortcomings:
+ <DD>If there are numbers in the list not
+     corresponding to an occurrence, no error is given. Do not use the
+     number 0, since that indicates a path
+     (see <A HREF="#paths"><CODE>paths</CODE></A>).
+ <DT>See also:
+ <DD><A HREF="#Implicit"><CODE>Implicit</CODE></A>,
+     <A HREF="#Infix"><CODE>Infix</CODE></A>,
+     <A HREF="#Simplify"><CODE>Simplify</CODE></A>,
+     <A HREF="#Convert"><CODE>Convert</CODE></A>
+</DL>
+
+
+<H3><A NAME="simplify">Simplify</A></H3>
+<DL>
+ <DT>Syntax:
+ <DD><CODE>Simplify</CODE>
+ <DT>Effect:
+ <DD>The goal is reduced to beta normal form.
+ <DT>See also:
+ <DD><A HREF="#Convert"><CODE>Convert</CODE></A>,
+     <A HREF="#Unfold"><CODE>Unfold</CODE></A>,
+     <A HREF="#Pattern"><CODE>Pattern</CODE></A>
+</DL>
+
+<H3><A NAME="convert">Convert</A></H3>
+<DL>
+ <DT>Syntax:
+ <DD><CODE>Convert</CODE> <VAR>term</VAR>
+ <DT>Effect:
+ <DD>Changes the goal to <VAR>term</VAR>, which should be
+               beta-delta-convertible to the goal.
+ <DT>See also:
+ <DD><A HREF="#Unfold"><CODE>Unfold</CODE></A>,
+     <A HREF="#Simplify"><CODE>Simplify</CODE></A>,
+     <A HREF="#Pattern"><CODE>Pattern</CODE></A>
+</DL>
+
+<H3><A NAME="pattern">Pattern</A></H3>
+<DL>
+ <DT>Syntax:
+ <DD>
+  <OL>
+  <LI><CODE>Pattern</CODE> <VAR>term</VAR>
+  <LI><CODE>Pattern</CODE> <VAR>num-list</VAR> <VAR>term</VAR>
+  </OL>
+ <DT>Effect:
+ <DD>This tactic performs a beta-expansion. The first
+               variant abstracts over all occurrences of <VAR>term</VAR>
+               in the current goal, the second variant abstracts only
+               over the numbered occurences of <VAR>term</VAR>.<BR>
+               In this way the goal can be converted into a form more
+               suitable for matching.
+ <DT>Shortcomings:
+ <DD>If there are numbers in the list not
+     corresponding to an occurrence, no error is given. Do not use the
+     number 0, since that indicates a path
+     (see <A HREF="#paths"><CODE>paths</CODE></A>).
+ <DT>See also:
+ <DD><A HREF="#Convert"><CODE>Convert</CODE></A>
+</DL>
+
+<HR>
+
+
+<H3><A NAME="specialtactics">Special tactics</A></H3>
+<P>
+Tactics that are useful only in conjunction with certain lemmas are
+called special. Currently we have special tactics for propositional and
+predicate logic,
+and for dealing with Leibniz-equality. All these tactics work independent
+of the name of the connectives. E.g. "and", "/\" or "PRODUCT" may be all
+used as the name for conjunction. However, the user has to indicate which
+lemmas have to be used for each special tactic. This is done with the
+command <CODE>use</CODE>.
+</P>
+
+<H3><A NAME="use">Use</A></H3>
+<DL>
+ <DT>Syntax:
+ <DD>
+   <OL>
+   <LI><CODE>Use</CODE> <VAR>tacticname</VAR> <VAR>var</VAR>
+   <LI><CODE>Use</CODE>
+   </OL>
+ <DT>Effect:
+ <DD><VAR>tacticname</VAR> should be the name of a special tactic, and
+     <VAR>var</VAR> should be the proof of a lemma that is used by this
+     tactic. This command records the name of this lemma, so that if
+     the indicated tactic is used, this lemma is automatically invoked.
+     Which form of lemma is used by a tactic, is indicated in the
+     description of the tactic.<BR>
+     More than one lemma can be associated with one tactic.<BR>
+     The command without parameters gives an overview that shows which 
+     special tactics are associated with which lemmas.
+ <DT>See also:
+ <DD><A HREF="#AndI"><CODE>AndI</CODE></A>,
+     <A HREF="#AndEL"><CODE>AndEL</CODE></A>,
+     <A HREF="#AndER"><CODE>AndER</CODE></A>,
+     <A HREF="#OrIL"><CODE>OrIL</CODE></A>,
+     <A HREF="#OrIR"><CODE>OrIR</CODE></A>,
+     <A HREF="#OrE"><CODE>OrE</CODE></A>,
+     <A HREF="#NotI"><CODE>NotI</CODE></A>,
+     <A HREF="#NotE"><CODE>NotE</CODE></A>,
+     <A HREF="#FalseE"><CODE>FalseE</CODE></A>,
+     <A HREF="#ExistsI"><CODE>ExistsI</CODE></A>,
+     <A HREF="#ExistsE"><CODE>ExistsE</CODE></A>,
+     <A HREF="#Rewrite"><CODE>Rewrite</CODE></A>,
+     <A HREF="#Lewrite"><CODE>Lewrite</CODE></A>,
+     <A HREF="#Refl"><CODE>Refl</CODE></A>   
+</DL>
+<H3><A NAME="andi">AndI</A></H3>
+<DL>
+ <DT>Syntax:
+ <DD><CODE>AndI</CODE>
+ <DT>Effect:
+ <DD>The goal should be a conjunction. This tactic splits the goal in two
+     separate conjuncts.<BR>
+     This tactic needs an introduction lemma for conjunction of the
+     following form:<BR>
+     <CODE>@P,Q:s. P -> Q -> and P Q</CODE>
+ <DT>See also:
+ <DD><A HREF="#Use"><CODE>Use</CODE></A>
+</DL>
+<H3><A NAME="andel">AndEL</A></H3>
+<DL>
+ <DT>Syntax:
+ <DD><OL>
+     <LI><CODE>AndEL</CODE> <VAR>term</VAR>
+     <LI><CODE>AndEL</CODE> <VAR>term</VAR> <CODE>On</CODE> 
+                                            <VAR>term-list</VAR>
+     </OL>
+ <DT>Effect:
+ <DD>The conclusion of the type of <VAR>term</VAR> should be a conjunction.
+     This tactic adds
+     the left conjunct to the local context.
+     The second variant is a combination of 'Forward' and 'AndEL 1'.<BR>
+     This tactic needs an elimation lemma for conjunction of the
+     following form:<BR>
+     <CODE>@P,Q:s. and P Q -> P</CODE>
+ <DT>Shortcomings:
+ <DD>It is not possible to give the name of the new hypothesis.
+ <DT>See also:
+ <DD><A HREF="#Forward"><CODE>Forward</CODE></A>,
+     <A HREF="#AndER"><CODE>AndER</CODE></A>,
+     <A HREF="#AndE"><CODE>AndE</CODE></A>,
+     <A HREF="#Use"><CODE>Use</CODE></A>
+</DL>
+<H3><A NAME="ander">AndER</A></H3>
+<DL>
+ <DT>Syntax:
+ <DD><OL>
+     <LI><CODE>AndER</CODE> <VAR>term</VAR>
+     <LI><CODE>AndER</CODE> <VAR>term</VAR> <CODE>On</CODE> 
+                                            <VAR>term-list</VAR>
+     </OL>
+ <DT>Effect:
+ <DD>The conclusion of the type of <VAR>term</VAR> should be a conjunction.
+     This tactic adds
+     the right conjunct to the local context.
+     The second variant is a combination of 'Forward' and 'AndER 1'.<BR>
+     This tactic needs an elimation lemma for conjunction of the
+     following form:<BR>
+     <CODE>@P,Q:s. and P Q -> Q</CODE>
+ <DT>Shortcomings:
+ <DD>It is not possible to give the name of the new hypothesis.
+ <DT>See also:
+ <DD><A HREF="#Forward"><CODE>Forward</CODE></A>,
+     <A HREF="#AndEL"><CODE>AndEL</CODE></A>,
+     <A HREF="#AndE"><CODE>AndE</CODE></A>,
+     <A HREF="#Use"><CODE>Use</CODE></A>
+</DL>
+<H3><A NAME="ande">AndE</A></H3>
+<DL>
+ <DT>Syntax:
+ <DD><OL>
+     <LI><CODE>AndE</CODE> <VAR>term</VAR>
+     <LI><CODE>AndE</CODE> <VAR>term</VAR> <CODE>On</CODE> 
+                                            <VAR>term-list</VAR>
+     </OL>
+ <DT>Effect:
+ <DD>The conclusion of the type of <VAR>term</VAR> should be a conjunction.
+     This tactic adds
+     both conjuncts to the local context, and if <VAR>term</VAR> is a local
+     variable, this variable is hidden.<BR>                    
+     The second variant is a combination of 'Forward' and 'AndE 1'.<BR>
+     'AndE' is a combination of the special tactics 'AndEL' and 'AndER'; so
+     both have to be made available by 'Use', before 'AndE' can be used.     
+ <DT>Shortcomings:
+ <DD>It is not possible to give the name of the new hypotheses.
+ <DT>See also:
+ <DD><A HREF="#Forward"><CODE>Forward</CODE></A>,
+     <A HREF="#AndEL"><CODE>AndEL</CODE></A>,
+     <A HREF="#AndER"><CODE>AndER</CODE></A>,
+     <A HREF="#Use"><CODE>Use</CODE></A>,
+     <A HREF="#Hide"><CODE>Hide</CODE></A>
+</DL>
+<H3><A NAME="oril">OrIL</A></H3>
+<DL>
+ <DT>Syntax:
+ <DD><CODE>OrIL</CODE>
+ <DT>Effect:
+ <DD>The goal should be a disjunction. This tactic reduces this goal to the
+     disjunct on the left hand side.<BR>
+     This tactic needs an introduction lemma for disjunction of the
+     following form:<BR>
+     <CODE>@P,Q:s. P -> or P Q</CODE>
+ <DT>See also:
+ <DD><A HREF="#Use"><CODE>Use</CODE></A>
+</DL>
+<H3><A NAME="orir">OrIR</A></H3>
+<DL>
+ <DT>Syntax:
+ <DD><CODE>OrIR</CODE>
+ <DT>Effect:
+ <DD>The goal should be a disjunction. This tactic reduces this goal to the
+     disjunct on the right hand side.<BR>
+     This tactic needs an introduction lemma for disjunction of the
+     following form:<BR>
+     <CODE>@P,Q:s. Q -> or P Q</CODE>
+ <DT>See also:
+ <DD><A HREF="#Use"><CODE>Use</CODE></A>
+</DL>
+<H3><A NAME="ore">OrE</A></H3>
+<DL>
+ <DT>Syntax:
+ <DD><OL>
+     <LI><CODE>OrE</CODE> <VAR>term</VAR>
+     <LI><CODE>OrE</CODE> <VAR>term</VAR> <CODE>On</CODE> 
+                                            <VAR>term-list</VAR>
+     </OL>
+ <DT>Effect:
+ <DD>The conclusion of the type of <VAR>term</VAR> should be a disjunction.
+     This tactic
+     generates (at least) two new goals.
+     The two new goals have the same conclusion as
+     the old goal, but the local context of the first goal is augmented by
+     the disjunct on the left hand side, and likewise for the second goal
+     and the disjunct on the right hand side.   
+     If <VAR>term</VAR> is a local variable, this variable is hidden.<BR>                    
+     The second variant is a combination of 'Forward' and 'OrE 1'.<BR>
+     This tactic needs an elimation lemma for disjunction of the
+     following form:<BR>
+     <CODE>@P,Q:s1. @R:s2. or P Q -> (P->R) -> (Q->R) -> R</CODE>
+ <DT>Shortcomings:
+ <DD>It is not possible to give the name of the new hypotheses.
+ <DT>See also:
+ <DD><A HREF="#Forward"><CODE>Forward</CODE></A>,
+     <A HREF="#Use"><CODE>Use</CODE></A>,
+     <A HREF="#Hide"><CODE>Hide</CODE></A>
+</DL>
+<H3><A NAME="noti">NotI</A></H3>
+<DL>
+ <DT>Syntax:
+ <DD><CODE>NotI</CODE>
+ <DT>Effect:
+ <DD>The goal should be a negation. This tactic adds the negated proposition
+     to the context and sets the new goal to False.<BR>
+     This tactic needs an introduction lemma for negation of the
+     following form:<BR>
+     <CODE>@P:s. (P -> False) -> Not P</CODE>
+ <DT>Shortcomings:
+ <DD>It is not possible to give the name of the new hypotheses.
+ <DT>See also:
+ <DD><A HREF="#Use"><CODE>Use</CODE></A>
+</DL>
+<H3><A NAME="note">NotE</A></H3>
+<DL>
+ <DT>Syntax:
+ <DD><OL>
+     <LI><CODE>NotE</CODE> <VAR>term</VAR>
+     <LI><CODE>NotE</CODE> <VAR>term</VAR> <CODE>On</CODE> 
+                                            <VAR>term-list</VAR>
+     </OL>
+ <DT>Effect:
+ <DD>The conclusion of the type of <VAR>term</VAR> should be of the form
+     <CODE>Not P</CODE>,
+     and the goal should be <CODE>False</CODE>.
+     This tactic replaces the goal by <CODE>P</CODE>.
+     The second variant is a combination of 'Forward' and 'NotE 1'.<BR>
+     This tactic needs an elimation lemma for negation of the
+     following form:<BR>
+     <CODE>@P:s. Not P -> P -> False</CODE>
+ <DT>See also:
+ <DD><A HREF="#Forward"><CODE>Forward</CODE></A>,
+     <A HREF="#Use"><CODE>Use</CODE></A>
+</DL>
+<H3><A NAME="falsee">FalseE</A></H3>
+<DL>
+ <DT>Syntax:
+ <DD><CODE>FalseE</CODE>
+ <DT>Effect:
+ <DD>This tactic replaces the current goal by False, if the following
+     elimination lemma is recorded with the command <CODE>use</CODE>:<BR>
+     <CODE>@P:s. False -> P</CODE>
+ <DT>See also:
+ <DD><A HREF="#Use"><CODE>Use</CODE></A>
+</DL>
+<H3><A NAME="existsi">ExistsI</A></H3>
+<DL>
+ <DT>Syntax:
+ <DD><CODE>ExistsI</CODE> <VAR>term</VAR>
+ <DT>Effect:
+ <DD>The goal should be an existential quantification. <VAR>term</VAR>
+     is taken to be the witness of the property. The new goal is to prove
+     that this is indeed the case.<BR>
+     This tactic needs an introduction lemma for existential
+     quantification of the
+     following form:<BR>
+     <CODE>@x1:t1. ... @xn:tn. @x:t. @P:t->s. P x -> Ex x1 .. xn P</CODE>
+ <DT>See also:
+ <DD><A HREF="#Use"><CODE>Use</CODE></A>
+</DL>
+<H3><A NAME="existse">ExistsE</A></H3>
+<DL>
+ <DT>Syntax:
+ <DD><OL>
+     <LI><CODE>ExistsE</CODE> <VAR>term</VAR>
+     <LI><CODE>ExistsE</CODE> <VAR>term</VAR> <CODE>On</CODE> 
+                                            <VAR>term-list</VAR>
+     </OL>
+ <DT>Effect:
+ <DD>The conclusion of the type of <VAR>term</VAR> should be an existantial
+     quantification.
+     This tactic
+     generates a new goal, where the local context is extended with
+      a witness and a proof of the property for
+     the witness.                      
+     If <VAR>term</VAR> is a local variable, this variable is hidden.<BR>         The second variant is a combination of 'Forward' and 'ExistsE 1'.<BR>
+     This tactic needs an elimation lemma for existential quantification of
+     the following form:<BR>
+     <CODE>@x1:t1. ... @xn:tn. @P:t->s1. @R:s2. Ex x1 .. xn P -> 
+          (@x:t. P x -> R) -> R</CODE>
+ <DT>Shortcomings:
+ <DD> It is not possible to give the name of the new hypotheses.
+ <DT>See also:
+ <DD><A HREF="#Forward"><CODE>Forward</CODE></A>,
+     <A HREF="#Use"><CODE>Use</CODE></A>,
+     <A HREF="#Hide"><CODE>Hide</CODE></A>
+</DL>
+<H3><A NAME="rewrite">Rewrite</A></H3>
+<DL>
+ <DT>Syntax:
+ <DD>
+  <CODE>Rewrite</CODE> [<VAR>num</VAR>] <VAR>term</VAR> 
+      [<CODE>On</CODE> <VAR>term-list</VAR>] [<CODE>In</CODE> <CODE>var</CODE>]
+ <DT>Effect:
+ <DD><VAR>term</VAR> should be the proof of an equality. This 
+               tactic replaces in the goal one occurrence of 
+               the left-hand side of the equality by the 
+               right-hand side. The optional 
+               number selects the occurrence (otherwise the first).
+               The variant with the <CODE>On</CODE> clause are a combination
+               of 'Forward' and 'Rewrite' without <CODE>On</CODE> clause.
+               Finally, it is also possible to rewrite in an assumption, 
+               using the <CODE>In</CODE> clause.<BR>
+               This tactic needs an elimination lemma for Leibniz-equality of
+               the following form:<BR>
+               <CODE>@x1:t1. .. @xn:tn.@x,y:t. @P:t->sort. eq x1 .. xn x y -> P y -> P x</CODE><BR>
+               Note here the order of <CODE>y</CODE> and <CODE>x</CODE>! <BR>
+               The equality may be quantified and may have 
+               conditions, which will become new goals.
+ <DT>Example:
+ <DD>Suppose we have already typed:<BR>
+     <CODE>Var eq : @A:*. A -&gt; A -&gt; *<BR>
+           Var eq_elim_l : { as above }<BR>                      
+           Use Rewrite eq_elim_l<BR>
+           Var lemma : @x:Nat. eq Nat x (minus x zero)</CODE><BR>
+                and our goal is,<BR>
+                <CODE>Q two -&gt; R </CODE><BR>
+                then <CODE>Rewrite lemma</CODE> will yield as new goal<BR>
+                <CODE>Q (minus two zero) -&gt; R</CODE>
+ <DT>Shortcomings:
+ <DD><UL>
+     <LI> This tactic cannot replace expressions 
+      containing variables that are local in the goal.
+     <LI> If there are numbers in the list not
+          corresponding to an occurrence, no error is given. Do not use the
+          number 0, since that indicates a path
+         (see <A HREF="#paths"><CODE>paths</CODE></A>).
+     </UL> 
+ <DT>See also:
+ <DD><A HREF="#Forward"><CODE>Forward</CODE></A>,
+     <A HREF="#Lewrite"><CODE>Lewrite</CODE></A>,
+     <A HREF="#Use"><CODE>Use</CODE></A>
+</DL>
+<H3><A NAME="lewrite">Lewrite</A></H3>
+<DL>
+ <DT>Syntax:
+ <DD>
+  <CODE>Lewrite</CODE> [<VAR>num</VAR>] <VAR>term</VAR> 
+      [<CODE>On</CODE> <VAR>term-list</VAR>] [<CODE>In</CODE> <CODE>var</CODE>]
+ <DT>Effect:
+ <DD><VAR>term</VAR> should be the proof of an equality. This
+               tactic replaces in the goal one occurrence of
+               the RIGHT-hand side of the equality by the
+               LEFT-hand side.<BR>
+               This tactic needs an elimination lemma for Leibniz-equality of
+               the following form:<BR>
+               <CODE>@x1:t1. .. @xn:tn.@x,y:t. @P:t->sort. eq x1 .. xn x y -> P x -> P y</CODE><BR>
+               Note here the order of <CODE>y</CODE> and <CODE>x</CODE>! <BR>
+               For more information we refer to 'Rewrite'.
+ <DT>Shortcomings:
+ <DD><UL>
+     <LI> This tactic cannot replace expressions 
+      containing variables that are local in the goal.
+     <LI> If there are numbers in the list not
+          corresponding to an occurrence, no error is given. Do not use the
+          number 0, since that indicates a path
+         (see <A HREF="#paths"><CODE>paths</CODE></A>).
+     </UL> 
+ <DT>See also:
+ <DD><A HREF="#Rewrite"><CODE>Rewrite</CODE></A>,
+     <A HREF="#Use"><CODE>Use</CODE></A>
+</DL>
+<H3><A NAME="refl">Refl</A></H3>
+<DL>
+ <DT>Syntax:
+ <DD><CODE>Refl</CODE>
+ <DT>Effect:
+ <DD>The goal should be of the form <CODE>eq A x x'</CODE>, where
+     <CODE>x</CODE> and <CODE>x'</CODE> are bd-convertible.
+     This tactic proofs the goal by using the corresponding reflexivity 
+     lemma. This lemma should be of the following form:<BR>
+     <CODE>@x1:t1. .. @xn:tn. @x:t. eq x1 .. xn x x</CODE><BR>
+ <DT>See also:
+ <DD><A HREF="#Use"><CODE>Use</CODE></A>
+</DL><HR>
+
+<H3><A NAME="tacticals">Tacticals</A></H3>
+<P>
+Tacticals are ways of composing tactics and can be useful to reduce the
+number of commands the user has to give to reach the goal.
+</P>
+
+<H3><A NAME="then">Then</A></H3>
+<DL>
+ <DT>Syntax:
+ <DD>
+  <OL>
+  <LI><VAR>tactic</VAR> <CODE>Then (</CODE> <VAR>tactic1</VAR> 
+      <CODE>|</CODE> <VAR>tactic2</VAR> <CODE>|</CODE> ...
+     <CODE>|</CODE> <VAR>tacticn</VAR> <CODE>)</CODE>
+  <LI><VAR>tactic</VAR> <CODE>Then</CODE> <VAR>tactic1</VAR>
+  </OL>
+ <DT>Effect:
+ <DD><P> The tactical first performs <VAR>tactic</VAR> and then
+      <VAR>tactic1</VAR> on the first of the generated subgoals,
+      <VAR>tactic2</VAR> on the second of the generated subgoals,
+      etc. If there are more new subgoals than tactics, the last tactic
+      in the list is applied to the rest of the subgoals.
+      If there are fewer new subgoals than tactics, the rest of the tactics
+      is ignored.
+      If any application
+      of a tactic fails, the combination fails as a whole,
+      meaning it has no effect.</P>
+     <P>The second variant is just an instance of the first variant, where
+         <VAR>n</VAR> equals one, and the parentheses have been left out.
+        So <VAR>tactic1</VAR> is performed on all generated subgoals.
+     </P>
+ <DT>See also:
+ <DD><A HREF="#Try"><CODE>Try</CODE></A>,
+     <A HREF="#Repeat"><CODE>Repeat</CODE></A>,
+     <A HREF="#Else"><CODE>Else</CODE></A>
+</DL>
+<H3><A NAME="try">Try</A></H3>
+<DL>
+ <DT>Syntax:
+ <DD><CODE>Try</CODE> <VAR>tactic</VAR>
+ <DT>Effect:
+ <DD> This tactical tries <VAR>tactic</VAR>, but does not fail if
+               <VAR>tactic</VAR> fails.
+ <DT>Example:
+ <DD><P>
+     <CODE>Apply H Then Try Assumption</CODE><BR>
+           This example shows how <CODE>Try</CODE> can be useful.
+           All hypotheses of <CODE>H</CODE> that are in the context are
+           immediately proved. If <CODE>Try</CODE> were omitted, a single
+           failure of the <CODE>Assumption</CODE> tactic (which is probable)
+           would mean failure of the whole composed tactic.
+     </P>
+     <P><CODE>Try</CODE> <VAR>tactic</VAR> is the same as
+        <VAR>tactic</VAR> <CODE>Else</CODE> <CODE>"skip"</CODE>.
+     </P>
+ <DT>See also:
+ <DD><A HREF="#Repeat"><CODE>Repeat</CODE></A>,
+     <A HREF="#Then"><CODE>Then</CODE></A>,
+     <A HREF="#Else"><CODE>Else</CODE></A>
+</DL>
+
+<H3><A NAME="repeat">Repeat</A></H3>
+<DL>
+ <DT>Syntax:
+ <DD><CODE>Repeat</CODE> <VAR>tactic</VAR>
+ <DT>Effect:
+ <DD>Repeats <VAR>tactic</VAR> as often as possible, but with a
+               maximum of 10 times. So it is ensured the repetition
+               always ends.
+ <DT>See also:
+ <DD><A HREF="#Try"><CODE>Try</CODE></A>,
+     <A HREF="#Then"><CODE>Then</CODE></A>
+</DL>
+<HR>
+
+
+<H3><A NAME="else">Else</A></H3>
+<DL>
+ <DT>Syntax:
+ <DD>
+  <VAR>tactic1</VAR> <CODE>Else</CODE> <VAR>tactic2</VAR>
+ <DT>Effect:
+ <DD><P> The tactical tries to perform <VAR>tactic1</VAR>.
+         If this succeeds, this tactical is done.
+         If this fails, <VAR>tactic2</VAR> is performed.
+     </P>
+ <DT>See also:
+ <DD><A HREF="#Try"><CODE>Try</CODE></A>,
+     <A HREF="#Repeat"><CODE>Repeat</CODE></A>,
+     <A HREF="#Then"><CODE>Then</CODE></A>
+</DL><HR>
+<HR>
+
+
+<H2><A NAME="commandsprovemode">Commands of prove-mode</A></H2>
+<P>    
+Below we describe the commands that are special for the prove-mode.
+At the end of this section we
+describe which <A HREF="#generalcommands">other commands</A> can be used
+in prove-mode.
+</P>
+
+<H3><A NAME="exit">Exit</A></H3>
+<DL>
+ <DT>Syntax:
+ <DD><CODE>Exit</CODE>
+ <DT>Effect:
+ <DD> Finishes the current proof task and returns to main-mode
+      (if no other proof tasks are running). 
+      This command is only admitted if the proof is completed. The proof will
+      be recorded under the name given with the command <CODE>prove</CODE>.
+ <DT>See also:
+ <DD><A HREF="#Abort"><CODE>Abort</CODE></A>
+</DL>
+
+
+<H3><A NAME="abort">Abort</A></H3>
+<DL>
+ <DT>Syntax:
+ <DD><CODE>Abort</CODE>
+ <DT>Effect:
+ <DD> Aborts the current proof-task and returns to main-mode
+      (if no other proof-tasks are running).
+      The proof is not recorded, even if it is completed.
+ <DT>See also:
+ <DD><A HREF="#Exit"><CODE>Exit</CODE></A>
+</DL>
+
+<H3><A NAME="show">Show</A></H3>
+<DL>
+ <DT>Syntax:
+ <DD>
+  <OL>
+  <LI><CODE>Show</CODE> <VAR>num</VAR> 
+  <LI><CODE>Show</CODE>
+  </OL>
+ <DT>Effect:
+ <DD>Shows goal <VAR>num</VAR> with its context. Default is goal number 1.
+</DL>
+
+<H3><A NAME="undo">Undo</A></H3>
+<DL>
+ <DT>Syntax:
+ <DD>
+  <OL>
+  <LI><CODE>Undo</CODE>
+  <LI><CODE>Undo</CODE> <VAR>num</VAR>
+  </OL>
+ <DT>Effect:
+ <DD>Makes the last tactic of the current goal undone (so this a local undo).
+     The second variant makes
+               the last <VAR>num</VAR> tactics undone. In case the number of
+               tactics you want to undo is unknown, this can be
+               looked up with the <CODE>History</CODE> command.<BR>
+               Note that this command doesn't make the effect of
+               COMMANDS (e.g. <CODE>Infix</CODE> or <CODE>Option</CODE>) undone.
+ <DT>See also:
+ <DD><A HREF="#Restart"><CODE>Restart</CODE></A>,
+     <A HREF="#History"><CODE>History</CODE></A>
+</DL>
+
+
+<H3><A NAME="restart">Restart</A></H3>
+<DL>
+ <DT>Syntax:
+ <DD><CODE>Restart</CODE>
+ <DT>Effect:
+ <DD>Returns to the goal you started with.
+ <DT>See also:
+ <DD><A HREF="#Undo"><CODE>Undo</CODE></A>,
+     <A HREF="#History"><CODE>History</CODE></A>
+</DL>
+
+<H3><A NAME="history">History</A></H3>
+<DL>
+ <DT>Syntax:
+ <DD><CODE>History</CODE>
+ <DT>Effect:
+ <DD> Shows a list of the tactics used so far in proving
+      the proposition, in a structured way. The lines with a question
+      mark indicate the current subgoals.<BR>
+      Some tactics are numbered. Suppose a tactic <VAR>tac</VAR>
+      has number <VAR>n</VAR>,
+      then <CODE>Undo</CODE> <VAR>n</VAR> will make all tactics upto
+      <VAR>tac</VAR> undone.
+ <DT>See also:
+ <DD><A HREF="#Undo"><CODE>Undo</CODE></A>,
+     <A HREF="#Restart"><CODE>Restart</CODE></A>
+</DL>
+<HR>
+
+<H3><A NAME="focus">Focus</A></H3>
+<DL>
+ <DT>Syntax:
+ <DD><CODE>Focus</CODE> <VAR>num</VAR>
+ <DT>Effect:
+ <DD>Selects goal <VAR>num</VAR> as the current goal.
+</DL>
+                                
+<H3><A NAME="task">Task</A></H3>
+<DL>
+ <DT>Syntax:
+ <DD>
+   <OL>
+   <LI><CODE>Task</CODE> <VAR>var</VAR>
+   <LI><CODE>Task</CODE>
+   </OL>
+ <DT>Effect:
+ <DD>This command switches to the proof-task for <VAR>var</VAR>.
+     Of course, this is only useful when there are multiple proof-tasks.
+     <BR>
+     The second variant displays all current proof-tasks.
+ <DT>See also:
+ <DD><A HREF="#Prove"><CODE>Prove</CODE></A>
+</DL><HR>
+
+<H3><A NAME="othercommands">Other commands</A></H3>
+<P>
+Almost all commands that are available in main-mode, are also available
+in prove-mode. Most of them have exactly the same effect (they
+ignore the local context).
+However, some commands use the local context of the first goal.
+These commands are:
+</P>
+<UL>
+<LI> <A HREF="#type">Type</A>
+<LI> <A HREF="#print">Print</A>
+<LI> <A HREF="#check">Check</A>
+<LI> <A HREF="#bred">bRed</A>
+<LI> <A HREF="#dred">dRed</A>
+<LI> <A HREF="#bdred">bdRed</A>
+</UL>
+The only commands that are not available in prove-mode, are
+<A HREF="#system">System</A> and <A HREF="#reset">Reset</A>.
+<HR>
+
+<H2><A NAME="matching">matching</A></H2>
+<P>
+Matching is the problem of finding a substitution for some variables so that
+a <EM>pattern</EM> is beta-delta equal to a term. These variables that may
+substituted for are called <EM>existential</EM> variables.
+</P>
+<P>
+Matching in Yarrow is an extension of first-order matching.
+First order matching means the routine doesn't know
+anything about beta or delta reduction. 
+There are three ways in which it is extended:
+</P>
+<UL>
+<LI> patterns without existential variables are matched with beta-delta equal terms
+<LI> definitions are unfolded under some circumstances
+<LI> If the pattern is of the form 
+  <CODE>x x1 .. xn</CODE> where <CODE>x</CODE> is an existential variable,
+  the substitution <CODE>&lt;x := \x1 .. xn. term&gt;</CODE> is delivered 
+  (roughly). These patterns are called lambda-patterns.
+</UL>
+<P>If the program doesn't see the proper instantation of some existential
+variables, the user can mold the term in the proper form with the 
+<A HREF="#Pattern"><CODE>Pattern</CODE></A> or 
+<A HREF="#Convert"><CODE>Convert</CODE></A> tactics.
+</P>
+
+
+<HR>
+
+<H2><A NAME="paths">paths</A></H2>
+<P>
+A path is a way of indicating a subterm of a term. It may be used on any 
+place where a <VAR>num</VAR> indicating an occurrence is expected.
+Paths are generated by the graphical user interface; we strongly discourage
+use of paths by the user.
+</P>
+<P>
+The important point is that paths are notated as a space-separated list of
+numbers, starting with 0. This doesn't conflict with occurrences, since they
+are always positive numbers, but it may explain unexpected behaviour, e.g.
+caused by
+</P>
+<UL>
+<LI><CODE>Unfold 0 plus</CODE> (typically all occurrences of plus will be unfolded)
+</UL>
+<HR>
+
+<HR>
+</BODY>
+</HTML>

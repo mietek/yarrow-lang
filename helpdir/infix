@@ -1,0 +1,22 @@
+<DL>
+ <DT>Syntax:
+ <DD><CODE>Infix</CODE> <VAR>num</VAR> <VAR>var</VAR>
+ <DT>Effect:
+ <DD> Sets the precedence of operator <VAR>var</VAR> to <VAR>num</VAR>, 
+               and makes it non-associative. 
+               The precedence runs from 1 to 9, operators with a 
+               higher precedence bind stronger. In this way many 
+               parentheses can be avoided.<BR>
+               Note that this command affects only parsing and 
+               printing of expressions; the termed operator does 
+               not have to be defined yet.<BR>
+               Standard precedence is 5. Note that application binds 
+               always stronger and -&gt; always weaker than operators.
+ <DT>Examples:
+ <DD><CODE>Infix 2 (=)<BR>
+           Infix 5 (+)</CODE>
+ <DT>See also:
+ <DD><A HREF="#InfixR"><CODE>InfixR</CODE></A>,
+     <A HREF="#InfixL"><CODE>InfixL</CODE></A>,
+     <A HREF="#infix-notation"><CODE>infix-notation</CODE></A>
+</DL>

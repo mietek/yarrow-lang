@@ -1,0 +1,15 @@
+<DL>
+ <DT>Syntax:
+ <DD><CODE>History</CODE>
+ <DT>Effect:
+ <DD> Shows a list of the tactics used so far in proving
+      the proposition, in a structured way. The lines with a question
+      mark indicate the current subgoals.<BR>
+      Some tactics are numbered. Suppose a tactic <VAR>tac</VAR>
+      has number <VAR>n</VAR>,
+      then <CODE>Undo</CODE> <VAR>n</VAR> will make all tactics upto
+      <VAR>tac</VAR> undone.
+ <DT>See also:
+ <DD><A HREF="#Undo"><CODE>Undo</CODE></A>,
+     <A HREF="#Restart"><CODE>Restart</CODE></A>
+</DL>

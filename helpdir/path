@@ -1,0 +1,28 @@
+<DL>
+ <DT>Syntax:
+ <DD>
+   <OL>
+   <LI><CODE>Path</CODE> "<VAR>pathname</VAR>"
+   <LI><CODE>Path</CODE>
+   </OL>
+ <DT>Effect:
+ <DD><P>Adds <VAR>filename</VAR> to the current path. This means that
+     every <CODE>Load</CODE> and <CODE>Read</CODE> operation will also look
+     in this directory for files. On start-up only the current directory
+     is in the path. Note that modules are always <EM>saved</EM> in the
+     current directory.</P>
+     <P>You can use both <CODE>/</CODE> and <CODE>\</CODE> as separation
+     between directory names, this is automatically corrected for the
+     platform, if necessary. Use <CODE>..</CODE> for the parent directory,
+     and <CODE>.</CODE> for the current directory.</P>
+     <P>The second variant displays all paths.</P>
+ <DT>Example:
+ <DD><CODE>Path "theories/lists"</CODE>
+ <DT>Prove-mode:
+ <DD>This command is not available in prove-mode.
+ <DT>Shortcoming:
+ <DD>You cannot delete entries from the path.
+ <DT>See also:                          
+ <DD><A HREF="#Load"><CODE>Load</CODE></A>,
+     <A HREF="#Read"><CODE>Read</CODE></A>
+</DL>  

@@ -1,0 +1,25 @@
+<DL>
+ <DT>Syntax:
+ <DD>
+  <OL>
+  <LI><CODE>Option +</CODE><VAR>opt</VAR>
+  <LI><CODE>Option -</CODE><VAR>opt</VAR>
+  <LI><CODE>Option</CODE>
+  </OL>
+ <DT>Effect:
+ <DD>The first variant sets option <VAR>opt</VAR> on, the
+               second sets it off.<BR>
+               The options are:
+               <DL>
+               <DT>i<DD> parameters of variables may be implicit
+                            (see implicit)
+               <DT>s<DD> print after the types in contexts also the
+                            sorts
+               <DT>p<DD> print the proofterm with its holes when in
+                          prover mode
+               <DT>r<DD> show reduction path for commands 
+                     <CODE>bdRed</CODE>, <CODE>bRed</CODE>, <CODE>dRed</CODE>
+               </DL>
+               The third variant displays the current values of 
+               the options.
+</DL>

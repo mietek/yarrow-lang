@@ -1,0 +1,31 @@
+Common commands ('Help list' for a complete list):
+<DL COMPACT>
+<DT><A HREF="#Def">Def x:=t</A>       
+    <DD>adds definition of x:=t to context
+<DT><A HREF="#Var">Var x:t</A>        
+    <DD>adds variable x of type t to context
+<DT><A HREF="#Prove">Prove x:t</A>      
+    <DD>find interactively inhabitant of type t
+<DT><A HREF="#Reset">Reset v</A>        
+    <DD>clears context from v onwards
+<DT><A HREF="#System">System sys</A>     
+    <DD>sets the type-system to sys
+<DT><A HREF="#Type">Type t</A>         
+    <DD>gives the type of term t
+<DT><A HREF="#bdRed">bdRed t</A>        
+    <DD>reduces term t to bd-normal form
+<DT><A HREF="#Print">Print v</A>        
+    <DD>print definition of v
+<DT><A HREF="#Help">Help com</A>       
+    <DD>gives help on com
+<DT><A HREF="#Context">Context</A>        
+    <DD>displays the global context
+<DT><A HREF="#Option">Option +-o</A>     
+    <DD>sets option o on or off
+<DT><A HREF="#Infix">Infix n v</A>         
+    <DD>sets the precedence of operator v
+<DT><A HREF="#Implicit">Implicit n v</A>
+    <DD>sets the number of arguments that are implicit
+<DT><A HREF="#Read">Read "string"
+    <DD>reads file
+</DL>

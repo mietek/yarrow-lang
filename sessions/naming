@@ -1,0 +1,44 @@
+   NAMING CONVENTIONS FOR LEMMAS
+
+It is important to have some conventions for naming lemmas, because it makes
+it easier to remember names.
+We adopt the following conventions:
+- The main idea is to name a lemma after its conclusion, where spaces 
+  (applications) are replaced by underscore characters. This will only work
+  when the conclusion is distinctive enough.
+  E.g. prove issquare_m : @m,n:Nat. m = mult n n -> issquare m
+- It is import to be consistent in the names given to variables,
+  e.g. we always use m, n and p for the first, second and third variable
+  for natural numbers. When introducing some type, we state the
+  convention we use for variables of that type.
+- For infix operators, we also give a name consisting just of letters, that
+  can be used in names of lemmas. We keep the infix order, though.
+  E.g. prove P_Or_P : @P:*p. P -> P\/P
+- When the conclusion is an equality, it normally suffices to name the lemma
+  after the left hand side.
+  E.g. prove m_plus_O : @m:Nat. m+O = m
+- Often the conclusion is a nested application. In many cases the
+  parentheses can be simulated by ommiting or adding underscores.
+  E.g. prove Sm_plus_n : @m,n:Nat. (S m) + n = S (m+n)
+       prove even__m_plus_m : @m:Nat. even (m+m)
+- Sometimes the conclusion of the lemma is not very distinctive, and it is
+  better to name the lemma after an hypothesis. In these case, we let the
+  lemma end with an underscore.
+  E.g. Sm_is_Sn_ : @m,n:Nat. S m = S n -> m=n
+  This is particulary true when the conclusion is False, so we use this
+  convention also when the conclusion is a negation.
+  E.g. prove m_is_Sm_ : @m:Nat. Not (m= S m)
+- Sometimes we leave a useless part of the name out.
+  E.g. plus_O : @m:Nat. m+O = m
+- Often the lemma describes a property of some operation. In this case the
+  name of the lemma consists of the name of the operation, an underscore,
+  and the name of the property. We use the following abbreviations for 
+  some of the standard properties:
+    sym, comm, trans, assoc, antisym, refl, idemp
+  E.g. prove le_trans : @m,n,p:Nat. m<=n -> n<=p -> m<=p
+- The conventions set out above are guidelines, and we do not adhere to them
+  strictly!
+  E.g. prove And_i : @P,Q:*p. P -> Q -> P /\ Q
+
+Jan Zwanenburg, 19-1-'97
+

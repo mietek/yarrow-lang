@@ -1,0 +1,13 @@
+-- System lambda-omega-l
+-- In this PTS programs can occur within propositions, but not the other way
+-- around. Both the pure programming part and the pure logical part
+-- correspomd to lambda-omega.
+-- This PTS is very suitable as a programming logic, see
+--   Erik Poll. A Programming Logic based on Type Theory. Ph.D. Thesis.
+--   Eindhoven University of Technology, 1994.
+
+System (*s,#s, *p,#p),(*s:#s, *p:#p),((#s,#s), (#s,*s), (*s,*s), (#s,#p), (*s,#p), (#p,#p), (#s,*p),(*s,*p),(#p,*p),(*p,*p))
+
+-- Naming conventions
+-- For variables of type *s: A,B,C
+--                       *p: P,Q,R

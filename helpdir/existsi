@@ -1,0 +1,14 @@
+<DL>
+ <DT>Syntax:
+ <DD><CODE>ExistsI</CODE> <VAR>term</VAR>
+ <DT>Effect:
+ <DD>The goal should be an existential quantification. <VAR>term</VAR>
+     is taken to be the witness of the property. The new goal is to prove
+     that this is indeed the case.<BR>
+     This tactic needs an introduction lemma for existential
+     quantification of the
+     following form:<BR>
+     <CODE>@x1:t1. ... @xn:tn. @x:t. @P:t->s. P x -> Ex x1 .. xn P</CODE>
+ <DT>See also:
+ <DD><A HREF="#Use"><CODE>Use</CODE></A>
+</DL>

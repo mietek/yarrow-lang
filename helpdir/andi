@@ -1,0 +1,12 @@
+<DL>
+ <DT>Syntax:
+ <DD><CODE>AndI</CODE>
+ <DT>Effect:
+ <DD>The goal should be a conjunction. This tactic splits the goal in two
+     separate conjuncts.<BR>
+     This tactic needs an introduction lemma for conjunction of the
+     following form:<BR>
+     <CODE>@P,Q:s. P -> Q -> and P Q</CODE>
+ <DT>See also:
+ <DD><A HREF="#Use"><CODE>Use</CODE></A>
+</DL>

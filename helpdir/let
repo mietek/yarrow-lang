@@ -1,0 +1,10 @@
+<DL>
+ <DT>Syntax:
+ <DD>
+  <OL><LI><CODE>Let</CODE> <VAR>var</VAR> <CODE>:=</CODE> <VAR>term</VAR>
+      <LI><CODE>Let</CODE> <VAR>var</VAR> <CODE>:=</CODE> <VAR>term</VAR>
+                                          <CODE>:</CODE> <VAR>term2</VAR>
+  </OL> 
+ <DT>Effect:
+ <DD>Adds a definition to the local context.
+</DL>

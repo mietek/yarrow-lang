@@ -1,0 +1,53 @@
+<HTML>
+<HEAD>
+<TITLE>lolplus/lambdaLplus (with proofs)</TITLE>
+</HEAD>
+<BODY BGCOLOR="#FFFFFF", TEXT="#000000">
+<PRE><FONT COLOR="#000000"></FONT><FONT COLOR="#000000">-- File: lambdaLplus
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#000000">-- This file selects the DPTS lambda-omega-L-plus, i.e. the extension of
+</FONT><FONT COLOR="#000000">-- lambda-omega-L with records and existential types.
+</FONT><FONT COLOR="#000000">-- Records are built-in in Yarrow, and are activated below by the System
+</FONT><FONT COLOR="#000000">-- command.
+</FONT><FONT COLOR="#000000">-- Existential types are not built-in in Yarrow, but are introduced with
+</FONT><FONT COLOR="#000000">-- their usual second-order encoding.
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#000000">System (*s-&gt;records,#s, *p,#p),
+</FONT><FONT COLOR="#000000">       (*s:#s, *p:#p),
+</FONT><FONT COLOR="#000000">       ((#s,#s), 
+</FONT><FONT COLOR="#000000">        (#s,*s), (*s,*s),
+</FONT><FONT COLOR="#000000">        (#s,#p), (*s,#p), (#p,#p),
+</FONT><FONT COLOR="#000000">        (#s,*p),(*s,*p),(#p,*p),(*p,*p))
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#000000">Path "../lol"
+</FONT><FONT COLOR="#000000">Load "logic"
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#000000">---------------------------
+</FONT><FONT COLOR="#000000">-- EXISTENTIAL DATATYPES --
+</FONT><FONT COLOR="#000000">---------------------------
+</FONT><FONT COLOR="#000000">  
+</FONT><FONT COLOR="#000000">-- Existential datatypes will be expressed using Sig.
+</FONT><FONT COLOR="#0000FF">Def Sig := \I:*s-&gt;*s. @Y:*s. (@X:*s. I X -&gt; Y) -&gt; Y  : (*s-&gt;*s)-&gt;*s
+</FONT><FONT COLOR="#000000">Binder Sig
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#0000FF">Def pack := \I:*s-&gt;*s. \Rep:*s. \imp: I Rep. \Y:*s. \a:(@X:*s.I X-&gt;Y).
+</FONT><FONT COLOR="#0000FF">                       a Rep imp : 
+</FONT><FONT COLOR="#0000FF">            @I:*s-&gt;*s. @Rep:*s. I Rep -&gt; (Sig X:*s. I X)
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#0000FF">Def unpack := \I:*s-&gt;*s. \T:*s. \adt: Sig X:*s.I X. \m: @Rep:*s. I Rep -&gt; T.
+</FONT><FONT COLOR="#0000FF">                    adt T m : 
+</FONT><FONT COLOR="#0000FF">              @I:*s-&gt;*s. @T:*s. (Sig X:*s.I X) -&gt; (@Rep:*s.I Rep -&gt; T) -&gt; T
+</FONT><FONT COLOR="#000000">Implicit 2 unpack
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#0000FF">Prove beta_Sig : @I:*s-&gt;*s. @T:*s. @Rep:*s. @imp: I Rep. 
+</FONT><FONT COLOR="#0000FF">                 @m:(@Rep:*s. I Rep -&gt; T).
+</FONT><FONT COLOR="#0000FF">                     unpack (pack I Rep imp) m = m Rep imp
+</FONT><FONT COLOR="#000000">Intros
+</FONT><FONT COLOR="#000000">Unfold unpack
+</FONT><FONT COLOR="#000000">Unfold pack
+</FONT><FONT COLOR="#000000">Refl
+</FONT><FONT COLOR="#000000">Exit
+</FONT></PRE>
+</BODY>
+</HTML>

@@ -1,0 +1,12 @@
+<DL>
+ <DT>Syntax:
+ <DD><CODE>Exit</CODE>
+ <DT>Effect:
+ <DD> Finishes the current proof task and returns to main-mode
+      (if no other proof tasks are running). 
+      This command is only admitted if the proof is completed. The proof will
+      be recorded under the name given with the command <CODE>prove</CODE>.
+ <DT>See also:
+ <DD><A HREF="#Abort"><CODE>Abort</CODE></A>
+</DL>
+

@@ -1,0 +1,18 @@
+<DL>
+ <DT>Syntax:
+ <DD>
+   <OL>
+   <LI><CODE>Intro</CODE> <VAR>var-list</VAR>
+   <LI><CODE>Intro</CODE>
+   </OL>
+ <DT>Effect:
+ <DD>If the goal is a <CODE>@</CODE>-type or a <CODE>let</CODE>-type, this tactic
+     introduces one variable or definition. In variant 1
+     the given variable name is used, otherwise a name will
+     be chosen (usually the name already occurring in the
+     type).                            
+ <DT>Example:
+ <DD><CODE>Intro A,x,H1,H2</CODE>
+ <DT>See also:                          
+ <DD><A HREF="#Intros"><CODE>Intros</CODE></A>
+</DL>  

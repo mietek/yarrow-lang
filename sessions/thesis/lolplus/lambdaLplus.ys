@@ -1,0 +1,45 @@
+-- File: lambdaLplus
+
+-- This file selects the DPTS lambda-omega-L-plus, i.e. the extension of
+-- lambda-omega-L with records and existential types.
+-- Records are built-in in Yarrow, and are activated below by the System
+-- command.
+-- Existential types are not built-in in Yarrow, but are introduced with
+-- their usual second-order encoding.
+
+
+System (*s->records,#s, *p,#p),
+       (*s:#s, *p:#p),
+       ((#s,#s), 
+        (#s,*s), (*s,*s),
+        (#s,#p), (*s,#p), (#p,#p),
+        (#s,*p),(*s,*p),(#p,*p),(*p,*p))
+
+Path "../lol"
+Load "logic"
+
+---------------------------
+-- EXISTENTIAL DATATYPES --
+---------------------------
+  
+-- Existential datatypes will be expressed using Sig.
+Def Sig := \I:*s->*s. @Y:*s. (@X:*s. I X -> Y) -> Y  : (*s->*s)->*s
+Binder Sig
+
+Def pack := \I:*s->*s. \Rep:*s. \imp: I Rep. \Y:*s. \a:(@X:*s.I X->Y).
+                       a Rep imp : 
+            @I:*s->*s. @Rep:*s. I Rep -> (Sig X:*s. I X)
+
+Def unpack := \I:*s->*s. \T:*s. \adt: Sig X:*s.I X. \m: @Rep:*s. I Rep -> T.
+                    adt T m : 
+              @I:*s->*s. @T:*s. (Sig X:*s.I X) -> (@Rep:*s.I Rep -> T) -> T
+Implicit 2 unpack
+
+Prove beta_Sig : @I:*s->*s. @T:*s. @Rep:*s. @imp: I Rep. 
+                 @m:(@Rep:*s. I Rep -> T).
+                     unpack (pack I Rep imp) m = m Rep imp
+Intros
+Unfold unpack
+Unfold pack
+Refl
+Exit

@@ -1,0 +1,134 @@
+-- File: prelims
+
+-- This file contains some preliminary definitions and results for the
+-- theory of ADTs.
+-- It is divided into two parts
+-- 1. Definitions and results printed in the thesis (Section 6.7.1)
+-- 2. Results not printed in the thesis.
+
+Path "../lol"
+Path "../lolExtra"
+Load "lambdaLplus"
+Load "logic2"
+
+--------------------------------------------------------------
+--  1. D E F S   A N D   R E S U L T S   I N   T H E S I S  --
+--------------------------------------------------------------
+
+Def IsInjection := \A,B:*s. \f:A->B. @a1,a2:A. f a1=f a2 -> a1=a2
+Implicit 2 IsInjection
+
+Def IsSurjection := \A,B:*s. \f:A->B. @b:B. Ex a:A. f a = b
+Implicit 2 IsSurjection
+
+Def Image := \A,B:*s. \f:A->B. \b:B. Ex a:A. f a = b
+Implicit 2 Image
+
+Def Dom := \A,B:*s. \P:A->B->*p. \a:A. Ex b:B. P a b :
+           @A,B:*s. (A->B->*p) -> A->*p
+Implicit 2 Dom
+
+def Inverse := \Y,Z:*s. \R:Y->Z->*p. \z:Z.\y:Y. R y z :
+               @Y,Z:*s. (Y->Z->*p) -> (Z->Y->*p)
+Implicit 2 Inverse
+
+Def IsER := \Y:*s. \R:Y->Y->*p.
+                    (@y:Y. R y y) /\
+                    (@y1,y2:Y. R y1 y2 -> R y2 y1) /\
+                    (@y1,y2,y3:Y. R y1 y2 -> R y2 y3 -> R y1 y3)
+Implicit 1 IsER
+
+Def IsERon := 
+     \Y:*s.\R:Y->Y->*p. \P:Y->*p.
+         (@y:Y. P y -> R y y) /\
+         (@y1,y2:Y. P y1 -> P y2 -> R y1 y2 -> R y2 y1) /\
+         (@y1,y2,y3:Y. P y1 -> P y2 -> P y3 -> R y1 y2 -> R y2 y3 -> R y1 y3) :
+     @Y:*s. (Y->Y->*p) -> (Y->*p) -> *p
+Implicit 1 IsERon
+
+Def Comp := \A,B,C:*s. \(~):A->B->*p. \(~~):B->C->*p.
+                 \a:A.\c:C. Ex b:B. a~b /\ b~~c
+Implicit 3 Comp
+
+def LeftC := \Y,Z:*s. \(~):Y->Z->*p.
+                   \y1,y2:Y. Ex z:Z. y1 ~ z /\ y2 ~ z :
+             @Y,Z:*s. (Y->Z->*p) -> (Y->Y->*p)
+Implicit 2 LeftC
+
+Def RightC := \Y,Z:*s. \(~):Y->Z->*p.
+                   \z1,z2:Z. Ex y:Y. y ~ z1 /\ y ~ z2 :
+              @Y,Z:*s. (Y->Z->*p) -> (Z->Z->*p)
+Implicit 2 RightC
+
+Def Restr := \A:*s. \R:A->A->*p.\P:A->*p.
+               \a,a':A. P a /\ R a a' /\ P a' :
+            @A:*s. (A->A->*p)->(A->*p) -> (A->A->*p)
+Implicit 1 Restr
+
+Def IsZclosed := \Y,Z:*s. \R:Y->Z->*p.
+                  @y1,y2:Y. @z1,z2:Z. R y1 z1 -> R y1 z2 -> R y2 z2 -> R y2 z1
+Implicit 2 IsZclosed
+
+
+------------------------------------
+--  2. N O T   I N   T H E S I S  --
+------------------------------------
+
+Prove Image_f_f_x : @A,B:*s. @f:A->B. @x:A. Image f (f x)
+Intros
+Unfold Image
+ExistsI x
+Refl
+Exit
+
+Prove IsER__IsERon : @A:*s. @R:A->A->*p. @P:A->*p.
+                      IsER R -> IsERon R P
+Intros
+Unfold IsERon
+Unfold IsER In H
+AndE H
+AndE H2
+Repeat AndI
+Intros
+Apply H1
+Intros 4
+Apply H3
+Intros 6
+Apply H4
+Exit
+
+Prove Inverse_Inverse : @A,B:*s. @R:A->B->*p. Inverse (Inverse R) <===> R
+Intros
+Apply equiv_predR
+Unfold Inverse
+Intros
+Refl
+Exit
+
+prove IsER_is : @A:*s. IsER ((=) A)
+Intro
+Unfold IsER
+Repeat AndI
+Apply is_refl
+Apply is_sym
+Apply is_trans
+Exit
+
+prove IsZclosed_Inverse :  @A,B:*s.@(~):A->B->*p.
+                           IsZclosed (~) -> IsZclosed (Inverse (~))
+Unfold Inverse
+Unfold IsZclosed
+Intros 8
+Intros
+Apply H On H2
+Assumption
+Assumption
+Exit
+
+Prove rel_LeftC : @A,B:*s. @(~):A->B->*p. 
+                  @a1,a2:A.@b:B. a1~b -> a2~b -> LeftC (~) a1 a2
+Intros
+Unfold LeftC
+ExistsI b
+AndI Then Assumption
+Exit

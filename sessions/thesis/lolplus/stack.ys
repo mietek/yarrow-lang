@@ -1,0 +1,157 @@
+-- File: stack
+
+-- Gives the example of the ADT of stacks.
+-- This file is divided into two parts.
+-- 1) Without existential types.
+-- 2) With existential types.
+
+Path "../lol"
+Path "../lolExtra"
+Load "lambdaLplus"
+Load "logic2"
+Load "list2"
+
+
+------------------------------------------------------------
+------------------------------------------------------------
+--                                                        --
+--  1. W I T H O U T   E X I S T E N T I A L   T Y P E S  --
+--                                                        --
+------------------------------------------------------------
+------------------------------------------------------------
+
+Def StackI := \Rep:*s. {| empty : Rep, 
+                          push : Nat -> Rep -> Rep,
+                          pop : Rep -> Rep,
+                          top : Rep -> Nat,
+                          isEmpty : Rep -> Bool |}
+
+Def Rep1 := List Nat
+Def ops1 := {empty = nil Nat,
+              push = (;) Nat,
+              pop = tail Nat,
+              top = head O,
+              isEmpty = null Nat} :
+             StackI Rep1
+
+Def Spec := \Rep:*s. \ops:StackI Rep.
+                   ops`isEmpty ops`empty = true /\
+                   (@s:Rep. @n:Nat. ops`isEmpty (ops`push n s) = false) /\
+                   (@s:Rep. @n:Nat. ops`top (ops`push n s) = n) /\
+                   (@s:Rep. @n:Nat. ops`pop (ops`push n s) = s) :
+            @Rep:*s. StackI Rep -> *p
+
+Prove Spec_ops1 : Spec Rep1 ops1
+Unfold Spec
+Repeat AndI
+Unfold ops1
+Apply null_nil
+Intros
+Unfold ops1
+Apply null_cons
+Intros
+Unfold ops1
+Apply head_cons
+Intros
+Unfold ops1
+Apply tail_cons
+Exit
+
+-- 'wprinciple' is called 'principle' in my thesis
+Prove wprinciple : @Rep1:*s. @ops1: StackI Rep1. Spec Rep1 ops1 ->
+                   @A:*s. @body:(@X:*s.StackI X -> A). @Q:A->*p.
+                 (@X:*s.@ops:StackI X. Spec X ops -> Q (body X ops)) ->
+                 Q ((\X:*s.\ops:StackI X. body X ops) Rep1 ops1)
+Intros
+Simplify
+Apply H1
+Assumption
+Exit
+
+Def prog1 := (\X:*s.\ops : StackI X.
+                  ops`isEmpty (ops`pop (ops`push O ops`empty))) Rep1 ops1
+
+Prove prog1_is_true : prog1 = true
+Convert (\b:Bool. b= true) ((\X:*s.\ops : StackI X.
+                  ops`isEmpty (ops`pop (ops`push O ops`empty))) Rep1 ops1)
+Apply wprinciple
+Exact Spec_ops1
+Intros
+Unfold Spec In H
+AndE H
+AndE H2
+AndE H4
+Rewrite H6
+Apply H1
+Exit
+
+
+
+------------------------------------------------------
+------------------------------------------------------
+--                                                  --
+--  2. W I T H   E X I S T E N T I A L   T Y P E S  --
+--                                                  --
+------------------------------------------------------
+------------------------------------------------------
+
+Def imp1 := pack StackI Rep1 ops1 : Sig Rep:*s. StackI Rep
+
+Def StackImp := Sig Rep:*s. StackI Rep
+
+Def prog1' := unpack imp1 (\X:*s. \ops:StackI X.
+                              ops`isEmpty (ops`pop (ops`push O ops`empty))) :
+              Bool
+
+Def Rep2 := List Nat
+Def ops2 := {empty = nil Nat,
+              push = snoc Nat,
+              pop = init Nat,
+              top = last O,
+              isEmpty = null Nat} :
+             StackI Rep2
+Def imp2 := pack StackI Rep2 ops2 : StackImp
+
+Def UserSpec := \imp:StackImp. ExK Rep:*s. Ex ops:StackI Rep.
+                     imp = pack StackI Rep ops /\ Spec Rep ops :
+                StackImp -> *p
+
+Prove UserSpec_imp1 : UserSpec imp1
+Unfold UserSpec
+Unfold imp1
+ExistsI Rep1
+ExistsI ops1
+AndI
+Refl
+Apply Spec_ops1
+Exit
+
+Prove principle : @imp:StackImp. UserSpec imp ->
+                  @A:*s. @body:(@X:*s.StackI X -> A). @Q:A->*p.
+                 (@X:*s.@ops:StackI X. Spec X ops -> Q (body X ops)) ->
+                 Q (unpack imp (\X:*s.\ops:StackI X. body X ops))
+Intros
+Unfold UserSpec In H
+ExistsE H
+ExistsE H2
+AndE H3
+Rewrite H4
+Unfold StackI
+Rewrite beta_Sig
+Apply H1
+Assumption
+Exit
+
+Prove prog1'_is_true : prog1'=true
+Unfold prog1'
+Apply principle On \b:Bool. b=true
+Exact UserSpec_imp1
+Intros
+Unfold Spec In H
+AndE H
+AndE H2
+AndE H4
+Rewrite H6
+Apply H1
+Exit
+

@@ -1,0 +1,14 @@
+<DL>
+ <DT>Syntax:
+ <DD><CODE>NotI</CODE>
+ <DT>Effect:
+ <DD>The goal should be a negation. This tactic adds the negated proposition
+     to the context and sets the new goal to False.<BR>
+     This tactic needs an introduction lemma for negation of the
+     following form:<BR>
+     <CODE>@P:s. (P -> False) -> Not P</CODE>
+ <DT>Shortcomings:
+ <DD>It is not possible to give the name of the new hypotheses.
+ <DT>See also:
+ <DD><A HREF="#Use"><CODE>Use</CODE></A>
+</DL>

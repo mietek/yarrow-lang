@@ -1,0 +1,27 @@
+<DL>
+ <DT>Syntax:
+ <DD>
+   <OL>
+   <LI><CODE>Load</CODE> "<VAR>filename</VAR>"
+   <LI><CODE>Load</CODE>
+   </OL>
+ <DT>Effect:
+ <DD><P>Loads module with name <VAR>filename</VAR><CODE>.yc</CODE>, and all
+     modules on the import list of this module.<BR>
+     It is checked that the module is valid in the current type system.
+     (If the context is empty, the type system is changed to the type system
+     of the module).
+     Furthermore, if any of the imported modules are changed,
+     <VAR>filename</VAR> is type-checked again to ensure consistency.<BR>
+     The declarations of the module are inserted in the context just after
+     the last declaration of the last module.</P>
+     <P>The second variant gives a list of all modules currently loaded,
+        with the first and last variable that every module contains.</P>
+ <DT>Example:
+ <DD><CODE>Load "integer"</CODE>
+ <DT>See also:                          
+ <DD><A HREF="#Save"><CODE>Save</CODE></A>,
+     <A HREF="#Clear"><CODE>Clear</CODE></A>,
+     <A HREF="#Read"><CODE>Read</CODE></A>,
+     <A HREF="#Path"><CODE>Path</CODE></A>
+</DL>  

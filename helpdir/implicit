@@ -1,0 +1,52 @@
+<DL>
+ <DT>Syntax:
+ <DD><CODE>Implicit</CODE> <VAR>num</VAR> <VAR>var</VAR>
+ <DT>Effect:
+ <DD><P>
+     Often a number of type-arguments are superfluous, 
+     in the sense that they can be derived from the 
+     context. Yarrow has a simple way of suppressing most 
+     useless arguments. Arguments to a variable can be 
+     suppressed in Yarrow, if they can be derived by 
+     inspecting following arguments. In most cases, this 
+     is good enough. Internally, always all parameters are 
+     represented.
+     </P>
+     <P>
+     This command is only allowed if <VAR>var</VAR> has been 
+     defined. It expresses that you want to suppress the 
+     first <VAR>num</VAR> arguments of <VAR>var</VAR>.
+     After this command, the first <VAR>num</VAR> arguments may be 
+     all left out, but this is not compulsory; otherwise 
+     all of them must be given. In order to be able 
+     to decide whether or not some arguments are implicit, 
+     the restriction is made that the first argument of <VAR>var</VAR>
+     has an other sort than the <VAR>num</VAR>+1th argument.
+     </P>
+     <P>
+     If option i is turned off, implicit arguments are no 
+     longer admitted, and all arguments are printed. 
+     Turning this option on again will re-allow implicit 
+     arguments in exactly the same way as before.
+     </P>
+ <DT>Examples:
+ <DD>Assume the following declarations have been made:<BR>
+     <CODE>id : @A:*.A-&gt;A<BR>
+           comp : @A,B,C:*. (B-&gt;C) -&gt; (A-&gt;B) -&gt; (A-&gt;C)<BR>
+           (=) : @A:*. A-&gt;A-&gt;Prop<BR>
+     </CODE>      Then the following commands define these 
+                  variables to have the usual number of 
+                  implicit arguments:<BR>
+     <CODE>Implicit 1 id<BR>
+           Implicit 3 comp<BR>
+           Implicit 1 (=)</CODE><BR>
+     And so the following expressions are admitted:<BR>
+     <CODE>id O</CODE> (means <CODE>id Nat O</CODE>)<BR>
+     <CODE>comp not even</CODE>  
+                       (means <CODE>comp Nat Bool Bool not even</CODE>)<BR>
+     <CODE>O=O</CODE> (means <CODE>(=) Nat O O</CODE>)
+ <DT>Shortcomings:
+ <DD>Sometimes arguments are not printed while they cannot be inferred.
+ <DT>See also:
+ <DD><A HREF="#Option"><CODE>Option</CODE></A>
+</DL>

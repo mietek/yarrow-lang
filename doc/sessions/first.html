@@ -1,0 +1,70 @@
+<HTML>
+<HEAD>
+<TITLE>
+How to try these Yarrow sessions
+</TITLE>
+</HEAD>
+
+<BODY>
+<H2 ALIGN=CENTER>How to try these Yarrow sessions</H2>
+It is most convenient to use Yarrow in combination with a windows system.
+I suggest you have two windows to try these example sessions in Yarrow:
+<UL>
+<LI>One containing a shell in which you start up yarrow with the command<BR>
+    <CODE>yarrow</CODE>
+<LI>One containing the commands that we will give to Yarrow.
+    These commands are always contained in files in a subdirectory of
+    <CODE>sessions</CODE>. This file is best
+    displayed with a text editor, so you can drag commands to the shell
+    windows and you don't have to type them yourself.
+</UL>
+
+For example, load the file <CODE>sessions/example/exam.ys</CODE> in the
+text editor and drag the first line to Yarrow. You will see
+<PRE>
+> prove silly : @P:*.P->P
+--------------------------------------------------
+@P:*. P->P
+
+$ 
+</PRE>
+Dragging the next line to Yarrow will result in
+<PRE>
+$ intros then assumption
+Goal proved!
+
+$ 
+</PRE>
+And the last line will give
+<PRE>
+$ exit
+prove silly : @P:*. P->P
+intros then assumption
+exit
+
+silly := .. : @P:*. P->P
+> 
+</PRE>
+
+<P>
+Sometimes you will drag multiple lines to Yarrow which may result in the
+input and output not to be interleaved correctly. Blame your windows
+system for this.
+</P>
+    
+<P>
+When you start working on your own proofs in Yarrow, you typically work 
+in the same way, with one window containing Yarrow and one containing a
+text editor with the session you are working on. Then the text is dragged
+in the other direction, from the Yarrow window to the editor window.
+This works easy because after the end of a proof, Yarrow gives a summary of
+all the commands that were used.
+</P>
+<HR>
+
+<P>
+<A HREF="index.html">Back to the example sessions page</A><BR>
+<A HREF="../index.html">Back to Yarrow Home Page</A>
+</P>
+</BODY>
+</HTML> 

@@ -1,0 +1,6 @@
+<DL>
+ <DT>Syntax:
+ <DD><CODE>Focus</CODE> <VAR>num</VAR>
+ <DT>Effect:
+ <DD>Selects goal <VAR>num</VAR> as the current goal.
+</DL>

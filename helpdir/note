@@ -1,0 +1,20 @@
+<DL>
+ <DT>Syntax:
+ <DD><OL>
+     <LI><CODE>NotE</CODE> <VAR>term</VAR>
+     <LI><CODE>NotE</CODE> <VAR>term</VAR> <CODE>On</CODE> 
+                                            <VAR>term-list</VAR>
+     </OL>
+ <DT>Effect:
+ <DD>The conclusion of the type of <VAR>term</VAR> should be of the form
+     <CODE>Not P</CODE>,
+     and the goal should be <CODE>False</CODE>.
+     This tactic replaces the goal by <CODE>P</CODE>.
+     The second variant is a combination of 'Forward' and 'NotE 1'.<BR>
+     This tactic needs an elimation lemma for negation of the
+     following form:<BR>
+     <CODE>@P:s. Not P -> P -> False</CODE>
+ <DT>See also:
+ <DD><A HREF="#Forward"><CODE>Forward</CODE></A>,
+     <A HREF="#Use"><CODE>Use</CODE></A>
+</DL>

@@ -1,0 +1,34 @@
+<DL>
+ <DT>Syntax:
+ <DD>
+   <OL>
+   <LI><CODE>Context</CODE> [: <VAR>sort-list</VAR>] [On <VAR>filename</VAR>]
+   <LI><CODE>Context</CODE> "<VAR>modulename</VAR>" [: <VAR>sort-list</VAR>]
+                            [On <VAR>filename</VAR>]
+   <LI><CODE>Context</CODE> <VAR>var</VAR> .. <VAR>var</VAR>
+                            [: <VAR>sort-list</VAR>] [On <VAR>filename</VAR>]
+   <LI><CODE>Context</CODE> <VAR>var</VAR>
+                            [: <VAR>sort-list</VAR>] [On <VAR>filename</VAR>]
+   </OL>
+ <DT>Effect:
+ <DD><P>This command displays the global context. With option
+     s set, also all corresponding sorts are shown. The piece of the context
+     defined in modules is only indicated by the first and last name
+     of each module.
+     </P>
+     <P>The second variant displays the part of a context as defined in the
+        named module.
+     </P>
+     <P>The third variant displays only the variables in the indicated range,
+        and the fourth variant displays only the given variable.
+     </P>
+     <P>The optional <VAR>sort-list</VAR> indicates the sorts
+     for which all definitions will be printed in full. Defining terms
+     belonging to other sorts are abbreviated to ".." .
+     </P>
+     <P>Optionally, a filename may be given, to which the output is redirected.
+     </P>
+ <DT>See also:
+ <DD><A HREF="#Option"><CODE>Option</CODE></A>
+</DL>
+

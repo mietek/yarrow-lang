@@ -1,0 +1,11 @@
+<DL>
+ <DT>Syntax:
+ <DD><CODE>Convert</CODE> <VAR>term</VAR>
+ <DT>Effect:
+ <DD>Changes the goal to <VAR>term</VAR>, which should be
+               beta-delta-convertible to the goal.
+ <DT>See also:
+ <DD><A HREF="#Unfold"><CODE>Unfold</CODE></A>,
+     <A HREF="#Simplify"><CODE>Simplify</CODE></A>,
+     <A HREF="#Pattern"><CODE>Pattern</CODE></A>
+</DL>

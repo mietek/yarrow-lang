@@ -1,0 +1,29 @@
+-- pred
+-- defines existential quantification
+
+System (*s,#s,*p,#p),
+       (*s:#s,*p:#p),
+       ((*s,*p),(*s,#p),(#s,*p),(#s,#p),(*p,*p),(#p,*p),(#p,#p))
+-- this is sys_wl without rules (*s,*s), (#s,*s), (#s,#s)
+
+Def Ex := \A:*s.\P:A->*p.@Q:*p. (@x:A.P x->Q) -> Q
+Implicit 1 Ex
+
+-- The next lemma is used by the existsi tactic.
+Prove Ex_i : @A:*s.@x:A.@P:A->*p. P x -> Ex P
+Unfold Ex
+Intro A,x,P,HPx,Q,H
+Apply H x
+Assumption
+Exit
+
+Use ExistsI Ex_i
+
+-- The next lemma is used by the existse tactic.
+Prove Ex_e : @A:*s.@P:A->*p.@R:*p. Ex P -> (@x:A. P x -> R) -> R
+Unfold Ex
+Intro A,P,R,H
+Apply H
+Exit
+Use ExistsE Ex_e
+

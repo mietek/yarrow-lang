@@ -1,0 +1,12 @@
+<DL>
+ <DT>Syntax:
+ <DD><CODE>dRed</CODE> <VAR>term</VAR>
+ <DT>Effect:
+ <DD>Gives the d-normal form of <VAR>term</VAR>.
+ <DT>Prove-mode:
+ <DD>This command is also available in prove-mode. Then it is performed
+     in the context of the first goal.
+ <DT>See also:
+ <DD><A HREF="#bdRed"><CODE>bdRed</CODE></A>,
+     <A HREF="#bRed"><CODE>bRed</CODE></A>
+</DL>

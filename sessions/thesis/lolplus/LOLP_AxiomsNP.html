@@ -1,0 +1,48 @@
+<HTML>
+<HEAD>
+<TITLE>lolplus/LOLP_Axioms (without proofs)</TITLE>
+</HEAD>
+<BODY BGCOLOR="#FFFFFF", TEXT="#000000">
+<PRE><FONT COLOR="#000000"></FONT><FONT COLOR="#000000">-- File: LOLP_Axioms
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#000000">-- This file introduces axioms for records and existential types.
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#000000">Path "../lol"
+</FONT><FONT COLOR="#000000">Path "../lolExtra"
+</FONT><FONT COLOR="#000000">Load "lambdaLplus"
+</FONT><FONT COLOR="#000000">Load "logic2"
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#000000">-------------
+</FONT><FONT COLOR="#000000">-- records --
+</FONT><FONT COLOR="#000000">-------------
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#000000">-- We introduce the induction axiom for records only for two-field record with
+</FONT><FONT COLOR="#000000">-- labels 'l' and 'r' (See Remark 6.2.2.)
+</FONT><FONT COLOR="#FF0000">Var ind_rec : @A,B:*s. @P:{|l:A,r:B|} -&gt;*p. (@a:A.@b:B. P {l=a,r=b}) -&gt;
+</FONT><FONT COLOR="#FF0000">                  @z:{|l:A,r:B|}. P z
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#000000">-- exhaustion property follows from axiom
+</FONT><FONT COLOR="#0000FF">Prove exh_rec : @A,B:*s. @z:{|l:A,r:B|}. Ex a:A.Ex b:B. z={l=a,r=b}
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#000000">-- an additional property
+</FONT><FONT COLOR="#0000FF">Prove is_rec : @A,B:*s. @x,y:{|l:A,r:B|}.
+</FONT><FONT COLOR="#0000FF">                 x`l=y`l -&gt; x`r = y`r -&gt; x=y
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#000000">-----------------------
+</FONT><FONT COLOR="#000000">-- existential types --
+</FONT><FONT COLOR="#000000">-----------------------
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#000000">-- We introduce the induction axiom for existential types only for kind *s.(See
+</FONT><FONT COLOR="#000000">-- Remark 6.2.2.)
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#FF0000">Var ind_sigma : @I:*s-&gt;*s. @P:(Sig X:*s.I X) -&gt; *p.
+</FONT><FONT COLOR="#FF0000">                 (@A:*s.@a:I A. P (pack I A a)) -&gt;
+</FONT><FONT COLOR="#FF0000">                 @z:(Sig X:*s. I X). P z
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#000000">-- exhaustion property follows from axiom
+</FONT><FONT COLOR="#0000FF">Prove exh_sigma : @I:*s-&gt;*s. @z:(Sig X:*s. I X).
+</FONT><FONT COLOR="#0000FF">                     ExK A:*s. Ex a:I A. z = pack I A a
+</FONT><FONT COLOR="#000000">
+</FONT></PRE>
+</BODY>
+</HTML>

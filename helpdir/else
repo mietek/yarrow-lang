@@ -1,0 +1,14 @@
+<DL>
+ <DT>Syntax:
+ <DD>
+  <VAR>tactic1</VAR> <CODE>Else</CODE> <VAR>tactic2</VAR>
+ <DT>Effect:
+ <DD><P> The tactical tries to perform <VAR>tactic1</VAR>.
+         If this succeeds, this tactical is done.
+         If this fails, <VAR>tactic2</VAR> is performed.
+     </P>
+ <DT>See also:
+ <DD><A HREF="#Try"><CODE>Try</CODE></A>,
+     <A HREF="#Repeat"><CODE>Repeat</CODE></A>,
+     <A HREF="#Then"><CODE>Then</CODE></A>
+</DL>

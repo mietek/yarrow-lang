@@ -1,0 +1,188 @@
+<HTML>
+<HEAD>
+<TITLE>lolplus/bag2 (without proofs)</TITLE>
+</HEAD>
+<BODY BGCOLOR="#FFFFFF", TEXT="#000000">
+<PRE><FONT COLOR="#000000"></FONT><FONT COLOR="#000000">-- File: bag2
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#000000">-- This file treats implementation 2 of the example of bags. It follows the 
+</FONT><FONT COLOR="#000000">-- structure of Section 6.5.2, and is hence divided in the following parts.
+</FONT><FONT COLOR="#000000">-- 1.  Interface
+</FONT><FONT COLOR="#000000">-- 2.  Specification
+</FONT><FONT COLOR="#000000">-- 3.  Implementation
+</FONT><FONT COLOR="#000000">-- 4c. Using a weaker specification
+</FONT><FONT COLOR="#000000">-- 4d. Subset algebras
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#000000">Path "../lol"
+</FONT><FONT COLOR="#000000">Path "../lolExtra"
+</FONT><FONT COLOR="#000000">Load "lambdaLplus"
+</FONT><FONT COLOR="#000000">Load "list2"
+</FONT><FONT COLOR="#000000">Load "prelims"
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#000000">----------------------------
+</FONT><FONT COLOR="#000000">--                        --
+</FONT><FONT COLOR="#000000">--  1. I N T E R F A C E  --
+</FONT><FONT COLOR="#000000">--                        --
+</FONT><FONT COLOR="#000000">----------------------------
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#0000FF">Def BagI := \X:*s. {| empty : X,
+</FONT><FONT COLOR="#0000FF">                      add : Nat -&gt; X -&gt; X,
+</FONT><FONT COLOR="#0000FF">                      card : Nat -&gt; X -&gt; Nat,
+</FONT><FONT COLOR="#0000FF">                      bound : X -&gt; Nat |}
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#0000FF">Def BagImp := Sig X:*s. BagI X
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#000000">-- We introduce Sim, Bisim, and the parametricity axiom just for BagI;
+</FONT><FONT COLOR="#000000">-- the general scheme cannot be formalized in Yarrow (see the discussion
+</FONT><FONT COLOR="#000000">-- at the end of Section 6.7.6, on pages 190,191).
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#0000FF">Def SimBagI := \Rep1,Rep2:*s. \(~):Rep1 -&gt;Rep2-&gt;*p.
+</FONT><FONT COLOR="#0000FF">            \ops1:BagI Rep1. \ops2:BagI Rep2. 
+</FONT><FONT COLOR="#0000FF">                ops1`empty ~ ops2`empty /\
+</FONT><FONT COLOR="#0000FF">                (@x:Rep1.@y:Rep2. @m:Nat. x ~ y -&gt; 
+</FONT><FONT COLOR="#0000FF">                                          ops1`add m x ~ ops2`add m y) /\
+</FONT><FONT COLOR="#0000FF">                (@x:Rep1.@y:Rep2. @m:Nat.  x ~ y -&gt; 
+</FONT><FONT COLOR="#0000FF">                                          ops1`card m x = ops2`card m y) /\ 
+</FONT><FONT COLOR="#0000FF">                (@x:Rep1.@y:Rep2. x ~ y -&gt; ops1`bound x = ops2`bound y) :
+</FONT><FONT COLOR="#0000FF">            @Rep1,Rep2:*s. (Rep1-&gt;Rep2-&gt;*p) -&gt; BagI Rep1 -&gt; BagI Rep2 -&gt; *p
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#0000FF">Def BisimBagI := \Bag:*s.\(~): Bag-&gt;Bag-&gt;*p.\ops:BagI Bag. 
+</FONT><FONT COLOR="#0000FF">                    SimBagI Bag Bag (~) ops ops : 
+</FONT><FONT COLOR="#0000FF">             @Bag:*s. (Bag-&gt;Bag-&gt;*p) -&gt; BagI Bag -&gt; *p
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#FF0000">Var parSigmaBagI : @X1:*s.@X2:*s.@x1:BagI X1. @x2:BagI X2.
+</FONT><FONT COLOR="#FF0000">                       @(~) : X1-&gt;X2-&gt;*p.
+</FONT><FONT COLOR="#FF0000">                       SimBagI X1 X2 (~) x1 x2 -&gt;
+</FONT><FONT COLOR="#FF0000">                       pack BagI X1 x1 = pack BagI X2 x2
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#000000">------------------------------------
+</FONT><FONT COLOR="#000000">--                                --
+</FONT><FONT COLOR="#000000">--  2. S P E C I F I C A T I O N  --
+</FONT><FONT COLOR="#000000">--                                --
+</FONT><FONT COLOR="#000000">------------------------------------
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#0000FF">Def NaiveSpec := \Bag:*s. \ops:BagI Bag.
+</FONT><FONT COLOR="#0000FF">                 @m,n:Nat. @b:Bag. 
+</FONT><FONT COLOR="#0000FF">                   ops`card m ops`empty = O /\
+</FONT><FONT COLOR="#0000FF">                   ops`card m (ops`add m b) = S (ops`card m b) /\
+</FONT><FONT COLOR="#0000FF">                   (Not (m=n) -&gt; ops`card m (ops`add n b) = 
+</FONT><FONT COLOR="#0000FF">                                                ops`card m b) /\
+</FONT><FONT COLOR="#0000FF">                   ops`add m (ops`add n b) =
+</FONT><FONT COLOR="#0000FF">                                   ops`add n (ops`add m b) /\
+</FONT><FONT COLOR="#0000FF">                   (S O &lt;= ops`card m b -&gt; m &lt;= ops`bound b) :
+</FONT><FONT COLOR="#0000FF">              @Bag:*s. BagI Bag -&gt; *p
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#0000FF">Def UserSpec := \imp:BagImp. ExK Rep:*s. Ex ops:BagI Rep.
+</FONT><FONT COLOR="#0000FF">                      imp = pack BagI Rep ops /\ NaiveSpec Rep ops
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#000000">--------------------------------------
+</FONT><FONT COLOR="#000000">--                                  --
+</FONT><FONT COLOR="#000000">--  3. I M P L E M E N T A T I O N  --
+</FONT><FONT COLOR="#000000">--                                  --
+</FONT><FONT COLOR="#000000">--------------------------------------
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#0000FF">Def Rep2 := List Nat
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#0000FF">Def ops2 := {empty = nil Nat,
+</FONT><FONT COLOR="#0000FF">             add = insert,
+</FONT><FONT COLOR="#0000FF">             card = count,
+</FONT><FONT COLOR="#0000FF">             bound = last O} : BagI Rep2
+</FONT><FONT COLOR="#0000FF">Def imp2 := pack BagI Rep2 ops2 : BagImp
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#000000">-------------------------------------------------------------------
+</FONT><FONT COLOR="#000000">--                                                               --
+</FONT><FONT COLOR="#000000">--  4c. U S I N G   A   W E A K E R   S P E C I F I C A T I O N  --
+</FONT><FONT COLOR="#000000">--                                                               --
+</FONT><FONT COLOR="#000000">-------------------------------------------------------------------
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#0000FF">Def IsInvarBagI := \Rep:*s.\Inv:Rep-&gt;*p.\ops:BagI Rep.
+</FONT><FONT COLOR="#0000FF">                       Inv (ops`empty) /\
+</FONT><FONT COLOR="#0000FF">                       @m:Nat. @r:Rep. Inv r -&gt; Inv (ops`add m r)
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#0000FF">Prove IsInvar_Ordered_ops2 : IsInvarBagI Rep2 Ordered ops2
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#0000FF">Def Spec := \Rep:*s. \Inv : Rep-&gt;*p. \ops:BagI Rep.
+</FONT><FONT COLOR="#0000FF">      @m,n:Nat. @r:Rep. Inv r -&gt;
+</FONT><FONT COLOR="#0000FF">           ops`card m ops`empty = O /\
+</FONT><FONT COLOR="#0000FF">           ops`card m (ops`add m r) = S (ops`card m r) /\
+</FONT><FONT COLOR="#0000FF">           (Not (m=n) -&gt; ops`card m (ops`add n r) = 
+</FONT><FONT COLOR="#0000FF">                                               ops`card m r) /\
+</FONT><FONT COLOR="#0000FF">           ops`add m (ops`add n r) =
+</FONT><FONT COLOR="#0000FF">                                  ops`add n (ops`add m r) /\
+</FONT><FONT COLOR="#0000FF">           (S O &lt;= ops`card m r -&gt; m &lt;= ops`bound r) :
+</FONT><FONT COLOR="#0000FF">            @Rep:*s. (Rep-&gt;*p) -&gt; BagI Rep -&gt; *p
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#0000FF">Def ImplemSpec := \Rep:*s. \ops:BagI Rep.
+</FONT><FONT COLOR="#0000FF">                  ExQ Inv : Rep-&gt;*p. Spec Rep Inv ops /\ 
+</FONT><FONT COLOR="#0000FF">                    IsInvarBagI Rep Inv ops
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#0000FF">Prove Spec_True__NaiveSpec : @R:*s.@opsR:BagI R. Spec R (\r:R. True) opsR -&gt;
+</FONT><FONT COLOR="#0000FF">                                                 NaiveSpec R opsR
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#0000FF">Prove NaiveSpec__Spec_True : @Rep:*s. @ops:BagI Rep. NaiveSpec Rep ops -&gt;
+</FONT><FONT COLOR="#0000FF">                                                    Spec Rep (\r:Rep. True) ops
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#0000FF">Def WeakUserSpec := \bagImp : BagImp. 
+</FONT><FONT COLOR="#0000FF">                    ExK Rep:*s. Ex ops:BagI Rep. ExQ Inv : Rep-&gt;*p.
+</FONT><FONT COLOR="#0000FF">                    bagImp = pack BagI Rep ops /\ Spec Rep Inv ops /\ 
+</FONT><FONT COLOR="#0000FF">                    IsInvarBagI Rep Inv ops
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#0000FF">Prove Spec_Ordered_ops2 : Spec Rep2 Ordered ops2
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#0000FF">Prove ImplemSpec_ops2 : ImplemSpec Rep2 ops2
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#0000FF">Prove Implem__WeakUserSpec : @Rep:*s. @ops:BagI Rep.
+</FONT><FONT COLOR="#0000FF">                                 ImplemSpec Rep ops -&gt; 
+</FONT><FONT COLOR="#0000FF">                                 WeakUserSpec (pack BagI Rep ops)
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#0000FF">Prove WeakUserSpec_imp2 : WeakUserSpec imp2
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#000000">-----------------------------------------
+</FONT><FONT COLOR="#000000">--                                     --
+</FONT><FONT COLOR="#000000">--  4d. S U B S E T   A L G E B R A S  --
+</FONT><FONT COLOR="#000000">--                                     --
+</FONT><FONT COLOR="#000000">-----------------------------------------
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#0000FF">Def IsSubsetAlg :=\R:*s. \opsR : BagI R. \Inv:R-&gt;*p. \S:*s. \opsS : BagI S.
+</FONT><FONT COLOR="#0000FF">               Ex inj:S-&gt;R.
+</FONT><FONT COLOR="#0000FF">                IsInjection inj /\
+</FONT><FONT COLOR="#0000FF">                (Inv &lt;==&gt; Image inj) /\
+</FONT><FONT COLOR="#0000FF">                SimBagI R S (\r:R.\s:S. r = inj s) opsR opsS  :
+</FONT><FONT COLOR="#0000FF">              @R:*s. BagI R -&gt; (R-&gt;*p) -&gt; @S:*s. BagI S -&gt; *p
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#FF0000">Var exis_SubsetAlg : @R:*s. @opsR:BagI R. @Inv:R-&gt;*p.
+</FONT><FONT COLOR="#FF0000">                     IsInvarBagI R Inv opsR -&gt;
+</FONT><FONT COLOR="#FF0000">                     ExK S:*s. Ex opsS: BagI S. 
+</FONT><FONT COLOR="#FF0000">                     IsSubsetAlg R opsR Inv S opsS
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#000000">-- (i)
+</FONT><FONT COLOR="#0000FF">prove pack_Subset : @R:*s. @opsR:BagI R. @Inv:R-&gt;*p.
+</FONT><FONT COLOR="#0000FF">                    @S:*s. @opsS: BagI S. IsSubsetAlg R opsR Inv S opsS -&gt;
+</FONT><FONT COLOR="#0000FF">                    (=) BagImp (pack BagI R opsR) (pack BagI S opsS)
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#000000">-- (ii)
+</FONT><FONT COLOR="#0000FF">Prove Spec_Sens :
+</FONT><FONT COLOR="#0000FF">                @R:*s. @opsR:BagI R. @Inv:R-&gt;*p. @S:*s. @opsS: BagI S. 
+</FONT><FONT COLOR="#0000FF">                IsSubsetAlg R opsR Inv S opsS -&gt; Spec R Inv opsR -&gt;
+</FONT><FONT COLOR="#0000FF">                Spec S (\s:S. True) opsS
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#0000FF">Prove Implem__UserSpec : @Rep:*s. @ops:BagI Rep.
+</FONT><FONT COLOR="#0000FF">                             ImplemSpec Rep ops -&gt; 
+</FONT><FONT COLOR="#0000FF">                             UserSpec (pack BagI Rep ops)
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#0000FF">Prove UserSpec_imp2 : UserSpec imp2
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#0000FF">Prove principle : @imp:BagImp. UserSpec imp -&gt;
+</FONT><FONT COLOR="#0000FF">              @A:*s.@Q:A-&gt;*p.@body:@X:*s. BagI X -&gt; A.
+</FONT><FONT COLOR="#0000FF">              (@X:*s.@ops:BagI X. Spec X (\r:X.True) ops -&gt; Q (body X ops)) -&gt; 
+</FONT><FONT COLOR="#0000FF">              Q (unpack imp (\X:*s.\ops:BagI X. body X ops))
+</FONT><FONT COLOR="#000000">
+</FONT></PRE>
+</BODY>
+</HTML>

@@ -1,0 +1,45 @@
+<DL>
+ <DT>Syntax:
+ <DD>
+  <OL>
+  <LI><CODE>System</CODE> <VAR>sys</VAR>
+  <LI><CODE>System</CODE>
+  </OL>
+ <DT>Effect:
+ <DD><P>Changes the type system used to <VAR>sys</VAR>. The context is
+        cleared, unless the old system is a part of <VAR>sys</VAR>.<BR>
+        If <VAR>sys</VAR> can be mapped to \C it is terminating,
+        and if \U- can be mapped to <VAR>sys</VAR> it is non-terminating.
+        This is verified by this program and a corresponding
+        message is issued. If the system is not terminating,
+        typing may not terminate, so this program can hang or
+        crash. On top of that, if the type system is considered as
+        a logic, it is inconsistent.<BR>
+        <VAR>sys</VAR> consists of the list of sorts, the list of
+        axioms and the list of rules, all seperated by a
+        comma, and enclosed by parentheses. Every list
+        consists of a number of items seperated by commas.<BR>
+        A sort is a just an identifier.<BR>
+        An axiom consists of two sorts seperated by
+        a colon.<BR>
+        A rule consists of a triple of sorts seperated by
+        commas, and is enclosed by parentheses. The third sort
+        may be omitted, in which case it is assumed to be
+        equal to the second sort.
+        </P>     
+     <P>The <CODE>System</CODE> command is also used to select
+        extensions of Pure Type Systems available in Yarrow, e.g. subtyping.
+        See 'extensions'.</P>
+     <P>The second variant displays the current type system.</P>
+ <DT>Examples:
+ <DD><CODE>System (Set,Type),(Set:Type),((Set,Set),(Set,Type))</CODE>
+                 for \P.<BR>
+     <CODE>System (*,#,##),(*:#,#:##),((*,*),(*,#,##))</CODE><BR>
+ <DT>Note:
+ <DD>The typing algorithm may not be able to handle some
+             systems. In this situation an error will be issued.
+ <DT>Prove-mode:
+ <DD>This command is not available in prove-mode.
+ <DT>See also:
+ <DD><A HREF="#extensions"><CODE>extensions</CODE></A>
+</DL>

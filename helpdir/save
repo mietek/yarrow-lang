@@ -1,0 +1,20 @@
+<DL>
+ <DT>Syntax:
+ <DD>
+   <CODE>Save</CODE> "<VAR>filename</VAR>"
+ <DT>Effect:
+ <DD>Saves the piece of the context not belonging to existing modules in
+     module <VAR>filename</VAR><CODE>.yc</CODE>. The type system used,
+     the import list and infix and implicit declarations are also stored.
+     The import list for this module is the list of all modules currently
+     loaded.<BR>
+     However, if <VAR>filename</VAR> is the most recent module, it is
+     updated. That means that the piece of the context added since this 
+     module was loaded is added to the module.<BR>
+     If <VAR>filename</VAR> is another loaded module, it can't be updated.
+ <DT>Example:
+ <DD><CODE>Save "integer"</CODE>
+ <DT>See also:                          
+ <DD><A HREF="#Load"><CODE>Load</CODE></A>,
+     <A HREF="#Clear"><CODE>Clear</CODE></A>
+</DL>  

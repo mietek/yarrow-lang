@@ -1,0 +1,102 @@
+<HTML>
+<HEAD>
+<TITLE>New in Yarrow v1.20 (since v1.00).</TITLE>
+<!-- Changed by: Jan Zwanenburg, 4-Nov-1999 -->
+</HEAD>
+<BODY>
+<H2><CENTER>New in Yarrow v1.20 (since v1.00)</CENTER></H2>
+
+<H1>Main changes</H1>
+<UL>
+<LI>
+Yarrow now supports forward reasoning, with the 'Forward' tactic.
+<!--
+  - The 'Forward' tactic
+    9-10-'97
+  - The Forward, Apply, OrE, AndE, NotE, ExistsE, Rewrite and Lewrite tactics
+    have been extended.
+    Especially the 'Forward' tactic benefits from this extension.
+    [EXAMPLE]
+    29-1-'98
+-->
+<LI>
+Yarrow now supports records and subtyping.
+<!--
+  - Two extensions of DPTSs are implemented: records and subtyping.
+    23-6-'98
+-->
+</UL>
+
+<H1>Other significant changes</H1>
+<UL>
+<LI>
+It is possible to declare a variable as 'Binder', which makes terms better
+readable.
+<LI>
+ All commands and tactics have become case-insensitive, e.g. you can type
+'Intros' or 'InTrOs' instead of 'Intros'.
+<!-- 13-10-'97 -->
+<LI> The 'Undo' command is now local, i.e. it undoes the last step in the
+    current goal instead of the absolute last step. As a consequence,
+    no tactics can be undone if the goal is proved.
+    The 'History' command is adapted accordingly, it also prints the tactics
+    in a more structured way.
+<!-- 3-11-'97 -->
+<LI>
+   It is now possible to suppress printing of selected elements of the local
+    context, with the tactic 'Hide'. The tactic 'Unhide' makes the
+    suppression undone.
+<!--    9-8-'98-->
+<LI>The tactics 'ExistsE', 'ExistsI', 'Refl', 'Rewrite' and 'Lewrite' have been
+    made more
+    flexible: The existential quantification and the equality predicate
+    can be arbitrarily polymorphic (including not polymorphic at all)
+<!--    9-8-'98-->
+<LI> The tactics Rewrite and Lewrite can also be used in hypotheses.
+    <!-- 23-11-'98 -->
+</UL>
+
+<H1>Minor changes</H1>
+<UL>
+<LI>
+    The special tactics 'AndEL' and 'AndER' replace the old 'AndE' tactic.
+    This is still available; it is a combination of 'AndEL' and 'AndER'.
+    <!-- 11-10-'97 -->
+<LI> The 'Focus' command is no longer a tactic.
+    <!-- 3-11-'97 -->
+<LI> The tactical 'Then' has been made more flexible.
+    <!-- 23-6-'98 -->
+<LI> A new tactical 'Else'.
+    <!-- 23-6-'98 -->
+<LI> Also if a line ends with ':=', the command may be completed on the next 
+    line.
+    <!-- 20-5-'99 -->
+</UL>
+
+<H1>Bug fixes</H1>
+<UL>
+<LI> 'Prove @x1,x2:Nat. P x1 x2' and then 'Intros' lead to variables 'x' and
+    'x1' in the context instead of 'x1' and 'x2'.
+<!--    21-10-'97-->
+<LI> During the summary of the used tactics, terms were sometimes printed
+    in an awkward way, e.g. 'convert (=) x y'.
+<!--    21-10-'97-->
+<LI> The matching routine sometimes gave an internal error. This resulted
+    sometimes in internal errors when using 'Apply' or rewriting tactics.
+<!--    31-7-'98-->
+<LI> The tactic 'Pattern' sometimes resulted in an ill-typed goal. Now any
+    attempt to do so results in an error.
+<!--    20-5-'99-->
+</UL>
+
+<HR>
+
+<P>
+<A HREF="relea.html">Back to Yarrpw Releases Page</A><BR>
+<A HREF="index.html">Back to Yarrow Home Page</A>
+</P>
+
+</BODY>
+</HTML>
+
+

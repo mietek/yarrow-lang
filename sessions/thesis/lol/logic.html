@@ -1,0 +1,352 @@
+<HTML>
+<HEAD>
+<TITLE>lol/logic (with proofs)</TITLE>
+</HEAD>
+<BODY BGCOLOR="#FFFFFF", TEXT="#000000">
+<PRE><FONT COLOR="#000000"></FONT><FONT COLOR="#000000">-- File: logic
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#000000">-- This file introduces predicate logic.
+</FONT><FONT COLOR="#000000">-- It consists of two parts.
+</FONT><FONT COLOR="#000000">-- 1. Axioms, corresponding to Section 4.5
+</FONT><FONT COLOR="#000000">-- 2. Library, corresponding to Section 4.6
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#000000">Load "lambdaL"
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#000000">-----------------------
+</FONT><FONT COLOR="#000000">-----------------------
+</FONT><FONT COLOR="#000000">--                   --
+</FONT><FONT COLOR="#000000">--  1.  A X I O M S  --
+</FONT><FONT COLOR="#000000">--                   --
+</FONT><FONT COLOR="#000000">-----------------------
+</FONT><FONT COLOR="#000000">-----------------------
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#0000FF">Def False := @P:*p.P
+</FONT><FONT COLOR="#000000">                                   
+</FONT><FONT COLOR="#0000FF">Def True := @P:*p.P-&gt;P
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#0000FF">Def Not := \P:*p. P-&gt;False
+</FONT><FONT COLOR="#000000">      
+</FONT><FONT COLOR="#0000FF">Def (/\) := \P,Q:*p. (@R:*p. (P-&gt;Q-&gt;R)-&gt;R)
+</FONT><FONT COLOR="#000000">InfixR 3 (/\)
+</FONT><FONT COLOR="#000000">-- Name in lemmas: And
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#0000FF">Def (\/) := \P,Q:*p. (@R:*p.(P-&gt;R)-&gt;(Q-&gt;R)-&gt;R)
+</FONT><FONT COLOR="#000000">InfixR 2 (\/)
+</FONT><FONT COLOR="#000000">-- Name in lemmas: Or
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#000000">-- Existential quantification over a datatype
+</FONT><FONT COLOR="#0000FF">Def Ex := \A:*s.\P:A-&gt;*p.@Q:*p. (@x:A.P x-&gt;Q) -&gt; Q
+</FONT><FONT COLOR="#000000">Implicit 1 Ex
+</FONT><FONT COLOR="#000000">Binder Ex
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#000000">-- We define existential quantifications over propkinds for three categories
+</FONT><FONT COLOR="#000000">-- of propkinds, viz. over propkinds of the form
+</FONT><FONT COLOR="#000000">--    *p       (exis. quant. over propositions, denoted by ExP), 
+</FONT><FONT COLOR="#000000">--    A-&gt;*p    (exis. quant. over predicates, denoted by ExQ,
+</FONT><FONT COLOR="#000000">--              which is polymorphic in A:*s), and
+</FONT><FONT COLOR="#000000">--    A-&gt;B-&gt;*p (exis. quant. over relations, denoted by ExR, 
+</FONT><FONT COLOR="#000000">--              which is polymorphic in A,B:*s)
+</FONT><FONT COLOR="#000000">-- (See Remark 4.5.2 on page 88)
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#000000">-- existential quantification over propositions
+</FONT><FONT COLOR="#0000FF">Def ExP := \P:*p-&gt;*p. @Q:*p. (@X:*p. P X -&gt; Q) -&gt; Q
+</FONT><FONT COLOR="#000000">Binder ExP
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#000000">-- existential quantification over predicates
+</FONT><FONT COLOR="#0000FF">Def ExQ := \A:*s.\P:(A-&gt;*p)-&gt;*p. @Q:*p. (@X:(A-&gt;*p). P X -&gt; Q) -&gt; Q
+</FONT><FONT COLOR="#000000">Implicit 1 ExQ
+</FONT><FONT COLOR="#000000">Binder ExQ
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#000000">-- existential quantification over relations
+</FONT><FONT COLOR="#0000FF">Def ExR := \A,B:*s.\P:(A-&gt;B-&gt;*p)-&gt;*p. @Q:*p. (@X:A-&gt;B-&gt;*p. P X -&gt; Q) -&gt; Q
+</FONT><FONT COLOR="#000000">Implicit 2 ExR
+</FONT><FONT COLOR="#000000">Binder ExR
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#000000">-- existential quantification over kind *s
+</FONT><FONT COLOR="#0000FF">Def ExK := \P:*s-&gt;*p. @Q:*p. (@X:*s. P X -&gt; Q) -&gt; Q
+</FONT><FONT COLOR="#000000">Binder ExK
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#000000">-- Leibniz' equality
+</FONT><FONT COLOR="#0000FF">Def (=) := \A:*s.\x,y:A. @P:A-&gt;*p. P x -&gt; P y
+</FONT><FONT COLOR="#000000">Infix 4 (=)
+</FONT><FONT COLOR="#000000">Implicit 1 (=)
+</FONT><FONT COLOR="#000000">-- prefix name: is
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#FF0000">Var classic : @P:*p. Not (Not P) -&gt; P
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#000000">-- the axiom of extensionality for ordinary functions
+</FONT><FONT COLOR="#FF0000">Var is_arrow :  @A,B:*s.@f,g:A-&gt;B. (@x:A. f x = g x) -&gt; f = g
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#000000">-- the axiom of extensionality for polymorphic functions
+</FONT><FONT COLOR="#000000">-- We introduce this axiom only for kind *s.
+</FONT><FONT COLOR="#000000">-- (See Remark 4.5.2 on page 88.)
+</FONT><FONT COLOR="#FF0000">Var is_pi1 : @A:*s-&gt;*s. @f,g:(@X:*s. A X). (@X:*s. f X = g X) -&gt; f = g
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#000000">-- We define Leibniz' equality for prop-constructors for three categories
+</FONT><FONT COLOR="#000000">-- of propkinds, viz. over propkinds of the form
+</FONT><FONT COLOR="#000000">--    *p       (equality of propositions, denoted by &lt;=&gt;),
+</FONT><FONT COLOR="#000000">--    A-&gt;*p    (equality of predicates, denoted by &lt;==&gt;,
+</FONT><FONT COLOR="#000000">--              which is polymorphic in A:*s), and
+</FONT><FONT COLOR="#000000">--    A-&gt;B-&gt;*p (equality of relations, denoted by &lt;===&gt;, 
+</FONT><FONT COLOR="#000000">--              which is polymorphic in A,B:*s).
+</FONT><FONT COLOR="#000000">-- (See Remark 4.5.2 on page 88.)
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#0000FF">Def (&lt;=&gt;) := \P,Q:*p. @R:*p-&gt;*p. R P -&gt; R Q
+</FONT><FONT COLOR="#000000">Infix 1 (&lt;=&gt;)
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#FF0000">Var equiv_prop : @P,Q:*p. (P-&gt;Q) -&gt; (Q-&gt;P) -&gt; (P&lt;=&gt;Q)
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#000000">-- Equiv met K = A-&gt;*p.
+</FONT><FONT COLOR="#0000FF">Def (&lt;==&gt;) := \A:*s. \P,Q:A-&gt;*p. @R:(A-&gt;*p)-&gt;*p. R P -&gt; R Q
+</FONT><FONT COLOR="#000000">Implicit 1 (&lt;==&gt;)
+</FONT><FONT COLOR="#000000">Infix 1 (&lt;==&gt;)
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#000000">-- Equiv met K = A-&gt;B-&gt;*p.
+</FONT><FONT COLOR="#0000FF">Def (&lt;===&gt;) := \A,B:*s. \P,Q:A-&gt;B-&gt;*p. @R:(A-&gt;B-&gt;*p)-&gt;*p. R P -&gt; R Q
+</FONT><FONT COLOR="#000000">Implicit 2 (&lt;===&gt;)
+</FONT><FONT COLOR="#000000">Infix 1 (&lt;===&gt;)
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#000000">-- The axiom scheme equiv_pred for propkinds is only introduced for
+</FONT><FONT COLOR="#000000">-- unary predicates and relations.
+</FONT><FONT COLOR="#000000">-- (See Remark 4.5.2 on page 88.)
+</FONT><FONT COLOR="#FF0000">Var equiv_predQ : @A:*s. @P,Q:A-&gt;*p. (@a:A. P a &lt;=&gt; Q a) -&gt; P &lt;==&gt; Q
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#FF0000">Var equiv_predR : @A,B:*s. @P,Q:A-&gt;B-&gt;*p. (@a:A.@b:B. P a b &lt;=&gt; Q a b) -&gt; 
+</FONT><FONT COLOR="#FF0000">                                          P &lt;===&gt; Q
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#000000">-------------------------
+</FONT><FONT COLOR="#000000">-------------------------
+</FONT><FONT COLOR="#000000">--                     --
+</FONT><FONT COLOR="#000000">--  2.  L I B R A R Y  --
+</FONT><FONT COLOR="#000000">--                     --
+</FONT><FONT COLOR="#000000">-------------------------
+</FONT><FONT COLOR="#000000">-------------------------
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#0000FF">Prove ex_falso : @P:*p. False-&gt;P
+</FONT><FONT COLOR="#000000">Unfold False
+</FONT><FONT COLOR="#000000">Intro P,H
+</FONT><FONT COLOR="#000000">Apply H
+</FONT><FONT COLOR="#000000">Exit
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#000000">-- Indicate that this lemma must used by the FalseE tactic
+</FONT><FONT COLOR="#000000">Use FalseE ex_falso                           
+</FONT><FONT COLOR="#000000">  
+</FONT><FONT COLOR="#0000FF">Prove Not_i : @P:*p. (P-&gt;False) -&gt; Not P
+</FONT><FONT COLOR="#000000">Intros
+</FONT><FONT COLOR="#000000">Assumption
+</FONT><FONT COLOR="#000000">Exit
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#000000">-- Indicate that this lemma must used by the NotI tactic
+</FONT><FONT COLOR="#000000">Use NotI Not_i
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#0000FF">Prove Not_e : @P:*p. Not P -&gt; P -&gt; False
+</FONT><FONT COLOR="#000000">Intro P,H
+</FONT><FONT COLOR="#000000">Assumption
+</FONT><FONT COLOR="#000000">Exit
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#000000">-- Indicate that this lemma must used by the NotE tactic
+</FONT><FONT COLOR="#000000">Use NotE Not_e
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#0000FF">Prove true_True : True
+</FONT><FONT COLOR="#000000">Unfold True
+</FONT><FONT COLOR="#000000">Intro P,H
+</FONT><FONT COLOR="#000000">Apply H
+</FONT><FONT COLOR="#000000">Exit
+</FONT><FONT COLOR="#000000">           
+</FONT><FONT COLOR="#0000FF">Prove And_i : @P,Q:*p. P -&gt; Q -&gt; P/\Q
+</FONT><FONT COLOR="#000000">Unfold (/\)
+</FONT><FONT COLOR="#000000">Intro P,Q,HP,HQ,R,HI
+</FONT><FONT COLOR="#000000">Apply HI Then Assumption
+</FONT><FONT COLOR="#000000">Exit
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#000000">-- Indicate that this lemma must used by the AndI tactic
+</FONT><FONT COLOR="#000000">Use AndI And_i
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#0000FF">Prove And_el : @P,Q:*p. P/\Q -&gt; P
+</FONT><FONT COLOR="#000000">Intro P,Q,H
+</FONT><FONT COLOR="#000000">Apply H Then Intro H2,H3
+</FONT><FONT COLOR="#000000">Assumption
+</FONT><FONT COLOR="#000000">Exit
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#000000">-- Indicate that this lemma must used by the AndEL tactic
+</FONT><FONT COLOR="#000000">Use AndEL And_el
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#0000FF">Prove And_er : @P,Q:*p. P/\Q -&gt; Q
+</FONT><FONT COLOR="#000000">Intro P,Q,H
+</FONT><FONT COLOR="#000000">Apply H Then Intro H2,H3
+</FONT><FONT COLOR="#000000">Assumption
+</FONT><FONT COLOR="#000000">Exit
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#000000">-- Indicate that this lemma must used by the AndER tactic
+</FONT><FONT COLOR="#000000">Use AndER And_er
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#0000FF">Prove And_sym : @P,Q:*p. P/\Q -&gt; Q/\P
+</FONT><FONT COLOR="#000000">Intro P,Q,H
+</FONT><FONT COLOR="#000000">AndE H
+</FONT><FONT COLOR="#000000">AndI Then Assumption
+</FONT><FONT COLOR="#000000">Exit
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#0000FF">Prove And_assoc : @P,Q,R:*p. P/\(Q/\R) -&gt; (P/\Q)/\R
+</FONT><FONT COLOR="#000000">Intros
+</FONT><FONT COLOR="#000000">AndE H
+</FONT><FONT COLOR="#000000">AndE H2
+</FONT><FONT COLOR="#000000">AndI Then Try Assumption
+</FONT><FONT COLOR="#000000">AndI Then Try Assumption
+</FONT><FONT COLOR="#000000">Exit
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#0000FF">Prove Or_il : @P,Q:*p. P -&gt; P\/Q
+</FONT><FONT COLOR="#000000">Unfold (\/)
+</FONT><FONT COLOR="#000000">Intro P,Q,HP,R,HPR,HQR
+</FONT><FONT COLOR="#000000">Apply HPR
+</FONT><FONT COLOR="#000000">Assumption
+</FONT><FONT COLOR="#000000">Exit
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#000000">-- Indicate that this lemma must used by the OrIL tactic
+</FONT><FONT COLOR="#000000">Use OrIL Or_il
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#0000FF">Prove Or_ir : @P,Q:*p. Q -&gt; P\/Q
+</FONT><FONT COLOR="#000000">Unfold (\/)
+</FONT><FONT COLOR="#000000">Intro P,Q,HP,R,HPR,HQR
+</FONT><FONT COLOR="#000000">Apply HQR
+</FONT><FONT COLOR="#000000">Assumption
+</FONT><FONT COLOR="#000000">Exit
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#000000">-- Indicate that this lemma must used by the OrIR tactic
+</FONT><FONT COLOR="#000000">Use OrIR Or_ir
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#0000FF">Prove Or_e : @P,Q,R:*p. P\/Q -&gt; (P-&gt;R) -&gt; (Q-&gt;R) -&gt; R
+</FONT><FONT COLOR="#000000">Intros
+</FONT><FONT COLOR="#000000">Apply H Then Intro
+</FONT><FONT COLOR="#000000">Apply H1 Then Assumption
+</FONT><FONT COLOR="#000000">Apply H2 Then Assumption
+</FONT><FONT COLOR="#000000">Exit
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#000000">-- Indicate that this lemma must used by the OrE tactic
+</FONT><FONT COLOR="#000000">Use OrE Or_e
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#0000FF">Prove Or_sym : @P,Q:*p. P\/Q -&gt; Q\/P
+</FONT><FONT COLOR="#000000">Intro P,Q,H
+</FONT><FONT COLOR="#000000">OrE H
+</FONT><FONT COLOR="#000000">OrIR
+</FONT><FONT COLOR="#000000">Assumption
+</FONT><FONT COLOR="#000000">OrIL
+</FONT><FONT COLOR="#000000">Assumption
+</FONT><FONT COLOR="#000000">Exit
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#0000FF">Prove Or_assoc : @P,Q,R:*p. P\/Q\/R -&gt; (P\/Q)\/R
+</FONT><FONT COLOR="#000000">Intros
+</FONT><FONT COLOR="#000000">OrE H
+</FONT><FONT COLOR="#000000">OrIL
+</FONT><FONT COLOR="#000000">OrIL
+</FONT><FONT COLOR="#000000">Assumption
+</FONT><FONT COLOR="#000000">OrE H1
+</FONT><FONT COLOR="#000000">OrIL
+</FONT><FONT COLOR="#000000">OrIR
+</FONT><FONT COLOR="#000000">Assumption
+</FONT><FONT COLOR="#000000">OrIR
+</FONT><FONT COLOR="#000000">Assumption
+</FONT><FONT COLOR="#000000">Exit
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#000000">-- The next lemma is used by the ExistsI tactic. Therefore we should not
+</FONT><FONT COLOR="#000000">-- write Ex x:A. P x, this is not the correct form for this tactic.
+</FONT><FONT COLOR="#0000FF">Prove Ex_i : @A:*s.@x:A.@P:A-&gt;*p. P x -&gt; (Ex) P
+</FONT><FONT COLOR="#000000">Unfold Ex
+</FONT><FONT COLOR="#000000">Intro A,x,P,HPx,Q,H
+</FONT><FONT COLOR="#000000">Apply H x
+</FONT><FONT COLOR="#000000">Assumption
+</FONT><FONT COLOR="#000000">Exit
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#000000">Use ExistsI Ex_i
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#000000">-- The next lemma is used by the ExistsE tactic.
+</FONT><FONT COLOR="#0000FF">Prove Ex_e : @A:*s.@P:A-&gt;*p.@R:*p. (Ex) P -&gt; (@x:A. P x -&gt; R) -&gt; R
+</FONT><FONT COLOR="#000000">Unfold Ex
+</FONT><FONT COLOR="#000000">Intro A,P,R,H
+</FONT><FONT COLOR="#000000">Apply H
+</FONT><FONT COLOR="#000000">Exit
+</FONT><FONT COLOR="#000000">Use ExistsE Ex_e
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#0000FF">Prove is_refl : @A:*s.@x:A. x=x
+</FONT><FONT COLOR="#000000">Unfold (=)
+</FONT><FONT COLOR="#000000">Intro A,x,P,H
+</FONT><FONT COLOR="#000000">Assumption
+</FONT><FONT COLOR="#000000">Exit
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#000000">-- Indicate that this lemma must used by the Refl tactic
+</FONT><FONT COLOR="#000000">Use Refl is_refl
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#0000FF">Prove is_elim_r : @A:*s.@x,y:A.@P:A-&gt;*p. x=y -&gt; P x -&gt; P y
+</FONT><FONT COLOR="#000000">Intros
+</FONT><FONT COLOR="#000000">Apply H
+</FONT><FONT COLOR="#000000">Assumption
+</FONT><FONT COLOR="#000000">Exit
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#000000">-- Indicate that this lemma must used by the Lewrite tactic
+</FONT><FONT COLOR="#000000">Use Lewrite is_elim_r
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#0000FF">Prove is_elim_l : @A:*s.@x,y:A.@P:A-&gt;*p. x=y -&gt; P y -&gt; P x
+</FONT><FONT COLOR="#000000">Intros 5
+</FONT><FONT COLOR="#000000">Lewrite H
+</FONT><FONT COLOR="#000000">Intro
+</FONT><FONT COLOR="#000000">Assumption
+</FONT><FONT COLOR="#000000">Exit
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#000000">-- Indicate that this lemma must used by the Rewrite tactic
+</FONT><FONT COLOR="#000000">Use Rewrite is_elim_l
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#000000">             
+</FONT><FONT COLOR="#0000FF">Prove is_sym : @A:*s.@x,y:A. x=y -&gt; y=x
+</FONT><FONT COLOR="#000000">Intros
+</FONT><FONT COLOR="#000000">Rewrite H
+</FONT><FONT COLOR="#000000">Refl
+</FONT><FONT COLOR="#000000">Exit
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#0000FF">Prove is_trans : @A:*s.@x,y,z:A. x=y -&gt; y=z -&gt; x=z
+</FONT><FONT COLOR="#000000">Intro A,x,y,z,H1,H2
+</FONT><FONT COLOR="#000000">Rewrite H1
+</FONT><FONT COLOR="#000000">Assumption
+</FONT><FONT COLOR="#000000">Exit
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#0000FF">Prove exm : @P:*p. P \/ Not P
+</FONT><FONT COLOR="#000000">Intro P
+</FONT><FONT COLOR="#000000">Apply classic
+</FONT><FONT COLOR="#000000">NotI
+</FONT><FONT COLOR="#000000">NotE H
+</FONT><FONT COLOR="#000000">OrIR
+</FONT><FONT COLOR="#000000">NotI
+</FONT><FONT COLOR="#000000">NotE H
+</FONT><FONT COLOR="#000000">OrIL
+</FONT><FONT COLOR="#000000">Assumption
+</FONT><FONT COLOR="#000000">Exit
+</FONT><FONT COLOR="#000000">   
+</FONT><FONT COLOR="#0000FF">Prove contrapos : @P,Q:*p.(Not P -&gt; Q) -&gt; (Not Q -&gt; P)
+</FONT><FONT COLOR="#000000">Intro P, Q, H1, H2
+</FONT><FONT COLOR="#000000">Apply classic
+</FONT><FONT COLOR="#000000">NotI
+</FONT><FONT COLOR="#000000">NotE H2
+</FONT><FONT COLOR="#000000">Apply H1
+</FONT><FONT COLOR="#000000">Assumption
+</FONT><FONT COLOR="#000000">Exit
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#0000FF">Prove impl__Or : @P,Q:*p. (Not P -&gt; Q) -&gt; P \/ Q
+</FONT><FONT COLOR="#000000">Intro P, Q, H1
+</FONT><FONT COLOR="#000000">OrE exm P
+</FONT><FONT COLOR="#000000">OrIL
+</FONT><FONT COLOR="#000000">Assumption
+</FONT><FONT COLOR="#000000">OrIR
+</FONT><FONT COLOR="#000000">Apply H1 Then Assumption
+</FONT><FONT COLOR="#000000">Exit
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#0000FF">Prove add_negat : @P:*p. (Not P -&gt; P) -&gt; P
+</FONT><FONT COLOR="#000000">Intro P, H1
+</FONT><FONT COLOR="#000000">Apply classic
+</FONT><FONT COLOR="#000000">NotI
+</FONT><FONT COLOR="#000000">NotE H
+</FONT><FONT COLOR="#000000">Apply H1
+</FONT><FONT COLOR="#000000">Assumption
+</FONT><FONT COLOR="#000000">Exit
+</FONT></PRE>
+</BODY>
+</HTML>

@@ -1,0 +1,18 @@
+<DL>
+ <DT>Syntax:
+ <DD>
+   <OL>
+   <LI><CODE>Def</CODE> <VAR>var</VAR> <CODE>:=</CODE> <VAR>term</VAR>
+   <LI><CODE>Def</CODE> <VAR>var</VAR> <CODE>:=</CODE> <VAR>term</VAR>
+                                       <CODE>:</CODE> <VAR>term2</VAR>
+   </OL>
+ <DT>Effect:
+ <DD>Adds the definition of <VAR>var</VAR> to be equal to <VAR>term</VAR>
+     to the global context. In the second variant the recorded
+     type is <VAR>term2</VAR>.
+ <DT>Example:
+ <DD><CODE>Def Bool := @A:*.A-&gt;A-&gt;A <BR>
+           Def true := \A:*.\a1:A.\a2:A.a1 : Bool</CODE>
+ <DT>See also:
+ <DD><A HREF="#Var"><CODE>Var</CODE></A>
+</DL>

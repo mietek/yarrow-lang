@@ -1,0 +1,12 @@
+(,*s,#s,*p,#p)(,*s:#s,*p:#p)(,#s:#s:#s,#s:*s:*s,*s:*s:*s,#s:#p:#p,*s:#p:#p,#p:#p:#p,#s:*p:*p,*s:*p:*p,#p:*p:*p,*p:*p:*p)()()
+s(,*s:R)
+(,"lambdaL"134378004,"logic"949585108)
+p()
+b(,Sig)
+l()
+i(,unpack:2)
+l()
+=(,L\N()I:L@N()_:BS*s:#s.BS*s:#s.L\N()T:BS*s:#s.L\N()Rep:BS*s:#s.L\N()imp:NA(,BVI,BVRep):*s.L\N()m:L@N()Rep:BS*s:#s.L@N()_:NA(,BVI,BVRep):*s.BVT:*s.NA(,NA(,BVis_refl,BVT),NA(,NA(,BVm,BVRep),BVimp)))beta_Sig:L@N()I:L@N()_:BS*s:#s.BS*s:#s.L@N()T:BS*s:#s.L@N()Rep:BS*s:#s.L@N()imp:NA(,BVI,BVRep):*s.L@N()m:L@N()Rep:BS*s:#s.L@N()_:NA(,BVI,BVRep):*s.BVT:*s.NA(,NA(,NA(,BV=,BVT),NA(,NA(,NA(,NA(,BVunpack,BVI),BVT),NA(,NA(,NA(,BVpack,BVI),BVRep),BVimp)),BVm)),NA(,NA(,BVm,BVRep),BVimp)):*p.
+=(,L\N()I:L@N()_:BS*s:#s.BS*s:#s.L\N()T:BS*s:#s.L\N()adt:NA(,BVSig,L\N()X:BS*s:#s.NA(,BVI,BVX)):*s.L\N()m:L@N()Rep:BS*s:#s.L@N()_:NA(,BVI,BVRep):*s.BVT:*s.NA(,NA(,BVadt,BVT),BVm))unpack:L@N()I:L@N()_:BS*s:#s.BS*s:#s.L@N()T:BS*s:#s.L@N()_:NA(,BVSig,L\N()X:BS*s:#s.NA(,BVI,BVX)):*s.L@N()_:L@N()Rep:BS*s:#s.L@N()_:NA(,BVI,BVRep):*s.BVT:*s.BVT:*s.
+=(,L\N()I:L@N()_:BS*s:#s.BS*s:#s.L\N()Rep:BS*s:#s.L\N()imp:NA(,BVI,BVRep):*s.L\N()Y:BS*s:#s.L\N()a:L@N()X:BS*s:#s.L@N()_:NA(,BVI,BVX):*s.BVY:*s.NA(,NA(,BVa,BVRep),BVimp))pack:L@N()I:L@N()_:BS*s:#s.BS*s:#s.L@N()Rep:BS*s:#s.L@N()_:NA(,BVI,BVRep):*s.NA(,BVSig,L\N()X:BS*s:#s.NA(,BVI,BVX)):*s.
+=(,L\N()I:L@N()_:BS*s:#s.BS*s:#s.L@N()Y:BS*s:#s.L@N()_:L@N()X:BS*s:#s.L@N()_:NA(,BVI,BVX):*s.BVY:*s.BVY)Sig:L@N()_:L@N()_:BS*s:#s.BS*s:#s.BS*s:#s.

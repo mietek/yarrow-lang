@@ -1,0 +1,10 @@
+<DL>
+ <DT>Syntax:
+ <DD>
+  <OL>
+  <LI><CODE>Show</CODE> <VAR>num</VAR> 
+  <LI><CODE>Show</CODE>
+  </OL>
+ <DT>Effect:
+ <DD>Shows goal <VAR>num</VAR> with its context. Default is goal number 1.
+</DL>

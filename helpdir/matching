@@ -1,0 +1,26 @@
+<P>
+Matching is the problem of finding a substitution for some variables so that
+a <EM>pattern</EM> is beta-delta equal to a term. These variables that may
+substituted for are called <EM>existential</EM> variables.
+</P>
+<P>
+Matching in Yarrow is an extension of first-order matching.
+First order matching means the routine doesn't know
+anything about beta or delta reduction. 
+There are three ways in which it is extended:
+</P>
+<UL>
+<LI> patterns without existential variables are matched with beta-delta equal terms
+<LI> definitions are unfolded under some circumstances
+<LI> If the pattern is of the form 
+  <CODE>x x1 .. xn</CODE> where <CODE>x</CODE> is an existential variable,
+  the substitution <CODE>&lt;x := \x1 .. xn. term&gt;</CODE> is delivered 
+  (roughly). These patterns are called lambda-patterns.
+</UL>
+<P>If the program doesn't see the proper instantation of some existential
+variables, the user can mold the term in the proper form with the 
+<A HREF="#Pattern"><CODE>Pattern</CODE></A> or 
+<A HREF="#Convert"><CODE>Convert</CODE></A> tactics.
+</P>
+
+

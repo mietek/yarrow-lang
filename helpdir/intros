@@ -1,0 +1,14 @@
+<DL>
+ <DT>Syntax:
+ <DD>
+   <OL>
+   <LI><CODE>Intros</CODE>
+   <LI><CODE>Intros</CODE> <VAR>num</VAR>
+   </OL>
+ <DT>Effect:
+ <DD>The first variant repeats <CODE>Intro</CODE> as often as possible.
+     The second variant repeats <CODE>Intro</CODE> <VAR>num</VAR> times.
+ <DT>See also:
+ <DD><A HREF="#Intro"><CODE>Intro</CODE></A>, 
+     <A HREF="#Repeat"><CODE>Repeat</CODE></A>
+</DL>

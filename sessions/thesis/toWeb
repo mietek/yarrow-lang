@@ -1,0 +1,8 @@
+# script file
+
+cp *.html ~/www/proofs/thesis
+cp lol/*.html ~/www/proofs/thesis/lol
+cp lolExtra/*.html ~/www/proofs/thesis/lolExtra
+cp lolplus/*.html ~/www/proofs/thesis/lolplus
+cp lolsub/*.html ~/www/proofs/thesis/lolsub
+cp models/*.html ~/www/proofs/thesis/models

@@ -1,0 +1,68 @@
+-- File: subLibrary
+
+-- This files gives two proofs of lemma Eq_sub__Eq_super in Section 8.3.1.
+
+Path "../lol"
+Path "../lolplus"
+Load "lambdaLsubplus"
+Load "logic"
+
+-- No implicit arguments now!
+Option -i
+
+Prove Eq_sub__Eq_super : @B:*s. @A<:B. @x,y:A. (=) A x y -> (=) B x y
+Intros
+Unfold (=)
+Intro
+Let Q := \z:A. P z
+Convert Q x -> Q y
+Apply H
+Exit
+
+-- The command
+--    Deduction Eq_sub__Eq_super
+-- gives:
+--    ---------------                                               
+--  1 | B : *s      |                                      hyp      
+--  2 | A <: B : *s |                                      hyp      
+--  3 | x : A       |                                      hyp      
+--  4 | y : A       |                                      hyp      
+--  5 | (=) A x y   |                                      hyp      
+--    |--------------                                               
+--    | -------------                                               
+--  6 | | P : B->*p |                                      hyp      
+--    | |------------                                               
+--    | | --------------------------                                
+--  7 | | | Q := \z:A. P z : A->*p |                       def      
+--    | | |-------------------------                                
+--  8 | | | @P:A->*p. P x -> P y                           conv 5   
+--  9 | | | Q x -> Q y                                     @E 8     
+-- 10 | | | P x -> P y                                     conv 9   
+-- 11 | | P x -> P y                                       defI 7-10
+-- 12 | @P:B->*p. P x -> P y                               @I 6-11  
+-- 13 | (=) B x y                                          conv 12  
+-- 14 @B:*s. @A <: B : *s. @x,y:A. (=) A x y -> (=) B x y  @I 1-13  
+
+
+-- A less instructive proof is the following.
+Prove Eq_sub__Eq_super2 : @B:*s. @A<:B. @x,y:A. (=) A x y -> (=) B x y
+Intros
+Assumption
+Exit
+
+-- The command 
+--    Deduction Eq_sub__Eq_super2
+-- gives:
+--   ---------------                                            
+-- 1 | B : *s      |                                      hyp   
+-- 2 | A <: B : *s |                                      hyp   
+-- 3 | x : A       |                                      hyp   
+-- 4 | y : A       |                                      hyp   
+-- 5 | (=) A x y   |                                      hyp   
+--   |--------------                                            
+-- 6 | (=) B x y                                          subsum 5
+-- 7 @B:*s. @A <: B : *s. @x,y:A. (=) A x y -> (=) B x y  @I 1-6
+
+
+
+

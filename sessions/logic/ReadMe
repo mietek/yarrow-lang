@@ -1,0 +1,19 @@
+The files in this directory set up a logic for reasoning about programs.
+We use the following sorts:
+  *s  (for Set) is the type of all datatypes or sets
+  *p  (for Prop) is the type of all propositions
+
+Short description of the files:
+ - lambdaL  defines the type system we use
+ - prop     defines the proposition connectives False, True, /\ and \/,
+            and proves some of their properties.
+ - pred     defines the existential quantification.
+ - is       defines the Leibniz-equality and some of its properties.
+ - classic  adds an axiom for classical logic and establishes some
+            consequences.
+ - functio  defines the identity function and functional composition and
+            derives some of their properties.
+So there are no specific datatypes defined here; for this go to directory
+perDat.
+
+Jan Zwanenburg, 22-9-'97

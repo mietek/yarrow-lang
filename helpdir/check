@@ -1,0 +1,20 @@
+<DL>
+ <DT>Syntax:
+ <DD>
+  <OL>
+  <LI><CODE>Check </CODE> <VAR>term</VAR> <CODE>: </CODE> <VAR>term</VAR>
+  <LI><CODE>Check </CODE> <VAR>term</VAR> <CODE>:=: </CODE> <VAR>term</VAR>
+  <LI><CODE>Check </CODE> <VAR>term</VAR> <CODE>&lt;: </CODE> <VAR>term</VAR>
+  </OL>
+ <DT>Effect:
+ <DD> The first variant checks that the typing judgment holds.
+      The second variant checks whether or not the two terms are
+      beta-delta convertable. 
+      The third variant checks if the first term is a subtype of the second
+      term (for systems with subtyping).
+ <DT>Prove-mode:
+ <DD>This command is also available in prove-mode. Then it is performed
+     in the context of the first goal.
+ <DT>See also:
+ <DD><A HREF="#subtyping"><CODE>subtyping</CODE></A>
+</DL>

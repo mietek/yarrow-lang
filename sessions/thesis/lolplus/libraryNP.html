@@ -1,0 +1,216 @@
+<HTML>
+<HEAD>
+<TITLE>lolplus/library (without proofs)</TITLE>
+</HEAD>
+<BODY BGCOLOR="#FFFFFF", TEXT="#000000">
+<PRE><FONT COLOR="#000000"></FONT><FONT COLOR="#000000">-- File: library
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#000000">-- This file gives our general theory of ADTs, leading to the main theorems.
+</FONT><FONT COLOR="#000000">-- It follows the structure of Sections 6.7.4, 6.7.5, and 6.7.6, and is hence
+</FONT><FONT COLOR="#000000">-- divided in the following parts.
+</FONT><FONT COLOR="#000000">--  4. Quotients and Subsets (Section 6.7.4)
+</FONT><FONT COLOR="#000000">--  5. Sensible and well-behaved (Section 6.7.5)
+</FONT><FONT COLOR="#000000">--  6. Main results (Section 6.7.6)
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#000000">Path "../lol"
+</FONT><FONT COLOR="#000000">Path "../lolExtra"
+</FONT><FONT COLOR="#000000">Load "lambdaLplus"
+</FONT><FONT COLOR="#000000">Load "parametricity"
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#000000">----------------------------------------------------
+</FONT><FONT COLOR="#000000">----------------------------------------------------
+</FONT><FONT COLOR="#000000">--                                                --
+</FONT><FONT COLOR="#000000">--  4. Q U O T I E N T S   A N D   S U B S E T S  --
+</FONT><FONT COLOR="#000000">--                                                --
+</FONT><FONT COLOR="#000000">----------------------------------------------------
+</FONT><FONT COLOR="#000000">----------------------------------------------------
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#0000FF">Def IsQuotAlg := \I:*s-&gt;*s.
+</FONT><FONT COLOR="#0000FF">              \R:*s. \opsR : I R. \(~~):R-&gt;R-&gt;*p. \Q:*s. \opsQ : I Q.
+</FONT><FONT COLOR="#0000FF">              Ex surj:R-&gt;Q.
+</FONT><FONT COLOR="#0000FF">                (@r,r':R. r ~~ r' &lt;=&gt; surj r = surj r') /\
+</FONT><FONT COLOR="#0000FF">                IsSurjection surj /\
+</FONT><FONT COLOR="#0000FF">                Sim I R Q (\r:R.\q:Q. q = surj r) opsR opsQ  :
+</FONT><FONT COLOR="#0000FF">              @I:*s-&gt;*s.@R:*s. I R -&gt; (R-&gt;R-&gt;*p) -&gt; @Q:*s. I Q -&gt; *p
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#0000FF">Def IsSubsetAlg := \I:*s-&gt;*s.\R:*s. \opsR : I R. \Inv:R-&gt;*p. \S:*s.\opsS : I S.
+</FONT><FONT COLOR="#0000FF">                Ex inj:S-&gt;R.
+</FONT><FONT COLOR="#0000FF">                  IsInjection inj /\
+</FONT><FONT COLOR="#0000FF">                  (Inv &lt;==&gt; Image inj) /\
+</FONT><FONT COLOR="#0000FF">                  Sim I R S (\r:R.\s:S. r = inj s) opsR opsS  :
+</FONT><FONT COLOR="#0000FF">                @I:*s-&gt;*s. @R:*s. I R -&gt; (R-&gt;*p) -&gt; @S:*s. I S -&gt; *p
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#0000FF">Def IsQuotSubsetAlg := \I:*s-&gt;*s.
+</FONT><FONT COLOR="#0000FF">               \R:*s. \opsR : I R. \(~~) : R-&gt;R-&gt;*p. \Inv:R-&gt;*p. 
+</FONT><FONT COLOR="#0000FF">               \Q:*s. \opsQ : I Q.
+</FONT><FONT COLOR="#0000FF">                     ExR Rel:R-&gt;Q-&gt;*p.
+</FONT><FONT COLOR="#0000FF">                     (Inv &lt;==&gt; Dom Rel) /\
+</FONT><FONT COLOR="#0000FF">                     (@q:Q. Ex r:R. Rel r q) /\
+</FONT><FONT COLOR="#0000FF">                     (@r,r':R. @q,q':Q. Rel r q -&gt; Rel r' q' -&gt; 
+</FONT><FONT COLOR="#0000FF">                                        r~~r' &lt;=&gt; q=q') /\
+</FONT><FONT COLOR="#0000FF">                     Sim I R Q Rel opsR opsQ : 
+</FONT><FONT COLOR="#0000FF">              @I:*s-&gt;*s.@R:*s. I R -&gt; (R-&gt;R-&gt;*p) -&gt; (R-&gt;*p) -&gt; @Q:*s. I Q -&gt; *p
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#FF0000">var exis_QuotAlg :@I:*s-&gt;*s. FirstO I -&gt;
+</FONT><FONT COLOR="#FF0000">                  @R:*s. @opsR:I R. @(~~):R-&gt;R-&gt;*p. 
+</FONT><FONT COLOR="#FF0000">                  Bisim I R (~~) opsR -&gt; IsER (~~) -&gt;
+</FONT><FONT COLOR="#FF0000">                  ExK Q:*s. Ex opsQ: I Q. 
+</FONT><FONT COLOR="#FF0000">                  IsQuotAlg I R opsR (~~) Q opsQ
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#FF0000">var exis_SubsetAlg :  @I:*s-&gt;*s. FirstO I -&gt;
+</FONT><FONT COLOR="#FF0000">                    @R:*s. @opsR:I R. @Inv:R-&gt;*p.
+</FONT><FONT COLOR="#FF0000">                    IsInvar I R Inv opsR -&gt;
+</FONT><FONT COLOR="#FF0000">                    ExK S:*s. Ex opsS: I S. 
+</FONT><FONT COLOR="#FF0000">                    IsSubsetAlg I R opsR Inv S opsS
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#0000FF">Prove exis_QuotSubsetAlg : @I:*s-&gt;*s. FirstO I -&gt;
+</FONT><FONT COLOR="#0000FF">                @R:*s. @opsR:I R. @(~~):R-&gt;R-&gt;*p. @Inv:R-&gt;*p.
+</FONT><FONT COLOR="#0000FF">                IsERon (~~) Inv -&gt; 
+</FONT><FONT COLOR="#0000FF">                Bisim I R (~~) opsR -&gt;
+</FONT><FONT COLOR="#0000FF">                IsInvar I R Inv opsR -&gt; 
+</FONT><FONT COLOR="#0000FF">                ExK Q:*s. Ex opsQ: I Q. 
+</FONT><FONT COLOR="#0000FF">                IsQuotSubsetAlg I R opsR (~~) Inv Q opsQ
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#0000FF">Prove pack_QuotSubset : @I:*s-&gt;*s. SimplyT I -&gt;
+</FONT><FONT COLOR="#0000FF">                 @R:*s. @opsR:I R. @(~~):R-&gt;R-&gt;*p.
+</FONT><FONT COLOR="#0000FF">                 @Inv: R-&gt;*p.
+</FONT><FONT COLOR="#0000FF">                 @Q:*s. @opsQ:I Q. IsQuotSubsetAlg I R opsR (~~) Inv Q opsQ -&gt;
+</FONT><FONT COLOR="#0000FF">                 (=) (Sig X:*s. I X) (pack I R opsR) (pack I Q opsQ)
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#000000">------------------------------------------------------------
+</FONT><FONT COLOR="#000000">------------------------------------------------------------
+</FONT><FONT COLOR="#000000">--                                                        --
+</FONT><FONT COLOR="#000000">--  5. S E N S I B L E   A N D   W E L L - B E H A V E D  --
+</FONT><FONT COLOR="#000000">--                                                        --
+</FONT><FONT COLOR="#000000">------------------------------------------------------------
+</FONT><FONT COLOR="#000000">------------------------------------------------------------
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#0000FF">Def Sensible := \I:*s-&gt;*s. \Spec : @R:*s.(R-&gt;R-&gt;*p) -&gt; (R-&gt;*p) -&gt; I R -&gt; *p.
+</FONT><FONT COLOR="#0000FF">                 @R:*s.@opsR:I R.@(~~):R-&gt;R-&gt;*p. @Inv:R-&gt;*p.@Q:*s.@opsQ:I Q.
+</FONT><FONT COLOR="#0000FF">                 IsQuotSubsetAlg I R opsR (~~) Inv Q opsQ -&gt;
+</FONT><FONT COLOR="#0000FF">                 Spec R (~~) Inv opsR -&gt; Spec Q ((=) Q) (\q:Q.True) opsQ
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#0000FF">Def WB := \I:*s-&gt;*s.
+</FONT><FONT COLOR="#0000FF">     \Spec: (@R:*s.(R-&gt;R-&gt;*p) -&gt; (R-&gt;*p) -&gt; I R -&gt; *p).
+</FONT><FONT COLOR="#0000FF">     @Y,Z:*s. 
+</FONT><FONT COLOR="#0000FF">     @RelY:Y-&gt;Y-&gt;*p.  @RelZ:Z-&gt;Z-&gt;*p.
+</FONT><FONT COLOR="#0000FF">     @InvY:Y-&gt;*p. @InvZ:Z-&gt;*p. IsERon RelY InvY -&gt; IsERon RelZ InvZ -&gt;
+</FONT><FONT COLOR="#0000FF">     @opsY:I Y. @opsZ : I Z.
+</FONT><FONT COLOR="#0000FF">     (ExR (~):Y-&gt;Z-&gt;*p.
+</FONT><FONT COLOR="#0000FF">       Sim I Y Z (~) opsY opsZ /\
+</FONT><FONT COLOR="#0000FF">       (Restr RelY InvY &lt;===&gt; LeftC (~)) /\
+</FONT><FONT COLOR="#0000FF">       (Restr RelZ InvZ &lt;===&gt; RightC (~)) /\
+</FONT><FONT COLOR="#0000FF">       IsZclosed (~)) -&gt;
+</FONT><FONT COLOR="#0000FF">     Spec Y RelY InvY opsY -&gt; Spec Z RelZ InvZ opsZ
+</FONT><FONT COLOR="#000000">Implicit 1 WB
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#000000">-- For proving properties about WB, it is easier to use the following,
+</FONT><FONT COLOR="#000000">-- equivalent formulation.
+</FONT><FONT COLOR="#0000FF">Def WB' := \I:*s-&gt;*s.
+</FONT><FONT COLOR="#0000FF">     \Spec: (@R:*s.(R-&gt;R-&gt;*p) -&gt; (R-&gt;*p) -&gt; I R -&gt; *p).
+</FONT><FONT COLOR="#0000FF">     @Y,Z:*s.
+</FONT><FONT COLOR="#0000FF">     @RelY:Y-&gt;Y-&gt;*p. @RelZ:Z-&gt;Z-&gt;*p.
+</FONT><FONT COLOR="#0000FF">     @InvY:Y-&gt;*p. @InvZ:Z-&gt;*p.
+</FONT><FONT COLOR="#0000FF">     @opsY:I Y. @opsZ : I Z.
+</FONT><FONT COLOR="#0000FF">     @(~):Y-&gt;Z-&gt;*p.
+</FONT><FONT COLOR="#0000FF">       Sim I Y Z (~) opsY opsZ -&gt;
+</FONT><FONT COLOR="#0000FF">       IsZclosed (~) -&gt;
+</FONT><FONT COLOR="#0000FF">       (Restr RelY InvY) &lt;===&gt; LeftC (~) -&gt;
+</FONT><FONT COLOR="#0000FF">       (Restr RelZ InvZ) &lt;===&gt; RightC (~) -&gt;
+</FONT><FONT COLOR="#0000FF">       IsERon RelY InvY -&gt;
+</FONT><FONT COLOR="#0000FF">       IsERon RelZ InvZ -&gt;
+</FONT><FONT COLOR="#0000FF">       Spec Y RelY InvY opsY -&gt; Spec Z RelZ InvZ opsZ
+</FONT><FONT COLOR="#000000">Implicit 1 WB'
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#000000">-- WB and WB' are really equivalent:
+</FONT><FONT COLOR="#0000FF">Prove WB__WB' : @I:*s-&gt;*s. @Spec : (@R:*s.(R-&gt;R-&gt;*p) -&gt; (R-&gt;*p) -&gt; I R -&gt; *p).
+</FONT><FONT COLOR="#0000FF">                WB' I Spec &lt;=&gt; WB I Spec
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#0000FF">Prove WB__Sensible : @I:*s-&gt;*s. SimplyT I -&gt; 
+</FONT><FONT COLOR="#0000FF">            @Spec: (@R:*s. (R-&gt;R-&gt;*p)-&gt;(R-&gt;*p)-&gt;I R-&gt;*p).
+</FONT><FONT COLOR="#0000FF">            WB' I Spec -&gt; Sensible I Spec
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#0000FF">Prove WB_Prop: @I:*s-&gt;*s. @P:*p.
+</FONT><FONT COLOR="#0000FF">   WB' (\R:*s.\(~~):R-&gt;R-&gt;*p. \Inv:R-&gt;*p.\ops:I R.  P)
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#0000FF">Prove WB_Impl : @I:*s-&gt;*s. SimplyT I -&gt;
+</FONT><FONT COLOR="#0000FF">   @P,Q:(@R:*s. (R-&gt;R-&gt;*p)-&gt;(R-&gt;*p)-&gt;I R-&gt;*p).
+</FONT><FONT COLOR="#0000FF">   WB' P -&gt; WB' Q -&gt;
+</FONT><FONT COLOR="#0000FF">   WB' (\R:*s.\(~~):R-&gt;R-&gt;*p.\Inv:R-&gt;*p.\ops:I R. 
+</FONT><FONT COLOR="#0000FF">                     P R (~~) Inv ops -&gt; Q R (~~) Inv ops)
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#0000FF">Prove WB_Pred : @I:*s-&gt;*s. SimplyT I -&gt;
+</FONT><FONT COLOR="#0000FF">    @A:*s. @f: @R:*s. I R -&gt; A. @P:A-&gt;*p.
+</FONT><FONT COLOR="#0000FF">    WB' (\R:*s.\(~~):R-&gt;R-&gt;*p. \Inv:R-&gt;*p.\ops:I R. 
+</FONT><FONT COLOR="#0000FF">                              P (f R ops))
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#0000FF">Prove WB_Univ : @I:*s-&gt;*s.
+</FONT><FONT COLOR="#0000FF">  @A:*s. @P:A-&gt;(@R:*s. (R-&gt;R-&gt;*p)-&gt;(R-&gt;*p)-&gt;I R-&gt;*p).
+</FONT><FONT COLOR="#0000FF">  (@a:A. WB' (P a)) -&gt; 
+</FONT><FONT COLOR="#0000FF">  WB' (\R:*s.\(~~):R-&gt;R-&gt;*p.\Inv:R-&gt;*p.\ops:I R. 
+</FONT><FONT COLOR="#0000FF">                    @a:A. P a R (~~) Inv ops)
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#0000FF">Prove WB_Tw : @I:*s-&gt;*s. SimplyT I -&gt;
+</FONT><FONT COLOR="#0000FF">    @f,g: @R:*s. I R -&gt; R.
+</FONT><FONT COLOR="#0000FF">    WB I (\R:*s.\(~~):R-&gt;R-&gt;*p. \Inv:R-&gt;*p. \ops:I R.
+</FONT><FONT COLOR="#0000FF">    f R ops ~~ g R ops)
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#0000FF">Prove WB_UnivRep : @I:*s-&gt;*s. SimplyT I -&gt;
+</FONT><FONT COLOR="#0000FF">     @P:(@R:*s. (R-&gt;R-&gt;*p)-&gt;(R-&gt;*p)-&gt;I R-&gt; R-&gt;*p).
+</FONT><FONT COLOR="#0000FF">     WB' (\R:*s.\(~~):R-&gt;R-&gt;*p. \Inv:R-&gt;*p.
+</FONT><FONT COLOR="#0000FF">                       \ops: {|l:I R, r: R|}. 
+</FONT><FONT COLOR="#0000FF">                               P R (~~) Inv ops`l ops`r) -&gt;
+</FONT><FONT COLOR="#0000FF">     WB' (\R:*s.\(~~):R-&gt;R-&gt;*p. \Inv:R-&gt;*p.\ops:I R. 
+</FONT><FONT COLOR="#0000FF">                        @r:R. Inv r -&gt; P R (~~) Inv ops r)
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#000000">----------------------------------
+</FONT><FONT COLOR="#000000">----------------------------------
+</FONT><FONT COLOR="#000000">--                              --
+</FONT><FONT COLOR="#000000">--  6. M A I N   R E S U L T S  --
+</FONT><FONT COLOR="#000000">--                              --
+</FONT><FONT COLOR="#000000">----------------------------------
+</FONT><FONT COLOR="#000000">----------------------------------
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#0000FF">Def MkUserSpec := \I:*s-&gt;*s.
+</FONT><FONT COLOR="#0000FF">           \Spec:(@R:*s. (R-&gt;R-&gt;*p) -&gt; (R-&gt;*p) -&gt; I R -&gt; *p).
+</FONT><FONT COLOR="#0000FF">           \imp : (Sig X:*s. I X).
+</FONT><FONT COLOR="#0000FF">                ExK R:*s. Ex ops:I R.
+</FONT><FONT COLOR="#0000FF">                    imp = pack I R ops /\
+</FONT><FONT COLOR="#0000FF">                    Spec R ((=) R) (\r:R.True) ops :
+</FONT><FONT COLOR="#0000FF">           @I:*s-&gt;*s.(@R:*s. (R-&gt;R-&gt;*p) -&gt; (R-&gt;*p) -&gt; I R -&gt; *p) -&gt;
+</FONT><FONT COLOR="#0000FF">           (Sig X:*s. I X) -&gt; *p
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#0000FF">Def MkImplemSpec := \I:*s-&gt;*s.
+</FONT><FONT COLOR="#0000FF">           \Spec:(@R:*s. (R-&gt;R-&gt;*p) -&gt; (R-&gt;*p) -&gt; I R -&gt; *p).
+</FONT><FONT COLOR="#0000FF">           \R:*s. \ops:I R.
+</FONT><FONT COLOR="#0000FF">                           ExR (~~) : R-&gt;R-&gt;*p. ExQ Inv:R-&gt;*p.
+</FONT><FONT COLOR="#0000FF">                                Spec R (~~) Inv ops /\ 
+</FONT><FONT COLOR="#0000FF">                                Bisim I R (~~) ops /\
+</FONT><FONT COLOR="#0000FF">                                IsInvar I R Inv ops /\
+</FONT><FONT COLOR="#0000FF">                                IsERon (~~) Inv  : 
+</FONT><FONT COLOR="#0000FF">           @I:*s-&gt;*s.(@R:*s. (R-&gt;R-&gt;*p) -&gt; (R-&gt;*p) -&gt; I R -&gt; *p) -&gt;
+</FONT><FONT COLOR="#0000FF">           @R:*s. I R -&gt; *p
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#0000FF">Prove Implem__UserSpec :
+</FONT><FONT COLOR="#0000FF">     @I:*s-&gt;*s. FirstO I -&gt;
+</FONT><FONT COLOR="#0000FF">     @Spec: (@R:*s.(R-&gt;R-&gt;*p) -&gt; (R-&gt;*p) -&gt; I R -&gt; *p). WB' I Spec -&gt;
+</FONT><FONT COLOR="#0000FF">     @Rep:*s.@ops:I Rep.
+</FONT><FONT COLOR="#0000FF">     MkImplemSpec I Spec Rep ops -&gt;
+</FONT><FONT COLOR="#0000FF">     MkUserSpec I Spec (pack I Rep ops)
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#0000FF">Prove principle : @I:*s-&gt;*s.
+</FONT><FONT COLOR="#0000FF">                  @Spec:(@Rep:*s. (Rep-&gt;Rep-&gt;*p) -&gt; (Rep-&gt;*p) -&gt; I Rep -&gt; *p).
+</FONT><FONT COLOR="#0000FF">                  @imp: (Sig X:*s. I X). MkUserSpec I Spec imp -&gt;
+</FONT><FONT COLOR="#0000FF">                  @A:*s. @Q:A-&gt;*p. @body:(@X:*s.I X -&gt; A). 
+</FONT><FONT COLOR="#0000FF">                  (@X:*s.@ops:I X. Spec X ((=) X) (\r:X. True) ops -&gt;
+</FONT><FONT COLOR="#0000FF">                                       Q (body X ops)) -&gt;
+</FONT><FONT COLOR="#0000FF">                 Q (unpack imp (\X:*s.\ops:I X. body X ops))
+</FONT><FONT COLOR="#000000">
+</FONT></PRE>
+</BODY>
+</HTML>

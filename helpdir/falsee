@@ -1,0 +1,10 @@
+<DL>
+ <DT>Syntax:
+ <DD><CODE>FalseE</CODE>
+ <DT>Effect:
+ <DD>This tactic replaces the current goal by False, if the following
+     elimination lemma is recorded with the command <CODE>use</CODE>:<BR>
+     <CODE>@P:s. False -> P</CODE>
+ <DT>See also:
+ <DD><A HREF="#Use"><CODE>Use</CODE></A>
+</DL>

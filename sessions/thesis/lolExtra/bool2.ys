@@ -1,0 +1,234 @@
+-- File: bool2
+
+-- defines not, and, and or as boolean functions
+
+Path "../lol"
+Load "bool"
+
+---------
+-- not --
+---------
+
+Def not := \b:Bool. if b false true
+
+Prove not_true  : not true = false
+Unfold not
+Rewrite if_true
+Refl
+Exit
+
+Prove not_false : not false = true
+Unfold not
+Rewrite if_false
+Refl
+Exit
+
+Prove not_is_false_ : @b:Bool. not b = false -> b = true
+Apply indbool
+Intro
+Refl
+Intro
+Lewrite H
+Apply not_false
+Exit
+
+Prove not_is_true_ : @b:Bool. not b = true -> b = false
+Apply indbool
+Intro
+Lewrite H
+Apply not_true
+Intro
+Refl
+Exit
+
+Prove not_not : @b:Bool. not (not b) = b
+Apply indbool
+Rewrite not_true
+Apply not_false 
+Rewrite not_false
+Apply not_true
+Exit
+
+
+---------
+-- and --
+---------
+
+-- Name in lemmas: and
+Def (&&) := \a,b:Bool. if a b false : Bool->Bool->Bool
+
+Prove true_and : @b:Bool. true && b = b
+Intro
+Unfold (&&)
+Rewrite if_true
+Refl
+Exit
+
+Prove false_and : @b:Bool. false && b = false
+Intro
+Unfold (&&)
+Rewrite if_false
+Refl
+Exit
+
+Prove and_true : @b:Bool. b && true = b
+Apply indbool 
+Rewrite true_and
+Refl
+Rewrite false_and
+Refl
+Exit
+
+Prove and_false : @b:Bool. b && false = false
+Apply indbool 
+Rewrite true_and
+Refl
+Rewrite false_and
+Refl
+Exit
+
+Prove and_comm : @b,c:Bool. b && c = c && b
+Intro
+Apply indbool
+Rewrite and_true
+Rewrite true_and
+Refl
+Rewrite and_false
+Rewrite false_and
+Refl
+Exit
+
+Prove and_assoc : @b,c,d:Bool. (b&&c)&&d = b&&(c&&d)
+Intro b,c
+Apply indbool
+Repeat Rewrite and_true
+Refl
+Repeat Rewrite and_false
+Refl
+Exit
+
+Prove and_is_false_ : @b,c:Bool. b&&c = false -> b=false \/ c=false
+Apply indbool Then Apply indbool
+Rewrite true_and Then Intro Then OrIL Then Assumption
+Intro Then OrIR Then Refl
+Intro Then OrIL Then Refl
+Intro Then OrIL Then Refl
+Exit
+
+Prove and_is_true_ : @b,c:Bool. b&&c = true -> b=true /\ c=true
+Apply indbool Then Apply indbool
+Intro Then AndI Then Refl
+Rewrite true_and Then Intro Then AndI Then Try Refl Then Try Assumption
+Rewrite false_and Then Intro Then AndI Then Try Refl Then Try Assumption
+Rewrite false_and Then Intro Then AndI Then Assumption
+Exit
+
+--------
+-- or --
+--------
+
+-- Name in lemmas: or
+Def (||) := \a,b:Bool. if a true b : Bool->Bool->Bool
+
+Prove true_or : @b:Bool. true || b = true
+Intro
+Unfold (||)
+Rewrite if_true
+Refl
+Exit
+
+Prove false_or : @b:Bool. false || b = b
+Intro
+Unfold (||)
+Rewrite if_false
+Refl
+Exit
+
+Prove or_true : @b:Bool. b || true = true
+Apply indbool 
+Rewrite true_or
+Refl
+Rewrite false_or
+Refl
+Exit
+
+Prove or_false : @b:Bool. b || false = b
+Apply indbool 
+Rewrite true_or
+Refl
+Rewrite false_or
+Refl
+Exit
+
+Prove or_comm : @b,c:Bool. b || c = c || b
+Intro
+Apply indbool
+Rewrite or_true
+Rewrite true_or
+Refl
+Rewrite or_false
+Rewrite false_or
+Refl
+Exit
+
+Prove or_assoc : @b,c,d:Bool. (b||c)||d = b||(c||d)
+Intro b,c
+Apply indbool
+Repeat Rewrite or_true
+Refl
+Repeat Rewrite or_false
+Refl
+Exit
+
+Prove or_idemp : @b:Bool. b||b = b
+Apply indbool
+Apply true_or
+Apply false_or
+Exit
+
+
+Prove or_is_true_ : @b,c:Bool. b || c = true -> b=true \/ c=true
+Apply indbool
+Intros
+OrIL
+Refl
+Apply indbool
+Intro
+OrIR
+Refl
+Rewrite false_or
+Intro
+OrIL
+Assumption
+Exit
+
+Prove or_is_false_ : @b,c:Bool. b || c = false -> b=false /\ c=false
+Apply indbool Then Apply indbool 
+Rewrite true_or Then Intro Then AndI Then Try Assumption Then Try Refl
+Rewrite true_or Then Intro Then AndI Then Try Assumption Then Try Refl
+Rewrite false_or Then Intro Then AndI Then Try Assumption Then Try Refl
+Rewrite false_or Then Intro Then AndI Then Try Assumption Then Try Refl
+Exit
+
+Prove not_or : @b,c:Bool. not (b||c) = not b && not c
+Apply indbool Then Apply indbool
+Rewrite true_or Then Repeat Rewrite not_true Then Rewrite false_and Then Refl
+Rewrite true_or Then Repeat Rewrite not_true Then Rewrite not_false
+Rewrite false_and Then Refl
+Rewrite false_or Then Repeat Rewrite not_true Then Rewrite not_false
+Rewrite true_and Then Refl
+Rewrite false_or Then Repeat Rewrite not_false
+Rewrite true_and Then Refl
+Exit
+
+Prove not_and : @b,c:Bool. not (b&&c) = not b || not c
+Apply indbool Then Apply indbool
+Rewrite true_and Then Repeat Rewrite not_true Then Rewrite false_or Then Refl
+Rewrite true_and Then Rewrite not_true Then Repeat Rewrite not_false
+Rewrite false_or Then Refl
+Rewrite false_and Then Rewrite not_true Then Repeat Rewrite not_false
+Rewrite true_or Then Refl
+Rewrite false_and Then Repeat Rewrite not_false
+Rewrite true_or Then Refl
+Exit
+

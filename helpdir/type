@@ -1,0 +1,10 @@
+<DL>
+ <DT>Syntax:
+ <DD>
+  <CODE>Type </CODE> <VAR>term</VAR>
+ <DT>Effect:
+ <DD> Gives the type of <VAR>term</VAR>.
+ <DT>Prove-mode:
+ <DD>This command is also available in prove-mode. Then it is performed
+     in the context of the first goal.
+</DL>

@@ -1,0 +1,551 @@
+\documentstyle[a4wide]{article}
+%\documentstyle[a4wide,12pt]{article}
+\parindent 0pt
+\newcommand{\st}{\raisebox{-.7ex}{{\rm *}}}
+
+\begin{document}
+
+\section*{Proof construction with Yarrow}
+\subsubsection*{Preliminaries}
+This tutorial is intended for people who are familiar with Pure Type
+Systems, but not necessarily with proof-assistants.
+Start up Yarrow, and type
+{\tt option +p}. This means Yarrow shows the proofterm that is under
+construction, so we can see what happens.
+Note that Yarrow has an extensive help-system. E.g. if the syntax we use
+below is not clear, type {\tt help syntax}.
+\subsubsection*{EXAMPLE 1}
+We construct a proof of
+$
+\forall P,Q,R:\st.\  
+(P\Rightarrow Q\Rightarrow R) \Rightarrow (P\Rightarrow
+Q) \Rightarrow (P\Rightarrow R)
+$.
+The command {\tt prove} starts a new proof-task, with as parameters the
+proposition we want to prove and its name.
+\begin{verbatim}
+> prove example1 : @P,Q,R:*. (P->Q->R) -> (P->Q) -> (P->R)
+Proofterm = ?1
+
+--------------------------------------------------
+?1 : @P,Q,R:*. (P->Q->R)->(P->Q)->P->R
+\end{verbatim}
+"{\tt >}" is the prompt of Yarrow when in main-mode (no proof-tasks).
+We have started a proof-task, the prompt has changed to "{\tt \verb%$%}".
+Yarrow indicates that the proof is a completely unknown term
+{\tt ?1}, that should have the given type.
+
+The command {\tt show} shows the current goal(s).
+\begin{verbatim}
+$ show
+Proofterm = ?1
+
+--------------------------------------------------
+?1 : @P,Q,R:*. (P->Q->R)->(P->Q)->P->R
+\end{verbatim}
+Using the command {\tt intro}, the context is extended with a variable
+{\tt P} of type {\tt *}.
+\begin{verbatim}
+$ intro
+?1 := \P:*. ?2
+Proofterm = \P:*. ?2
+
+P : *
+--------------------------------------------------
+?2 : @Q,R:*. (P->Q->R)->(P->Q)->P->R
+\end{verbatim}
+Yarrow shows that for {\tt ?1} the term {\tt \verb%\%P:*. ?2} is
+substituted, and also shows the complete proofterm.
+Above the dashed line {\tt -----------} is the local context:
+all variables (hypotheses) we may use, so for {\tt ?2} we may use the
+variable {\tt P}.
+
+As long as the goal belongs to a $\Pi$-type,
+we can repeat the command {\tt intro}.
+\begin{verbatim}
+$ intro
+?2 := \Q:*. ?3
+Proofterm = \P,Q:*. ?3
+
+P : *
+Q : *
+--------------------------------------------------
+?3 : @R:*. (P->Q->R)->(P->Q)->P->R
+\end{verbatim}
+The command {\tt intros} repeats {\tt intro} as often as possible.
+\begin{verbatim}
+$ intros
+?3 := \R:*.\H:P->Q->R.\H1:P->Q.\H2:P. ?7
+Proofterm = \P,Q,R:*.\H:P->Q->R.\H1:P->Q.\H2:P. ?7
+
+P : *
+Q : *
+R : *
+H : P->Q->R
+H1 : P->Q
+H2 : P
+--------------------------------------------------
+?7 : R
+\end{verbatim}
+An ordinary mathematician would proceed as follows:
+\begin{enumerate}
+\item
+First conclude 
+{\tt Q}
+from
+{\tt H2:P}
+and
+{\tt H1:P->Q}
+\item
+Then conclude
+{\tt R}
+from
+{\tt Q},
+{\tt H2:P}
+and
+{\tt H:P->Q->R}
+\end{enumerate}
+In Yarrow we work in the other way around ({\em goal-directed}).
+First we use {\tt H},
+with the command {\tt apply H}.
+\begin{verbatim}
+$ apply H
+?7 := H ?11 ?9
+Proofterm = \P,Q,R:*.\H:P->Q->R.\H1:P->Q.\H2:P. H ?11 ?9
+
+2 goals
+
+P : *
+Q : *
+R : *
+H : P->Q->R
+H1 : P->Q
+H2 : P
+--------------------------------------------------
+?11 : P
+
+2) ?9 : Q
+\end{verbatim}
+We see the proofterm for {\tt R} is of the form 
+{\tt (H ?11 ?9)}, where {\tt ?11 : P} and {\tt ?9 : Q}.
+
+Only the local context of the {\em first} goal is printed.
+By typing {\tt show 2} we see the local context of the second goal
+(which is, in this case, the same as the local context of the first goal).
+\begin{verbatim}
+$ show 2
+Proofterm = \P,Q,R:*.\H:P->Q->R.\H1:P->Q.\H2:P. H ?11 ?9
+
+2 goals
+
+P : *
+Q : *
+R : *
+H : P->Q->R
+H1 : P->Q
+H2 : P
+--------------------------------------------------
+?9 : Q
+
+1) ?11 : P
+\end{verbatim}
+Each command will be applied to the first goal.
+The second goal can be selected with the command {\tt focus 2}.
+
+We have an inhabitant of {\tt P},
+viz. {\tt H2}.
+\begin{verbatim}
+$ exact H2
+?11 := H2
+Proofterm = \P,Q,R:*.\H:P->Q->R.\H1:P->Q.\H2:P. H H2 ?9
+
+P : *
+Q : *
+R : *
+H : P->Q->R
+H1 : P->Q
+H2 : P
+--------------------------------------------------
+?9 : Q
+\end{verbatim}
+Goal {\tt P} has now been proved,
+and only goal {\tt Q} remains.
+{\tt Q} follows from {\tt H1} and {\tt H2}.
+\begin{verbatim}
+$ apply H1
+?9 := H1 ?13
+Proofterm = \P,Q,R:*.\H:P->Q->R.\H1:P->Q.\H2:P. H H2 (H1 ?13)
+
+P : *
+Q : *
+R : *
+H : P->Q->R
+H1 : P->Q
+H2 : P
+--------------------------------------------------
+?13 : P
+
+$ exact H2
+?13 := H2
+Proofterm = \P,Q,R:*.\H:P->Q->R.\H1:P->Q.\H2:P. H H2 (H1 H2)
+
+Goal proved!
+\end{verbatim}
+Now we have proved our theorem.
+
+With {\tt exit} we end the proof-task.
+\begin{verbatim}
+$ exit
+Prove example1 : @P,Q,R:*. (P->Q->R)->(P->Q)->P->R
+Intro
+Intro
+Intros
+Apply H
+Exact H2
+Apply H1
+Exact H2
+Exit
+
+example1 := .. : @P,Q,R:*. (P->Q->R)->(P->Q)->P->R
+>
+\end{verbatim}
+The proof is stored in the context as definition of {\tt example1}.
+A summary of the proof is given, for your convenience. Yarrow is insensitive
+to the case of the letters in a command (e.g. you can type \verb!iNtRoS!
+instead of \verb!intros!, but Yarrow prints them in a standard form.
+
+\subsubsection*{EXAMPLE 2}
+It is possible to extend the context with declarations and definitions:
+\begin{verbatim}
+> var nat : *
+nat : *
+> var zero : nat
+zero : nat
+> var succ : nat->nat
+succ : nat->nat
+> var IS : @A:*. A->A->*
+IS : @A:*. A->A->*
+> var refl : @A:*. @z:A. IS A z z
+refl : @A:*.@z:A. IS A z z
+> def two := succ (succ zero) : nat
+two := .. : nat
+> def f := \x:nat. succ (succ x) : nat->nat
+f := .. : nat->nat
+> prove example2 : IS nat (f zero) two
+Proofterm = ?1
+
+--------------------------------------------------
+?1 : IS nat (f zero) two
+
+$ apply refl
+?1 := refl nat (f zero)
+Proofterm = refl nat (f zero)
+
+Goal proved!
+\end{verbatim}
+
+Yarrow sees that {\tt (IS nat (f zero) two)}
+is an instantiation of {\tt (IS A z z)}.
+For {\tt A} he substitutes {\tt nat}.
+For {\tt z} he substitutes {\tt f zero} 
+(this is $\beta$-equal to {\tt two}).
+
+With the command {\tt abort} 
+a proof-task is stopped, and the proof is discarded.
+
+\begin{verbatim}
+$ abort
+Prove example2 : IS nat (f zero) two
+Apply refl
+Abort
+
+Goal not proved
+>
+\end{verbatim}
+
+%We willen voortaan niet meer de constructie van de bewijsterm zien:
+%\begin{verbatim}
+%> option -p
+%>
+%\end{verbatim}
+
+\subsubsection*{EXAMPLE 3}
+
+\begin{verbatim}
+> def false := @P:*. P
+false := .. : *
+> def not := \P:*. P->false
+not := .. : *->*
+> var classic : @P:*. not (not P) -> P
+classic : @P:*. not (not P) -> P
+\end{verbatim}
+Under this assumption we can prove that
+$
+\forall P,Q:\st.\   
+(\neg P \Rightarrow Q) \Rightarrow  (\neg Q \Rightarrow P )
+$
+\begin{verbatim}
+> prove example3 : @P,Q:*. (not P -> Q) -> (not Q -> P)
+Proofterm = ?1
+
+--------------------------------------------------
+@P,Q:*. (not P -> Q) -> not Q -> P
+
+$ intros
+?1 := \P,Q:*.\H:not P -> Q.\H1:not Q. ?5
+Proofterm = \P,Q:*.\H:not P -> Q.\H1:not Q. ?5
+
+P : *
+Q : *
+H : not P -> Q
+H1 : not Q
+--------------------------------------------------
+P
+
+$ apply classic
+?5 := classic P ?7
+Proofterm = \P,Q:*.\H:not P -> Q.\H1:not Q. classic P ?7
+
+P : *
+Q : *
+H : not P -> Q
+H1 : not Q
+--------------------------------------------------
+not (not P)
+\end{verbatim}
+
+{\tt (not (not P))} is the same as {\tt (P->false)->false}.
+This is an arrow-type, so we can introduce a new hypothesis with {\tt intro}.
+
+\begin{verbatim}
+> intro
+Not an @-type or definition (error)
+\end{verbatim}
+
+Yarrow doesn't see that
+\tt (not (not P)) \rm 
+is an arrow-type.
+We have to unfold the definition first.
+With {\tt unfold 1 not} the first occurrence of {\tt not} is unfolded.
+%\newpage
+\begin{verbatim}
+$ unfold 1 not
+?7 := ?9
+Proofterm = \P,Q:*.\H:not P -> Q.\H1:not Q. classic P ?9
+
+P : *
+Q : *
+H : not P -> Q
+H1 : not Q
+--------------------------------------------------
+not P -> false
+
+$ intro
+?9 := \H2:not P. ?10
+Proofterm = \P,Q:*.\H:not P -> Q.\H1:not Q. classic P (\H2:not P. ?10)
+
+P : *
+Q : *
+H : not P -> Q
+H1 : not Q
+H2 : not P
+--------------------------------------------------
+false
+\end{verbatim}
+The ordinary way to proceed is:
+\begin{enumerate}
+\item
+first conclude {\tt Q} from {\tt H:(not P)->Q} and {\tt H2:(not P)}
+\item
+then derive a contradiction from
+{\tt Q} and {\tt H0:(not Q)}.
+\end{enumerate}
+Again, we work the other way around in Yarrow.
+First we use {\tt H1}, and only later {\tt H} and {\tt H2}.
+
+{\tt (not Q)}, the type of {\tt H1}, is the same as {\tt Q->false}:
+\begin{verbatim}
+$ unfold not in H1
+?10 := ?11
+Proofterm = \P,Q:*.\H:not P -> Q.\H1:not Q. classic P (\H2:not P. ?11)
+
+P : *
+Q : *
+H : not P -> Q
+H1 : Q->false
+H2 : not P
+--------------------------------------------------
+false
+
+$ apply H1
+?11 := H1 ?13
+Proofterm = \P,Q:*.\H:not P -> Q.\H1:not Q. classic P (\H2:not P. H1 ?13)
+
+P : *
+Q : *
+H : not P -> Q
+H1 : Q->false
+H2 : not P
+--------------------------------------------------
+Q
+\end{verbatim}
+It isn't necessary to unfold the definition of not; 
+we could have done {\tt apply H1} right away.
+
+We prove {\tt Q} with {\tt H} and {\tt H2}.
+\begin{verbatim}
+$ apply H
+?13 := H ?15
+Proofterm= \P,Q:*.\H:not P -> Q.\H1:not Q. classic P (\H2:not P. H1 (H ?15))
+
+P : *
+Q : *
+H : not P -> Q
+H1 : Q->false
+H2 : not P
+--------------------------------------------------
+not P
+\end{verbatim}
+There is already a variable with type {\tt (not P)} in the context, viz. {\tt H2}.
+So we use the command {\tt exact}.
+\begin{verbatim}
+$ exact H2
+?15 := H2
+Proofterm= \P,Q:*.\H:not P -> Q.\H1:not Q. classic P (\H2:not P. H1 (H H2))
+
+Goal proved!
+\end{verbatim}
+
+With the command {\tt restart} 
+we throw away the proof we have given so far, and start the proof from
+scratch.
+\begin{verbatim}
+$ restart
+Proofterm = ?1
+
+--------------------------------------------------
+@P,Q:*. (not P -> Q) -> not Q -> P
+
+$ intros
+?1 := \P,Q:*.\H:not P -> Q.\H1:not Q. ?5
+Proofterm = \P,Q:*.\H:not P -> Q.\H1:not Q. ?5
+
+P : *
+Q : *
+H : not P -> Q
+H1 : not Q
+--------------------------------------------------
+P
+
+$ apply classic
+?5 := classic P ?7
+Proofterm = \P,Q:*.\H:not P -> Q.\H1:not Q. classic P ?7
+
+P : *
+Q : *
+H : not P -> Q
+H1 : not Q
+--------------------------------------------------
+not (not P)
+\end{verbatim}
+
+Using {\tt undo} we can retrace the last step of the current goal:
+\begin{verbatim}
+$ undo
+Proofterm = \P,Q:*.\H:not P -> Q.\H1:not Q. ?5
+
+P : *
+Q : *
+H : not P -> Q
+H1 : not Q
+--------------------------------------------------
+P
+
+prove example3 : @P,Q:*. (not P -> Q) -> not Q -> P
+intros
+abort
+
+Goal not proved
+> 
+\end{verbatim}
+
+\subsubsection*{EXAMPLE 4}
+We prove
+$\forall A:\st.\ 
+  \forall P,Q:A\rightarrow\st.\ 
+  (\forall x:A.\:P x\Rightarrow Q x) \Rightarrow (\forall y:A.\:P y) \Rightarrow (\forall z:A.\:Q z) 
+$.
+\begin{verbatim}
+> prove example4 : @A:*. @P,Q:A->*. (@x:A. P x -> Q x) -> (@y:A. P y) -> 
+.                                     (@z:A. Q z)
+Proofterm = ?1
+
+--------------------------------------------------
+?1 : @A:*.@P,Q:A->*. (@x:A. P x -> Q x)->(@y:A. P y)->(@z:A. Q z)
+$ intros
+?1 := \A:*.\P,Q:A->*.\H:@x:A. P x -> Q x.\H1:@y:A. P y.\z:A. ?7
+Proofterm = \A:*.\P,Q:A->*.\H:@x:A. P x -> Q x.\H1:@y:A. P y.\z:A. ?7
+
+A : *
+P : A->*
+Q : A->*
+H : @x:A. P x -> Q x
+H1 : @y:A. P y
+z : A
+--------------------------------------------------
+?7 : Q z
+\end{verbatim}
+The ordinary way to proceed is:
+\begin{enumerate}
+\item
+first conclude
+{\tt P z}
+from
+{\tt H1 : (@y:A. P y)}
+and
+{\tt z:A}
+\item
+then conclude
+{\tt Q z} from {\tt P z} and {\tt H : (@x:A. P x -> Q x)}
+\end{enumerate}
+Again, we work the other way around.
+First use {\tt H},
+with the command {\tt apply H}.
+\begin{verbatim}
+$ apply H
+?7 := H z ?9
+Proofterm = \A:*.\P,Q:A->*.\H:@x:A. P x -> Q x.\H1:@y:A. P y.\z:A. H z ?9
+
+A : *
+P : A->*
+Q : A->*
+H : @x:A. P x -> Q x
+H1 : @y:A. P y
+z : A
+--------------------------------------------------
+?9 : P z
+\end{verbatim}
+Yarrow determined itself that {\tt H} has to have {\tt z} as first argument.
+We prove {\tt P z} with {\tt H1}.
+\begin{verbatim}
+$ apply H1
+?9 := H1 z
+Proofterm = \A:*.\P,Q:A->*.\H:@x:A. P x -> Q x.\H1:@y:A. P y.\z:A. H z (H1 z)
+
+Goal proved!
+\end{verbatim}
+Again, {\tt H1} has got argument {\tt z} automatically.
+\begin{verbatim}
+$ exit
+Prove example4 : @A:*.@P,Q:A->*. (@x:A. P x -> Q x)->(@y:A. P y)->(@z:A. Q z)
+Intros
+Apply H
+Apply H1
+Exit
+
+example4 := .. : @A:*.@P,Q:A->*. (@x:A. P x -> Q x)->(@y:A. P y)->(@z:A. Q z)
+> 
+\end{verbatim}
+
+\end{document}
+

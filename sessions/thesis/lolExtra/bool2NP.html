@@ -1,0 +1,85 @@
+<HTML>
+<HEAD>
+<TITLE>lolExtra/bool2 (without proofs)</TITLE>
+</HEAD>
+<BODY BGCOLOR="#FFFFFF", TEXT="#000000">
+<PRE><FONT COLOR="#000000"></FONT><FONT COLOR="#000000">-- File: bool2
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#000000">-- defines not, and, and or as boolean functions
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#000000">Path "../lol"
+</FONT><FONT COLOR="#000000">Load "bool"
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#000000">---------
+</FONT><FONT COLOR="#000000">-- not --
+</FONT><FONT COLOR="#000000">---------
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#0000FF">Def not := \b:Bool. if b false true
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#0000FF">Prove not_true  : not true = false
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#0000FF">Prove not_false : not false = true
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#0000FF">Prove not_is_false_ : @b:Bool. not b = false -&gt; b = true
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#0000FF">Prove not_is_true_ : @b:Bool. not b = true -&gt; b = false
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#0000FF">Prove not_not : @b:Bool. not (not b) = b
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#000000">---------
+</FONT><FONT COLOR="#000000">-- and --
+</FONT><FONT COLOR="#000000">---------
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#000000">-- Name in lemmas: and
+</FONT><FONT COLOR="#0000FF">Def (&amp;&amp;) := \a,b:Bool. if a b false : Bool-&gt;Bool-&gt;Bool
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#0000FF">Prove true_and : @b:Bool. true &amp;&amp; b = b
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#0000FF">Prove false_and : @b:Bool. false &amp;&amp; b = false
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#0000FF">Prove and_true : @b:Bool. b &amp;&amp; true = b
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#0000FF">Prove and_false : @b:Bool. b &amp;&amp; false = false
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#0000FF">Prove and_comm : @b,c:Bool. b &amp;&amp; c = c &amp;&amp; b
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#0000FF">Prove and_assoc : @b,c,d:Bool. (b&amp;&amp;c)&amp;&amp;d = b&amp;&amp;(c&amp;&amp;d)
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#0000FF">Prove and_is_false_ : @b,c:Bool. b&amp;&amp;c = false -&gt; b=false \/ c=false
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#0000FF">Prove and_is_true_ : @b,c:Bool. b&amp;&amp;c = true -&gt; b=true /\ c=true
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#000000">--------
+</FONT><FONT COLOR="#000000">-- or --
+</FONT><FONT COLOR="#000000">--------
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#000000">-- Name in lemmas: or
+</FONT><FONT COLOR="#0000FF">Def (||) := \a,b:Bool. if a true b : Bool-&gt;Bool-&gt;Bool
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#0000FF">Prove true_or : @b:Bool. true || b = true
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#0000FF">Prove false_or : @b:Bool. false || b = b
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#0000FF">Prove or_true : @b:Bool. b || true = true
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#0000FF">Prove or_false : @b:Bool. b || false = b
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#0000FF">Prove or_comm : @b,c:Bool. b || c = c || b
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#0000FF">Prove or_assoc : @b,c,d:Bool. (b||c)||d = b||(c||d)
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#0000FF">Prove or_idemp : @b:Bool. b||b = b
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#0000FF">Prove or_is_true_ : @b,c:Bool. b || c = true -&gt; b=true \/ c=true
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#0000FF">Prove or_is_false_ : @b,c:Bool. b || c = false -&gt; b=false /\ c=false
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#0000FF">Prove not_or : @b,c:Bool. not (b||c) = not b &amp;&amp; not c
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#0000FF">Prove not_and : @b,c:Bool. not (b&amp;&amp;c) = not b || not c
+</FONT><FONT COLOR="#000000">
+</FONT></PRE>
+</BODY>
+</HTML>

@@ -1,0 +1,269 @@
+<HTML>
+<HEAD>
+<TITLE>lolplus/axiomatizing (without proofs)</TITLE>
+</HEAD>
+<BODY BGCOLOR="#FFFFFF", TEXT="#000000">
+<PRE><FONT COLOR="#000000"></FONT><FONT COLOR="#000000">-- File: axiomatizing
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#000000">-- In this file we postulate only the axiom of choice and the existence of
+</FONT><FONT COLOR="#000000">-- quotient and subset types, and show how to prove the existence of quotient
+</FONT><FONT COLOR="#000000">-- and subset algebras from these axioms.
+</FONT><FONT COLOR="#000000">-- This file is divided into three parts.
+</FONT><FONT COLOR="#000000">-- 1. The axiom of choice and the axioms stating the existence of quotient
+</FONT><FONT COLOR="#000000">--    and subset types. This corresponds to definition 6.8.1.3 on page 194.
+</FONT><FONT COLOR="#000000">--    We also show that the existence of QuotSubset types follows from the
+</FONT><FONT COLOR="#000000">--    last two axioms.
+</FONT><FONT COLOR="#000000">-- 2. We prove the existence of quotient and subset algebras for all
+</FONT><FONT COLOR="#000000">--    simply-typed interfaces (including higher-order ones). This corresponds
+</FONT><FONT COLOR="#000000">--    to Conjectures 6.8.2.1, 6.8.2.2 and 6.8.2.6
+</FONT><FONT COLOR="#000000">-- 3. We prove the existence of quotient and subset algebras for first-order
+</FONT><FONT COLOR="#000000">--    interfaces. This does not follow directly from part 2, since the
+</FONT><FONT COLOR="#000000">--    theorems that state the existence are formulated quite differently.
+</FONT><FONT COLOR="#000000">--    This corresponds to Theorem 6.8.1.4.
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#000000">Path "../lol"
+</FONT><FONT COLOR="#000000">Path "../lolExtra"
+</FONT><FONT COLOR="#000000">Load "lambdaLplus"
+</FONT><FONT COLOR="#000000">Load "parametricity"
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#000000">----------------------
+</FONT><FONT COLOR="#000000">----------------------
+</FONT><FONT COLOR="#000000">--                  --
+</FONT><FONT COLOR="#000000">--  1. A X I O M S  --
+</FONT><FONT COLOR="#000000">--                  --
+</FONT><FONT COLOR="#000000">----------------------
+</FONT><FONT COLOR="#000000">----------------------
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#FF0000">Var axiom_choice :  @A,B:*s.@P:A-&gt;B-&gt;*p. 
+</FONT><FONT COLOR="#FF0000">                    (@x:A.Ex y:B. P x y) -&gt; 
+</FONT><FONT COLOR="#FF0000">                     Ex f:A-&gt;B. @x:A. P x (f x)
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#0000FF">Def IsQuotType := \R:*s. \(~~):R-&gt;R-&gt;*p. \Q:*s.
+</FONT><FONT COLOR="#0000FF">               Ex surj:R-&gt;Q.
+</FONT><FONT COLOR="#0000FF">                (@r,r':R. r ~~ r' &lt;=&gt; surj r = surj r') /\
+</FONT><FONT COLOR="#0000FF">                IsSurjection surj :
+</FONT><FONT COLOR="#0000FF">              @R:*s. (R-&gt;R-&gt;*p) -&gt; *s -&gt; *p
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#FF0000">Var exis_QuotType : @R:*s. @(~~):R-&gt;R-&gt;*p. IsER (~~) -&gt;
+</FONT><FONT COLOR="#FF0000">                 ExK Q:*s.
+</FONT><FONT COLOR="#FF0000">                 IsQuotType R (~~) Q
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#0000FF">Def IsSubsetType := \R:*s. \Inv:R-&gt;*p. \S:*s.
+</FONT><FONT COLOR="#0000FF">                 Ex inj:S-&gt;R.
+</FONT><FONT COLOR="#0000FF">                  IsInjection inj /\
+</FONT><FONT COLOR="#0000FF">                  (Inv &lt;==&gt; Image inj) :
+</FONT><FONT COLOR="#0000FF">                @R:*s. (R-&gt;*p) -&gt; *s -&gt; *p
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#FF0000">Var exis_SubsetType : @R:*s. @Inv:R-&gt;*p.
+</FONT><FONT COLOR="#FF0000">                   ExK S:*s.
+</FONT><FONT COLOR="#FF0000">                   IsSubsetType R Inv S
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#0000FF">Def IsQuotSubsetType := \R:*s. \(~~):R-&gt;R-&gt;*p. \Inv:R-&gt;*p. \Q:*s.
+</FONT><FONT COLOR="#0000FF">                     ExR rel:R-&gt;Q-&gt;*p.
+</FONT><FONT COLOR="#0000FF">                     (Inv &lt;==&gt; Dom rel) /\
+</FONT><FONT COLOR="#0000FF">                     (@q:Q. Ex r:R. rel r q) /\
+</FONT><FONT COLOR="#0000FF">                     (@r,r':R. @q,q':Q. rel r q -&gt; rel r' q' -&gt; 
+</FONT><FONT COLOR="#0000FF">                                        r~~r' &lt;=&gt; q=q') :
+</FONT><FONT COLOR="#0000FF">                     @R:*s. (R-&gt;R-&gt;*p) -&gt; (R-&gt;*p) -&gt; *s -&gt; *p
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#0000FF">Prove exis_QuotSubsetType : @R:*s. @(~~):R-&gt;R-&gt;*p. @Inv:R-&gt;*p.
+</FONT><FONT COLOR="#0000FF">                     IsERon (~~) Inv -&gt; 
+</FONT><FONT COLOR="#0000FF">                     ExK Q:*s.
+</FONT><FONT COLOR="#0000FF">                     IsQuotSubsetType R (~~) Inv Q
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#000000">----------------------------------------------------
+</FONT><FONT COLOR="#000000">----------------------------------------------------
+</FONT><FONT COLOR="#000000">--                                                --
+</FONT><FONT COLOR="#000000">--  2. H I G H E R - O R D E R   A L G E B R A S  --
+</FONT><FONT COLOR="#000000">--                                                --
+</FONT><FONT COLOR="#000000">----------------------------------------------------
+</FONT><FONT COLOR="#000000">----------------------------------------------------
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#000000">-- auxialary result
+</FONT><FONT COLOR="#0000FF">Prove has_elem : @I:*s-&gt;*s. SimplyT I -&gt;
+</FONT><FONT COLOR="#0000FF">                 @R : *s. @S : *s.
+</FONT><FONT COLOR="#0000FF">                 (Ex r:R. True) -&gt;
+</FONT><FONT COLOR="#0000FF">                 (Ex s:S. True) -&gt;
+</FONT><FONT COLOR="#0000FF">                 (Ex r:I R. True) -&gt;
+</FONT><FONT COLOR="#0000FF">                 (Ex s:I S. True)
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#000000">-- induction-step for Sim_LeftC for the case I = I1 -&gt; I2
+</FONT><FONT COLOR="#0000FF">prove Sim_lemma : 
+</FONT><FONT COLOR="#0000FF">      @I1,I2 : *s-&gt;*s. SimplyT I1 -&gt; SimplyT I2 -&gt;
+</FONT><FONT COLOR="#0000FF">      @Y,Z : *s. (Ex r:Y. True) -&gt; (Ex s:Z. True) -&gt;
+</FONT><FONT COLOR="#0000FF">      @(~) : Y-&gt;Z-&gt;*p.
+</FONT><FONT COLOR="#0000FF">      IsZclosed (Sim I2 Y Z (~)) -&gt;
+</FONT><FONT COLOR="#0000FF">      LeftC (Sim I1 Y Z (~)) &lt;===&gt; Sim I1 Y Y (LeftC (~)) -&gt;
+</FONT><FONT COLOR="#0000FF">      LeftC (Sim I2 Y Z (~)) &lt;===&gt; Sim I2 Y Y (LeftC (~)) -&gt;
+</FONT><FONT COLOR="#0000FF">      LeftC (Sim (\X:*s. I1 X -&gt; I2 X) Y Z (~)) &lt;===&gt;
+</FONT><FONT COLOR="#0000FF">      Sim (\X:*s. I1 X -&gt; I2 X) Y Y (LeftC (~))
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#0000FF">Prove Sim_LeftC :
+</FONT><FONT COLOR="#0000FF">            @I:*s-&gt;*s. SimplyT I -&gt;
+</FONT><FONT COLOR="#0000FF">            @Y : *s.
+</FONT><FONT COLOR="#0000FF">            @Z : *s.
+</FONT><FONT COLOR="#0000FF">            (Ex r:Y.True) -&gt;
+</FONT><FONT COLOR="#0000FF">            (Ex s:Z.True) -&gt;
+</FONT><FONT COLOR="#0000FF">            @(~) : Y-&gt;Z-&gt;*p.
+</FONT><FONT COLOR="#0000FF">            IsZclosed (~) -&gt;
+</FONT><FONT COLOR="#0000FF">            (Sim I Y Y (LeftC (~)) &lt;===&gt; LeftC (Sim I Y Z (~)))
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#000000">-- simple corollary of Sim_LeftC
+</FONT><FONT COLOR="#0000FF">prove Sim_LeftC_weak : @I:*s-&gt;*s. SimplyT I -&gt;
+</FONT><FONT COLOR="#0000FF">            @Y : *s.
+</FONT><FONT COLOR="#0000FF">            @Z : *s.
+</FONT><FONT COLOR="#0000FF">            (Ex r:Y.True) -&gt;
+</FONT><FONT COLOR="#0000FF">            (Ex s:Z.True) -&gt;
+</FONT><FONT COLOR="#0000FF">            @(~) : Y-&gt;Z-&gt;*p.
+</FONT><FONT COLOR="#0000FF">            IsZclosed (~) -&gt;
+</FONT><FONT COLOR="#0000FF">            @opsY : I Y. Bisim I Y (LeftC (~)) opsY -&gt;
+</FONT><FONT COLOR="#0000FF">            Ex opsZ : I Z. Sim I Y Z (~) opsY opsZ
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#000000">-- Now we are ready to consider quotient/subset algebras.
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#0000FF">Def IsQuotAlg := \I:*s-&gt;*s.
+</FONT><FONT COLOR="#0000FF">              \R:*s. \opsR : I R. \(~~):R-&gt;R-&gt;*p. \Q:*s. \opsQ : I Q.
+</FONT><FONT COLOR="#0000FF">              Ex surj:R-&gt;Q.
+</FONT><FONT COLOR="#0000FF">                (@r,r':R. r ~~ r' &lt;=&gt; surj r = surj r') /\
+</FONT><FONT COLOR="#0000FF">                IsSurjection surj /\
+</FONT><FONT COLOR="#0000FF">                Sim I R Q (\r:R.\q:Q. q = surj r) opsR opsQ  :
+</FONT><FONT COLOR="#0000FF">              @I:*s-&gt;*s.@R:*s. I R -&gt; (R-&gt;R-&gt;*p) -&gt; @Q:*s. I Q -&gt; *p
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#0000FF">Def IsSubsetAlg := \I:*s-&gt;*s.\R:*s. \opsR : I R. \Inv:R-&gt;*p. \S:*s.\opsS : I S.
+</FONT><FONT COLOR="#0000FF">                Ex inj:S-&gt;R.
+</FONT><FONT COLOR="#0000FF">                  IsInjection inj /\
+</FONT><FONT COLOR="#0000FF">                  (Inv &lt;==&gt; Image inj) /\
+</FONT><FONT COLOR="#0000FF">                  Sim I R S (\r:R.\s:S. r = inj s) opsR opsS  :
+</FONT><FONT COLOR="#0000FF">                @I:*s-&gt;*s. @R:*s. I R -&gt; (R-&gt;*p) -&gt; @S:*s. I S -&gt; *p
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#0000FF">Def IsQuotSubsetAlg := \I:*s-&gt;*s.
+</FONT><FONT COLOR="#0000FF">               \R:*s. \opsR : I R. \(~~) : R-&gt;R-&gt;*p. \Inv:R-&gt;*p. 
+</FONT><FONT COLOR="#0000FF">               \Q:*s. \opsQ : I Q.
+</FONT><FONT COLOR="#0000FF">                     ExR rel:R-&gt;Q-&gt;*p.
+</FONT><FONT COLOR="#0000FF">                     (Inv &lt;==&gt; Dom rel) /\
+</FONT><FONT COLOR="#0000FF">                     (@q:Q. Ex r:R. rel r q) /\
+</FONT><FONT COLOR="#0000FF">                     (@r,r':R. @q,q':Q. rel r q -&gt; rel r' q' -&gt; 
+</FONT><FONT COLOR="#0000FF">                                        r~~r' &lt;=&gt; q=q') /\
+</FONT><FONT COLOR="#0000FF">                     Sim I R Q rel opsR opsQ : 
+</FONT><FONT COLOR="#0000FF">              @I:*s-&gt;*s.@R:*s. I R -&gt; (R-&gt;R-&gt;*p) -&gt; (R-&gt;*p) -&gt; @Q:*s. I Q -&gt; *p
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#0000FF">Prove exis_QuotSubsetAlgHO : @I:*s-&gt;*s. SimplyT I -&gt;
+</FONT><FONT COLOR="#0000FF">                @R:*s. @opsR:I R. @(~~):R-&gt;R-&gt;*p. @Inv:R-&gt;*p.
+</FONT><FONT COLOR="#0000FF">                IsERon (~~) Inv -&gt; 
+</FONT><FONT COLOR="#0000FF">                (Ex r:R. Inv r) -&gt;
+</FONT><FONT COLOR="#0000FF">                Bisim I R (Restr (~~) Inv) opsR -&gt; 
+</FONT><FONT COLOR="#0000FF">                ExK Q:*s. Ex opsQ: I Q. 
+</FONT><FONT COLOR="#0000FF">                IsQuotSubsetAlg I R opsR (~~) Inv Q opsQ
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#0000FF">Prove exis_QuotAlgHO : @I:*s-&gt;*s. SimplyT I -&gt;
+</FONT><FONT COLOR="#0000FF">                  @R:*s. @opsR:I R. @(~~):R-&gt;R-&gt;*p. 
+</FONT><FONT COLOR="#0000FF">                  Bisim I R (~~) opsR -&gt; IsER (~~) -&gt;
+</FONT><FONT COLOR="#0000FF">                  ExK Q:*s. Ex opsQ: I Q. 
+</FONT><FONT COLOR="#0000FF">                  IsQuotAlg I R opsR (~~) Q opsQ
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#0000FF">Prove exis_SubsetAlgHO : @I:*s-&gt;*s. SimplyT I -&gt;
+</FONT><FONT COLOR="#0000FF">                    @R:*s. @opsR:I R. @Inv:R-&gt;*p. (Ex r:R. Inv r) -&gt;
+</FONT><FONT COLOR="#0000FF">                    Bisim I R (\r1,r2:R. Inv r1 /\ r1=r2) opsR -&gt;
+</FONT><FONT COLOR="#0000FF">                    ExK S:*s. Ex opsS: I S. 
+</FONT><FONT COLOR="#0000FF">                    IsSubsetAlg I R opsR Inv S opsS
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#000000">--------------------------------------------------
+</FONT><FONT COLOR="#000000">--------------------------------------------------
+</FONT><FONT COLOR="#000000">--                                              --
+</FONT><FONT COLOR="#000000">--  3. F I R S T - O R D E R   A L G E B R A S  --
+</FONT><FONT COLOR="#000000">--                                              --
+</FONT><FONT COLOR="#000000">--------------------------------------------------
+</FONT><FONT COLOR="#000000">--------------------------------------------------
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#000000">-- We first consider quotients, then subsets, and then quotients of subsets.
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#000000">---------------
+</FONT><FONT COLOR="#000000">-- QUOTIENTS --
+</FONT><FONT COLOR="#000000">---------------
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#0000FF">Prove exis_QuotAlg :@I:*s-&gt;*s. FirstO I -&gt;
+</FONT><FONT COLOR="#0000FF">                  @R:*s. @opsR:I R. @(~~):R-&gt;R-&gt;*p. 
+</FONT><FONT COLOR="#0000FF">                  Bisim I R (~~) opsR -&gt; IsER (~~) -&gt;
+</FONT><FONT COLOR="#0000FF">                  ExK Q:*s. Ex opsQ: I Q. 
+</FONT><FONT COLOR="#0000FF">                  IsQuotAlg I R opsR (~~) Q opsQ
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#000000">-------------
+</FONT><FONT COLOR="#000000">-- SUBSETS --
+</FONT><FONT COLOR="#000000">-------------
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#000000">-- Now first-order subset algebras. We do this in two steps.
+</FONT><FONT COLOR="#000000">-- First we prove exis_SubsetAlg_Bisim, i.e.
+</FONT><FONT COLOR="#000000">--                  @I:*s-&gt;*s. FirstO I -&gt;
+</FONT><FONT COLOR="#000000">--                  @R:*s. @Inv:R-&gt;*p.  @opsR:I R.
+</FONT><FONT COLOR="#000000">--                  Bisim I R (\r1,r2:R. Inv r1 /\ r1=r2) opsR -&gt;
+</FONT><FONT COLOR="#000000">--                  ExK S:*s. Ex opsS: I S. 
+</FONT><FONT COLOR="#000000">--                  IsSubsetAlg I R opsR Inv S opsS
+</FONT><FONT COLOR="#000000">-- This requires three auxiliary results.
+</FONT><FONT COLOR="#000000">-- Then it is easy to prove exis_SubsetAlg.
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#000000">-- Auxiliary result 1: Sim_LeftC for Basic interfaces, but with possibly
+</FONT><FONT COLOR="#000000">-- empty types.
+</FONT><FONT COLOR="#0000FF">prove Sim_Basic_LeftC_strong : @I:*s-&gt;*s. Basic I -&gt;
+</FONT><FONT COLOR="#0000FF">            @Y : *s.
+</FONT><FONT COLOR="#0000FF">            @Z : *s.
+</FONT><FONT COLOR="#0000FF">            @(~) : Y-&gt;Z-&gt;*p.
+</FONT><FONT COLOR="#0000FF">            IsZclosed (~) -&gt;
+</FONT><FONT COLOR="#0000FF">            Sim I Y Y (LeftC (~)) &lt;===&gt; LeftC (Sim I Y Z (~))
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#000000">-- Auxiliary result 2
+</FONT><FONT COLOR="#0000FF">prove Sim_FirstO_LeftC_weak_lemma : @I:*s-&gt;*s. Basic I -&gt;
+</FONT><FONT COLOR="#0000FF">            @Y : *s.
+</FONT><FONT COLOR="#0000FF">            @Z : *s.
+</FONT><FONT COLOR="#0000FF">            @(~) : Y-&gt;Z-&gt;*p.
+</FONT><FONT COLOR="#0000FF">            (@z:Z. Ex y:Y. y~z) -&gt;
+</FONT><FONT COLOR="#0000FF">            (@opsZ:I Z. Ex opsY:I Y. Sim I Y Z (~) opsY opsZ )
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#000000">-- Auxiliary result 3
+</FONT><FONT COLOR="#0000FF">prove Sim_FirstO_LeftC_weak : @I:*s-&gt;*s. FirstO I -&gt;
+</FONT><FONT COLOR="#0000FF">            @Y : *s.
+</FONT><FONT COLOR="#0000FF">            @Z : *s.
+</FONT><FONT COLOR="#0000FF">            @(~) : Y-&gt;Z-&gt;*p. 
+</FONT><FONT COLOR="#0000FF">            IsZclosed (~) -&gt; (@z:Z. Ex y:Y. y~z) -&gt;
+</FONT><FONT COLOR="#0000FF">            @opsY,opsY':I Y. Sim I Y Y (LeftC (~)) opsY opsY' -&gt; 
+</FONT><FONT COLOR="#0000FF">            LeftC (Sim I Y Z (~)) opsY opsY'
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#000000">-- The next result is equal to exis_SubsetAlg, except that it has
+</FONT><FONT COLOR="#000000">--    Bisim I R (\r1,r2:R. Inv r1 /\ r1=r2) opsR
+</FONT><FONT COLOR="#000000">-- instead of
+</FONT><FONT COLOR="#000000">--    IsInvar I R Inv opsR
+</FONT><FONT COLOR="#0000FF">Prove exis_SubsetAlg_Bisim : @I:*s-&gt;*s. FirstO I -&gt;
+</FONT><FONT COLOR="#0000FF">                    @R:*s. @Inv:R-&gt;*p.  @opsR:I R.
+</FONT><FONT COLOR="#0000FF">                    Bisim I R (\r1,r2:R. Inv r1 /\ r1=r2) opsR -&gt;
+</FONT><FONT COLOR="#0000FF">                    ExK S:*s. Ex opsS: I S. 
+</FONT><FONT COLOR="#0000FF">                    IsSubsetAlg I R opsR Inv S opsS
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#0000FF">Prove exis_SubsetAlg : 
+</FONT><FONT COLOR="#0000FF">                    @I:*s-&gt;*s. FirstO I -&gt;
+</FONT><FONT COLOR="#0000FF">                    @R:*s. @opsR:I R. @Inv:R-&gt;*p.
+</FONT><FONT COLOR="#0000FF">                    IsInvar I R Inv opsR -&gt;
+</FONT><FONT COLOR="#0000FF">                    ExK S:*s. Ex opsS: I S. 
+</FONT><FONT COLOR="#0000FF">                    IsSubsetAlg I R opsR Inv S opsS
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#000000">--------------------------
+</FONT><FONT COLOR="#000000">-- QUOTIENTS OF SUBSETS --
+</FONT><FONT COLOR="#000000">--------------------------
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#000000">-- By combining exis_QuotAlg and exis_SubsetAlg
+</FONT><FONT COLOR="#0000FF">prove exis_QuotSubsetAlg : @I:*s-&gt;*s. FirstO I -&gt;
+</FONT><FONT COLOR="#0000FF">                @R:*s. @opsR:I R. @(~~):R-&gt;R-&gt;*p. @Inv:R-&gt;*p.
+</FONT><FONT COLOR="#0000FF">                IsERon (~~) Inv -&gt; 
+</FONT><FONT COLOR="#0000FF">                Bisim I R (~~) opsR -&gt;
+</FONT><FONT COLOR="#0000FF">                IsInvar I R Inv opsR -&gt; 
+</FONT><FONT COLOR="#0000FF">                ExK Q:*s. Ex opsQ: I Q. 
+</FONT><FONT COLOR="#0000FF">                IsQuotSubsetAlg I R opsR (~~) Inv Q opsQ
+</FONT><FONT COLOR="#000000">
+</FONT></PRE>
+</BODY>
+</HTML>

@@ -1,0 +1,8 @@
+<DL>
+ <DT>Syntax:
+ <DD><CODE>Quit</CODE>
+ <DT>Effect:
+ <DD>Quits Yarrow immediately.
+ <DT>Prove-mode:
+ <DD>This command is not available in prove-mode. Exit prove-mode first.
+</DL>

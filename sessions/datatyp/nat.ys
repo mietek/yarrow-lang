@@ -1,0 +1,64 @@
+-- nat
+-- defines the natural numbers as its second-order encoding
+
+-- naming conventions for lemmas:
+-- variables for Nats are m,n,p
+
+Path "../logic"
+Read "lambdaL"
+Load "prop"
+Load "is"
+
+Def Nat := @B:*s. B->(B->B)->B
+Def O := \B:*s. \b:B. \f:B->B. b : Nat
+Def S := \n:Nat. \B:*s. \b:B. \f:B->B. f (n B b f) : Nat->Nat
+Def primrecnat := \B:*s. \nv:B.\sv:B->B. \n:Nat. n B nv sv : 
+                  @B:*s.B->(B->B)->Nat->B
+Implicit 1 primrecnat
+
+Prove primrecnat_O : @B:*s.@nv:B.@sv:B->B. primrecnat nv sv O = nv
+Intro B, nv, sv
+Refl
+Exit
+
+Prove primrecnat_Sm : @B:*s.@nv:B.@sv:B->B.@m:Nat.
+                             primrecnat nv sv (S m) = sv (primrecnat nv sv m)
+Intro B, nv, sv, m
+Refl
+Exit
+
+Var indnat : @P:Nat->*p. (P O) -> (@m:Nat.P m -> P (S m)) -> (@m:Nat.P m)
+ 
+Var O_is_SO_ : Not (O = S O)
+
+Prove O_is_Sm_ : @m:Nat. Not (O=S m)
+Intro
+Noti
+Let f := primrecnat O (\n:Nat. S O)
+NotE O_is_SO_
+Convert f O = f (S m)
+Rewrite H
+Refl
+Exit
+  
+-- This lemma of double induction will be very useful for proving properties
+-- about functions that compare two natural numbers in some way.
+Prove nat_double_ind : @R:Nat->Nat->*p. (@m:Nat.R O m) -> 
+                                        (@m:Nat. R (S m) O) -> 
+                                        (@m,n:Nat. R m n -> R (S m) (S n)) ->
+                                        (@m,n:Nat. R m n)
+Intro R, H, H1, H2
+Apply indnat
+Assumption
+Intro m, H3
+Apply indnat
+Apply H1
+Intros
+Apply H2
+Apply H3
+Exit
+
+
+
+
+

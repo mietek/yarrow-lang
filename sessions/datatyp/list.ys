@@ -1,0 +1,181 @@
+-- list
+-- defines lists using the second-order encoding
+
+-- naming conventions for lemmas:
+-- variables for Lists are always ending in s
+-- e.g. as,xs,ys
+
+Path "../logic"
+Read "lambdaL"
+Load "prop"
+Load "is"
+Load "functio"
+
+Def List := \A:*s. @B:*s. B -> (A->B->B) -> B
+Def nil := \A:*s. \B:*s. \b:B. \f:A->B->B. b : @A:*s. List A
+-- Name in lemmas: cons
+Def (;) := \A:*s. \a:A. \as:List A. \B:*s. \b:B.\f:A->B->B. f a (as B b f) :
+           @A:*s. A -> List A -> List A
+Implicit 1 (;)    
+InfixR 5 (;)   
+-- primreclist is also known as foldr
+Def primreclist := \A:*s.\B:*s. \nv:B. \cv:A->B->B. \as:List A. as B nv cv :
+                   @A,B:*s. B-> (A->B->B) -> List A -> B
+Implicit 2 primreclist
+
+Prove primreclist_nil : @A,B:*s. @nv:B. @cv:A->B->B. 
+                                    primreclist nv cv (nil A) = nv
+Intros
+Refl
+Exit
+
+Prove primreclist_cons : @A,B:*s. @nv:B. @cv:A->B->B. @a:A.@as:List A.
+                       primreclist nv cv (a;as) = cv a (primreclist nv cv as)
+Intros
+Refl
+Exit
+
+Var indlist : @A:*s. @P:List A->*p. P (nil A) ->
+                                    (@a:A. @as:List A. P as -> P (a;as)) ->
+                                    (@as:List A. P as)
+                                                                      
+-- Note that we can't make the function 'head', since it is undefined on the
+-- empty list. We also refrain from the function 'tail'.
+         
+-- Name in lemmas: concat
+Def (++) := \A:*s. \as,as' : List A. primreclist as' ((;) A) as :
+            @A:*s. List A -> List A -> List A
+Implicit 1 (++)
+
+Prove nil_concat : @A:*s. @as:List A. (nil A)++as = as
+Intros
+-- We could use Reflexivity right away, but the following proof is
+-- independent of the encoding we have chosen.
+Unfold (++)
+Rewrite primreclist_nil
+Refl
+Exit
+
+Prove cons_concat : @A:*s. @a:A. @as,as': List A. 
+                    (a;as) ++ as' = a ; (as++as')
+Intros
+Unfold (++)
+Rewrite primreclist_cons
+Refl
+Exit
+
+Prove concat_assoc : @A:*s. @bs,cs,as : List A. (as++bs)++cs = as++(bs++cs)
+Intro A, bs, cs
+Apply indlist
+Repeat Rewrite nil_concat
+Refl
+Intros
+Repeat Rewrite cons_concat
+Rewrite H
+Refl
+Exit
+
+Prove concat_nil : @A:*s. @as:List A. as ++ (nil A) = as
+Intro A
+Apply indlist
+Rewrite nil_concat
+Refl
+Intros
+Rewrite cons_concat
+Rewrite H
+Refl
+Exit
+
+                                          
+Def singleton := \A:*s. \a:A. a ; (nil A) : @A:*s. A -> List A
+Implicit 1 singleton
+
+Def reverse := \A:*s. primreclist (nil A) (
+                                 \a:A. \revas:List A. revas ++ singleton a) :
+               @A:*s. List A -> List A
+Implicit 1 reverse
+
+Prove reverse_nil : @A:*s. reverse (nil A) = nil A
+Intros
+Unfold reverse
+Rewrite primreclist_nil
+Refl
+Exit
+
+Prove reverse_cons : @A:*s. @a:A.@as:List A.
+                     reverse (a;as) = reverse as ++ singleton a
+Intros
+Unfold reverse
+Rewrite primreclist_cons
+Refl
+Exit
+
+Prove reverse_concat : @A:*s. @bs,as:List A. 
+                       reverse (as++bs) = reverse bs ++ reverse as
+Intro A, bs
+Apply indlist
+Rewrite nil_concat
+Rewrite reverse_nil
+Rewrite concat_nil
+Refl
+Intros
+Rewrite cons_concat
+Repeat Rewrite reverse_cons
+Rewrite H
+Apply concat_assoc
+Exit
+
+Prove reverse_reverse : @A:*s. @as:List A. reverse (reverse as) = as
+Intro A
+Apply indlist
+Repeat Rewrite reverse_nil
+Refl
+Intros
+Rewrite reverse_cons
+Rewrite reverse_concat
+Rewrite H
+Unfold singleton
+Rewrite reverse_cons Then Rewrite reverse_nil
+Rewrite nil_concat
+Unfold singleton
+Rewrite cons_concat
+Rewrite nil_concat
+Refl
+Exit
+
+Def map := \A,B:*s. \f:A->B. primreclist (nil B) (
+                                          \a:A. \bs:List B. (f a);bs) :
+           @A,B:*s. (A->B) -> List A -> List B
+Implicit 2 map
+
+
+Prove map_nil : @A,B:*s. @f:A->B. map f (nil A) = nil B
+Intros
+Unfold map
+Rewrite primreclist_nil
+Refl
+Exit
+
+Prove map_cons : @A,B:*s. @f:A->B. @a:A. @as:List A. 
+                 map f (a;as) = f a ; map f as
+Intros
+Unfold map
+Rewrite primreclist_cons
+Refl
+Exit
+
+Prove map_comp : @A,B,C:*s. @f:A->B.@g:B->C. map (g&f) = map g & map f
+Intros
+Apply is_Set
+Apply indlist
+Unfold 2 (&)
+Repeat Rewrite map_nil
+Refl
+Intros
+Unfold 2 (&)
+Repeat Rewrite map_cons
+Unfold 1 (&)
+Rewrite H
+Unfold (&)
+Refl
+Exit

@@ -1,0 +1,9 @@
+<DL>
+ <DT>Syntax:
+ <DD><CODE>Exact</CODE> <VAR>term</VAR>
+ <DT>Effect:
+ <DD>This tactic directly proves the goal, if
+               <VAR>term</VAR> is an inhabitant of the goal.
+ <DT>See also:
+ <DD><A HREF="#Assumption"><CODE>Assumption</CODE></A>
+</DL>

@@ -1,0 +1,596 @@
+-- File: nat
+
+-- This file introduces the natural numbers.
+-- It consists of two parts.
+-- 1. Axioms, corresponding to Section 4.5
+-- 2. Library, corresponding to Section 4.6
+
+
+-- naming conventions for lemmas:
+-- variables for Nats are m,n,p
+
+Load "lambdaL"
+Load "logic"
+Load "bool"
+
+-----------------------
+-----------------------
+--                   --
+--  1.  A X I O M S  --
+--                   --
+-----------------------
+-----------------------
+
+Var Nat : *s
+Var O : Nat
+Var S : Nat -> Nat
+Var primrecnat : @B:*s.B->(Nat->B->B)-> Nat -> B
+Implicit 1 primrecnat
+
+Var primrecnat_O : @B:*s.@nv:B.@sv:Nat->B->B. primrecnat nv sv O = nv
+Var primrecnat_Sm : @B:*s.@nv:B.@sv:Nat->B->B.@m:Nat. 
+                       primrecnat nv sv (S m) = sv m (primrecnat nv sv m)
+
+Var indnat : @P:Nat->*p. (P O) -> (@m:Nat.P m -> P (S m)) -> (@m:Nat.P m)
+
+
+-------------------------
+-------------------------
+--                     --
+--  2.  L I B R A R Y  --
+--                     --
+-------------------------
+-------------------------
+
+-----------------
+-- predecessor --
+-----------------
+
+Def pred := primrecnat O (\m,n:Nat.m)
+
+Prove pred_O : pred O = O
+Unfold pred
+Rewrite primrecnat_O
+Refl
+Exit
+
+Prove pred_Sm : @m:Nat. pred (S m) = m
+Intro m
+Unfold pred
+Rewrite primrecnat_Sm
+Refl
+Exit
+
+--------------------------------------
+-- O and S are different injections --
+--------------------------------------
+
+Prove O_is_Sm_ : @m:Nat. Not (O=S m)
+Intro
+NotI
+Let f := primrecnat false (\dummy:Nat.\b:Bool. true)
+NotE false_is_true_
+First f O = f (S m)
+Rewrite H
+Refl
+Unfold f
+Rewrite primrecnat_O
+Rewrite primrecnat_Sm
+Intro
+Assumption
+Exit
+
+Prove Sm_is_O_ : @m:Nat. Not (S m=O)
+Intros
+NotI
+NotE O_is_Sm_ On m
+Apply is_sym
+Assumption
+Exit
+
+Prove Sm_is_Sn_ : @m,n:Nat. S m = S n -> m = n
+Intro m, n, H
+Lewrite 2 pred_Sm
+Lewrite 1 pred_Sm
+Rewrite H
+Refl
+Exit
+
+Prove m_is_Sm_ : @m:Nat. Not (m= S m)
+Apply indnat
+Apply O_is_Sm_
+Intro m, H
+Unfold Not
+Intro H1
+Apply H
+Apply Sm_is_Sn_
+Assumption
+Exit
+
+-------------
+-- iternat --
+-------------
+
+Def iternat := \B:*s. \nv:B. \sv: B->B. primrecnat nv (\dummy:Nat. sv) :
+               @B:*s.B->(B->B)-> Nat -> B
+Implicit 1 iternat
+
+Prove iternat_O : @B:*s.@nv:B.@sv: B->B. iternat nv sv O = nv
+Intros
+Unfold iternat
+Apply primrecnat_O
+Exit
+
+Prove iternat_Sm : @B:*s.@nv:B.@sv:B->B.@m:Nat. 
+                       iternat nv sv (S m) = sv (iternat nv sv m)
+Intros
+Unfold iternat
+Apply primrecnat_Sm
+Exit
+
+----------------------------
+-- double induction lemma --
+----------------------------
+  
+-- This lemma of double induction will be very useful for proving properties
+-- about functions that compare two natural numbers in some way.
+Prove nat_double_ind : @R:Nat->Nat->*p. (@m:Nat.R O m) -> 
+                                        (@m:Nat. R (S m) O) -> 
+                                        (@m,n:Nat. R m n -> R (S m) (S n)) ->
+                                        (@m,n:Nat. R m n)
+Intro R, H, H1, H2
+Apply indnat
+Assumption
+Intro m, H3
+Apply indnat
+Apply H1
+Intros
+Apply H2
+Apply H3
+Exit
+
+
+-------------------
+-- less or equal --
+-------------------
+
+-- Name in lemmas: Le
+Def (<=) := \m,n:Nat. @R:Nat->*p. R m -> (@p:Nat. R p -> R (S p)) -> R n
+
+Prove Le_refl : @m:Nat. m<=m
+Unfold (<=)
+Intro m, R, H1, H2 Then Assumption
+Exit
+
+Prove m_Le_Sn : @m,n:Nat. m<=n -> m<= S n
+Intro m, n, H
+Unfold (<=)
+Intro R, H1, H2
+Apply H2
+Apply H Then Assumption
+Exit
+
+Prove Le_ind : @m:Nat. @P:Nat->*p. P m -> (@n:Nat. m<=n -> P n -> P (S n)) ->
+                                     @n:Nat. m<=n -> P n
+Intros
+Apply H2 (\q:Nat. m<=q /\ P q)
+Focus 3 
+Intros Then Assumption
+AndI
+Apply Le_refl
+Assumption
+Intros
+AndE H3
+AndI
+Apply m_Le_Sn
+Assumption
+Apply H1
+Assumption
+Assumption
+Exit
+
+Prove O_Le_m : @m:Nat. O <= m
+Apply indnat
+Apply Le_refl
+Intro n, H
+Apply m_Le_Sn
+Assumption
+Exit
+
+Prove Sm_Le_Sn : @m,n:Nat. m <= n -> S m <= S n
+Intro m, n, H
+Pattern n
+Apply H
+Apply Le_refl
+Intro p, H1
+Apply m_Le_Sn
+Assumption
+Exit
+
+Prove Le_trans : @m,n,p:Nat. m<=n -> n<=p -> m<=p
+Intro m, n, p, H1, H2
+Apply H2
+Assumption
+Intro p', H3
+Apply m_Le_Sn
+Assumption
+Exit
+
+Prove m_Le_Sm : @m:Nat. m <= S m
+Intro m
+Apply m_Le_Sn
+Apply Le_refl
+Exit
+
+Prove predm_Le_m : @m:Nat. pred m <= m
+Apply indnat
+Rewrite pred_O
+Apply Le_refl
+Intro m, H
+Rewrite pred_Sm
+Apply m_Le_Sm
+Exit
+
+Prove Sm_Le_Sn_ : @m,n:Nat. S m <= S n -> m <= n
+Intro m,n,H
+Lewrite 2 pred_Sm
+Lewrite pred_Sm
+Pattern S n
+Apply H
+Apply Le_refl
+Intro p,H1
+Apply Le_trans On H1
+Rewrite pred_Sm
+Apply predm_Le_m
+Exit
+
+Prove Sm_Le_n_ : @m,n:Nat. S m <= n -> m <= n
+Intro m, n, H
+Apply Le_trans On H
+Apply m_Le_Sm
+Exit
+
+Prove Sm_Le_O_ : @m:Nat. Not (S m <= O)
+Intro Then NotI
+Let R := \m:Nat. Not (O=m)
+Cut R O
+Unfold R Then Intro H1
+NotE H1
+Refl
+Apply H
+Unfold R
+Apply O_is_Sm_
+Intro p, H1
+Unfold R
+Apply O_is_Sm_
+Exit
+
+Prove Sm_Le_m_ : @m:Nat. Not (S m <= m)
+Apply indnat
+Apply Sm_Le_O_
+Intro m, H
+NotI
+Apply H
+Apply Sm_Le_Sn_
+Assumption
+Exit
+
+Prove Le_antisym : @m,n:Nat. m<=n -> n<=m -> m=n
+Intro m,n,H
+Apply H
+Intro Then Refl
+Intro p,H1,H2
+FalseE
+Apply Sm_Le_m_ p
+Apply Le_trans On H2
+Forward Sm_Le_n_ On H2
+Forward H1 On H3
+Rewrite H4
+Apply Le_refl
+Exit
+
+Prove m_Le_O_ : @m:Nat. m <= O -> m=O
+Intro m, H
+Apply Le_antisym Then Try Assumption
+Apply O_Le_m
+Exit
+
+---------------
+-- Less than --
+---------------
+
+-- Name in lemmas: Lt
+Def (<) := \m,n:Nat. S m <= n
+
+Prove m_Lt_n__Sm_Le_n : @m,n:Nat. m<n -> S m <= n
+Intros
+Assumption
+Exit
+
+Prove Sm_Le_n__m_Lt_n : @m,n:Nat. S m <= n -> m<n
+Intros
+Assumption
+Exit
+
+-- We try to define the same lemmas, in the same order, as for <=.
+
+Prove m_Lt_Sm : @m:Nat. m < S m
+Unfold (<)
+Intro
+Apply Sm_Le_Sn
+Apply Le_refl
+Exit
+
+Prove m_Lt_Sn : @m,n:Nat. m < n -> m < S n
+Intros
+Unfold (<)
+Apply m_Le_Sn
+Assumption
+Exit
+
+Prove O_Lt_Sm : @m:Nat. O < S m
+Unfold (<)
+Intro
+Apply Sm_Le_Sn
+Apply O_Le_m
+Exit
+
+Prove Sm_Lt_Sn : @m,n:Nat. m < n -> S m < S n
+Unfold (<)
+Intros
+Apply Sm_Le_Sn
+Assumption
+Exit
+
+Prove Sm_Lt_Sn_ :  @m,n:Nat. S m < S n -> m < n
+Unfold (<)
+Intros
+Apply Sm_Le_Sn_
+Assumption
+Exit
+
+Prove m_Lt_O_ : @m:Nat. Not (m<O)
+Intro
+Unfold (<)
+Apply Sm_Le_O_
+Exit
+
+Prove m_Lt_m_ : @m:Nat. Not (m<m)
+Exact Sm_Le_m_
+Exit
+
+Prove m_Lt_Sn__m_Le_n : @m,n:Nat. m < S n -> m <= n
+Intros
+Apply Sm_Le_Sn_
+Assumption
+Exit
+
+Prove m_Le_n__m_Lt_Sn : @m,n:Nat. m<=n -> m < S n
+Intros
+Unfold (<)
+Apply Sm_Le_Sn
+Assumption
+Exit
+
+Prove m_Lt_n__m_Le_n : @m,n:Nat. m<n -> m<=n
+Intros
+Apply Sm_Le_n_
+Assumption
+Exit
+
+
+Prove O_nis_m__O_Lt_m : @m:Nat. Not (O=m) -> O<m
+Apply indnat
+Intro
+FalseE
+Apply H
+Refl
+Intros
+Apply O_Lt_Sm
+Exit
+
+Prove Lt__nis : @m,n:Nat. m<n -> Not (m=n)
+Intros
+NotI
+Unfold (<) In H
+NotE Sm_Le_m_ On m
+Rewrite 2 H1
+Assumption
+Exit
+
+Prove Lt_trans : @n,m,p:Nat. m<n -> n<p -> m<p
+Unfold (<)
+Intros
+Apply Le_trans On H
+Apply Sm_Le_n_
+Assumption
+Exit
+
+Prove Lt_Le_trans : @n,m,p:Nat. m<n -> n<=p -> m<p
+Unfold (<)
+Intros
+Apply Le_trans On H
+Assumption
+Exit
+
+Prove Le_Lt_trans : @n,m,p:Nat. m<=n -> n<p -> m<p
+Unfold (<)
+Intros
+Apply Le_trans On H1
+Apply Sm_Le_Sn
+Assumption
+Exit
+
+Prove Le__Lt_Or_is : @m,n:Nat. m<=n -> m<n \/ m=n
+Intro
+Apply Le_ind
+OrIR
+Refl
+Intros
+OrIL
+OrE H1
+Apply m_Lt_Sn
+Assumption
+Rewrite H2
+Apply m_Lt_Sm
+Exit
+
+Prove Le_Or_Gt : @m,n:Nat. m<=n \/ n<m
+Apply nat_double_ind
+Intro
+OrIL
+Apply O_Le_m
+Intro
+OrIR
+Apply O_Lt_Sm
+Intros
+OrE H
+OrIL
+Apply Sm_Le_Sn
+Assumption
+OrIR
+Apply Sm_Lt_Sn
+Assumption
+Exit
+
+Prove Le__Not_Gt : @m,n:Nat. m<=n -> Not (n<m)
+Apply nat_double_ind
+Intros
+Apply m_Lt_O_
+Intros
+FalseE
+Apply Sm_Le_O_ On H
+Intros
+NotI
+NotE H
+Apply Sm_Le_Sn_
+Assumption
+Apply Sm_Lt_Sn_
+Assumption
+Exit
+
+Prove Not_Gt__Le : @m,n:Nat.  Not (n<m) -> m<=n
+Apply nat_double_ind
+Intros
+Apply O_Le_m
+Intros
+FalseE
+NotE H
+Apply O_Lt_Sm
+Intros
+Apply Sm_Le_Sn
+Apply H
+NotI
+NotE H1
+Apply Sm_Lt_Sn
+Assumption
+Exit
+
+-----------------------------------
+-- boolean comparison of numbers --
+-----------------------------------
+
+-- is_zero
+
+Def isZero := iternat true (\b:Bool. false) : Nat -> Bool
+
+Prove isZero_O : isZero O = true
+Unfold isZero
+Apply iternat_O
+Exit
+
+Prove isZero_Sm : @m:Nat. isZero (S m) = false
+Intro
+Unfold isZero
+Apply iternat_Sm
+Exit
+
+-- leq
+
+Def leq := \m,n:Nat. iternat (\m:Nat.isZero m) (
+                         \le_Pn:Nat->Bool. \m:Nat.le_Pn (pred m)) n m: 
+           Nat -> Nat -> Bool
+
+Prove leq_O_m : @m:Nat. leq O m = true
+Unfold leq
+Apply indnat
+Rewrite iternat_O
+Apply isZero_O
+Intros
+Rewrite iternat_Sm
+Rewrite pred_O
+Assumption
+Exit
+
+Prove leq_Sm_O : @m:Nat. leq (S m) O = false
+Intro
+Unfold leq
+Rewrite iternat_O
+Apply isZero_Sm
+Exit
+
+Prove leq_Sm_Sn : @m,n:Nat. leq (S m) (S n) = leq m n
+Intros
+Unfold 1 leq
+Rewrite iternat_Sm
+Rewrite pred_Sm
+Refl
+Exit
+
+
+Prove leq_true__Le : @m,n:Nat. leq m n = true -> m <= n
+Apply nat_double_ind
+Intros
+Apply O_Le_m
+Intros
+FalseE
+NotE false_is_true_
+Lewrite H
+Rewrite leq_Sm_O
+Refl
+Intros
+Apply Sm_Le_Sn
+Apply H
+Lewrite H1
+Rewrite leq_Sm_Sn
+Refl
+Exit
+
+Prove Le__leq_true : @m,n:Nat. m <= n -> leq m n = true
+Apply nat_double_ind
+Intros
+Apply leq_O_m
+Intros
+FalseE
+Apply Sm_Le_O_ On H
+Intros
+Rewrite leq_Sm_Sn
+Apply H
+Apply Sm_Le_Sn_
+Assumption
+Exit
+
+Prove Gt__leq_false : @m,n:Nat. n < m -> leq m n = false
+Intros
+OrE exh_bool On leq m n Then Try Assumption
+Forward leq_true__Le On H2
+FalseE
+Apply Le__Not_Gt On H3
+Assumption
+Exit
+
+Prove leq_false__Gt : @m,n:Nat. leq m n = false -> n < m
+Intros
+Apply classic
+NotI
+Forward Not_Gt__Le On H1
+Forward Le__leq_true On H2
+NotE false_is_true_
+Lewrite H
+Lewrite H3
+Refl
+Exit
+
+
+
+

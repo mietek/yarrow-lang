@@ -1,0 +1,65 @@
+<HTML>
+<HEAD>
+<TITLE>lolsub/subLibrary (without proofs)</TITLE>
+</HEAD>
+<BODY BGCOLOR="#FFFFFF", TEXT="#000000">
+<PRE><FONT COLOR="#000000"></FONT><FONT COLOR="#000000">-- File: subLibrary
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#000000">-- This files gives two proofs of lemma Eq_sub__Eq_super in Section 8.3.1.
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#000000">Path "../lol"
+</FONT><FONT COLOR="#000000">Path "../lolplus"
+</FONT><FONT COLOR="#000000">Load "lambdaLsubplus"
+</FONT><FONT COLOR="#000000">Load "logic"
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#000000">-- No implicit arguments now!
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#0000FF">Prove Eq_sub__Eq_super : @B:*s. @A&lt;:B. @x,y:A. (=) A x y -&gt; (=) B x y
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#000000">-- The command
+</FONT><FONT COLOR="#000000">--    Deduction Eq_sub__Eq_super
+</FONT><FONT COLOR="#000000">-- gives:
+</FONT><FONT COLOR="#000000">--    ---------------                                               
+</FONT><FONT COLOR="#000000">--  1 | B : *s      |                                      hyp      
+</FONT><FONT COLOR="#000000">--  2 | A &lt;: B : *s |                                      hyp      
+</FONT><FONT COLOR="#000000">--  3 | x : A       |                                      hyp      
+</FONT><FONT COLOR="#000000">--  4 | y : A       |                                      hyp      
+</FONT><FONT COLOR="#000000">--  5 | (=) A x y   |                                      hyp      
+</FONT><FONT COLOR="#000000">--    |--------------                                               
+</FONT><FONT COLOR="#000000">--    | -------------                                               
+</FONT><FONT COLOR="#000000">--  6 | | P : B-&gt;*p |                                      hyp      
+</FONT><FONT COLOR="#000000">--    | |------------                                               
+</FONT><FONT COLOR="#000000">--    | | --------------------------                                
+</FONT><FONT COLOR="#000000">--  7 | | | Q := \z:A. P z : A-&gt;*p |                       def      
+</FONT><FONT COLOR="#000000">--    | | |-------------------------                                
+</FONT><FONT COLOR="#000000">--  8 | | | @P:A-&gt;*p. P x -&gt; P y                           conv 5   
+</FONT><FONT COLOR="#000000">--  9 | | | Q x -&gt; Q y                                     @E 8     
+</FONT><FONT COLOR="#000000">-- 10 | | | P x -&gt; P y                                     conv 9   
+</FONT><FONT COLOR="#000000">-- 11 | | P x -&gt; P y                                       defI 7-10
+</FONT><FONT COLOR="#000000">-- 12 | @P:B-&gt;*p. P x -&gt; P y                               @I 6-11  
+</FONT><FONT COLOR="#000000">-- 13 | (=) B x y                                          conv 12  
+</FONT><FONT COLOR="#000000">-- 14 @B:*s. @A &lt;: B : *s. @x,y:A. (=) A x y -&gt; (=) B x y  @I 1-13  
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#000000">-- A less instructive proof is the following.
+</FONT><FONT COLOR="#0000FF">Prove Eq_sub__Eq_super2 : @B:*s. @A&lt;:B. @x,y:A. (=) A x y -&gt; (=) B x y
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#000000">-- The command 
+</FONT><FONT COLOR="#000000">--    Deduction Eq_sub__Eq_super2
+</FONT><FONT COLOR="#000000">-- gives:
+</FONT><FONT COLOR="#000000">--   ---------------                                            
+</FONT><FONT COLOR="#000000">-- 1 | B : *s      |                                      hyp   
+</FONT><FONT COLOR="#000000">-- 2 | A &lt;: B : *s |                                      hyp   
+</FONT><FONT COLOR="#000000">-- 3 | x : A       |                                      hyp   
+</FONT><FONT COLOR="#000000">-- 4 | y : A       |                                      hyp   
+</FONT><FONT COLOR="#000000">-- 5 | (=) A x y   |                                      hyp   
+</FONT><FONT COLOR="#000000">--   |--------------                                            
+</FONT><FONT COLOR="#000000">-- 6 | (=) B x y                                          subsum 5
+</FONT><FONT COLOR="#000000">-- 7 @B:*s. @A &lt;: B : *s. @x,y:A. (=) A x y -&gt; (=) B x y  @I 1-6
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#000000">
+</FONT></PRE>
+</BODY>
+</HTML>

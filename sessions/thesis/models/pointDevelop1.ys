@@ -1,0 +1,61 @@
+-- File: pointDevelop1
+
+-- This file shows how the OOP concept of aggregation is modelled in system
+-- lambda-omega-L-plus. It corresponds with Section 9.1.
+
+Path "../lol"
+Path "../lolExtra"
+Path "../lolplus"
+Load "lambdaLplus"
+Load "nat"
+
+-------------------------
+-- Step 1: Aggregation --
+-------------------------
+
+Def PointRep := {|x:Nat|}
+
+Def pointInit := {x=O} : PointRep
+
+Def getX := \st:PointRep. st`x :
+            PointRep -> Nat
+
+Def setX := \st:PointRep. \n:Nat. {x=n} :
+            PointRep -> Nat -> PointRep
+
+Def bump := \st:PointRep. {x= S st`x} :
+            PointRep -> PointRep
+                 
+Def pointMet := {getX = \st:PointRep. st`x,
+                 setX = \st:PointRep. \n:Nat. {x=n},
+                 bump = \st:PointRep. {x= S st`x}} :
+                {|getX:PointRep->Nat, 
+                  setX:PointRep->Nat->PointRep,
+                  bump:PointRep->PointRep|}
+
+Def PointI := \R:*s. {|getX:R->Nat, 
+                       setX:R->Nat->R,
+                       bump:R->R|}
+
+Check pointMet : PointI PointRep
+-- Result: Yes
+
+Def newPoint := {state = pointInit,
+                 met = pointMet} :
+                {| state : PointRep, met : PointI PointRep |}
+
+Def Point := {| state : PointRep, met : PointI PointRep |}
+
+Def point'getX := \p:Point. p`met`getX p`state :
+                  Point -> Nat
+
+Def point'bump := \p:Point. {state = p`met`bump p`state,
+                              met = p`met} :
+                  Point -> Point
+
+Def point'setX := \p:Point. \n:Nat. {state = p`met`setX p`state n,
+                                      met = p`met} :
+                  Point -> Nat -> Point
+
+bdRed point'getX (point'setX newPoint (S O))
+-- Result: S O

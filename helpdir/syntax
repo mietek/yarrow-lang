@@ -1,0 +1,44 @@
+<P>
+The syntax is quite close to the standard syntax of the typed 
+lambda calculus. We write 
+</P>       
+<DL COMPACT>
+<DT><CODE>\x:T.e       </CODE><DD> for a lambda abstraction
+<DT><CODE>@x:T.e       </CODE><DD> for a pi-type (in this program also called
+                        @-type)
+<DT><CODE>let x:=e:T.f </CODE><DD> for a local definition
+<DT><CODE>f e          </CODE><DD> for application (left-associative)
+<DT><CODE>(e)          </CODE><DD> to deviate from standard-precedence
+</DL>
+
+<P>
+Precedence goes from lowest to highest, so <CODE>\x:T.x x</CODE> means 
+      <CODE>\x:T.(x x)</CODE> and not <CODE>(\x:T.x) x</CODE>.
+The lambda, pi and let terms do extend to right as far as possible.
+</P>
+
+<P>    
+We use the following shorthands:
+</P>
+<DL COMPACT>
+<DT><CODE>\x1,x2,..xn:T.e       </CODE><DD> for a repeated abstraction
+<DT><CODE>@x1,x2,..xn:T.e       </CODE><DD> for a repeated pi-type 
+<DT><CODE>T-&gt;U      </CODE><DD> as a short-hand for <CODE>@x:T.U</CODE> if <CODE>x</CODE> does not occur 
+                        in <CODE>U</CODE> (the <CODE>-&gt;</CODE> is right-associative)
+<DT><CODE>let x:=e.f   </CODE><DD> for a local definition
+</DL>
+
+<P>
+Variables and sorts can consists of the following characters:<BR>
+<CODE>a..z  A..Z  0..9  * # ' _</CODE><BR>
+They may not start with a digit, underline or apostroph however. 
+The words <CODE>let</CODE>, <CODE>then</CODE>, <CODE>else</CODE>, 
+<CODE>in</CODE> and <CODE>on</CODE> are keywords (independent of case).
+Variables can also be used infix, see
+<A HREF="#infix-notation"><CODE>infix-notation</CODE></A>.
+</P>
+
+<P>
+In the name of commands, the case of the letters is ignored.
+Two dash signes '--' signal the rest of the line is comment.
+</P>

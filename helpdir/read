@@ -1,0 +1,14 @@
+<DL>
+ <DT>Syntax:
+ <DD><CODE>Read</CODE> "<VAR>filename</VAR>"
+ <DT>Effect:
+ <DD>Reads script file <VAR>filename</VAR>.
+     This command has the same effect as entering the
+     contents of the file by keyboard. However, if an error occurs, all
+     input after the error is ignored.
+ <DT>Prove-mode:
+ <DD>This command is also available in prove-mode.
+ <DT>See also:                          
+ <DD><A HREF="#Path"><CODE>Path</CODE></A>
+</DL>
+

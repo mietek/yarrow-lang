@@ -1,0 +1,98 @@
+<HTML>
+<HEAD>
+<TITLE>lolsub/sortId (without proofs)</TITLE>
+</HEAD>
+<BODY BGCOLOR="#FFFFFF", TEXT="#000000">
+<PRE><FONT COLOR="#000000"></FONT><FONT COLOR="#000000">-- File: sort
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#000000">-- This file contains the example of sorting of records, as in Section 8.4.
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#000000">Path "../lol"
+</FONT><FONT COLOR="#000000">Path "../lolplus"
+</FONT><FONT COLOR="#000000">Load "lambdaLsubplus"
+</FONT><FONT COLOR="#000000">Load "sort"  -- so we have Perm
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#000000">-----------------------
+</FONT><FONT COLOR="#000000">-- PREDICATE Ordered --
+</FONT><FONT COLOR="#000000">-----------------------
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#0000FF">Def OrderedId := \B&lt;:{|id:Nat|}.
+</FONT><FONT COLOR="#0000FF">                 \l:List B. 
+</FONT><FONT COLOR="#0000FF">                 @P:List B -&gt; *p.
+</FONT><FONT COLOR="#0000FF">                 P (nil B) -&gt;
+</FONT><FONT COLOR="#0000FF">                 (@a:B.@m:List B. P m -&gt; (@b:B. Elem b m -&gt; a`id&lt;=b`id) -&gt; 
+</FONT><FONT COLOR="#0000FF">                                  P (a;m)) -&gt;
+</FONT><FONT COLOR="#0000FF">                 P l :
+</FONT><FONT COLOR="#0000FF">                 @B&lt;:{|id:Nat|}. List B -&gt; *p
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#000000">Implicit 1 OrderedId
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#0000FF">Prove OrderedId_nil : @B&lt;:{|id:Nat|}. OrderedId (nil B)
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#0000FF">Prove OrderedId_cons : @B&lt;:{|id:Nat|}.@a:B.@m:List B. OrderedId m -&gt; 
+</FONT><FONT COLOR="#0000FF">                                        (@b:B. Elem b m -&gt; a`id&lt;=b`id) -&gt; 
+</FONT><FONT COLOR="#0000FF">                                        OrderedId (a;m)
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#0000FF">Prove OrderedId_singleton : @B&lt;:{|id:Nat|}. @m:B. OrderedId (singleton m)
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#0000FF">Prove OrderedId_exh : @B&lt;:{|id:Nat|}. @l:List B. OrderedId l -&gt; 
+</FONT><FONT COLOR="#0000FF">                       l = nil B \/
+</FONT><FONT COLOR="#0000FF">                       Ex a:B. Ex m:List B. l = a;m /\
+</FONT><FONT COLOR="#0000FF">                                              (@b:B. Elem b m -&gt; a`id&lt;=b`id) /\
+</FONT><FONT COLOR="#0000FF">                                              OrderedId m
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#0000FF">Prove OrderedId_cons_ : @B&lt;:{|id:Nat|}. @a:B.@m:List B. OrderedId (a;m) -&gt; 
+</FONT><FONT COLOR="#0000FF">                                          (@b:B. Elem b m -&gt; a`id&lt;=b`id) /\
+</FONT><FONT COLOR="#0000FF">                                          OrderedId m
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#000000">-----------------------
+</FONT><FONT COLOR="#000000">-- FUNCTION insertId --
+</FONT><FONT COLOR="#000000">-----------------------
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#0000FF">Def insertId := \B&lt;:{|id:Nat|}. \n:B. primreclist (singleton n) (
+</FONT><FONT COLOR="#0000FF">                      \head:B. \tail:List B. \insert_tail:List B. 
+</FONT><FONT COLOR="#0000FF">                         if (leq n`id head`id) 
+</FONT><FONT COLOR="#0000FF">                            (n;head;tail)
+</FONT><FONT COLOR="#0000FF">                            (head;insert_tail)) : 
+</FONT><FONT COLOR="#0000FF">              @B&lt;:{|id:Nat|}. B -&gt; List B -&gt; List B
+</FONT><FONT COLOR="#000000">implicit 1 insertId
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#0000FF">Prove insertId_nil : @B&lt;:{|id:Nat|}. @m:B. insertId m (nil B) = singleton m
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#0000FF">Prove Le__insertId : @B&lt;:{|id:Nat|}. @m,n:B.@l:List B. m`id&lt;=n`id -&gt; 
+</FONT><FONT COLOR="#0000FF">                                     insertId m (n;l) = m;n;l
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#0000FF">Prove Gt__insertId : @B&lt;:{|id:Nat|}. @m,n:B.@l:List B. n`id&lt;m`id -&gt; 
+</FONT><FONT COLOR="#0000FF">                                     insertId m (n;l) = n;(insertId m l)
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#0000FF">Prove Elem_insertId_ : @B&lt;:{|id:Nat|}. @m,n:B.@ns:List B.
+</FONT><FONT COLOR="#0000FF">                                           Elem m (insertId n ns) -&gt; 
+</FONT><FONT COLOR="#0000FF">                                           m=n \/ Elem m ns
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#0000FF">Prove OrderedId_insertId  : @B&lt;:{|id:Nat|}. @m:B. @l:List B. OrderedId l -&gt;
+</FONT><FONT COLOR="#0000FF">                                             OrderedId (insertId m l)
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#0000FF">Prove Perm_insertId : @B&lt;:{|id:Nat|}. @m:B. @l:List B.
+</FONT><FONT COLOR="#0000FF">                               Perm (insertId m l) (m;l)
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#000000">------------
+</FONT><FONT COLOR="#000000">-- sortId --
+</FONT><FONT COLOR="#000000">------------
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#0000FF">Def sortId := \B&lt;:{|id:Nat|}.
+</FONT><FONT COLOR="#0000FF">              primreclist (nil B) (\head:B. \tail:List B. 
+</FONT><FONT COLOR="#0000FF">                             \sort_tail:List B. insertId head sort_tail) :
+</FONT><FONT COLOR="#0000FF">            @B&lt;:{|id:Nat|}. List B -&gt; List B
+</FONT><FONT COLOR="#000000">Implicit 1 sortId
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#0000FF">Prove sortId_nil : @B&lt;:{|id:Nat|}. sortId (nil B) = nil B
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#0000FF">Prove sortId_cons : @B&lt;:{|id:Nat|}. @m:B.@l:List B. sortId (m;l) = insertId m (sortId l)
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#0000FF">Prove OrderedId_sortId : @B&lt;:{|id:Nat|}. @l:List B. OrderedId (sortId l)
+</FONT><FONT COLOR="#000000">
+</FONT><FONT COLOR="#0000FF">Prove Perm_sortId : @B&lt;:{|id:Nat|}. @l:List B. Perm (sortId l) l
+</FONT></PRE>
+</BODY>
+</HTML>

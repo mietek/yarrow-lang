@@ -1,0 +1,3 @@
+prove silly : @P:*.P->P
+intros then assumption
+exit

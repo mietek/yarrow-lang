@@ -1,0 +1,23 @@
+Guidelines for script files
+
+All script files in the subdirectories are set up as follows:
+- Additions to the search path (optional).
+- Declaration of the PTS being used.
+  Either directly or by loading a script-file defining the system.
+- A list of modules to be loaded.
+- The body of the script, containing definitions, axioms and proofs.
+
+Because of this set-up, script files can easily be (re-)compiled to code
+files by performing the following actions:
+- Go to the directory containing the script file
+- Start Yarrow
+- Enter 
+    read "name"
+- The script should be executed succesfully. Then enter 
+    save "name"
+  This creates a code file.
+In later sessions, it is sufficient to type
+  load "name"
+to quickly load the corresponding piece of theory.
+
+Jan Zwanenburg, 31-1-'97

@@ -1,0 +1,9 @@
+<DL>
+ <DT>Syntax:
+ <DD><CODE>Hide</CODE> <VAR>var-list</VAR>
+ <DT>Effect:                   
+ <DD>This tactic suppresses printing of the local variables named in
+     <VAR>var-list</VAR>.
+ <DT>See also:                          
+ <DD><A HREF="#Unhide"><CODE>Unhide</CODE></A>
+</DL>  

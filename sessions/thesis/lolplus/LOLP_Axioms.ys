@@ -1,0 +1,63 @@
+-- File: LOLP_Axioms
+
+-- This file introduces axioms for records and existential types.
+
+Path "../lol"
+Path "../lolExtra"
+Load "lambdaLplus"
+Load "logic2"
+
+-------------
+-- records --
+-------------
+
+-- We introduce the induction axiom for records only for two-field record with
+-- labels 'l' and 'r' (See Remark 6.2.2.)
+Var ind_rec : @A,B:*s. @P:{|l:A,r:B|} ->*p. (@a:A.@b:B. P {l=a,r=b}) ->
+                  @z:{|l:A,r:B|}. P z
+
+-- exhaustion property follows from axiom
+Prove exh_rec : @A,B:*s. @z:{|l:A,r:B|}. Ex a:A.Ex b:B. z={l=a,r=b}
+Intros 2
+Apply ind_rec
+Intros
+ExistsI a
+ExistsI b
+Refl
+Exit
+
+-- an additional property
+Prove is_rec : @A,B:*s. @x,y:{|l:A,r:B|}.
+                 x`l=y`l -> x`r = y`r -> x=y
+Intros 2
+Apply ind_rec
+Intros 2
+Apply ind_rec
+Intros
+Rewrite H
+Rewrite H1
+Refl
+Exit
+
+-----------------------
+-- existential types --
+-----------------------
+
+-- We introduce the induction axiom for existential types only for kind *s.(See
+-- Remark 6.2.2.)
+
+Var ind_sigma : @I:*s->*s. @P:(Sig X:*s.I X) -> *p.
+                 (@A:*s.@a:I A. P (pack I A a)) ->
+                 @z:(Sig X:*s. I X). P z
+
+-- exhaustion property follows from axiom
+Prove exh_sigma : @I:*s->*s. @z:(Sig X:*s. I X).
+                     ExK A:*s. Ex a:I A. z = pack I A a
+Intro
+Apply ind_sigma
+Intros
+ExistsI A
+ExistsI a
+Refl
+Exit
+
