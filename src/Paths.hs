@@ -156,7 +156,7 @@ changeSubterm1 subCon f vl p ts ps =
 findSubterm :: (Collection c, PreErrorMonad m, Functor m) => 
                 c Vari -> Term -> TermPath -> m (Term,LContext)
 findSubterm vl term path = let f (t,subCon,_) = (t,(t,subCon)) in
-                           map snd (changeSubterm f vl term path)
+                           fmap snd (changeSubterm f vl term path)
 
 pathNotExistError :: PreErrorMonad m => m a
 pathNotExistError = errS "Indicated path does not exist"
@@ -263,7 +263,7 @@ changePathNumberedSubterms :: (Collection c, PreErrorMonad m, Functor m) =>
                               c Vari -> Term -> m Term
 changePathNumberedSubterms f (path,select) vl term = 
       let f0 (t,locCon,vl') = (changeNumberedSubterms0 f select vl' t,()) in
-      map fst (changeSubterm f0 vl term path)
+      fmap fst (changeSubterm f0 vl term path)
 
 
 

@@ -117,13 +117,13 @@ class (Functor m,Monad m) => HasSyntax m where
      updateSyn  :: (SyntaxInfo->SyntaxInfo)-> m SyntaxInfo
      setSyn     :: SyntaxInfo -> m ()
      fetchSyn    = updateSyn id
-     setSyn new  = map (const ()) (updateSyn (\old -> new))
+     setSyn new  = fmap (const ()) (updateSyn (\old -> new))
    
 updateSyn' :: HasSyntax m => (SyntaxInfo->SyntaxInfo)-> m ()
-updateSyn' f = map (const ()) (updateSyn f)
+updateSyn' f = fmap (const ()) (updateSyn f)
 
 instance PartSyntax s => HasSyntax (State s) where
-     updateSyn f = map extractSyn (updateS (insertSyn f))
+     updateSyn f = fmap extractSyn (updateS (insertSyn f))
      -- hbc 0.9999.4 will complain if we replace updateS above by update,
      -- so we need a updateS function with a more restricted type.
 
@@ -180,7 +180,7 @@ extractRulesSub :: SyntaxInfo -> [(Sort,Sort,Sort)]
 extractRulesSub = ffh5 . extractPTSys
 
 fetchSys :: HasSyntax m => m System
-fetchSys = map extractSys fetchSyn
+fetchSys = fmap extractSys fetchSyn
 
 setSys :: HasSyntax m => System -> m ()
 setSys sys = updateSyn' (insertSys (const sys))
@@ -210,7 +210,7 @@ insertBoolOptions = insertAllOptions
 type CodeOption = (BoolOptions->Bool,Bool->BoolOptions->BoolOptions)
 
 fetchOptGen :: HasSyntax m => CodeOption -> m Bool
-fetchOptGen opt = map ((fst opt) . extractBoolOptions) fetchSyn 
+fetchOptGen opt = fmap ((fst opt) . extractBoolOptions) fetchSyn 
 
 setBoolOptions :: HasSyntax m => BoolOptions -> m ()
 setBoolOptions opts = updateSyn' (insertBoolOptions (const opts))
@@ -267,7 +267,7 @@ defaultAssoc :: (Int,Assoc)
 defaultAssoc = (6,NoAssoc)
 
 fetchPrecedence :: HasSyntax m => m Precedence
-fetchPrecedence = map extractPrecedence fetchSyn 
+fetchPrecedence = fmap extractPrecedence fetchSyn 
 
 fetchPrec :: HasSyntax m => Vari -> m (Int,Assoc)
 fetchPrec v = fetchSyn >>= \si -> 
@@ -289,7 +289,7 @@ extractBind :: SyntaxInfo -> Vari -> Bool
 extractBind si v = v `elem` extractBinder si
 
 fetchBinder :: HasSyntax m => m Binder
-fetchBinder = map extractBinder fetchSyn
+fetchBinder = fmap extractBinder fetchSyn
 
 fetchBind :: HasSyntax m => Vari -> m Bool
 fetchBind v = fetchSyn >>= \si ->
@@ -312,7 +312,7 @@ extractLatex :: SyntaxInfo -> Vari -> (Bool,Int)
 extractLatex si = findI (extractLatexVar si)
 
 fetchLatexVar :: HasSyntax m => m LatexVar
-fetchLatexVar = map extractLatexVar fetchSyn
+fetchLatexVar = fmap extractLatexVar fetchSyn
 
 fetchLatex :: HasSyntax m => Vari -> m (Bool,Int)
 fetchLatex v = fetchSyn >>= \si ->
@@ -338,7 +338,7 @@ defaultImplic :: Int
 defaultImplic = 0
 
 fetchImplicits :: HasSyntax m => m Implicit
-fetchImplicits = map extractImplicit fetchSyn 
+fetchImplicits = fmap extractImplicit fetchSyn 
 
 fetchImplicit :: HasSyntax m => Vari -> m Int
 fetchImplicit v = fetchSyn >>= \si -> 

@@ -99,12 +99,12 @@ class (Functor m, Monad m) => HasContext m where
      updateCon  :: (GContext->GContext)-> m GContext
      setCon     :: GContext -> m ()
      fetchCon    = updateCon id
-     setCon new  = map (const ()) (updateCon (\old -> new))
+     setCon new  = fmap (const ()) (updateCon (\old -> new))
 
 
     
 instance PartContext s => HasContext (State s) where
-     updateCon f = map extractCon (updateS2 (insertCon f))
+     updateCon f = fmap extractCon (updateS2 (insertCon f))
      -- hbc 0.9999.4 will complain if we replace updateS2 above by update,
      -- so we need a updateS2 function with a more restricted type.
 
@@ -122,7 +122,7 @@ instance PartContext MainS where
      insertCon f (MAINS ps) = MAINS (doSnd5 f ps)
 
 fetchModulesInfo :: M [ModuleInfo]
-fetchModulesInfo = map (\(MAINS (_,_,mi,_,_)) -> mi) fetchS
+fetchModulesInfo = fmap (\(MAINS (_,_,mi,_,_)) -> mi) fetchS
      -- hbc 0.9999.4 will complain if we replace fetchS above by update,
      -- so we need a fetchS function with a more restricted type.
 
@@ -135,7 +135,7 @@ setModulesInfo mi = update' (\(MAINS (si,con,_ ,mode, lemmas)) ->
 
 
 fetchTasks :: M Tasks
-fetchTasks = map (\(MAINS (_,_,_,mode,_)) -> mode) fetchS
+fetchTasks = fmap (\(MAINS (_,_,_,mode,_)) -> mode) fetchS
 
 updateTasks' :: (Tasks -> Tasks) -> M ()
 updateTasks' fmode = update' (\(MAINS (si,con,mi,mode,lemmas)) ->
@@ -147,7 +147,7 @@ setTasks mode = updateTasks' (const mode)
 
 
 fetchLemmas :: M SpecialLemmas
-fetchLemmas = map (\(MAINS (_,_,_,_,lemmas)) -> lemmas) fetchS
+fetchLemmas = fmap (\(MAINS (_,_,_,_,lemmas)) -> lemmas) fetchS
 
 updateLemmas' :: (SpecialLemmas -> SpecialLemmas) -> M ()
 updateLemmas' fLemmas = update' (\(MAINS (si,con,mi,mode,lemmas)) ->
@@ -181,34 +181,34 @@ updateTask' taskId f =
                            f task
                         else
                            task in
-       updateTasks' (doSnd (map f'))
+       updateTasks' (doSnd (fmap f'))
 
 fetchTask :: TaskId -> M Task
-fetchTask taskId = map (head.(filter (taskHasId taskId)).snd) 
+fetchTask taskId = fmap (head.(filter (taskHasId taskId)).snd) 
                          fetchTasks
     
 setTask :: TaskId -> Task -> M ()
 setTask taskId task = let f t | taskHasId taskId t = task
                           f t | otherwise = t in
-                      updateTasks' (doSnd (map f))
+                      updateTasks' (doSnd (fmap f))
                                                      
 fetchTaskItem :: TaskId -> M Item
-fetchTaskItem taskId = map fst4 (fetchTask taskId)
+fetchTaskItem taskId = fmap fst4 (fetchTask taskId)
 
 fetchTacticTree :: TaskId -> M TacticTree
-fetchTacticTree taskId = map snd4 (fetchTask taskId)
+fetchTacticTree taskId = fmap snd4 (fetchTask taskId)
 
 setTacticTree :: TaskId -> TacticTree -> M ()
 setTacticTree taskId tacTree = updateTask' taskId (doSnd4 (const tacTree))
 
 fetchTacPaths :: TaskId -> M [TacPath]
-fetchTacPaths taskId = map thd4 (fetchTask taskId)
+fetchTacPaths taskId = fmap thd4 (fetchTask taskId)
 
 setTacPaths :: TaskId -> [TacPath] -> M ()
 setTacPaths taskId tacPaths = updateTask' taskId (doThd4 (const tacPaths))
 
 fetchTaskId :: M TaskId
-fetchTaskId = map fst fetchTasks
+fetchTaskId = fmap fst fetchTasks
 
 setTaskId :: TaskId -> M ()
 setTaskId taskId = fetchTasks >>= \(_,tasks) ->
@@ -225,19 +225,19 @@ setHnumS gn = fetchTaskId >>= \taskId ->
 
 fetchHnumS :: M Hnum
 fetchHnumS = fetchTaskId >>= \taskId ->
-             map fth4 (fetchTask taskId)
+             fmap fth4 (fetchTask taskId)
 
 makeToProve :: TaskId -> M ToProve
 makeToProve taskId = 
     fetchTacticTree taskId >>= \tacTree ->
     fetchTacPaths taskId >>= \tacPaths ->
     return (snd (makeProofTerm tacTree),
-            map (findGoal tacTree) tacPaths)
+            fmap (findGoal tacTree) tacPaths)
 
 makeProofTerm :: TacticTree -> (Hnum, Term)
 makeProofTerm (TTHole (hnum,_)) = (hnum, mkHole hnum)
 makeProofTerm (TTTac _ (hnum,_,term) tacTrees) =
-       (hnum,foldl replace term (map makeProofTerm tacTrees))
+       (hnum,foldl replace term (fmap makeProofTerm tacTrees))
 
 
 -- replace n t u  replaces in term t all occurrences of Hole n by u 
@@ -245,9 +245,9 @@ replace :: Term -> (Hnum, Term) -> Term
 replace (Basic (Hole m)) (n,u) | n==m = u
 -- rest: distribute
 replace (Basic cat) s = mkBasic cat
-replace (Nonb cat ts) s = mkNonb cat (map (\a -> replace a s) ts)
+replace (Nonb cat ts) s = mkNonb cat (fmap (\a -> replace a s) ts)
 replace (Bind cat ts (v,t,s) b) sig = mkBind cat
-                                                (map (\a-> replace a sig) ts)
+                                                (fmap (\a-> replace a sig) ts)
                                                 (v, replace t sig, s)
                                                 (replace b sig)
 
@@ -261,8 +261,8 @@ domAllLocCon =
         varsTask taskId =
          fetchTaskItem taskId >>= \(nameProof,_,_) ->
          makeToProve taskId >>= \(_,goals) ->
-         return (nameProof : concat (map domLCon (map (snd3.snd) goals))) in
-    mapL varsTask (map extractTaskId tasks) >>= \varLists ->
+         return (nameProof : concat (fmap domLCon (fmap (snd3.snd) goals))) in
+    mapL varsTask (fmap extractTaskId tasks) >>= \varLists ->
     return (removeDoubles (concat varLists))
 
 -- findGoal tree path finds the goal corresponding to path in tree

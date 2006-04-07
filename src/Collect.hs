@@ -226,8 +226,8 @@ keysIL (IL l) = map fst l
 data Tree a = Leaf | Node (Tree a) a (Tree a)
     
 instance Functor Tree where
-    map f Leaf = Leaf
-    map f (Node t1 a t2) = Node (map f t1) (f a) (map f t2)
+    fmap f Leaf = Leaf
+    fmap f (Node t1 a t2) = Node (fmap f t1) (f a) (fmap f t2)
 
 depth :: Tree a -> Int
 depth Leaf = 0
@@ -381,7 +381,7 @@ instance AssocList TreeWithOrder where
      removeI (TWO t l n) k = let (b,t') = (removeTree t k) in
                              (b,TWO t' (l\\[k]) n)
                              -- Keep the same 'size'
-     mapI f (TWO t l n) = TWO (map (doSnd (doFst f)) t) l n
+     mapI f (TWO t l n) = TWO (fmap (doSnd (doFst f)) t) l n
      headI tl@(TWO t l _) = let h = head l in
                             (h, snd (findI tl h))
      tailI (TWO t l n) = let k = head l in 
@@ -407,7 +407,7 @@ takeTWO n (TWO t l _) = map (\k -> (k,fst (snd (findTree t k)))) (take n l)
 
 -- Corresponding collection of keys: ListAndTree                   
 keysTWO :: TreeWithOrder k v -> Tree k  
-keysTWO (TWO t _ _) = map fst t
+keysTWO (TWO t _ _) = fmap fst t
 
 ------------------------------
 -- ASSOCLIST: ListsAndOTree --

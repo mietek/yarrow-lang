@@ -92,7 +92,7 @@ admitSystem (pts,exS) =
      genErrS "Records may be used for only one sort"
   else
   -- End Extension: Records:
-  if not (map fst3 (ffh5 pts) `sublist` fth5 pts) then
+  if not (fmap fst3 (ffh5 pts) `sublist` fth5 pts) then
      genErrS "Bounded quantifications only admitted for subtyping sorts"
   else
   -- End Extension: Records:
@@ -101,8 +101,8 @@ admitSystem (pts,exS) =
 functional :: PTSystem -> Bool
 functional (_,axioms,rules,_,rulesSub) = 
         let axiomOk s = length (findAll axioms s) == 1
-            rules1 = map (\(s1,s2,s3) -> ((s1,s2),s3)) rules 
-            rulesSub1 = map (\(s1,s2,s3) -> ((s1,s2),s3)) rulesSub 
+            rules1 = fmap (\(s1,s2,s3) -> ((s1,s2),s3)) rules 
+            rulesSub1 = fmap (\(s1,s2,s3) -> ((s1,s2),s3)) rulesSub 
             ruleOk rs ss = length (findAll rs ss) == 1 
             rulesOk rs = all (ruleOk rs . fst) rs in
         all (axiomOk . fst) axioms && 
@@ -114,7 +114,7 @@ hasMultiple exs ext = length (filter ((ext==).snd) exs) > 1
         
 
 selectEx :: Extension -> [(sr,Extension)] -> [sr]
-selectEx ext = map fst . filter ((ext==).snd)
+selectEx ext = fmap fst . filter ((ext==).snd)
 
 ----------------------------------------------------
 -- T Y P E  C H E C K I N G  &  I N F E R E N C E --
@@ -430,7 +430,7 @@ inferTerm si _ srt | isSort srt =
               internalErr ("Topsort isn't supposed to be made by user.")
            else
               return (mkSrt (typeSort si s))
-inferTerm si con  t = map fst (inferType si con t)
+inferTerm si con  t = fmap fst (inferType si con t)
 
 -------------------
 -- MISCELLANEOUS --

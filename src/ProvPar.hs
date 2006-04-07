@@ -42,7 +42,7 @@ parseProverCommand =
   let t = toLowerIdent t0 in
   case t of
   Ident "undo"    -> nextToken >>
-                     map PUndo readNumDef1
+                     fmap PUndo readNumDef1
   Ident "restart" -> nextToken >> return PRestart
   Ident "focus"   -> nextToken >> 
                      eatNum >>= \n ->
@@ -51,13 +51,13 @@ parseProverCommand =
 
 
 parseTacticTerm :: Parse TacticTerm
-parseTacticTerm = map (foldr1 TElse)
+parseTacticTerm = fmap (foldr1 TElse)
                       (parseList1 (separator Else) parseTacticFactor)
 
 parseTacticFactor :: Parse TacticTerm
 parseTacticFactor =
     parseTactic >>= \tac ->
-    map (foldl TThen tac) 
+    fmap (foldl TThen tac) 
         (parseList commaOrThenL commaOrThenL parseTacticAltList)
                       where commaOrThenL = readToken' >>= \t ->
                                            if (t==Comma || t==Then) then
@@ -86,7 +86,7 @@ parseTactic =
   Ident "intro"      -> nextToken >>
                         startVar >>= \b ->
                         if b then
-                           map TIntroVar parseVarList
+                           fmap TIntroVar parseVarList
                         else
                            return TIntro
   Ident "intros"     -> nextToken >>
@@ -113,13 +113,13 @@ parseTactic =
                               parseVar >>= \h ->
                               return (TUnfoldIn (o,v,h))
                         otherwise -> return (TUnfold (o,v))
-  Ident "convert"    -> nextToken >> map TConvert parseTerm
-  Ident "cut"        -> nextToken >> map TCut parseTerm
-  Ident "first"      -> nextToken >> map TFirst parseTerm
+  Ident "convert"    -> nextToken >> fmap TConvert parseTerm
+  Ident "cut"        -> nextToken >> fmap TCut parseTerm
+  Ident "first"      -> nextToken >> fmap TFirst parseTerm
   Ident "forward"    -> nextToken >> 
-                        map TForward parseExtTerm
-  Ident "exact"      -> nextToken >> map TExact parseTerm
-  Ident "apply"      -> nextToken >> map TApply parseExtTerm
+                        fmap TForward parseExtTerm
+  Ident "exact"      -> nextToken >> fmap TExact parseTerm
+  Ident "apply"      -> nextToken >> fmap TApply parseExtTerm
   Ident "pattern"    -> nextToken >> 
                         parseOccs >>= \o ->
                         parseTerm >>= \t ->
@@ -146,25 +146,25 @@ parseTactic =
                         otherwise -> return (TLewrite (o,et))
   Ident "refl"       -> nextToken >> return TRefl
   Ident "andi"       -> nextToken >> return TAndI
-  Ident "andel"      -> nextToken >> map TAndEL parseExtTerm
-  Ident "ander"      -> nextToken >> map TAndER parseExtTerm
-  Ident "ande"       -> nextToken >> map TAndE parseExtTerm
+  Ident "andel"      -> nextToken >> fmap TAndEL parseExtTerm
+  Ident "ander"      -> nextToken >> fmap TAndER parseExtTerm
+  Ident "ande"       -> nextToken >> fmap TAndE parseExtTerm
   Ident "oril"       -> nextToken >> return TOrIL
   Ident "orir"       -> nextToken >> return TOrIR
-  Ident "ore"        -> nextToken >> map TOrE parseExtTerm
+  Ident "ore"        -> nextToken >> fmap TOrE parseExtTerm
   Ident "noti"       -> nextToken >> return TNotI
-  Ident "note"       -> nextToken >> map TNotE parseExtTerm
+  Ident "note"       -> nextToken >> fmap TNotE parseExtTerm
   Ident "falsee"     -> nextToken >> return TFalseE
-  Ident "existsi"    -> nextToken >> map TExistsI parseTerm
-  Ident "existse"    -> nextToken >> map TExistsE parseExtTerm
-  Ident "repeat"     -> nextToken >> map TRepeat parseTactic
-  Ident "try"        -> nextToken >> map TTry parseTactic
+  Ident "existsi"    -> nextToken >> fmap TExistsI parseTerm
+  Ident "existse"    -> nextToken >> fmap TExistsE parseExtTerm
+  Ident "repeat"     -> nextToken >> fmap TRepeat parseTactic
+  Ident "try"        -> nextToken >> fmap TTry parseTactic
   Ident "hide"       -> nextToken >>
-                        map THide parseVarList
+                        fmap THide parseVarList
   Ident "unhide"     -> nextToken >>
                         startVar >>= \b ->
                         if b then
-                           map TUnhide parseVarList
+                           fmap TUnhide parseVarList
                         else
                            return TUnhideAll
   LeftP              -> nextToken >> 
@@ -194,7 +194,7 @@ parseOccs = parseList startOcc (separator Comma) parseOcc
 parseOcc :: Parse Occurrence
 parseOcc = eatNum >>= \n ->
            if n==0 then
-              map PathOccurrence (parseList startNum startNum eatNum)
+              fmap PathOccurrence (parseList startNum startNum eatNum)
            else
               return (NumOccurrence n)
 
@@ -222,4 +222,4 @@ parseTermPath = parseList startNum startNum eatNum
 
 parsePath :: Parse Path
 parsePath = eatIdent "" >>= \id ->
-            map (pair id) parseTermPath
+            fmap (pair id) parseTermPath

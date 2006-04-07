@@ -24,7 +24,7 @@ showListModules = fetchModulesInfo >>= \mi ->
                   if null mi then
                      return []
                   else
-                     map (++[""]) showModules
+                     fmap (++[""]) showModules
 
 showModules :: M [String]
 showModules = fetchModulesInfo >>= \mi ->
@@ -42,7 +42,7 @@ showModules = fetchModulesInfo >>= \mi ->
                               printVarSt si firstV ++
                                 ".." ++ printVarSt si lastV in
               return ("Current modules:" :
-                      map showM (reverse mi))
+                      fmap showM (reverse mi))
 
 printSystemSt :: SyntaxInfo -> System -> (String,String,String,String,String)
 printSystemSt si sys = let (s,a,r,ss,rs) = systemToQuintuple sys in
@@ -59,15 +59,15 @@ systemToQuintuple :: System ->
                       [Sort], 
                       [(Sort,Sort,Sort)])
 systemToQuintuple ((ss,as,rs,sss,rss),exS) =
-                  let exsFor s = (s, map snd (filter ((s==).fst) exS)) in
-                  (map (exsFor) ss,as,rs,sss,rss)
+                  let exsFor s = (s, fmap snd (filter ((s==).fst) exS)) in
+                  (fmap (exsFor) ss,as,rs,sss,rss)
 
 printSortExsSt :: SyntaxInfo -> [(Sort,[Extension])] -> String
-printSortExsSt si s = commas (map (printSortExSt si) s)
+printSortExsSt si s = commas (fmap (printSortExSt si) s)
 
 printSortExSt :: SyntaxInfo -> (Sort,[Extension]) -> String
 printSortExSt si (s,exs) = printSortSt si s ++ 
-                           concat (map (("->"++).printExtension) exs)
+                           concat (fmap (("->"++).printExtension) exs)
                                 
 printExtension :: Extension -> String
 -- Extension: Records:
@@ -75,16 +75,16 @@ printExtension Records = "records"
 -- End Extension: Records:
 
 printSortsSt :: SyntaxInfo -> [Sort] -> String
-printSortsSt si s = commas (map (printSortSt si) s)
+printSortsSt si s = commas (fmap (printSortSt si) s)
 
 printAxiomsSt :: SyntaxInfo -> [(Sort,Sort)] -> String
-printAxiomsSt si a = prStrings ", " (map (printAxiomSt si) a)
+printAxiomsSt si a = prStrings ", " (fmap (printAxiomSt si) a)
 
 printAxiomSt :: SyntaxInfo -> (Sort,Sort) -> String
 printAxiomSt si (s1,s2) = printSortSt si s1 ++ ":" ++ printSortSt si s2
 
 printRulesSt :: SyntaxInfo -> [(Sort,Sort,Sort)] -> String
-printRulesSt si r = prStrings ", " (map (printRuleSt si) r)
+printRulesSt si r = prStrings ", " (fmap (printRuleSt si) r)
 
 printRuleSt :: SyntaxInfo -> (Sort,Sort,Sort) -> String
 printRuleSt si (s1,s2,s3) | s2==s3 = "(" ++ printSortSt si s1 ++ "," ++

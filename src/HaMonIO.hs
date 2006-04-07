@@ -39,7 +39,7 @@ instance IOMonad IO where
 data Imp s a = SIOSE (s -> IO (s,E a))
 
 instance Functor (Imp s) where
-     map f ~(SIOSE x) = SIOSE (\s -> map (doSnd (map f)) (x s))
+     fmap f ~(SIOSE x) = SIOSE (\s -> fmap (doSnd (fmap f)) (x s))
 
 
 instance Monad (Imp s) where
@@ -61,8 +61,8 @@ instance IOMonad (Imp s) where
 -- convertIOtoImp com mess  executes com and catches any IO-errors, replacing
 -- them by mess. All this is wrapped in an Imp-monad.
 convertIOtoImp :: IO a -> String -> Imp s a
-convertIOtoImp com mess = SIOSE (\state -> map (\x -> (state,x)) com')
-                        where com' = catch (map return com)
+convertIOtoImp com mess = SIOSE (\state -> fmap (\x -> (state,x)) com')
+                        where com' = catch (fmap return com)
                                            (\_ -> return (errS mess)) 
       
 -- Imp has a state:
@@ -72,7 +72,7 @@ instance StateMonad Imp where
      fetch = update id
      set new = update' (\old -> new)
      update' f = SIOSE (\s -> return (f s,return ())) 
-                 -- map (const ()) (update f)
+                 -- fmap (const ()) (update f)
 
 
 instance PreErrorMonad (Imp a) where
@@ -90,7 +90,7 @@ instance ErrorSMonad (Imp a) where
 -- goSte x s  executes x with initial state s
 -- unhandled errors in x are ignored!
 goSte :: Imp s a -> s -> IO a
-goSte (SIOSE x) s = map (\(st,x') -> noErr (const "") x') (x s)
+goSte (SIOSE x) s = fmap (\(st,x') -> noErr (const "") x') (x s)
 
 
 performS :: s -> State s a -> Imp b (a,s)

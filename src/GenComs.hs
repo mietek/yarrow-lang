@@ -86,7 +86,7 @@ getSort cont term =
 
 -- this routine delivers the global context as a total context
 fetchTCon :: HasContext a => a Context
-fetchTCon = map globToTot fetchCon
+fetchTCon = fmap globToTot fetchCon
 
 
 -- this routine delivers the combination of the global and local context
@@ -135,17 +135,17 @@ qSetPrecAndAss (v,n,as) =
               genErrS ("Precedence only in range 1.."++show maxPrec)
           else
              setPrec v (n,as) >>
-             map RSyntaxInfoIs fetchSyn
+             fmap RSyntaxInfoIs fetchSyn
 
 qSetBinder :: Vari -> M Result
 qSetBinder v =
              setBind v >>
-             map RSyntaxInfoIs fetchSyn
+             fmap RSyntaxInfoIs fetchSyn
 
 qSetLaTeX :: (Vari,Int) -> M Result
 qSetLaTeX (v,i) =
              setLatex v i >>
-             map RSyntaxInfoIs fetchSyn
+             fmap RSyntaxInfoIs fetchSyn
 
                                
 qSetImplArgs :: (Vari,Int) -> M Result
@@ -153,7 +153,7 @@ qSetImplArgs (v,n) =
      fetchTCon >>= \c ->
      checkImplic v n >>
      setImplicit v n >>
-     map RSyntaxInfoIs fetchSyn
+     fmap RSyntaxInfoIs fetchSyn
  
 givePossibleImplArgs :: Vari -> M [Int]
 givePossibleImplArgs v =

@@ -36,7 +36,7 @@ dummySubst = []
 
 -- domSubst delivers the variables defined in a substitution
 domSubst :: Subst -> [Vari]
-domSubst = map fst            
+domSubst = fmap fst            
 
 -- applySubst applies a substitution to a term                             
 applySubst :: Subst -> Term -> Term
@@ -54,12 +54,12 @@ applyLConSubst sigma = mapI (applyConESubst sigma)
 
 applyConESubst :: Subst -> ContextERest -> ContextERest
 applyConESubst sigma ((typ,sort),cat,ts) = 
-              ((applySubst sigma typ,sort),cat,map (applySubst sigma) ts)
+              ((applySubst sigma typ,sort),cat,fmap (applySubst sigma) ts)
 
 
 -- defVar delivers the definition of a variable in a substitution
 defVar :: Vari -> Subst -> [Term]
-defVar v sigma = map snd (filter ((v==) . fst) sigma)
+defVar v sigma = fmap snd (filter ((v==) . fst) sigma)
                   
 -- !!! Kun je defVar nu niet weglaten?
 defVar' :: Vari -> Subst -> (Bool,Term)
@@ -196,7 +196,7 @@ match'' options si (con, exVars, p, t)
     let (_,pVar) = deconstructVar p
         (_,(pType,_),pconstrs,pcts) = findGenDecl con pVar
         (tType,_) = admitNoErr (inferType si con t) in
-    map ((v,t):)
+    fmap ((v,t):)
        (
         (case pconstrs of
          CSub ->
@@ -281,12 +281,12 @@ lambdaPat options si (con, exVars, p, t) =
     let ts = unwindApps2 p
         ok1 = all isVar ts
         ok2 = length ts > 1
-        vs = map (snd.deconstructVar) ts
+        vs = fmap (snd.deconstructVar) ts
         x = last vs
         ok3 = x `elemC` exVars
         xns = init vs
         mapf x = let (_,(xt,xs)) = findTypeSort con x in (x,xt,xs)
-        xtsns = map mapf xns
+        xtsns = fmap mapf xns
         t' = foldl (flip mkAbs) t xtsns in
     if ok1 && ok2 && ok3 then
        -- Check t' is well-typed, i.e. all abstractions are well-formed,
@@ -362,11 +362,11 @@ matchSupers options si (prob:ps) =
 {- 
       let substs = matchSuper' options si prob
           subst = head substs
-          ps' = map (applyProbSubst subst) ps in
+          ps' = fmap (applyProbSubst subst) ps in
       if null substs then
          []
       else                 
-      map (subst++) (matchSupers options si ps')
+      fmap (subst++) (matchSupers options si ps')
 -}
 
 
@@ -385,11 +385,11 @@ matches options si (prob:ps) =
 {-
       let substs = match options si prob
           subst = head substs
-          ps' = map (applyProbSubst subst) ps in
+          ps' = fmap (applyProbSubst subst) ps in
       if null substs then
          []
       else                 
-      map (subst++) (matches options si ps')
+      fmap (subst++) (matches options si ps')
 -}
               
 -- apply a substitution to a problem
@@ -407,14 +407,14 @@ combineMatch :: Collection c =>
                 (Context,c Vari,Term,Term) -> [Subst]
 combineMatch [] match prob = []
 combineMatch [subst] match prob = 
-    map (subst ++) (match (applyProbSubst subst prob))
+    fmap (subst ++) (match (applyProbSubst subst prob))
 
 combineMatches:: Collection c =>
                  [Subst] -> ([(Context,c Vari,Term,Term)] -> [Subst]) -> 
                  [(Context,c Vari,Term,Term)] -> [Subst]
 combineMatches [] match probs = []
 combineMatches [subst] match probs = 
-    map (subst ++) (match (map (applyProbSubst subst) probs))
+    fmap (subst ++) (match (fmap (applyProbSubst subst) probs))
 
 
             
@@ -432,4 +432,4 @@ definedBefore con v t = let vcon' = con `afterVar` v
                         not (any (`elemC` fvt) vcon') 
 
 afterVar :: LContext -> Vari -> [Vari]
-afterVar con v =  map fst (fst (breakIL (==v) con))
+afterVar con v =  fmap fst (fst (breakIL (==v) con))

@@ -75,7 +75,7 @@ instance PartContext CLIS where
          insertCon f (CLIS clis) = CLIS (doFst5 (const (insertCon f (fst5 clis))) clis)
 
 instance PartSyntax s => HasSyntax (Imp s) where
-     updateSyn f = map extractSyn (updateS3 (insertSyn f))
+     updateSyn f = fmap extractSyn (updateS3 (insertSyn f))
      -- hbc 0.9999.4 will complain if we replace updateS3 above by update,
      -- so we need a updateS3 function with a more restricted type.
 
@@ -83,11 +83,11 @@ updateS3 :: (s->s) -> Imp s s
 updateS3 = update
 
 instance PartContext s => HasContext (Imp s) where
-     updateCon f = map extractCon (updateS3 (insertCon f))
+     updateCon f = fmap extractCon (updateS3 (insertCon f))
 
 -- Input files
 fetchInputFile :: CLI FileInput
-fetchInputFile = map (snd5.unClis) fetchS5
+fetchInputFile = fmap (snd5.unClis) fetchS5
 
 fetchS5 :: Imp s s
 fetchS5 = fetch
@@ -97,7 +97,7 @@ updateInputFile f = update' (CLIS . doSnd5 f . unClis)
 
 -- Environment variables
 fetchEnvVars :: CLI EnvVars
-fetchEnvVars = map (thd5.unClis) fetchS5
+fetchEnvVars = fmap (thd5.unClis) fetchS5
 
 fetchYarrowDir :: CLI String
 fetchYarrowDir = fetchEnvVars
@@ -107,14 +107,14 @@ setEnvVars envVars = update' (CLIS . doThd5 (const envVars) . unClis)
 
 -- path stuff
 fetchPaths :: CLI Paths
-fetchPaths = map (fth5.unClis) fetchS5
+fetchPaths = fmap (fth5.unClis) fetchS5
 
 setNewPath :: String -> CLI ()
 setNewPath path = update' (CLIS . doFth5 (path :) . unClis)
 
 -- current task
 fetchCurTaskId :: CLI TaskId
-fetchCurTaskId = map (ffh5.unClis) fetchS5
+fetchCurTaskId = fmap (ffh5.unClis) fetchS5
 
 setCurTaskId :: TaskId -> CLI ()
 setCurTaskId taskId = update' (CLIS. doFfh5 (const taskId) . unClis)
@@ -241,7 +241,7 @@ commandToQuery' _ = error "Unknown command to query"
 
 yesNoQuestion :: CLI Bool
 yesNoQuestion = getLin >>= \answer ->
-                let yn = map toUpper answer in
+                let yn = fmap toUpper answer in
                 return (take 1 yn == "Y")
 
 
@@ -277,7 +277,7 @@ getLineI = fetchInputFile >>= \ils ->
 doFullParse getLine pars = 
   scanLines [] 1 >>= \ts ->
   fetchSyn >>= \si ->
-  map fst (performS (PARSES (si,ts)) pars)
+  fmap fst (performS (PARSES (si,ts)) pars)
 
 -- scanLines ln  scans lines, starting with line number ln
 scanLines :: Tokens -> Int -> CLI Tokens
@@ -342,7 +342,7 @@ cGiveTasks =
                                 taskId ++ " (current task)"
                              else
                                 taskId in
-           putLines (map (print.fst3.fst4) tasks)
+           putLines (fmap (print.fst3.fst4) tasks)
 
 cGiveOptions :: CLI ()
 cGiveOptions = fetchSyn >>= \si ->
@@ -351,7 +351,7 @@ cGiveOptions = fetchSyn >>= \si ->
                    sign True  = "+"
                    printOpt (s,(read,_)) = sign (read opts) ++ s in
                putLine ("Current options are: " ++
-                        commas (map printOpt listOptions))
+                        commas (fmap printOpt listOptions))
 
 cGiveContext :: OutputMode -> ConPart -> [Sort] -> ConToFile -> CLI ()
 cGiveContext OutFrank part sl toFile = 
@@ -375,20 +375,20 @@ putStream :: ConToFile -> [String] -> CLI ()
 putStream toFile lines =
     case toFile of
     ConToScreen -> putLines lines
-    (ConToFile f) -> writeFil f (concat (map (++"\n") lines))
+    (ConToFile f) -> writeFil f (concat (fmap (++"\n") lines))
 
 cSize :: CLI ()
 cSize = fetchCon >>= \c ->
         let l = globConToList c 
-            sizeCE (_,((t,_),_,ts)) = sum (map size' (t:ts))
+            sizeCE (_,((t,_),_,ts)) = sum (fmap size' (t:ts))
             size' t = let s = size t in
                       if s>=0 then s else s
             size (Basic _) = 1
-            size (Nonb _ ts) = sum (map size' ts) 
-            size (Bind _ ts (_,t,_) b) = sum (map size' (t:b:ts)) in
+            size (Nonb _ ts) = sum (fmap size' ts) 
+            size (Bind _ ts (_,t,_) b) = sum (fmap size' (t:b:ts)) in
         putLine ("Number of items: " ++ show (length l)) >>
         putLine ("Total size (number of variables and sorts in all terms): " ++
-                 show (sum (map sizeCE l)))
+                 show (sum (fmap sizeCE l)))
         
 
 -- cPrintVar  prints the declaration/definition of var
@@ -435,7 +435,7 @@ cGiveTypingSystem = fetchSyn >>= \si ->
 putPaths :: CLI ()
 putPaths = fetchPaths >>= \path ->
            putLines ("Current paths:" :
-                     map (\n -> "\""++n++"\"") path)
+                     fmap (\n -> "\""++n++"\"") path)
 
 addPath :: String -> CLI ()
 addPath path = fetchPaths >>= \paths -> 
@@ -448,7 +448,7 @@ addPath path = fetchPaths >>= \paths ->
 cSetTask :: Vari -> CLI ()
 cSetTask v =
            mToCLI fetchTasks >>= \(_,tasks) ->
-           let nameTasks = map (fst3.fst4) tasks in
+           let nameTasks = fmap (fst3.fst4) tasks in
            if v `notElemC` nameTasks then
               genErrS ("There is no task "++v)
            else         
@@ -621,7 +621,7 @@ rExit con (v,t,his,exitMode) =
                             printTermSt si t) >>
                    putLines (showHistory si (showExitMode exitMode) his) >>
                    mToCLI fetchTasks >>= \(_,tasks) ->
-                   let nameTasks = map extractTaskId tasks
+                   let nameTasks = fmap extractTaskId tasks
                        newTaskId = last (noTask : nameTasks) in
                    setCurTaskId newTaskId >>
                    case exitMode of
@@ -691,7 +691,7 @@ makeJavaPart ConAll sl =
                    makeJavaPart (ConModule m) sl >>= \lines ->
                    putStream (ConToFile (m++".yct")) lines >>
                    return (", M \"" ++ m ++ "\" \"" ++ m ++ ".yct\"") in
-             mapL doModule (reverse (map fst3 mi)) >>= \sms ->
+             mapL doModule (reverse (fmap fst3 mi)) >>= \sms ->
              let lv = lastVarModuleDefined mi
                  partC = takeWhile (\it-> lv /= domConE it)
                                    (globConToList c) in
@@ -863,7 +863,7 @@ putReductionPath :: SyntaxInfo -> [Term] -> CLI ()
 putReductionPath si redSeq =
             fetchOptShowRedPath >>= \showPath ->
             if showPath then
-               putLines (map (printTermSt si) redSeq)
+               putLines (fmap (printTermSt si) redSeq)
             else
                let (count,nf) = lengthLast redSeq in 
                putSt (printTermSt si nf ++"\n"++ 
@@ -930,7 +930,7 @@ printContextSt = printContext displayString
 printFullGoalSt :: SyntaxInfo -> (Hnum,Goal) -> [String]
 printFullGoalSt si (n,(term,locCon,gi)) =  
     let locConL = locConToList locCon 
-        shownLocCon = map fst (filter (((==) True).snd) (zip locConL gi)) in
+        shownLocCon = fmap fst (filter (((==) True).snd) (zip locConL gi)) in
     -- const True means "print all definitions in full"
     printContextSt si (const True) shownLocCon ++
     [take 50 (repeat '-')] ++
@@ -958,7 +958,7 @@ printGoalsSt0 si n gs = let len = length gs in
                         [show len ++ " goals",""] ++
                         printFullGoalSt si (gs!!(n-1)) ++ [""] ++
                         let restGs = filter ((n/=) . snd) (zip gs [1..]) in
-                        map (\(g,m) -> show m ++ ") " ++
+                        fmap (\(g,m) -> show m ++ ") " ++
                                        printGoalSt si goalPath g)
                             restGs
 
@@ -980,7 +980,7 @@ showSubsts si [s] = showSubst si s
 
 showSubst :: SyntaxInfo -> Subst -> String
 showSubst si s = 
-         "<"++ commas (map (\(v,t) -> v++":="++printTermSt si t) s) ++">"
+         "<"++ commas (fmap (\(v,t) -> v++":="++printTermSt si t) s) ++">"
 
 ------------------
 -- For Jan only --
@@ -990,7 +990,7 @@ showSubst si s =
 cZwerver :: (TermIT,TermIT) -> CLI ()
 cZwerver (t1',t2') = genErrS "Not implemented"
 {-
-    map globToTot fetchCon >>= \con ->
+    fmap globToTot fetchCon >>= \con ->
     getTypeRet con t1' >>= \(t1,type1,_) ->
     getTypeRet con t2' >>= \(t2,type2,sort2) ->
     fetchSyn >>= \si ->
@@ -1010,9 +1010,9 @@ putRes si (lCon,term,sigma) =
 
 {-
 cZwerver t = let ts = unwindAppITs t in
-             map globToTot fetchCon >>= \c ->
+             fmap globToTot fetchCon >>= \c ->
              mapL (getTypeRet c) ts >>= \tTss ->
-             handle (zetHaakjes (map (\(a,b,c) -> (a,b)) tTss))
+             handle (zetHaakjes (fmap (\(a,b,c) -> (a,b)) tTss))
              (\e -> err e)
              (\(t,typ) -> fetchSyn >>= \si ->
                           putLine (printTermSt si t) >>

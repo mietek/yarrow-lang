@@ -61,8 +61,8 @@ data E a = Suc a | Err Error
 
 
 instance Functor E where
-       map f (Suc a) = Suc (f a)
-       map f (Err e) = Err e
+       fmap f (Suc a) = Suc (f a)
+       fmap f (Err e) = Err e
 
 instance Monad E where
        return a = Suc a
@@ -103,7 +103,7 @@ doFirstOk' p errs handle (x:xs) =
 data State s a = ST (s -> (s,E a))
 
 instance Functor (State s) where
-     map f (ST st) = ST (\s -> doSnd (map f) (st s))
+     fmap f (ST st) = ST (\s -> doSnd (fmap f) (st s))
 
 instance Monad (State s) where
      return x = ST (\s -> (s,Suc x))

@@ -130,10 +130,10 @@ nextToken = update' (\(PARSES (si,_:t)) -> PARSES (si,t))
 
 -- readToken'  inspects first token of input
 readToken' :: Parse Token
-readToken' = map fst readToken
+readToken' = fmap fst readToken
 
 startsWith :: Token -> Parse Bool
-startsWith t = map fst (startsWith' t)
+startsWith t = fmap fst (startsWith' t)
 
 startsWith' :: Token -> Parse (Bool,PlaceInfo)
 startsWith' t = readToken >>= \(t',pi) ->
@@ -165,7 +165,7 @@ readIdent s = readToken >>= \(t,pi) ->
 
 -- consistent name would be readIdent'
 eatIdent :: String -> Parse String
-eatIdent s = map fst (readIdent s)
+eatIdent s = fmap fst (readIdent s)
 
 eatOper :: String -> Parse String
 eatOper s = readToken' >>= \t ->
@@ -221,13 +221,13 @@ parseTerm :: Parse TermIT
 parseTerm = readToken >>= \(t,pi) ->
  case t of
  Lambda -> nextToken >>
-           map (changeStart pi) 
+           fmap (changeStart pi) 
                (parseTermHelpL parseDecls (repeated mkGenAbsIT))
  At ->     nextToken >>
-           map (changeStart pi) 
+           fmap (changeStart pi) 
                (parseTermHelpL parseDecls (repeated mkGenAllIT))
  Let ->    nextToken >>
-           map (changeStart pi) 
+           fmap (changeStart pi) 
            (parseTermHelpD parseDef mkDeltaIT')
                where mkDeltaIT' ((v,pi),d,t) body =
                             mkDeltaIT (v,d,t) body pi
@@ -256,7 +256,7 @@ parseTermHelpD :: Parse ((Vari,PlaceInfo),TermIT,TermIT) ->
                   Parse TermIT
 parseTermHelpD parseI const = parseI >>= \it ->
                               eat Dot "" >>
-                              map (const it) parseTerm
+                              fmap (const it) parseTerm
 
 parseTermHelpL :: 
     Parse ([(Vari,PlaceInfo)],TermIT,Constraints,[TermIT]) -> 
@@ -264,7 +264,7 @@ parseTermHelpL ::
     Parse TermIT
 parseTermHelpL parseI const = parseI >>= \it ->
                               eat Dot "" >>
-                              map (const it) parseTerm
+                              fmap (const it) parseTerm
 
 
 -- repeated make  generalizes make so it accepts a list of variables 
@@ -326,7 +326,7 @@ parseDefRest =
 
 
 -- 'small' terms
-parseSmall = map (foldr1 mkArrowIT)
+parseSmall = fmap (foldr1 mkArrowIT)
                  (parseList1 (separator Arrow) (parseFactor 0))
            
 
@@ -343,19 +343,19 @@ parseFactor n | n <= maxPrec =
                   return f
                else
                nextToken >>
-               let plist = map (f:) (parseList1 (separator (Oper v))
+               let plist = fmap (f:) (parseList1 (separator (Oper v))
                                                 (parseFactor (n+1)))
                    oper l@(_,IT lpi _) r@(_,IT rpi _) = 
                              changeStartEnd (combinePlace lpi rpi)
                                 (mkAppIT (mkAppIT (mkVrIT v dummyPI) l) r) in
                case vassoc of
-               NoAssoc ->  map (oper f) (parseFactor (n+1))
-               LeftAssoc    ->  map (foldl1 oper) plist
-               RightAssoc   ->  map (foldr1 oper) plist
+               NoAssoc ->  fmap (oper f) (parseFactor (n+1))
+               LeftAssoc    ->  fmap (foldl1 oper) plist
+               RightAssoc   ->  fmap (foldr1 oper) plist
      otherwise -> return f
 
 -- Factor_10      
-parseFactor n = map (foldl1 mkAppIT)
+parseFactor n = fmap (foldl1 mkAppIT)
                              (parseList1 startBasic parseBasic2)
 
 
@@ -369,7 +369,7 @@ parseBasic2 = parseBasic >>= \t ->
               else
                  return t
 -}
-              map (foldl mkRecSelectIT t)
+              fmap (foldl mkRecSelectIT t)
                   (parseList0 (separator Backquote) (readIdent ""))
 -- End Extension: Records:
 
@@ -482,19 +482,19 @@ parseContextE =
     otherwise -> pErr "Expected : or :="
 
 parseContext :: Parse LContext
-parseContext = map (listToLocCon . reverse)
+parseContext = fmap (listToLocCon . reverse)
                    (parseList startVar (separator Comma) parseContextE)
 
 parseVar :: Parse Vari
-parseVar = map fst parseVarPi
+parseVar = fmap fst parseVarPi
                         
 parseVarList :: Parse [Vari]
-parseVarList = map (map fst) parseVarPiList
+parseVarList = fmap (fmap fst) parseVarPiList
               
 -- parseIdAsSort  for use only of the "System" command, where a new
 --                set of sorts is introduced
 parseIdAsSort :: Parse Sort
-parseIdAsSort = map SORT (eatIdent "Expected sort")
+parseIdAsSort = fmap SORT (eatIdent "Expected sort")
   
 parseFilename :: Parse String
 parseFilename = readToken' >>= \t ->
@@ -565,7 +565,7 @@ separator t = readToken' >>= \u ->
 -- typically used for non-empty lists
 parseList1 :: (Functor p,Monad p) => p Bool -> p a -> p [a]
 parseList1 sep pp = pp >>= \term ->
-                    map (term:) (parseList0 sep pp)
+                    fmap (term:) (parseList0 sep pp)
 
 -- parseList st sep pp tl  parses a list of pp's from tl;
 -- st determines whether the list has one element or not
@@ -586,6 +586,6 @@ parseList0 :: (Functor p,Monad p) => p Bool -> p a -> p [a]
 parseList0 sep pp = sep >>= \b ->
                     if b then
                        pp >>= \term ->
-                       map (term:) (parseList0 sep pp)
+                       fmap (term:) (parseList0 sep pp)
                     else
                        return []

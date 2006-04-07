@@ -85,7 +85,7 @@ printBlock opt block =
 
                  
 test :: Block -> String
-test block = concat (map (++"\n") (printBlock testOptions block))
+test block = concat (fmap (++"\n") (printBlock testOptions block))
                                       
 testOptions = (False,False,False,False,False,False,False,False,False,False,
                OutAscii)
@@ -97,7 +97,7 @@ testOptions = (False,False,False,False,False,False,False,False,False,False,
 type B a =      State ( Int,          [(Label,ReferTerm)]) a
 
 fetchLineNo :: B Int
-fetchLineNo = map fst fetchS4
+fetchLineNo = fmap fst fetchS4
             -- hbc 0.9999.4 will complain if we replace fetchS4 above by fetch,
             -- so we need a fetchS4 function with a more restricted type.
 
@@ -109,11 +109,11 @@ incLineNo = update' (doFst (+1))
 
 {-
 fetchHypsNo :: B Int
-fetchHypsNo = map snd3 fetch
+fetchHypsNo = fmap snd3 fetch
 -}
          
 lookupLabel :: Label -> B ReferTerm
-lookupLabel label = map snd fetchS4 >>= \table ->
+lookupLabel label = fmap snd fetchS4 >>= \table ->
                     let (ok,ref) = findAL table label in
                     if ok then
                        return ref
@@ -127,12 +127,12 @@ addLabel label ref = update' (doSnd ((label,ref):))
 
 printBlock1 :: DedOptions -> Int -> Block -> B [(String,String,String)]
 printBlock1 opt noHyps (Composite blocks) = 
-        map concat (mapL (printBlock1 opt noHyps) blocks)
+        fmap concat (mapL (printBlock1 opt noHyps) blocks)
 printBlock1 opt noHyps (Line line) =
-     map (\x -> [x]) (printLine opt noHyps "" "" line)
+     fmap (\x -> [x]) (printLine opt noHyps "" "" line)
 printBlock1 opt noHyps (Flag label lines block) =
      fetchLineNo >>= \lineStart ->
-     let sizeFlag = maximum (map (length.snd3) lines)
+     let sizeFlag = maximum (fmap (length.snd3) lines)
          bar = replicate (4+sizeFlag) '-'
          trips0 = [("",pole noHyps ++ bar,"")]
          trips2 = [("",pole noHyps ++ '|':tail bar,"")]
@@ -166,13 +166,13 @@ printRefers :: DedOptions -> [Refer] -> B [String]
 printRefers opt [] = return []
 printRefers opt (refer:refers) = 
     printRefer refer >>= \r ->
-    map (r:) (mapL printRefer refers)
+    fmap (r:) (mapL printRefer refers)
 
 
 printRefer :: Refer -> B String
 printRefer (RS s) = return s
 printRefer (RF s) = return s
-printRefer (RL label) = map printRef (lookupLabel label)
+printRefer (RL label) = fmap printRef (lookupLabel label)
 
 printRef :: ReferTerm -> String
 printRef (RefLine n) = n
@@ -206,7 +206,7 @@ flattenBlock bl = case flattenBlock' bl of
 
 flattenBlock' :: Block -> [Block]
 flattenBlock' (Composite blocks) = 
-  concat (map flattenBlock' blocks)
+  concat (fmap flattenBlock' blocks)
 flattenBlock' l@(Line _) = [l]
 flattenBlock' (Flag label lines block) = 
   [Flag label lines (flattenBlock block)]
@@ -224,9 +224,9 @@ addTail s (s1:ss) = s1 : addTail s ss
 
 javaPrintBlock1 :: DedOptions -> Block -> B [String]
 javaPrintBlock1 opt (Composite blocks) = 
-     map (addHead "C ") (javaPrintList (javaPrintBlock1 opt) blocks)
+     fmap (addHead "C ") (javaPrintList (javaPrintBlock1 opt) blocks)
 javaPrintBlock1 opt (Line line) =
-     map (addHead "L ") (javaPrintLine opt line)
+     fmap (addHead "L ") (javaPrintLine opt line)
 javaPrintBlock1 opt (Flag label lines block) =
      fetchLineNo >>= \lineStart ->
      javaPrintList (javaPrintLine opt) lines >>= \ss1 ->
@@ -239,7 +239,7 @@ javaPrintBlock1 opt (Flag label lines block) =
 javaPrintList :: (a -> B [String]) -> [a] -> B [String]
 javaPrintList printItem items = 
      mapL printItem items >>= \pItems ->
-     (return . addHead "(" . addTail ")" . concat) (map (addHead ",") pItems)
+     (return . addHead "(" . addTail ")" . concat) (fmap (addHead ",") pItems)
 
 javaPrintLine opt (label,form,just) =
      fetchLineNo >>= \lineNo ->
@@ -287,7 +287,7 @@ latexPrintBlock name opt block =
 
 latexPrintBlock1 :: Vari -> DedOptions -> Block -> B [String]
 latexPrintBlock1 name opt (Composite blocks) = 
-     map concat (mapL (latexPrintBlock1 name opt) blocks)
+     fmap concat (mapL (latexPrintBlock1 name opt) blocks)
 latexPrintBlock1 name opt (Line line) =
      latexPrintLine name opt "\\derline" line
 latexPrintBlock1 name opt (Flag label lines block) =
@@ -310,7 +310,7 @@ latexPrintHyps name opt lines =
      incLineNo >>
      return ["\\flagstart{" ++ name ++ show lineNo ++ flagInf ++ "}{" ++
              show (length lines) ++ "}{\\begin{array}{l}" ++
-             concat (map ((++"\\\\").snd3) lines) ++ "\\end{array}}{" ++
+             concat (fmap ((++"\\\\").snd3) lines) ++ "\\end{array}}{" ++
              justifString++"}"]
 
 -- flagInf is used to separate the number of the flag and the number of the
@@ -334,12 +334,12 @@ latexPrintRefers :: Vari -> DedOptions -> [Refer] -> B [String]
 latexPrintRefers name opt [] = return []
 latexPrintRefers name opt (refer:refers) = 
     latexPrintRefer name refer >>= \r ->
-    map (r:) (mapL (latexPrintRefer name) refers)
+    fmap (r:) (mapL (latexPrintRefer name) refers)
                                                                                
 latexPrintRefer :: Vari -> Refer -> B String
 latexPrintRefer _ (RS s) = return s
 latexPrintRefer _ (RF s) = return ("$"++s++"$")
-latexPrintRefer name (RL label) = map (latexPrintRef name) (lookupLabel label)
+latexPrintRefer name (RL label) = fmap (latexPrintRef name) (lookupLabel label)
 
 latexPrintRef :: Vari -> ReferTerm -> String
 latexPrintRef name (RefLine n) = "\\ref{" ++ name ++ n ++ "}"
@@ -364,7 +364,7 @@ printDeduct :: SyntaxInfo -> SpecialLemmas -> Context -> Vari ->
                (Term,Term,Sort) -> Int -> OutputMode -> E [String]
 printDeduct si lemmas con name (t,typ,sort) opt0 outputMode = 
   let opt = makeOpt opt0 outputMode
-      lemmas' = map (\((a,b,_),(c,d)) -> (c,(d,a,b))) (indexedToListIL lemmas)
+      lemmas' = fmap (\((a,b,_),(c,d)) -> (c,(d,a,b))) (indexedToListIL lemmas)
       (_,eBlock) = runState 100 
                    (makeDeduct' (si,opt,lemmas',con,sort,[]) (t,typ,sort)) in
   handle eBlock
@@ -488,7 +488,7 @@ optJava opt = case optOutputMode opt of
 -- structured deductions.
 makeDeduct' :: Stuff -> (Term,Term,Sort) -> D Block
 makeDeduct' stuff@(_,opt,_,_,_,_) tts = 
-      map fst (makeDeduct stuff tts)
+      fmap fst (makeDeduct stuff tts)
                                        
 dedNf opt term = if optBetaConv opt then term else bnf emptyCon term
 
@@ -828,7 +828,7 @@ makeDeductApp stuff@(si,opt,lemmas,con,_,_) t args =
                          subDeductToDeduct stuff bj 
                                            (tUsedArgs,typ,sort) >>= \br ->
                          makeDeductAppTail stuff (br,tUsedArgs,typ,sort) 
-                                           (map fst3 rest))
+                                           (fmap fst3 rest))
  else
     defaul
 
@@ -855,9 +855,9 @@ makeDeductAppTail stuff@(_,opt,_,con,ps,_) (br,t,typ,sort) args =
                  args'
               else
                  filter ((== ps).thd3) args' in
- combineLinesGen' stuff (map (pair makeDeduct) args'') >>= \brs ->
+ combineLinesGen' stuff (fmap (pair makeDeduct) args'') >>= \brs ->
  let brs' = br':brs in
- return (Composite (map fst brs'), (allElimString stuff typ', map snd brs'))
+ return (Composite (fmap fst brs'), (allElimString stuff typ', fmap snd brs'))
 
 -- mkAlls con n term  tries to convert term such that it starts with n @'s.
 -- if this doesn't succeed, then it starts with as many @'s as possible.
@@ -893,45 +893,45 @@ typeOfArgs con typ (arg:args) =
 makeDeductLemma :: String -> Vari -> Stuff -> [(Term,Term,Sort)] ->
                    D ([(Term,Term,Sort)],(Block,Justif))
 makeDeductLemma "AndI" conn stuff (_:_:lhs:rhs:rest) =
-  map (pair rest) (combineLines stuff [lhs,rhs] (conn ++ "I"))
+  fmap (pair rest) (combineLines stuff [lhs,rhs] (conn ++ "I"))
                                              
 makeDeductLemma ('A':'n':'d':'E':dir) conn stuff (_:_:conj:rest) =
-  map (pair rest) (combineLines stuff [conj] (conn++"E"++dir++" "))
+  fmap (pair rest) (combineLines stuff [conj] (conn++"E"++dir++" "))
 
 makeDeductLemma ('O':'r':'I':dir) conn stuff (_:_:t:rest) =
-  map (pair rest) (combineLines stuff [t] (conn ++ "I" ++ dir))
+  fmap (pair rest) (combineLines stuff [t] (conn ++ "I" ++ dir))
 
 makeDeductLemma "OrE" conn stuff (_:_:_:disj:lhs:rhs:rest) =
-  map (pair rest) (
+  fmap (pair rest) (
   combineLinesGen stuff [(makeDeduct,disj),
                          (makeAbsFlagNH,lhs),
                          (makeAbsFlagNH,rhs)] (conn++"E"))
    
 makeDeductLemma "NotI" conn stuff (_:t:rest) =
-  map (pair rest) (combineLinesGen stuff [(makeAbsFlagNH,t)] (conn ++ "I"))
+  fmap (pair rest) (combineLinesGen stuff [(makeAbsFlagNH,t)] (conn ++ "I"))
 
 makeDeductLemma "NotE" conn stuff (_:t1:t2:rest) =
-  map (pair rest) (combineLines stuff [t1,t2] (conn ++ "E"))
+  fmap (pair rest) (combineLines stuff [t1,t2] (conn ++ "E"))
 
 makeDeductLemma "FalseE" conn stuff (_:t:rest) =
-  map (pair rest) (combineLines stuff [t] "FalseE")
+  fmap (pair rest) (combineLines stuff [t] "FalseE")
       
 makeDeductLemma "ExistsI" conn stuff (wit:_:t:rest) =
-  map (pair rest) (combineLines stuff [wit,t] (conn ++ "I"))
+  fmap (pair rest) (combineLines stuff [wit,t] (conn ++ "I"))
 
 makeDeductLemma "ExistsE" conn stuff (_:_:quant:elim:rest) =
-  map (pair rest) (
+  fmap (pair rest) (
   combineLinesGen stuff [(makeDeduct,quant),
                          (makeAbsFlag2,elim)] (conn++"E"))
 
 makeDeductLemma "Refl" conn stuff (_:rest) =
-  map (pair rest) (combineLines stuff [] (conn++"refl"))
+  fmap (pair rest) (combineLines stuff [] (conn++"refl"))
 
 makeDeductLemma "Rewrite" conn stuff (_:_:_:eq:prop:rest) =
-  map (pair rest) (combineLines stuff [eq,prop] (rewrJust stuff conn True))
+  fmap (pair rest) (combineLines stuff [eq,prop] (rewrJust stuff conn True))
 
 makeDeductLemma "Lewrite" conn stuff (_:_:_:eq:prop:rest) =
-  map (pair rest) (combineLines stuff [eq,prop] (rewrJust stuff conn False))
+  fmap (pair rest) (combineLines stuff [eq,prop] (rewrJust stuff conn False))
 
 makeDeductLemma s _ stuff args = errS mdlError
 {-
@@ -956,7 +956,7 @@ makeDeductGT stuff@(si,_,_,con,_,_) term =
 combineLines :: Stuff -> [(Term,Term,Sort)] ->
                 String -> D (Block,Justif)
 combineLines stuff terms just =
-    let funTerms = map (pair makeDeduct) terms in
+    let funTerms = fmap (pair makeDeduct) terms in
     combineLinesGen stuff funTerms just
       
 -- t is typically (Term,Term,Sort)
@@ -964,7 +964,7 @@ combineLinesGen :: Stuff -> [(Stuff->t->D (Block,Refer) , t)] ->
                    String -> D (Block,Justif)
 combineLinesGen stuff funTerms just = 
    combineLinesGen' stuff funTerms >>= \ress ->
-   return (Composite (map fst ress), (just,map snd ress))
+   return (Composite (fmap fst ress), (just,fmap snd ress))
                                      
 -- t is typically (Term,Term,Sort)
 combineLinesGen' :: Stuff -> [(Stuff->t->D (Block,Refer) , t)] ->
@@ -972,7 +972,7 @@ combineLinesGen' :: Stuff -> [(Stuff->t->D (Block,Refer) , t)] ->
 combineLinesGen' stuff [] = return []
 combineLinesGen' stuff ((f,term):terms) =
    f stuff term >>= \res ->
-   map (res :) (combineLinesGen' stuff terms)
+   fmap (res :) (combineLinesGen' stuff terms)
 
 
 -- no references for hypothesis
@@ -1019,7 +1019,7 @@ doNHyp stuff@(si,_,_,con,_,_) n (term,typ) hypRefs=
         (_,cat, ts, it, uType) = deconstructBind typ' in
     newLabel >>= \labelH ->
     let (hyp,just,stuff'@(_,_,_,con',_,_)) = doHyp stuff (cat,ts,it) labelH in
-    map (doThd3 ((labelH, hyp, (just,hypRefs)):))
+    fmap (doThd3 ((labelH, hyp, (just,hypRefs)):))
         (doNHyp stuff' (n-1) (u,uType) hypRefs)
 {-
 doNHyp stuff@(_,_,_,con,_,_) 1 (term,typ) hypRefs=
@@ -1111,10 +1111,10 @@ doHyp (si,opt,lemmas,con,ps,varRefs) (cat,ts,it@(v,t,s)) label =
   (hyp, just, (si,opt,lemmas,con',ps,varRefs'))
            
 {- For testing
-printCon si con = concat (map (++"\n") (printContext displayString si (const True) (tol con)))
+printCon si con = concat (fmap (++"\n") (printContext displayString si (const True) (tol con)))
 
 tol :: Ord k => ListsAndOTree k v -> [(k,v)]
-tol (LAOT as t) = take 5 (concat (map indexedToListIL as) ++ indexedToListTWO t)
+tol (LAOT as t) = take 5 (concat (fmap indexedToListIL as) ++ indexedToListTWO t)
 -}
  
 getTypSort :: Stuff -> Context -> Term -> (Term,Sort)  

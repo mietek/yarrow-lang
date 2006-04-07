@@ -37,13 +37,13 @@ doQuery query =
           return
 
 -- First, we handle requests for information
-doQuery1 QGiveSyntaxInfo = map RSyntaxInfoIs fetchSyn
-doQuery1 QGiveGlobCon = map RGlobConIs fetchCon
-doQuery1 QGiveModules = map RModulesAre fetchModulesInfo
+doQuery1 QGiveSyntaxInfo = fmap RSyntaxInfoIs fetchSyn
+doQuery1 QGiveGlobCon = fmap RGlobConIs fetchCon
+doQuery1 QGiveModules = fmap RModulesAre fetchModulesInfo
 doQuery1 (QGiveModuleContents m) = qGiveModuleContents m
 doQuery1 QGiveUseFor = qGiveUseFor
 -- Now commands that change the state
-doQuery1 (QSetOptions opts) = setBoolOptions opts >> map RSyntaxInfoIs fetchSyn
+doQuery1 (QSetOptions opts) = setBoolOptions opts >> fmap RSyntaxInfoIs fetchSyn
 -- Now commands that can be handled in both modes
 doQuery1 QClearModule = qClearModule
 doQuery1 (QGiveBDReductionPath taskNr ct)= giveNormalForm bdcom taskNr ct
@@ -56,7 +56,7 @@ doQuery1 (QCheckTyping taskNr ctt) = qCheckType taskNr ctt
 doQuery1 (QCheckSubtype taskNr ctt) = qCheckSubtype taskNr ctt
 -- End Extension: Subtyping
 doQuery1 (QZMatch taskNr cvtt) = qZMatch taskNr cvtt
-doQuery1 (QGivePossibleImplArgs v) = map RPossibleImplArgsAre
+doQuery1 (QGivePossibleImplArgs v) = fmap RPossibleImplArgsAre
                                          (givePossibleImplArgs v)
 doQuery1 (QSetPrecAndAss via) = qSetPrecAndAss via
 doQuery1 (QSetBinder vn) = qSetBinder vn
@@ -187,7 +187,7 @@ addConElems' [] c = c
 addConElems' (ce:ces) c = addConElems' ces (ce `addC` c)
 
 multDecl :: [Vari] -> ContextE -> LContext
-multDecl vs ce = listToLocCon (map (\v -> (v,snd ce)) vs)
+multDecl vs ce = listToLocCon (fmap (\v -> (v,snd ce)) vs)
 
 -- throwing variables out of the context
 
@@ -199,7 +199,7 @@ resetVar v =
             genErrS ("Variable "++v++" is not declared")
          else                                       
          let (_,cKeep) = removeI c2 v
-             cDelete = map fst c1 ++ [v] in
+             cDelete = fmap fst c1 ++ [v] in
          fetchModulesInfo >>= \mi ->
          let lv = lastVarModuleDefined mi in
          if lv `elem` cDelete then
@@ -229,8 +229,8 @@ changeSystem sys =
       let f1 a = [a]
           f2 (a,b) = [a,b]
           f3 (a,b,c) = [a,b,c]
-          flat = concat (map f2 axioms) ++ concat (map f3 rules) ++
-                 concat (map f1 sortsSub) ++ concat (map f3 rulesSub) in
+          flat = concat (fmap f2 axioms) ++ concat (fmap f3 rules) ++
+                 concat (fmap f1 sortsSub) ++ concat (fmap f3 rulesSub) in
       if not (all (`elem` sorts) flat) then
          genErrS "Sort mentioned in axioms or rules does not exist"
       else

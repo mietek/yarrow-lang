@@ -253,7 +253,7 @@ unhideAllTac = hideGenTac [] (\new old -> True) ""
 -- hideGenTac vs mkNewGi s  changes the hiding status of variables
 hideGenTac :: [Vari] -> (Bool->Bool->Bool) -> String -> Tactic
 hideGenTac vs mkNewGi s (goal,locCon,gi,_) =
-          let locConV = map fst (locConToList locCon) in
+          let locConV = fmap fst (locConToList locCon) in
           if not (vs `sublist` locConV) then
              genErrS ("Only local variables can be " ++ s)
           else     
@@ -274,14 +274,14 @@ hideGenTac vs mkNewGi s (goal,locCon,gi,_) =
 -- and is not the name of some task (since a variable with that name can be
 -- added to the context at any moment).
 freshVar :: Vari -> LContext -> M Bool
-freshVar v locCon =  map (v `notElemC`) (allForbiddenVars locCon)
+freshVar v locCon =  fmap (v `notElemC`) (allForbiddenVars locCon)
 
 -- allForbiddenVars gives all variables in the global context and
 -- the names of tasks.
 allForbiddenVars :: LContext -> M (ListsAndTree Vari)
 allForbiddenVars locCon = fetchCon >>= \globCon ->
                           fetchTasks >>= \(_,tasks) ->
-                          return (map extractTaskId tasks +++ 
+                          return (fmap extractTaskId tasks +++ 
                                   domCon (locCon `addLocG` globCon))
                    
 -- intro tactics add variables to the local context
@@ -615,7 +615,7 @@ makeApplyErr messs =
     let addNum ([ES ""],_) = ""
         addNum ([ES mess,_],(exCon,_))= show (length (indexedToListIL exCon))
                                         ++ " arguments: " ++ mess
-        messs' = filter (not.null) (map addNum messs) in
+        messs' = filter (not.null) (fmap addNum messs) in
     genErrS (if null messs' then
                 "Matching can't find any substitution"
              else
@@ -688,9 +688,9 @@ applyGenTac combine options ((term,typ,_),termtyps) (goal,locCon,gi,totCon) =
         trips = combinePrems options si totCon typ termtyps'
         comb :: (LContext, Term, Subst) -> [(LContext, Subst)]
         comb (exCon,pat,sigma) = 
-          map (doSnd (sigma++)) 
+          fmap (doSnd (sigma++)) 
               (combine options si totCon goal (exCon,pat))
-        pairs = concat (map comb trips) in
+        pairs = concat (fmap comb trips) in
     checkExtSolutions trips >>
     -- Take a solution with the least number of arguments.
     let pairs' = sortOrd ordPair pairs in
@@ -782,7 +782,7 @@ combineConclMax options si con typ (exCon,pat) =
 
 doMatchConcl options si con typ (exCon,pat) =
        let sigmas = doMatch options si con exCon pat typ in
-       map (adaptConcl exCon) sigmas
+       fmap (adaptConcl exCon) sigmas
 
 adaptConcl :: LContext -> Subst -> 
               (LContext, Subst)
@@ -887,7 +887,7 @@ makeForwErr messs =
     let addNum ([ES mess,_],(exCon,_,_)) = 
                           show (length (indexedToListIL exCon))
                           ++ " arguments: " ++ mess
-        messs' = map addNum messs in
+        messs' = fmap addNum messs in
     genErrS (commaSpaces messs')
 
 checkExtSolutions :: [(LContext, Term, Subst)] -> M ()
@@ -895,7 +895,7 @@ checkExtSolutions [] = genErrS "Couldn't find premises of the right form"
 checkExtSolutions _ = skip
 
 forgetSorts :: [(Term,Term,Sort)] -> [(Term,Term)]
-forgetSorts = map (\(a,b,c) -> (a,b))
+forgetSorts = fmap (\(a,b,c) -> (a,b))
 
 ordTrip :: (LContext,Term,Subst) -> (LContext,Term,Subst) -> Bool
 ordTrip (lCon1,_,_) (lCon2,_,_) = 
@@ -947,7 +947,7 @@ forwardUltExCon (term,typ) tac (goal,locCon,gi,totCon) (exCon,resTyp,sigma) =
 tryHideTac :: Term -> Tactic
 tryHideTac t gl@(goal,locCon,gi,totCon) =
     let (ok1, v) = deconstructVar t 
-        ok2 = v `elem` (map fst (locConToList locCon)) in
+        ok2 = v `elem` (fmap fst (locConToList locCon)) in
     if ok1 && ok2 then
        hideTac [v] gl
     else
@@ -1020,7 +1020,7 @@ combinePrem options si con (term,typ) (exCon,pat) =
            (_,it@(v,t,s),body) = deconstructAll pat''
            sigmas = doMatch options si con exCon t typ
            exCon' = mkDecl it `addC` exCon in
-       map (adaptPrem (exCon', body) . ((v,term) :)) sigmas ++
+       fmap (adaptPrem (exCon', body) . ((v,term) :)) sigmas ++
        combinePrem options si con (term,typ) (exCon', body)
     else
     if isGenAll pat' then
@@ -1029,7 +1029,7 @@ combinePrem options si con (term,typ) (exCon,pat) =
            (_,it@(v,t,s),cts,ts,body) = deconstructGenAll pat''
            exCon' = mkGenDecl (it,cts,ts) `addC` exCon
            sigmas = doMatch options si con exCon' (mkVr v) term in
-       map (adaptPrem (exCon', body)) sigmas ++
+       fmap (adaptPrem (exCon', body)) sigmas ++
        combinePrem options si con (term,typ) (exCon', body)
     else
        []
@@ -1068,9 +1068,9 @@ combinePrems' options si con ((termtyp):ttlist) trip =
     let trips = combinePrem options si con termtyp trip 
         comb :: (LContext, Term, Subst) -> [(LContext, Term, Subst)]
         comb (exCon,pat,sigma) = 
-          map (doThd3 (sigma++)) 
+          fmap (doThd3 (sigma++)) 
               (combinePrems' options si con ttlist (exCon,pat)) in
-    concat (map comb trips)
+    concat (fmap comb trips)
 
 
 combinePrems :: MatchOptions -> SyntaxInfo -> Context -> Term -> 

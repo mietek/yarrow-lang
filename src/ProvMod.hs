@@ -38,7 +38,7 @@ doQueryP (QCommand taskId (PFocus n)) = focus taskId n
 doQueryP (QGiveHistory taskId) = fetchTacPaths taskId >>= \tacPaths ->
                                  fetchTacticTree taskId >>= \tacTree ->
                                  return (RHistoryIs (tacPaths, tacTree))
-doQueryP (QGiveTask taskId) = map RTaskIs (makeToProve taskId)
+doQueryP (QGiveTask taskId) = fmap RTaskIs (makeToProve taskId)
 doQueryP _ = errNotInProveMode
 
 errNotInProveMode :: M Result
@@ -54,7 +54,7 @@ nameToTactic :: TacticTerm -> Tactic
 nameToTactic (TRepeat t) =           repeatFinTac (nameToTactic t)
 nameToTactic (TTry t) =              tryTac (nameToTactic t)
 nameToTactic (t `TThen` ts)=         nameToTactic t `thenTac`
-                                     map nameToTactic ts
+                                     fmap nameToTactic ts
 nameToTactic (t `TElse` u) =         nameToTactic t `elseTac`
                                      nameToTactic u
 nameToTactic (TIntroVar v) =         introVar v
@@ -144,12 +144,12 @@ doTac taskId tacTerm =
    tactic (goal,locCon,gi,totCon) >>= \(term, newGoals) ->
    let tacTree' = replaceTPath tacTree tacPath 
                   (TTTac tacTerm (hn,(goal,locCon,gi),term) 
-                         (map TTHole newGoals)) in
+                         (fmap TTHole newGoals)) in
    setTacticTree taskId tacTree' >>
-   let newTacPaths = map (\n -> tacPath ++ [n]) 
+   let newTacPaths = fmap (\n -> tacPath ++ [n]) 
                          (take (length newGoals) [0..]) in
    setTacPaths taskId (newTacPaths ++ tail tacPaths) >>
-   map (RTactic (hn,term)) (makeToProve taskId)
+   fmap (RTactic (hn,term)) (makeToProve taskId)
 
 
 -- routine for making a selector
@@ -164,11 +164,11 @@ makeAllSelect occs = let unNum (NumOccurrence occ) = return occ
 {- tentative new code
 makeAllSelect :: [Occurrence] -> [(TermPath,Selector)]
 makeAllSelect [] = [(emptyTermPath, const True)]
-makeAllSelect occs = map makeSelect occs
+makeAllSelect occs = fmap makeSelect occs
 
 makeSelect (PathOccurrence path) = (path, const True)
 makeSelect (NumOccurrence occ) = occs = let unNum (NumOccurrence occ) = occ
-                         occs' = map unNum occs
+                         occs' = fmap unNum occs
                          sel n = null occs || n `elem` occs' in
                                     (emptyTermPath, sel)
 -}
@@ -274,7 +274,7 @@ doUndo taskId n =
 restart :: TaskId -> M Result
 restart taskId = fetchTaskItem taskId >>= \it ->
                  setTask taskId (initProver it) >>
-                 map RTaskIs (makeToProve taskId)
+                 fmap RTaskIs (makeToProve taskId)
 
 
 focus :: TaskId -> Int -> M Result
@@ -285,4 +285,4 @@ focus taskId n =
     else
        setTacPaths taskId ([tacPaths!!(n-1)] ++
                            take (n-1) tacPaths ++ drop n tacPaths) >>
-       map RTaskIs (makeToProve taskId)
+       fmap RTaskIs (makeToProve taskId)

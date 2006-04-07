@@ -47,13 +47,13 @@ parseMCommand taskNr =
   readToken' >>= \t0 ->
   let t = toLowerIdent t0 in
   case t of
-  Ident "bdred" -> nextToken >> map (CGiveBDReductionPath taskNr . 
+  Ident "bdred" -> nextToken >> fmap (CGiveBDReductionPath taskNr . 
                                      pair emptyLCon) parseTerm
-  Ident "bred"  -> nextToken >> map (CGiveBReductionPath  taskNr . 
+  Ident "bred"  -> nextToken >> fmap (CGiveBReductionPath  taskNr . 
                                      pair emptyLCon) parseTerm
-  Ident "dred"  -> nextToken >> map (CGiveDReductionPath  taskNr . 
+  Ident "dred"  -> nextToken >> fmap (CGiveDReductionPath  taskNr . 
                                      pair emptyLCon) parseTerm
-  Ident "type"  -> nextToken >> map (CGiveType taskNr . 
+  Ident "type"  -> nextToken >> fmap (CGiveType taskNr . 
                                      pair emptyLCon) parseTerm
   Ident "check" -> nextToken >> 
                    parseTerm >>= \t1 ->
@@ -61,15 +61,15 @@ parseMCommand taskNr =
                    let makeC f t2 = f taskNr (emptyLCon,t1,t2) in
                    case tok of
                       Colon -> nextToken >>
-                               map (makeC CCheckTyping) parseTerm
+                               fmap (makeC CCheckTyping) parseTerm
                       Conv  -> nextToken >>
-                               map (makeC CCheckBDConv) parseTerm
+                               fmap (makeC CCheckBDConv) parseTerm
                       -- Extension: Subtyping:
                       LEC   -> nextToken >>
-                               map (makeC CCheckSubtype) parseTerm
+                               fmap (makeC CCheckSubtype) parseTerm
                       -- End Extension: Subtyping
                       otherwise -> pErr "Expected : or :=:"
-  Ident "print" -> nextToken >> map (CPrintVar taskNr) parseVar
+  Ident "print" -> nextToken >> fmap (CPrintVar taskNr) parseVar
   Ident "deduction"-> parseDeduction taskNr OutAscii
   Ident "latexdeduction"-> parseDeduction taskNr OutLatex
   Ident "javadeduction"-> parseDeduction taskNr OutJava
@@ -95,18 +95,18 @@ parseMCommand taskNr =
                         return CHelp
                      else
                         readTokensTillEoln >>= \ts ->
-                        return (CHelpOn (concat (map nacs ts)))
+                        return (CHelpOn (concat (fmap nacs ts)))
   Ident "option"  -> nextToken >>
                      startsWith Eoln >>= \b ->
                      if b then
                         return CGiveOptions
                      else
-                        map CSetOptions parseOption
+                        fmap CSetOptions parseOption
   Ident "infix"   -> infHelp NoAssoc
   Ident "infixr"  -> infHelp RightAssoc
   Ident "infixl"  -> infHelp LeftAssoc
   Ident "binder"  -> nextToken >>
-                     map CSetBinder parseVar
+                     fmap CSetBinder parseVar
   Ident "latexvar"-> impHelp CSetLaTeX
   Ident "implicit"-> impHelp CSetImplArgs
   Ident "read"    -> nextToken >> 
@@ -122,21 +122,21 @@ parseMCommand taskNr =
   Ident "var"     -> nextToken >>
                      parseDecls >>= \(vs,t,constrs,cts) ->
                      case constrs of
-                     CNone -> return (CDeclareVars ((map fst vs),t))
+                     CNone -> return (CDeclareVars ((fmap fst vs),t))
                      -- Extension: Subtyping:
                      CSub -> if (fst t)==dummyTerm then
                                 -- then t wasn't given by user
                                 return (CDeclareVarsSub 
-                                                 ((map fst vs),head cts))
+                                                 ((fmap fst vs),head cts))
                              else
                                 return (CDeclareVarsSubW 
-                                                 ((map fst vs),head cts,t))
+                                                 ((fmap fst vs),head cts,t))
                      -- End Extension: Subtyping
-  Ident "reset"   -> nextToken >> map CDelFromVar parseVar
+  Ident "reset"   -> nextToken >> fmap CDelFromVar parseVar
   Ident "system"  -> nextToken >> 
                      readToken' >>= \t ->
                      case t of
-                     LeftP -> map CSetTypingSystem parseSystem
+                     LeftP -> fmap CSetTypingSystem parseSystem
                      otherwise -> return CGiveTypingSystem
   Ident "use"     -> nextToken >>
                      startsWith Eoln >>= \b ->
@@ -153,20 +153,20 @@ parseMCommand taskNr =
                      readToken' >>= \t ->
                      case t of
                      Eoln -> return CGiveModules
-                     otherwise -> map CLoadModule parseFilename
+                     otherwise -> fmap CLoadModule parseFilename
   Ident "save"    -> nextToken >> 
-                     map CSaveModule parseFilename
+                     fmap CSaveModule parseFilename
   Ident "clear"   -> nextToken >> return CClearModule
   Ident "path"    -> nextToken >>
                      readToken' >>= \t ->
                      case t of
                      Eoln -> return CShowPath
-                     otherwise -> map CAddPath parseFilename
+                     otherwise -> fmap CAddPath parseFilename
   Ident "task" ->    nextToken >> 
                      readToken' >>= \t ->
                      case t of
                      Eoln -> return CGiveTasks
-                     otherwise -> map CSetTask parseVar
+                     otherwise -> fmap CSetTask parseVar
   -- ! Just for testing !      
   Ident "zmatch" ->  nextToken >>
                      eat LeftP "" >>
@@ -188,7 +188,7 @@ parseMCommand taskNr =
                      return (CZwerver (t1,t2))
   otherwise       -> return CNoParse
  
-parseComHelp com pars extract = map (com . extract fst) pars
+parseComHelp com pars extract = fmap (com . extract fst) pars
 
 parseGiveContext latex =
        startBasic >>= \b ->
@@ -244,7 +244,7 @@ infHelp assoc = impHelp (\(v,i) -> CSetPrecAndAss (v,i,assoc))
 
 impHelp com = nextToken >>
               eatNum >>= \n ->
-              map (com . flip pair n) parseVar
+              fmap (com . flip pair n) parseVar
 
 parseOption = let errMess = "Expected +opt or -opt" in
               eatOper errMess >>= \v ->
@@ -259,7 +259,7 @@ readTokensTillEoln = readToken' >>= \t ->
                      case t of
                      Eoln -> return []
                      otherwise -> nextToken >>
-                                  map (t:) readTokensTillEoln
+                                  fmap (t:) readTokensTillEoln
 
 
 
@@ -311,9 +311,9 @@ quintupleToSystem :: ([(Sort,[Extension])],
                       [(Sort,Sort,Sort)]) -> 
                      System
 quintupleToSystem (sorts',axioms,rules, sortsSub, rulesSub) =
-              let mkExs (s,exs) = map (pair s) exs in
-              ((map fst sorts', axioms, rules, sortsSub, rulesSub), 
-               concat (map mkExs sorts'))
+              let mkExs (s,exs) = fmap (pair s) exs in
+              ((fmap fst sorts', axioms, rules, sortsSub, rulesSub), 
+               concat (fmap mkExs sorts'))
 
 parseSortExs :: Parse [(Sort,[Extension])]
 parseSortExs = parseList startBasic (separator Comma) parseSortEx

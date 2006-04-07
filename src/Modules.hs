@@ -310,7 +310,7 @@ performSaveModule ::
                       [(Vari,Int)],[((Vari,String,[Sort]),(Vari,Int))],
                       [ContextE]) ->
               M (String,Checksum)
-performSaveModule all = map (\(_,(f,c)) -> (f [],c))
+performSaveModule all = fmap (\(_,(f,c)) -> (f [],c))
                         (perform (id,startChecksum) (saveModule all))
 
 
@@ -353,7 +353,7 @@ mTakeUntil p = mReadChar >>= \c ->
                   return ""
                else
                mNextChar >>
-               map (c:) (mTakeUntil p)
+               fmap (c:) (mTakeUntil p)
 
 mReadIdent :: ModulesI String
 mReadIdent = mTakeUntil (`elem` ":().,")  -- " \n:{}().,")
@@ -466,7 +466,7 @@ loadVar :: ModulesI Vari
 loadVar =  mReadIdent
 
 loadSort :: ModulesI Sort
-loadSort = map SORT mReadIdent
+loadSort = fmap SORT mReadIdent
 
 loadContextE :: ModulesI ContextE
 loadContextE = loadContCat >>= \cat ->
@@ -490,7 +490,7 @@ loadContext = mReadChar >>= \t ->
               '}' -> return []
               otherwise -> loadContextE >>= \ce ->
                            mEat '\n' >>
-                           map (ce :) loadContext
+                           fmap (ce :) loadContext
                                       
 loadSystem :: ModulesI System
 loadSystem = loadPTSystem >>= \pts ->
@@ -673,7 +673,7 @@ loadList la =
                          case c of
                          ',' -> mNextChar >>
                                 la >>= \t ->
-                                map (t:) loadList'
+                                fmap (t:) loadList'
                          otherwise -> return []
 
 ---------------
@@ -716,7 +716,7 @@ checkConflicts ids =
     fetchCon >>= \con ->
     domAllLocCon >>= \locVars ->
     let unsort (SORT s) = s
-        sortsAsIds = map unsort sorts
+        sortsAsIds = fmap unsort sorts
         globVars = domGCon con
         allIds = sortsAsIds +++ (locVars +++ globVars)
         conflicts = filter (`elemC` allIds) ids
@@ -799,7 +799,7 @@ setLemmas ((v,key):l) = setLemma key v >>
 qLoadModuleInput :: ModuleName -> String -> M Result
 qLoadModuleInput modName contents =
         fetchModulesInfo >>= \mi ->
-        if modName `elem` map fst3 mi then -- module already loaded
+        if modName `elem` fmap fst3 mi then -- module already loaded
            return RDone -- of (RModulesAre mi)  -- nothing 
         else
         performLoadMod1 contents >>= \(sys,imports,st)->
@@ -812,7 +812,7 @@ qLoadModuleInput modName contents =
                genErrS "Module not valid in current PTS"
          else
             skip) >>
-        let loadList = map fst imports \\ map fst3 mi in
+        let loadList = fmap fst imports \\ fmap fst3 mi in
         if not (null loadList) then
            -- load imported modules first, then try again.
            return (RLoadList (loadList ++ [modName]))
@@ -824,7 +824,7 @@ qContinueLoad :: StatusLoad -> M Result
 qContinueLoad (StartLoading modName sys st imports) =
      -- Precondition: modName is not yet loaded
      performLoadMod2 st >>= \(t1,t2,t3,t4,t5,fileCon,t7)->
-     let varsOfFile = toC (map fst fileCon) in
+     let varsOfFile = toC (fmap fst fileCon) in
      checkConflicts varsOfFile >>
      fetchModulesInfo >>= \mi ->
      splitContext mi >>= \(userCon,modCon) ->
@@ -884,7 +884,7 @@ continueLoad modName (precs,binds,latexs,impls,lemmas,varsOfFile,checksum)
 qSaveModule :: ModuleName -> M Result
 qSaveModule modName = 
             fetchModulesInfo >>= \mi ->
-            let miModNames = map fst3 mi in
+            let miModNames = fmap fst3 mi in
             if take 1 miModNames == [modName] then
                saveMod1 modName (tail mi)
                --("Module \"" ++ modName ++ "\" updated\n")
@@ -906,8 +906,8 @@ saveMod1 modName mi =
      fetchLatexVar >>= \allLatex ->
      fetchImplicits >>= \allImplicits ->
      fetchLemmas >>= \allLemmas ->
-     let varsOfF = toC (map fst newCon) in
-     let imports = map (\(name,_,checksum) -> (name,checksum)) mi
+     let varsOfF = toC (fmap fst newCon) in
+     let imports = fmap (\(name,_,checksum) -> (name,checksum)) mi
          precInfo = partA (indexedToListIL allPrec) varsOfF
          bindInfo = filter (`elem` varsOfF) allBind
          latexInfo = partA (indexedToListIL allLatex) varsOfF
