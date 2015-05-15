@@ -1,0 +1,21 @@
+name:               yarrow
+version:            1.20
+build-type:         Simple
+cabal-version:      >= 1.2
+author:             Jan Zwanenburg <janz@cs.kun.nl>
+maintainer:         Miëtek Bak <hello@mietek.io>
+stability:          experimental
+homepage:           http://www.cs.kun.nl/~janz/yarrow/
+synopsis:           Proof assistant for Pure Type Systems
+description:
+  Yarrow is a proof-assistant for Pure Type Systems (PTSs) with several
+  extensions.  In Yarrow you can experiment with various pure type systems,
+  representing different logics and programming languages.  A basic
+  knowledge of Pure Type Systems and the Curry-Howard-de Bruijn isomorphism
+  is required.
+
+executable yarrow
+  hs-source-dirs:     src
+  main-is:            CLIMain.hs
+  ghc-options:        -O2 -Wall -threaded
+  build-depends:      haskell98
