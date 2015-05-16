@@ -19,9 +19,9 @@
         with the first and last variable that every module contains.</P>
  <DT>Example:
  <DD><CODE>Load "integer"</CODE>
- <DT>See also:                          
+ <DT>See also:
  <DD><A HREF="#Save"><CODE>Save</CODE></A>,
      <A HREF="#Clear"><CODE>Clear</CODE></A>,
      <A HREF="#Read"><CODE>Read</CODE></A>,
      <A HREF="#Path"><CODE>Path</CODE></A>
-</DL>  
+</DL>

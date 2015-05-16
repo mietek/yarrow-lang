@@ -1,5 +1,5 @@
 -- File: SyntaxI
--- Description: This module defines the type SyntaxInfo, which holds 
+-- Description: This module defines the type SyntaxInfo, which holds
 --   information about the type system used and syntactic information,
 --   e.g. the associativity of operators.
 
@@ -14,7 +14,7 @@ module SyntaxI(Assoc(..), Precedence, Binder, LatexVar, Implicit, AllOptions,
                extractRules, extractSortsSub, extractRulesSub,
                fetchSys, setSys, isIdentSort,
                -- PRECEDENCE
-               extractPrecedence, insertPrecedence, extractPrec, 
+               extractPrecedence, insertPrecedence, extractPrec,
                {- defaultAssoc -} fetchPrecedence, fetchPrec, setPrec,
                -- BINDER
                extractBinder, insertBinder, extractBind, fetchBinder,
@@ -34,10 +34,10 @@ module SyntaxI(Assoc(..), Precedence, Binder, LatexVar, Implicit, AllOptions,
                extractOptShowProofterm, fetchOptShowRedPath,
                -- SIMPLE PRINTING ROUTINES
                isO1, isO, isOper,
-               printHnumSt, printVarSt, printVarListSt, 
+               printHnumSt, printVarSt, printVarListSt,
                printSortSt, printRule12St
                ) where
-               
+
 import Char(isDigit)
 import General
 import HaTuple
@@ -47,7 +47,7 @@ import Collect
 
 
 
--- associativity of operators 
+-- associativity of operators
 data Assoc = NoAssoc | LeftAssoc | RightAssoc
 
 instance Eq Assoc where
@@ -59,7 +59,7 @@ instance Eq Assoc where
 
 -- Precedence is an association list, holding operators with their precedence
 -- and associativity.
-type Precedence = IL Vari (Int,Assoc)              
+type Precedence = IL Vari (Int,Assoc)
 
 -- Binder is a list of variables that are treated as a binder.
 type Binder = [Vari]
@@ -72,7 +72,7 @@ type LatexVar = IL Vari Int
 -- information of how may implicit arguments it can have.
 type Implicit =  IL Vari Int
 
-                                                     
+
 -- AllOptions contains the values of a number of options
 type AllOptions = BoolOptions
 
@@ -82,7 +82,7 @@ type BoolOptions = (Bool,Bool,Bool,Bool)
 -- option 2: implicit paramaters are possible
 -- option 3: show proof term
 -- option 4: show reduction path
-                    
+
 
 -- SyntaxInfo holds also the type system used, so the name is a little
 -- misleading
@@ -92,7 +92,7 @@ type SyntaxInfo = (System,AllOptions,Precedence,Binder,LatexVar,Implicit)
 -- only for testing
 dummySyntax :: SyntaxInfo
 dummySyntax = ((([],[],[],[],[]),[]),(True,False,True,False),
-               emptyI,[],emptyI,emptyI) 
+               emptyI,[],emptyI,emptyI)
 
 
 -------------------------------------------------
@@ -118,7 +118,7 @@ class (Functor m,Monad m) => HasSyntax m where
      setSyn     :: SyntaxInfo -> m ()
      fetchSyn    = updateSyn id
      setSyn new  = fmap (const ()) (updateSyn (\old -> new))
-   
+
 updateSyn' :: HasSyntax m => (SyntaxInfo->SyntaxInfo)-> m ()
 updateSyn' f = fmap (const ()) (updateSyn f)
 
@@ -129,7 +129,7 @@ instance PartSyntax s => HasSyntax (State s) where
 
 updateS :: (s->s) -> State s s
 updateS = update
-   
+
 
 
 -- Now all variables for reading and writing syntaxinfo will follow,
@@ -210,12 +210,12 @@ insertBoolOptions = insertAllOptions
 type CodeOption = (BoolOptions->Bool,Bool->BoolOptions->BoolOptions)
 
 fetchOptGen :: HasSyntax m => CodeOption -> m Bool
-fetchOptGen opt = fmap ((fst opt) . extractBoolOptions) fetchSyn 
+fetchOptGen opt = fmap ((fst opt) . extractBoolOptions) fetchSyn
 
 setBoolOptions :: HasSyntax m => BoolOptions -> m ()
 setBoolOptions opts = updateSyn' (insertBoolOptions (const opts))
 
--- specific stuff       
+-- specific stuff
 
 optShowSort      :: CodeOption
 optShowSort      = (fst4, doFst4 . const)
@@ -267,10 +267,10 @@ defaultAssoc :: (Int,Assoc)
 defaultAssoc = (6,NoAssoc)
 
 fetchPrecedence :: HasSyntax m => m Precedence
-fetchPrecedence = fmap extractPrecedence fetchSyn 
+fetchPrecedence = fmap extractPrecedence fetchSyn
 
 fetchPrec :: HasSyntax m => Vari -> m (Int,Assoc)
-fetchPrec v = fetchSyn >>= \si -> 
+fetchPrec v = fetchSyn >>= \si ->
               return (extractPrec si v)
 
 setPrec :: HasSyntax m => Vari -> (Int,Assoc) -> m ()
@@ -338,10 +338,10 @@ defaultImplic :: Int
 defaultImplic = 0
 
 fetchImplicits :: HasSyntax m => m Implicit
-fetchImplicits = fmap extractImplicit fetchSyn 
+fetchImplicits = fmap extractImplicit fetchSyn
 
 fetchImplicit :: HasSyntax m => Vari -> m Int
-fetchImplicit v = fetchSyn >>= \si -> 
+fetchImplicit v = fetchSyn >>= \si ->
                   return (getImplicit si v)
 
 setImplicit :: HasSyntax m => Vari -> Int -> m ()
@@ -362,17 +362,17 @@ removeImplicit v = updateSyn' (insertImplicit (snd . flip removeI v))
 --           user interface), to produce error messages.
 --        2) They are not polymorphic, but just deliver a string.
 
-           
+
 -- All these routines return a character string.
 -- Their name ends in St (for String), and they get as parameter the
--- syntactic info.                                    
+-- syntactic info.
 
 -- isO1 checks this character can be the start of an operator
 isO1 :: Char -> Bool
 isO1 c = c `elem` "+<>/\\&!$%^~|@;=[]-"
 
 -- isO  checks this character can occur after the first character of
--- an operator     
+-- an operator
 isO :: Char -> Bool
 isO '\'' = True
 isO '_' = True
@@ -384,7 +384,7 @@ isOper :: Vari -> Bool
 isOper = isO1 . head
 
 printHnumSt si (N n) =  "?"++show n
-                       
+
 printVarSt :: SyntaxInfo -> Vari -> String
 printVarSt si v | isOper v || extractBind si v = "("++v++")"
 printVarSt si v  = v
@@ -393,13 +393,11 @@ printVarListSt :: SyntaxInfo -> [Vari] -> String
 printVarListSt si = prList (printVarSt si) ","
 
 printVarListSpaceSt :: SyntaxInfo -> [Vari] -> String
-printVarListSpaceSt si = prList (printVarSt si) " "              
+printVarListSpaceSt si = prList (printVarSt si) " "
 
 printSortSt :: SyntaxInfo -> Sort -> String
 printSortSt si s = sortToIdent s
 
 printRule12St :: SyntaxInfo -> Sort -> Sort -> String
-printRule12St si s1 s2 = "("++ printSortSt si s1 ++","++ 
+printRule12St si s1 s2 = "("++ printSortSt si s1 ++","++
                          printSortSt si s2 ++ ",?)"
-
-

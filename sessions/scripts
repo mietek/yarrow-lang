@@ -11,9 +11,9 @@ Because of this set-up, script files can easily be (re-)compiled to code
 files by performing the following actions:
 - Go to the directory containing the script file
 - Start Yarrow
-- Enter 
+- Enter
     read "name"
-- The script should be executed succesfully. Then enter 
+- The script should be executed succesfully. Then enter
     save "name"
   This creates a code file.
 In later sessions, it is sufficient to type

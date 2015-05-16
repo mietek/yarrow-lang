@@ -32,13 +32,13 @@ showModules = fetchModulesInfo >>= \mi ->
                  return ["No modules"]
               else
               fetchSyn >>= \si ->
-              let showM (n,(firstV,lastV),cs) = 
-                           "  \""++ n ++ "\": " ++ 
-                           if firstV == dummyVar then 
+              let showM (n,(firstV,lastV),cs) =
+                           "  \""++ n ++ "\": " ++
+                           if firstV == dummyVar then
                               "(empty)"
                            else if firstV==lastV then
                               printVarSt si firstV
-                           else 
+                           else
                               printVarSt si firstV ++
                                 ".." ++ printVarSt si lastV in
               return ("Current modules:" :
@@ -53,10 +53,10 @@ printSystemSt si sys = let (s,a,r,ss,rs) = systemToQuintuple sys in
                         printRulesSt si rs)
 
 systemToQuintuple :: System ->
-                     ([(Sort,[Extension])], 
-                      [(Sort,Sort)], 
+                     ([(Sort,[Extension])],
+                      [(Sort,Sort)],
                       [(Sort,Sort,Sort)],
-                      [Sort], 
+                      [Sort],
                       [(Sort,Sort,Sort)])
 systemToQuintuple ((ss,as,rs,sss,rss),exS) =
                   let exsFor s = (s, fmap snd (filter ((s==).fst) exS)) in
@@ -66,9 +66,9 @@ printSortExsSt :: SyntaxInfo -> [(Sort,[Extension])] -> String
 printSortExsSt si s = commas (fmap (printSortExSt si) s)
 
 printSortExSt :: SyntaxInfo -> (Sort,[Extension]) -> String
-printSortExSt si (s,exs) = printSortSt si s ++ 
+printSortExSt si (s,exs) = printSortSt si s ++
                            concat (fmap (("->"++).printExtension) exs)
-                                
+
 printExtension :: Extension -> String
 -- Extension: Records:
 printExtension Records = "records"

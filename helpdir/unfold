@@ -2,7 +2,7 @@
  <DT>Syntax:
  <DD>
   <OL>
-  <LI><CODE>Unfold</CODE> <VAR>var</VAR> 
+  <LI><CODE>Unfold</CODE> <VAR>var</VAR>
   <LI><CODE>Unfold</CODE> <VAR>num-list</VAR> <VAR>var</VAR>
   <LI><CODE>Unfold</CODE> <VAR>var</VAR> <CODE>In</CODE> <VAR>var2</VAR>
   <LI><CODE>Unfold</CODE> <VAR>num-list</VAR> <VAR>var</VAR> <CODE>In</CODE> <VAR>var2</VAR>
@@ -15,7 +15,7 @@
                in variant 2 and 4 only the numbered
                occurrences of the variable are unfolded.
                Here the explicit prefix order is used,
-               this can be different from the order in the text if infix 
+               this can be different from the order in the text if infix
                operators or implicit arguments are used!<BR>
                After the unfolding the term is simplified.
  <DT>Example:
@@ -32,4 +32,3 @@
      <A HREF="#Simplify"><CODE>Simplify</CODE></A>,
      <A HREF="#Convert"><CODE>Convert</CODE></A>
 </DL>
-

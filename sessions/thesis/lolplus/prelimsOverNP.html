@@ -28,14 +28,14 @@
                        E y1 y2 :
               @Y:*s. (Y-&gt;Y-&gt;*p) -&gt; (Y-&gt;Y-&gt;*p)
 </FONT><FONT COLOR="#000000">implicit 1 MakePER
-              
+
 </FONT><FONT COLOR="#0000FF">prove MakePER_ext : @Y:*s. @R:Y-&gt;Y-&gt;*p. @y1,y2:Y. R y1 y2 -&gt; MakePER R y1 y2
 
-</FONT><FONT COLOR="#0000FF">prove MakePER_sym : @Y:*s. @R:Y-&gt;Y-&gt;*p. @y1,y2:Y. 
+</FONT><FONT COLOR="#0000FF">prove MakePER_sym : @Y:*s. @R:Y-&gt;Y-&gt;*p. @y1,y2:Y.
                           MakePER R y1 y2 -&gt; MakePER R y2 y1
 
 
-</FONT><FONT COLOR="#0000FF">prove MakePER_trans : @Y:*s. @R:Y-&gt;Y-&gt;*p. @y1,y2,y3:Y. 
+</FONT><FONT COLOR="#0000FF">prove MakePER_trans : @Y:*s. @R:Y-&gt;Y-&gt;*p. @y1,y2,y3:Y.
                        MakePER R y1 y2 -&gt;  MakePER R y2 y3 -&gt; MakePER R y1 y3
 
 </FONT><FONT COLOR="#0000FF">Prove MakePER_PER : @Y:*s.@R:Y-&gt;Y-&gt;*p. IsPER (MakePER R)
@@ -69,16 +69,16 @@
 </FONT><FONT COLOR="#0000FF">prove MakeER_refl : @Y:*s. @R:Y-&gt;Y-&gt;*p. @y:Y. MakeER R y y
 
 
-</FONT><FONT COLOR="#0000FF">prove MakeER_sym : @Y:*s. @R:Y-&gt;Y-&gt;*p. @y1,y2:Y. 
+</FONT><FONT COLOR="#0000FF">prove MakeER_sym : @Y:*s. @R:Y-&gt;Y-&gt;*p. @y1,y2:Y.
                           MakeER R y1 y2 -&gt; MakeER R y2 y1
 
-</FONT><FONT COLOR="#0000FF">prove MakeER_trans : @Y:*s. @R:Y-&gt;Y-&gt;*p. @y1,y2,y3:Y. 
+</FONT><FONT COLOR="#0000FF">prove MakeER_trans : @Y:*s. @R:Y-&gt;Y-&gt;*p. @y1,y2,y3:Y.
                        MakeER R y1 y2 -&gt;  MakeER R y2 y3 -&gt; MakeER R y1 y3
 
 
 
 
-</FONT><FONT COLOR="#0000FF">Prove rel_LeftC : @A,B:*s. @(~):A-&gt;B-&gt;*p. 
+</FONT><FONT COLOR="#0000FF">Prove rel_LeftC : @A,B:*s. @(~):A-&gt;B-&gt;*p.
                   @a1,a2:A.@b:B. a1~b -&gt; a2~b -&gt; LeftC (~) a1 a2
 
 
@@ -93,7 +93,7 @@
                                                     LeftC (~) y1 y1
 
 
-</FONT><FONT COLOR="#0000FF">Prove rel_RightC : @A,B:*s. @(~):A-&gt;B-&gt;*p. 
+</FONT><FONT COLOR="#0000FF">Prove rel_RightC : @A,B:*s. @(~):A-&gt;B-&gt;*p.
                   @a:A.@b1,b2:B. a~b1 -&gt; a~b2 -&gt; RightC (~) b1 b2
 
 </FONT><FONT COLOR="#0000FF">prove IsZclosed__IsPER_LeftC : @Y,Z:*s. @R:Y-&gt;Z-&gt;*p.
@@ -104,7 +104,7 @@
 </FONT><FONT COLOR="#0000FF">prove IsZclosed__IsPER_RightC : @Y,Z:*s. @R:Y-&gt;Z-&gt;*p.
                     IsZclosed R -&gt; IsPER (RightC R)
 
-                  
+
 </FONT><FONT COLOR="#0000FF">def MakeZclosed := \Y,Z:*s. \R:Y-&gt;Z-&gt;*p. \y:Y.\z:Z.
                      @sim:Y-&gt;Z-&gt;*p.
                         (@y1:Y.@z1:Z. R y1 z1 -&gt; sim y1 z1) -&gt;

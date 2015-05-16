@@ -28,11 +28,11 @@ instance IOMonad IO where
     appendFil = appendFile
     getLin = getLine
     putSt = putStr
-    
+
 ------------------------------
 -- An I/O State Error monad --
 ------------------------------
-                            
+
 -- The following type-constructor is called Imp because it allows
 -- more-or-less imperative programming
 
@@ -63,15 +63,15 @@ instance IOMonad (Imp s) where
 convertIOtoImp :: IO a -> String -> Imp s a
 convertIOtoImp com mess = SIOSE (\state -> fmap (\x -> (state,x)) com')
                         where com' = catch (fmap return com)
-                                           (\_ -> return (errS mess)) 
-      
+                                           (\_ -> return (errS mess))
+
 -- Imp has a state:
 
 instance StateMonad Imp where
      update f = SIOSE (\s -> return (f s,return s))  -- is this what we want?
      fetch = update id
      set new = update' (\old -> new)
-     update' f = SIOSE (\s -> return (f s,return ())) 
+     update' f = SIOSE (\s -> return (f s,return ()))
                  -- fmap (const ()) (update f)
 
 
@@ -79,7 +79,7 @@ instance PreErrorMonad (Imp a) where
   err e = SIOSE (\s -> return (s,err e))
 
 instance ErrorSMonad (Imp a) where
-    handleS ~(SIOSE x) hand f = 
+    handleS ~(SIOSE x) hand f =
                      SIOSE (\st -> (x st) >>= \(st',x') ->
                                    handle x'
                                    (\e -> let (SIOSE hand') = hand e in

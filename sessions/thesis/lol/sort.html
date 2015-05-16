@@ -20,10 +20,10 @@
 </FONT><FONT COLOR="#000000">-- This is a nice definition, since there are only two clauses, that follow
 </FONT><FONT COLOR="#000000">-- the structure of lists.
 </FONT><FONT COLOR="#000000">
-</FONT><FONT COLOR="#0000FF">Def Ordered := \l:List Nat. 
+</FONT><FONT COLOR="#0000FF">Def Ordered := \l:List Nat.
 </FONT><FONT COLOR="#0000FF">               @P:List Nat -&gt; *p.
 </FONT><FONT COLOR="#0000FF">               P (nil Nat) -&gt;
-</FONT><FONT COLOR="#0000FF">               (@a:Nat.@m:List Nat. P m -&gt; (@b:Nat. Elem b m -&gt; a&lt;=b) -&gt; 
+</FONT><FONT COLOR="#0000FF">               (@a:Nat.@m:List Nat. P m -&gt; (@b:Nat. Elem b m -&gt; a&lt;=b) -&gt;
 </FONT><FONT COLOR="#0000FF">                                    P (a;m)) -&gt;
 </FONT><FONT COLOR="#0000FF">               P l :
 </FONT><FONT COLOR="#0000FF">               List Nat -&gt; *p
@@ -34,8 +34,8 @@
 </FONT><FONT COLOR="#000000">Assumption
 </FONT><FONT COLOR="#000000">Exit
 </FONT><FONT COLOR="#000000">
-</FONT><FONT COLOR="#0000FF">Prove Ordered_cons : @a:Nat.@m:List Nat. Ordered m -&gt; 
-</FONT><FONT COLOR="#0000FF">                                        (@b:Nat. Elem b m -&gt; a&lt;=b) -&gt; 
+</FONT><FONT COLOR="#0000FF">Prove Ordered_cons : @a:Nat.@m:List Nat. Ordered m -&gt;
+</FONT><FONT COLOR="#0000FF">                                        (@b:Nat. Elem b m -&gt; a&lt;=b) -&gt;
 </FONT><FONT COLOR="#0000FF">                                        Ordered (a;m)
 </FONT><FONT COLOR="#000000">Intros
 </FONT><FONT COLOR="#000000">Unfold Ordered
@@ -54,7 +54,7 @@
 </FONT><FONT COLOR="#000000">Apply Elem_nil_ On H
 </FONT><FONT COLOR="#000000">Exit
 </FONT><FONT COLOR="#000000">
-</FONT><FONT COLOR="#0000FF">Prove Ordered_exh : @l:List Nat. Ordered l -&gt; 
+</FONT><FONT COLOR="#0000FF">Prove Ordered_exh : @l:List Nat. Ordered l -&gt;
 </FONT><FONT COLOR="#0000FF">                     l = nil Nat \/
 </FONT><FONT COLOR="#0000FF">                     Ex a:Nat. Ex m:List Nat. l = a;m /\
 </FONT><FONT COLOR="#0000FF">                                              (@b:Nat. Elem b m -&gt; a&lt;=b) /\
@@ -84,7 +84,7 @@
 </FONT><FONT COLOR="#000000">Assumption
 </FONT><FONT COLOR="#000000">Exit
 </FONT><FONT COLOR="#000000">
-</FONT><FONT COLOR="#0000FF">Prove Ordered_cons_ : @a:Nat.@m:List Nat. Ordered (a;m) -&gt; 
+</FONT><FONT COLOR="#0000FF">Prove Ordered_cons_ : @a:Nat.@m:List Nat. Ordered (a;m) -&gt;
 </FONT><FONT COLOR="#0000FF">                                          (@b:Nat. Elem b m -&gt; a&lt;=b) /\
 </FONT><FONT COLOR="#0000FF">                                          Ordered m
 </FONT><FONT COLOR="#000000">Intros 3
@@ -128,7 +128,7 @@
 </FONT><FONT COLOR="#000000">Apply H
 </FONT><FONT COLOR="#000000">Exit
 </FONT><FONT COLOR="#000000">
-</FONT><FONT COLOR="#0000FF">Prove Perm_trans : @A:*s. @xs,ys,zs:List A. Perm xs ys -&gt; Perm ys zs -&gt; 
+</FONT><FONT COLOR="#0000FF">Prove Perm_trans : @A:*s. @xs,ys,zs:List A. Perm xs ys -&gt; Perm ys zs -&gt;
 </FONT><FONT COLOR="#0000FF">                                            Perm xs zs
 </FONT><FONT COLOR="#000000">Intros
 </FONT><FONT COLOR="#000000">Unfold Perm
@@ -138,12 +138,12 @@
 </FONT><FONT COLOR="#000000">Apply H1 Then Assumption
 </FONT><FONT COLOR="#000000">Exit
 </FONT><FONT COLOR="#000000">
-</FONT><FONT COLOR="#0000FF">Prove Perm_swap : @A:*s. @xs,ys:List A.@x,y:A. 
+</FONT><FONT COLOR="#0000FF">Prove Perm_swap : @A:*s. @xs,ys:List A.@x,y:A.
 </FONT><FONT COLOR="#0000FF">                                     Perm (xs++(x;y;ys)) (xs++(y;x;ys))
 </FONT><FONT COLOR="#000000">Unfold Perm Then Intros
 </FONT><FONT COLOR="#000000">Apply H2
 </FONT><FONT COLOR="#000000">Exit
-</FONT><FONT COLOR="#000000">                                                                 
+</FONT><FONT COLOR="#000000">
 </FONT><FONT COLOR="#0000FF">Prove Perm_cons : @A:*s. @a:A. @l,m:List A. Perm l m -&gt; Perm (a;l) (a;m)
 </FONT><FONT COLOR="#000000">Intros
 </FONT><FONT COLOR="#000000">Apply H
@@ -173,8 +173,8 @@
 </FONT><FONT COLOR="#000000">---------------------
 </FONT><FONT COLOR="#000000">
 </FONT><FONT COLOR="#0000FF">Def insert := \n:Nat. primreclist (singleton n) (
-</FONT><FONT COLOR="#0000FF">                      \head:Nat. \tail:List Nat. \insert_tail:List Nat. 
-</FONT><FONT COLOR="#0000FF">                         if (leq n head) (n;head;tail) (head;insert_tail)) : 
+</FONT><FONT COLOR="#0000FF">                      \head:Nat. \tail:List Nat. \insert_tail:List Nat.
+</FONT><FONT COLOR="#0000FF">                         if (leq n head) (n;head;tail) (head;insert_tail)) :
 </FONT><FONT COLOR="#0000FF">              Nat -&gt; List Nat -&gt; List Nat
 </FONT><FONT COLOR="#000000">
 </FONT><FONT COLOR="#0000FF">Prove insert_nil : @m:Nat. insert m (nil Nat) = singleton m
@@ -201,7 +201,7 @@
 </FONT><FONT COLOR="#000000">Refl
 </FONT><FONT COLOR="#000000">Exit
 </FONT><FONT COLOR="#000000">
-</FONT><FONT COLOR="#0000FF">Prove Elem_insert_ : @m,n:Nat.@ns:List Nat. Elem m (insert n ns) -&gt; 
+</FONT><FONT COLOR="#0000FF">Prove Elem_insert_ : @m,n:Nat.@ns:List Nat. Elem m (insert n ns) -&gt;
 </FONT><FONT COLOR="#0000FF">                                            m=n \/ Elem m ns
 </FONT><FONT COLOR="#000000">Intros 2
 </FONT><FONT COLOR="#000000">Apply indlist
@@ -292,7 +292,7 @@
 </FONT><FONT COLOR="#000000">-- sort [] = sort
 </FONT><FONT COLOR="#000000">-- sort (x:xs) = insert x (sort xs)
 </FONT><FONT COLOR="#000000">
-</FONT><FONT COLOR="#0000FF">Def sort := primreclist (nil Nat) (\head:Nat. \tail:List Nat. 
+</FONT><FONT COLOR="#0000FF">Def sort := primreclist (nil Nat) (\head:Nat. \tail:List Nat.
 </FONT><FONT COLOR="#0000FF">                                \sort_tail:List Nat. insert head sort_tail) :
 </FONT><FONT COLOR="#0000FF">            List Nat -&gt; List Nat
 </FONT><FONT COLOR="#000000">-- bdRed sort (S O ; O ; nil Nat)
@@ -326,7 +326,7 @@
 </FONT><FONT COLOR="#000000">Intros
 </FONT><FONT COLOR="#000000">Rewrite sort_cons
 </FONT><FONT COLOR="#000000">Forward Perm_cons On a, H
-</FONT><FONT COLOR="#000000">Apply Perm_trans On H1                                               
+</FONT><FONT COLOR="#000000">Apply Perm_trans On H1
 </FONT><FONT COLOR="#000000">Apply Perm_insert
 </FONT><FONT COLOR="#000000">Exit
 </FONT></PRE>

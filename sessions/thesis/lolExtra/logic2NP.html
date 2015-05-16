@@ -9,7 +9,7 @@
 </FONT><FONT COLOR="#000000">-- These lemmas are not included in the thesis, and are divided into three
 </FONT><FONT COLOR="#000000">-- groups.
 </FONT><FONT COLOR="#000000">-- 1) Introduction and elimination principles for ExP, ExQ, ExR, ExK
-</FONT><FONT COLOR="#000000">-- 2) Reflexivity, elimination, symmetry and transitivity for &lt;=&gt;, &lt;==&gt;, &lt;===&gt; 
+</FONT><FONT COLOR="#000000">-- 2) Reflexivity, elimination, symmetry and transitivity for &lt;=&gt;, &lt;==&gt;, &lt;===&gt;
 </FONT><FONT COLOR="#000000">-- 3) Miscellaneous
 </FONT><FONT COLOR="#000000">
 </FONT><FONT COLOR="#000000">Path "../lol"
@@ -49,7 +49,7 @@
 </FONT><FONT COLOR="#000000">Use ExistsI ExR_i
 </FONT><FONT COLOR="#000000">
 </FONT><FONT COLOR="#000000">-- The next lemma is used by the ExistsE tactic.
-</FONT><FONT COLOR="#0000FF">Prove ExR_e : @A,B:*s.@P:(A-&gt;B-&gt;*p)-&gt;*p.@R:*p. (ExR) P -&gt; 
+</FONT><FONT COLOR="#0000FF">Prove ExR_e : @A,B:*s.@P:(A-&gt;B-&gt;*p)-&gt;*p.@R:*p. (ExR) P -&gt;
 </FONT><FONT COLOR="#0000FF">                      (@X:A-&gt;B-&gt;*p. P X -&gt; R) -&gt; R
 </FONT><FONT COLOR="#000000">Use ExistsE ExR_e
 </FONT><FONT COLOR="#000000">
@@ -94,19 +94,19 @@
 </FONT><FONT COLOR="#000000">
 </FONT><FONT COLOR="#000000">Use Refl BimplR_refl
 </FONT><FONT COLOR="#000000">
-</FONT><FONT COLOR="#0000FF">Prove BimplR_elim_r : @A,B:*s. @P,Q:A-&gt;B-&gt;*p.@R:(A-&gt;B-&gt;*p)-&gt;*p. 
+</FONT><FONT COLOR="#0000FF">Prove BimplR_elim_r : @A,B:*s. @P,Q:A-&gt;B-&gt;*p.@R:(A-&gt;B-&gt;*p)-&gt;*p.
 </FONT><FONT COLOR="#0000FF">                      P&lt;===&gt;Q -&gt; R P -&gt; R Q
 </FONT><FONT COLOR="#000000">
 </FONT><FONT COLOR="#000000">Use Lewrite BimplR_elim_r
 </FONT><FONT COLOR="#000000">
-</FONT><FONT COLOR="#0000FF">Prove BimplR_elim_l : @A,B:*s. @P,Q:A-&gt;B-&gt;*p.@R:(A-&gt;B-&gt;*p)-&gt;*p. 
+</FONT><FONT COLOR="#0000FF">Prove BimplR_elim_l : @A,B:*s. @P,Q:A-&gt;B-&gt;*p.@R:(A-&gt;B-&gt;*p)-&gt;*p.
 </FONT><FONT COLOR="#0000FF">                      P&lt;===&gt;Q -&gt; R Q -&gt; R P
 </FONT><FONT COLOR="#000000">
 </FONT><FONT COLOR="#000000">Use Rewrite BimplR_elim_l
 </FONT><FONT COLOR="#000000">
 </FONT><FONT COLOR="#0000FF">Prove BimplR_sym : @A,B:*s. @P,Q:A-&gt;B-&gt;*p. (P&lt;===&gt;Q) -&gt; (Q&lt;===&gt;P)
 </FONT><FONT COLOR="#000000">
-</FONT><FONT COLOR="#0000FF">Prove BimplR_trans : @A,B:*s.@P,Q,R:A-&gt;B-&gt;*p. 
+</FONT><FONT COLOR="#0000FF">Prove BimplR_trans : @A,B:*s.@P,Q,R:A-&gt;B-&gt;*p.
 </FONT><FONT COLOR="#0000FF">                     (P&lt;===&gt;Q) -&gt; (Q&lt;===&gt;R) -&gt; (P&lt;===&gt;R)
 </FONT><FONT COLOR="#000000">
 </FONT><FONT COLOR="#000000">

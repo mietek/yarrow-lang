@@ -1,7 +1,7 @@
 -- file: YarMsg.hs
 -- description: This file contains the Query and Result datatypes, which
 --              will be used for communication between Yarrow and the
---              user-interface.      
+--              user-interface.
 
 module YarMsg(Query(..),Result(..)) where
 
@@ -17,17 +17,17 @@ import ProvDat(ToProve,GoalNr,TaskId,TacticTerm,ProverCommand,
 
 -- These are the messages that a user-interface can send to Yarrow,
 -- to ask Yarrow for specific information:
-data Query = 
+data Query =
   -- Commands
 
-  QTactic TaskId TacticTerm |    
+  QTactic TaskId TacticTerm |
   QCommand TaskId ProverCommand |
   QProverExit TaskId TaskExitMode |
   QProveVar (Vari,TermIT) |
-                                      
+
   QLoadModuleInput ModuleName String |
   QContinueLoad StatusLoad |
-  QSaveModule ModuleName | 
+  QSaveModule ModuleName |
   QSaveCompleted StatusSave |
   QClearModule |
   QGiveModules |
@@ -38,18 +38,18 @@ data Query =
   QDeclareVarsSub ([Vari],TermIT) |
   QDeclareVarsSubW ([Vari],TermIT,TermIT) |
   -- End Extension: Subtyping
-  QDefVar (Vari,TermIT)| 
+  QDefVar (Vari,TermIT)|
   QDefVarW (Vari,TermIT,TermIT) |
   QDelFromVar Vari |
 
-  QSetPrecAndAss (Vari,Int,Assoc) |        
-  QSetBinder Vari |        
-  QSetLaTeX (Vari,Int) |        
-  QSetImplArgs (Vari,Int) |                     
+  QSetPrecAndAss (Vari,Int,Assoc) |
+  QSetBinder Vari |
+  QSetLaTeX (Vari,Int) |
+  QSetImplArgs (Vari,Int) |
   QSetOptions BoolOptions |
   QSetTypingSystem System |
   QUseFor String Vari |
-                                              
+
   QGiveBReductionPath TaskId (LContext,TermIT) |
   QGiveDReductionPath TaskId (LContext,TermIT) |
   QGiveBDReductionPath TaskId (LContext,TermIT) |
@@ -57,7 +57,7 @@ data Query =
   QCheckTyping TaskId (LContext,TermIT,TermIT) |
   -- Extension: Subtyping:
   QCheckSubtype TaskId (LContext,TermIT,TermIT) |
-  -- End Extension: Subtyping  
+  -- End Extension: Subtyping
   QGiveType TaskId (LContext,TermIT) |
   QZMatch TaskId (LContext,[Vari],TermIT,TermIT) |
   QGiveHistory TaskId |
@@ -73,15 +73,15 @@ data Query =
   QTerminate
 
 -- These are the messages that contain requested information:
-data Result =                                
-  RTactic (Hnum,Term) ToProve |        
-  RExit [ContextE] (Vari,Term,TacticTree,TaskExitMode) | 
-                      -- the new part of the global context and 
-                      -- the tactics that yielded the proof, with the name 
+data Result =
+  RTactic (Hnum,Term) ToProve |
+  RExit [ContextE] (Vari,Term,TacticTree,TaskExitMode) |
+                      -- the new part of the global context and
+                      -- the tactics that yielded the proof, with the name
                       -- and lemma which was proved.
   RProofTaskId TaskId ToProve |
 
-  RLoadList [ModuleName] |  
+  RLoadList [ModuleName] |
   RLoadMessage String StatusLoad |
   RTrySaveThis String StatusSave |
   RModulesAre [ModuleInfo] |
@@ -99,10 +99,10 @@ data Result =
   RTypeIs ((Term,Term,Sort),LContext) |
   RZMatchIs [[(Vari,Term)]] | -- [Subst]
   RHistoryIs ([TacPath],TacticTree) |
-  RTaskIs ToProve |                                            
+  RTaskIs ToProve |
   RUseForIs [(String,Vari,Vari)] | -- tactic, connective, lemma
 
   RSyntaxInfoIs SyntaxInfo |
 
-  RDone |     
+  RDone |
   RError Error

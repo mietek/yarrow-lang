@@ -5,7 +5,7 @@
 --      place information, that can be used to give nice error messages
 --    + Instead of keyboard-input, also input from a file must be handled
 --      as if it were input by keyboard, so it must echoed to the screen.
---   In this module also a 'reverse' scanner is given, which transform a 
+--   In this module also a 'reverse' scanner is given, which transform a
 --   token to a string.
 
 module Scanner(Token(..), Tokens, scanLine, isInputComplete, nacs) where
@@ -21,7 +21,7 @@ import Engine
 
 
 
-----------------------      
+----------------------
 -- S C A N N I N G  --
 ----------------------
 
@@ -29,18 +29,18 @@ import Engine
 
 data Token = Lambda | At | Dot | LeftP | RightP | Colon | Comma | On | In |
 --               \    @     .      (       )        :      ,      on   in
-             Arrow | Let | Then | Else | Bar |  Is | Conv | Ident String | 
---            ->     let   then   else   |      :=   :=:    ident        
+             Arrow | Let | Then | Else | Bar |  Is | Conv | Ident String |
+--            ->     let   then   else   |      :=   :=:    ident
              Oper String | Num Int | Filename String |
 --            +<> etc    | number      "string"
              Eoln |
 --           CR
              Space | Newline |
---             for printing 
+--             for printing
 -- Extension: Records:
              LeftB | RightB | LeftBB | RightBB | Backquote |
 --           {           }        {|         |}         `
--- End Extension: Records                                  
+-- End Extension: Records
 -- Extension: Subtyping:
              LEC
 --           <:
@@ -55,17 +55,17 @@ instance Eq Token where Lambda    == Lambda    = True
                         RightP    == RightP    = True
                         Colon     == Colon     = True
                         Eoln      == Eoln      = True
-                        Arrow     == Arrow     = True  
-                        Comma     == Comma     = True      
+                        Arrow     == Arrow     = True
+                        Comma     == Comma     = True
                         On        == On        = True
                         In        == In        = True
                         Let       == Let       = True
                         Then      == Then      = True
                         Else      == Else      = True
                         Bar       == Bar       = True
-                        Is        == Is        = True  
+                        Is        == Is        = True
                         Conv      == Conv      = True
-                        Ident v   == Ident w   = v==w  
+                        Ident v   == Ident w   = v==w
                         Oper v    == Oper w    = v==w
                         Num m     == Num n     = m==n
                         Filename s== Filename t= s==t
@@ -88,36 +88,36 @@ type Tokens = [(Token,PlaceInfo)]
 -------------------------------
 
 -- isV1 checks this character can be the start of a variable
-isV1 :: Char -> Bool                 
+isV1 :: Char -> Bool
 isV1 '*' = True
 isV1 '#' = True
 isV1 c = isAlpha c
 
 -- isV checks this character can occur after the first character of
--- a variable       
-isV :: Char -> Bool                 
+-- a variable
+isV :: Char -> Bool
 isV '*' = True
 isV '#' = True
 isV '\'' = True
 isV '_' = True
 isV c = isAlphaNum c
-      
+
 
 ---------------------
 -- S C A N N I N G --
 ---------------------
 
--- scanLine s ln  scans line n containing s and delivers 
+-- scanLine s ln  scans line n containing s and delivers
 -- a list of tokens paired with placemarkers saying at which
 -- character in the input string the token started and ended
 -- (so the difference is the length of the token)
-scanLine :: (Functor m,ErrorSMonad m) => 
+scanLine :: (Functor m,ErrorSMonad m) =>
             String -> Int -> m [(Token,PlaceInfo)]
 scanLine s ln = let len = length s in
                 fmap (fmap (\(t,(s,e)) -> (t,((ln,len-s),(ln,len-e)))))
                     (scanLine' s len ln)
 
-scanLine' :: (Functor m,ErrorSMonad m) => 
+scanLine' :: (Functor m,ErrorSMonad m) =>
              String -> Int -> Int -> m [(Token,(Int,Int))]
 scanLine' "" len ln = return [(Eoln,(0,-1))]
 scanLine' (' ':s) len ln = scanLine' s len ln
@@ -126,7 +126,7 @@ scanLine' ('-':'-':s) len ln = return [(Eoln,(length s +2,length s))]
 scanLine' s' len ln = handleS (scan' s')
                       (\[ES mes] -> let p = len - length s' in
                                     errP ((ln,p),(ln,p+1)) mes)
-                      (\(t,s'') -> 
+                      (\(t,s'') ->
                         fmap ((t,(length s',length s'')) :)
                             (scanLine' s'' len ln))
 
@@ -135,7 +135,7 @@ scanLine' s' len ln = handleS (scan' s')
 --                 it is the responsibility of the interface to stop
 --                 reading more lines if an empty line (just one Eoln token)
 --                 is entered!
---                 A list of tokens is incomplete if it ends with 
+--                 A list of tokens is incomplete if it ends with
 --                 '.' '->' ',' ':=:', ':=', an operator or has an unmatched
 --                 number of parantheses.
 -- Precondition: length toks >= 2
@@ -148,10 +148,10 @@ isInputComplete toks =
            parantDiff = countMatch (fmap fst toks) in
        not (lastTok `elem` [Dot,Arrow,Colon,Comma,Conv,Is] ||
             isOper lastTok || parantDiff > 0)
-      
- 
+
+
 -- countMatch toks  returns the difference between the number of ('s and
---                  the number of )'s 
+--                  the number of )'s
 countMatch :: [Token] -> Int
 countMatch [] = 0
 countMatch (LeftP :toks) = countMatch toks + 1
@@ -162,7 +162,7 @@ countMatch (_:toks) = countMatch toks
 -- scan' may only deliver errors in the form of a string
 scan' :: (Functor m,ErrorSMonad m) => String -> m (Token,String)
 scan' (':':'=':':':s) = return (Conv,s)
-scan' (':':'=':s) = return (Is,s)                                
+scan' (':':'=':s) = return (Is,s)
 scan' ('"':s) = let (f,s2) = span (/='"') s in
                 if null s2 then
                    scanErrS "Filename not terminated"
@@ -201,28 +201,28 @@ scan1 :: PreErrorMonad m => Char -> m Token
 scan1 '.'  = return Dot
 scan1 '('  = return LeftP
 scan1 ')'  = return RightP
-scan1 ':'  = return Colon               
-scan1 ','  = return Comma                      
+scan1 ':'  = return Colon
+scan1 ','  = return Comma
 scan1 s    = scanErrS ("Unknown symbol "++[s])
 
-scanErrSuffix :: String                           
+scanErrSuffix :: String
 scanErrSuffix = " (scanner error)"
 
 scanErrS :: PreErrorMonad m => String -> m a
 scanErrS s = errS (s++scanErrSuffix)
 
-{-                     
+{-
 -- Some functions to test the scanner
--- Not used 
+-- Not used
 testLoop :: Int -> Scan ()
 testLoop n = putSt ("\n"++show n++" ") >>
-           printErrorsS scan 
+           printErrorsS scan
            (\(_,s) -> putSt (tostring s)) >>
            testLoop (n+1)
                where tostring [] = ""
                      tostring ((t,(i,j)):l) = "(" ++ nacs1 t ++ " " ++
                           show i ++ ".." ++ show j ++ ")," ++ tostring l
-           
+
 testScan = goSte (putSt "Type some string to be scanned" >> testLoop 0)
                   (SCANS testSyntax)
 -}
@@ -235,27 +235,27 @@ testScan = goSte (putSt "Type some string to be scanned" >> testLoop 0)
 nacs :: Token -> String
 nacs Lambda = "\\"
 nacs At = "@"
-nacs Dot = "."    
+nacs Dot = "."
 nacs LeftP = "("
 nacs RightP = ")"
-nacs Colon = ":" 
-nacs Comma = ","            
+nacs Colon = ":"
+nacs Comma = ","
 nacs On = "on"
 nacs In = "in"
 nacs Then = "then"
 nacs Else = "else"
 nacs Bar = "|"
-nacs Is = ":="    
-nacs Conv = ":=:"  
+nacs Is = ":="
+nacs Conv = ":=:"
 nacs Arrow = "->"
-nacs Let = "let" 
-nacs (Ident s) = s 
-nacs (Oper s) = s                                      
+nacs Let = "let"
+nacs (Ident s) = s
+nacs (Oper s) = s
 nacs (Num n) = show n
 nacs (Filename f) = "\"" ++ f ++ "\""
-nacs Space = " "                                                        
-nacs Newline ="\n"  
-nacs Eoln = "end of line"                           
+nacs Space = " "
+nacs Newline ="\n"
+nacs Eoln = "end of line"
 -- Extension: Records:
 nacs LeftB = "{"
 nacs RightB = "}"
@@ -266,4 +266,3 @@ nacs Backquote = "`"
 -- Extension: Subtyping:
 nacs LEC = "<:"
 -- End Extension: Subtyping
-

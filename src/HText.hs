@@ -59,7 +59,7 @@ begRef = "HREF=\""
 --               <OL> (<LI> Fancy)* </OL> |
 --               <DL> (<DT> Word <DD> Fancy)* </DL> |
 -- Piece ::= Text <BR>*
--- Text ::= Word+ |                   
+-- Text ::= Word+ |
 --
 -- Note: <CODE>, </CODE> and </VAR> tags are ignored;
 --       <VAR> places '<' and '>' around the first word.
@@ -86,12 +86,12 @@ hScan' ('<':s) = let (com,_:s') = break (=='>') s in
                  -- ignore verbatim and some other tags
                  if com == begVer || com == endVer || com == endVar ||
                     com == endAnc ||
-                    com == begEmp || com == endEmp then 
+                    com == begEmp || com == endEmp then
                     hScan' s'
                  else if com `beginsWith` begAnc then
                     let restCom = drop (length begAnc + 1) com in
-                    if restCom `beginsWith` begRef then  
-                       let (lnk,_) = break (=='"') 
+                    if restCom `beginsWith` begRef then
+                       let (lnk,_) = break (=='"')
                                            (drop (length begRef) restCom)
                            (tok:toks,s'') = hScan' s'
                            addLink (HWord (wrd,_)) = HWord (wrd, HLink lnk)
@@ -100,7 +100,7 @@ hScan' ('<':s) = let (com,_:s') = break (=='>') s in
                     else -- ignore command
                        hScan' s'
                  else if com == begVar then
-                    let (wrd,s'') = scanWord' s' 
+                    let (wrd,s'') = scanWord' s'
                         bracket s = "<"++s++">" in
                     doFst (HWord (bracket wrd,NoHLink) :) (hScan' s'')
                  else
@@ -124,8 +124,8 @@ scanWord' (c:s) = doFst (c:) (scanWord' s)
 
 symToAsc :: String -> Char
 symToAsc "lt" = '<'
-symToAsc "gt" = '>'       
-symToAsc "amp" = '&'       
+symToAsc "gt" = '>'
+symToAsc "amp" = '&'
 symToAsc _ = '?'
 
 
@@ -150,7 +150,7 @@ parseFancyText = parseStar parseParagraph
 
 -- parseParagraph delivers zero (failure) or one paragraph (success)
 parseParagraph :: [HToken] -> ([Paragraph],[HToken])
-parseParagraph (HCom c :ts) | c == begPar = 
+parseParagraph (HCom c :ts) | c == begPar =
               rbracket Para parseFancyText endPar ts
 parseParagraph (HCom c :ts) | c == begDes =
               rbracket Description parseDefItems endDes ts
@@ -179,12 +179,12 @@ rbracket f p rb ts = doFst (map f) ((parseThen p (parseComV rb) const) ts)
 
 
 parseListItems :: [HToken] -> ([[([Word],FancyText)]],[HToken])
-parseListItems = 
+parseListItems =
           parseStar (parseThen (parseCom itemT)
                                (mapP (pair []) parseFancyText) const')
 
 parseDefItems :: [HToken] -> ([[([Word],FancyText)]],[HToken])
-parseDefItems  = 
+parseDefItems  =
           parseStar (parseThen (parseThen (parseCom defT) parseText const')
                           (parseThen (parseCom defD) parseFancyText const')
                      pair)
@@ -217,7 +217,7 @@ parsePlus :: ([HToken] -> ([a],[HToken])) -> [HToken] -> ([[a]],[HToken])
 parsePlus p = parseThen p (parseStar p) (:)
 
 parseStar :: ([HToken] -> ([a],[HToken])) -> [HToken] -> ([[a]],[HToken])
-parseStar p = parsePlus p `parseElse` parseEmpty               
+parseStar p = parsePlus p `parseElse` parseEmpty
 
 
 parseThen :: ([HToken] -> ([a],[HToken])) -> ([HToken] -> ([b],[HToken])) ->
@@ -238,7 +238,7 @@ parseElse p q ts = let (as,ts') = p ts in
 parseEmpty :: [HToken] -> ([[a]],[HToken])
 parseEmpty ts = ([[]],ts)
 
-mapP :: (a->b) -> ([HToken] -> ([a],[HToken])) -> 
+mapP :: (a->b) -> ([HToken] -> ([a],[HToken])) ->
                   ([HToken] -> ([b],[HToken]))
 mapP f p ts = doFst (map f) (p ts)
 
@@ -249,8 +249,8 @@ mapP f p ts = doFst (map f) (p ts)
 -- FORMATTING --
 ----------------
 
-  
-{-                                                                 
+
+{-
 -- splitLines is used in the gencoms module
 splitLines :: [Word] -> String
 splitLines text = concat (map plusCR (splitILines lineLength text))
@@ -260,7 +260,7 @@ splitLines text = concat (map plusCR (splitILines lineLength text))
 type DisplayHelp a = Display String a
 
 format :: DisplayHelp a -> Int -> FancyText -> a
-format stuff@(_,vconc,_,_) lineLength fancy = 
+format stuff@(_,vconc,_,_) lineLength fancy =
             vconc (formatFan stuff lineLength fancy)
 
 formatFan :: DisplayHelp a -> Int -> FancyText -> [a]
@@ -272,7 +272,7 @@ formatFan stuff@(_,_,basic,_) ll (p : f@(Para _:_)) =
 formatFan stuff ll (p:f) = formatPar stuff ll p ++ formatFan stuff ll f
 
 formatPar :: DisplayHelp a -> Int -> Paragraph -> [a]
-formatPar stuff ll (Text s) = splitILines stuff ll s 
+formatPar stuff ll (Text s) = splitILines stuff ll s
 formatPar stuff ll (Para p) = formatFan stuff ll p
 formatPar stuff ll (Description d) = concat (map (formatItem stuff ll) d)
 
@@ -288,11 +288,11 @@ formatItem stuff@(hconc,_,basic,_) ll (ws,fancyText) =
 
 splitILines :: DisplayHelp a -> Int -> [Word] -> [a]
 splitILines stuff@(_,_,basic,_) lengt [] = [basic ""]
-splitILines stuff@(hconc,_,_,_) lengt ws = 
+splitILines stuff@(hconc,_,_,_) lengt ws =
                        let p l = sum (map snd l) <= lengt in
-                       map (hconc . map fst) 
+                       map (hconc . map fst)
                            (takeWhiles' p (map (formatWord stuff) ws))
-                                   
+
 
 formatWord :: DisplayHelp a -> Word -> (a,Int)
 formatWord stuff@(_,_,basic,label) (w,mlnk) =
@@ -310,17 +310,17 @@ testText file = readFil file `bind` \contents ->
                 out (format (parseFancy contents))
 
 doTest file = goSte (testText file) ()
-                                      
+
 
 instance Text Paragraph where
      showsPrec _ (Text ws) = (("Text:\""++unwords ws++"\"")++)
-     showsPrec _ (Description d) = 
-              (concat (map (\(ws,t) -> "\\item[" ++ unwords ws ++ "]" ++ 
+     showsPrec _ (Description d) =
+              (concat (map (\(ws,t) -> "\\item[" ++ unwords ws ++ "]" ++
                        show t) d)++)
-           
+
 testText2 :: String -> Imp () ()
 testText2 file = readFil file `bind` \contents ->
                  out (show (parseFancy contents))
 
 doTest2 file = goSte (testText2 file) ()
--}          
+-}

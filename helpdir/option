@@ -17,9 +17,9 @@
                             sorts
                <DT>p<DD> print the proofterm with its holes when in
                           prover mode
-               <DT>r<DD> show reduction path for commands 
+               <DT>r<DD> show reduction path for commands
                      <CODE>bdRed</CODE>, <CODE>bRed</CODE>, <CODE>dRed</CODE>
                </DL>
-               The third variant displays the current values of 
+               The third variant displays the current values of
                the options.
 </DL>

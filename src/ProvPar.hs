@@ -44,7 +44,7 @@ parseProverCommand =
   Ident "undo"    -> nextToken >>
                      fmap PUndo readNumDef1
   Ident "restart" -> nextToken >> return PRestart
-  Ident "focus"   -> nextToken >> 
+  Ident "focus"   -> nextToken >>
                      eatNum >>= \n ->
                      return (PFocus n)
   otherwise       -> return PNoParse
@@ -57,7 +57,7 @@ parseTacticTerm = fmap (foldr1 TElse)
 parseTacticFactor :: Parse TacticTerm
 parseTacticFactor =
     parseTactic >>= \tac ->
-    fmap (foldl TThen tac) 
+    fmap (foldl TThen tac)
         (parseList commaOrThenL commaOrThenL parseTacticAltList)
                       where commaOrThenL = readToken' >>= \t ->
                                            if (t==Comma || t==Then) then
@@ -67,10 +67,10 @@ parseTacticFactor =
                                               return False
 
 parseTacticAltList :: Parse [TacticTerm]
-parseTacticAltList = 
+parseTacticAltList =
                   readToken' >>= \t ->
                   if t == LeftP then
-                     nextToken >> 
+                     nextToken >>
                      parseList1 (separator Bar) parseTacticTerm >>= \tacList->
                      eat RightP "" >>
                      return tacList
@@ -100,10 +100,10 @@ parseTactic =
                         return (
                         if forgetIT typ == dummyTerm then
                            TLet v term
-                        else                
+                        else
                            TLetW v term typ)
   Ident "simplify"   -> nextToken >> return TSimplify
-  Ident "unfold"     -> nextToken >> 
+  Ident "unfold"     -> nextToken >>
                         parseOccs >>= \o ->
                         parseVar >>= \v ->
                         readToken' >>= \t0' ->
@@ -116,15 +116,15 @@ parseTactic =
   Ident "convert"    -> nextToken >> fmap TConvert parseTerm
   Ident "cut"        -> nextToken >> fmap TCut parseTerm
   Ident "first"      -> nextToken >> fmap TFirst parseTerm
-  Ident "forward"    -> nextToken >> 
+  Ident "forward"    -> nextToken >>
                         fmap TForward parseExtTerm
   Ident "exact"      -> nextToken >> fmap TExact parseTerm
   Ident "apply"      -> nextToken >> fmap TApply parseExtTerm
-  Ident "pattern"    -> nextToken >> 
+  Ident "pattern"    -> nextToken >>
                         parseOccs >>= \o ->
                         parseTerm >>= \t ->
                         return (TPattern (o,t))
-  Ident "rewrite"    -> nextToken >> 
+  Ident "rewrite"    -> nextToken >>
                         parseMaybeOcc >>= \o ->
                         parseExtTerm >>= \et ->
                         readToken' >>= \t0' ->
@@ -134,7 +134,7 @@ parseTactic =
                               parseVar >>= \h ->
                               return (TRewriteIn (o,et,h))
                         otherwise -> return (TRewrite (o,et))
-  Ident "lewrite"    -> nextToken >> 
+  Ident "lewrite"    -> nextToken >>
                         parseMaybeOcc >>= \o ->
                         parseExtTerm >>= \et ->
                         readToken' >>= \t0' ->
@@ -167,13 +167,13 @@ parseTactic =
                            fmap TUnhide parseVarList
                         else
                            return TUnhideAll
-  LeftP              -> nextToken >> 
+  LeftP              -> nextToken >>
                         parseTacticTerm >>= \tac ->
                         eat RightP "" >>
                         return tac
   otherwise          -> pErr "Unknown command"
 
-parseExtTerm :: Parse ExtTermIT                           
+parseExtTerm :: Parse ExtTermIT
 parseExtTerm = parseTerm >>= \t ->
                readToken' >>= \tok ->
                if tok == On then
@@ -186,10 +186,10 @@ parseExtTerm = parseTerm >>= \t ->
 toLowerIdent :: Token -> Token
 toLowerIdent (Ident s) = Ident (toLowers s)
 toLowerIdent tok = tok
-   
+
 parseOccs :: Parse [Occurrence]
 parseOccs = parseList startOcc (separator Comma) parseOcc
-                  
+
 -- parseOcc parses one occurrence number
 parseOcc :: Parse Occurrence
 parseOcc = eatNum >>= \n ->

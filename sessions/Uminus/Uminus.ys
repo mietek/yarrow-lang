@@ -74,4 +74,3 @@ unfold 1 Omega
 unfold 1 tau
 apply lemma
 exit
-

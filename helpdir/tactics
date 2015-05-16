@@ -2,7 +2,7 @@
 In the prove-mode a term of a given type is interactively constructed.
 Tactics are the commands that direct this process. We call the term that
 is being constructed the proof-term.
-</P>                            
+</P>
 <P>
 More specifically, at every moment during the construction, the proof-term
 is a lambda-term with some <EM>holes</EM> in it. Every hole has a type,

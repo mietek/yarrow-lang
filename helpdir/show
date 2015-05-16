@@ -2,7 +2,7 @@
  <DT>Syntax:
  <DD>
   <OL>
-  <LI><CODE>Show</CODE> <VAR>num</VAR> 
+  <LI><CODE>Show</CODE> <VAR>num</VAR>
   <LI><CODE>Show</CODE>
   </OL>
  <DT>Effect:

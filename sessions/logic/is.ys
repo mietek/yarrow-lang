@@ -40,7 +40,7 @@ Exit
 -- Indicate that this lemma must used by the lewrite tactic
 Use Lewrite is_elim_r
 
-             
+
 Prove is_sym : @A:*s.@x,y:A. x=y -> y=x
 Intros
 Rewrite H

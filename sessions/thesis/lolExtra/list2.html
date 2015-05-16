@@ -12,10 +12,10 @@
 </FONT><FONT COLOR="#000000">
 </FONT><FONT COLOR="#000000">Path "../lol"
 </FONT><FONT COLOR="#000000">Load "logic2"
-</FONT><FONT COLOR="#000000">Load "bool2" 
-</FONT><FONT COLOR="#000000">Load "nat2"  
+</FONT><FONT COLOR="#000000">Load "bool2"
+</FONT><FONT COLOR="#000000">Load "nat2"
 </FONT><FONT COLOR="#000000">Load "list"
-</FONT><FONT COLOR="#000000">Load "sort"  
+</FONT><FONT COLOR="#000000">Load "sort"
 </FONT><FONT COLOR="#000000">
 </FONT><FONT COLOR="#000000">
 </FONT><FONT COLOR="#000000">--------------------------------------------------------------------
@@ -49,7 +49,7 @@
 </FONT><FONT COLOR="#000000">Exit
 </FONT><FONT COLOR="#000000">
 </FONT><FONT COLOR="#000000">-- Two lemmas about insert --
-</FONT><FONT COLOR="#0000FF">Prove lemma_insert_m_n_is_insert_n_m : @m,n:Nat. m&lt;n -&gt; 
+</FONT><FONT COLOR="#0000FF">Prove lemma_insert_m_n_is_insert_n_m : @m,n:Nat. m&lt;n -&gt;
 </FONT><FONT COLOR="#0000FF">               (@l:List Nat. insert m (insert n l) = insert n (insert m l))
 </FONT><FONT COLOR="#000000">Intros 3
 </FONT><FONT COLOR="#000000">Apply indlist
@@ -85,7 +85,7 @@
 </FONT><FONT COLOR="#000000">Refl
 </FONT><FONT COLOR="#000000">Exit
 </FONT><FONT COLOR="#000000">
-</FONT><FONT COLOR="#0000FF">Prove insert_m_n_is_insert_n_m : @m,n:Nat. @l:List Nat. 
+</FONT><FONT COLOR="#0000FF">Prove insert_m_n_is_insert_n_m : @m,n:Nat. @l:List Nat.
 </FONT><FONT COLOR="#0000FF">                                 insert m (insert n l) = insert n (insert m l)
 </FONT><FONT COLOR="#000000">Intros 2
 </FONT><FONT COLOR="#000000">OrE Le_Or_Gt On m, n
@@ -102,7 +102,7 @@
 </FONT><FONT COLOR="#000000">Exit
 </FONT><FONT COLOR="#000000">
 </FONT><FONT COLOR="#000000">-- Lemma about concat
-</FONT><FONT COLOR="#0000FF">Prove concat_is_nil_ : @A:*s. @as,bs:List A. as ++ bs = nil A -&gt; 
+</FONT><FONT COLOR="#0000FF">Prove concat_is_nil_ : @A:*s. @as,bs:List A. as ++ bs = nil A -&gt;
 </FONT><FONT COLOR="#0000FF">                       as = nil A /\ bs = nil A
 </FONT><FONT COLOR="#000000">Intros
 </FONT><FONT COLOR="#000000">OrE exh_list On as
@@ -203,7 +203,7 @@
 </FONT><FONT COLOR="#000000">-- elem --
 </FONT><FONT COLOR="#000000">----------
 </FONT><FONT COLOR="#000000">
-</FONT><FONT COLOR="#0000FF">Def elem := \m:Nat. iterlist false (\hd:Nat. \elem_tail:Bool. 
+</FONT><FONT COLOR="#0000FF">Def elem := \m:Nat. iterlist false (\hd:Nat. \elem_tail:Bool.
 </FONT><FONT COLOR="#0000FF">                                    eq m hd || elem_tail) :
 </FONT><FONT COLOR="#0000FF">            Nat -&gt; List Nat -&gt; Bool
 </FONT><FONT COLOR="#000000">
@@ -247,7 +247,7 @@
 </FONT><FONT COLOR="#000000">-- genCount &amp; count --
 </FONT><FONT COLOR="#000000">----------------------
 </FONT><FONT COLOR="#000000">
-</FONT><FONT COLOR="#0000FF">Def genCount := \A:*s.\p:A-&gt;Bool.\l:List A. iterlist O (\hd:A. \countTail:Nat. 
+</FONT><FONT COLOR="#0000FF">Def genCount := \A:*s.\p:A-&gt;Bool.\l:List A. iterlist O (\hd:A. \countTail:Nat.
 </FONT><FONT COLOR="#0000FF">                                        if (p hd) (S countTail) countTail) l :
 </FONT><FONT COLOR="#0000FF">                @A:*s. (A-&gt;Bool) -&gt; List A -&gt; Nat
 </FONT><FONT COLOR="#000000">Implicit 1 genCount
@@ -259,7 +259,7 @@
 </FONT><FONT COLOR="#000000">Refl
 </FONT><FONT COLOR="#000000">Exit
 </FONT><FONT COLOR="#000000">
-</FONT><FONT COLOR="#0000FF">Prove genCount_cons : @A:*s.@p:A-&gt;Bool. @a:A. @l:List A. 
+</FONT><FONT COLOR="#0000FF">Prove genCount_cons : @A:*s.@p:A-&gt;Bool. @a:A. @l:List A.
 </FONT><FONT COLOR="#0000FF">                  genCount p (a;l) = if (p a) (S (genCount p l)) (genCount p l)
 </FONT><FONT COLOR="#000000">Intros
 </FONT><FONT COLOR="#000000">Unfold 1 genCount
@@ -277,7 +277,7 @@
 </FONT><FONT COLOR="#000000">Apply genCount_nil
 </FONT><FONT COLOR="#000000">Exit
 </FONT><FONT COLOR="#000000">
-</FONT><FONT COLOR="#0000FF">Prove count_cons : @m,n:Nat. @l:List Nat. 
+</FONT><FONT COLOR="#0000FF">Prove count_cons : @m,n:Nat. @l:List Nat.
 </FONT><FONT COLOR="#0000FF">                   count m (n;l) = if (eq m n) (S (count m l)) (count m l)
 </FONT><FONT COLOR="#000000">Intros
 </FONT><FONT COLOR="#000000">Unfold count
@@ -311,7 +311,7 @@
 </FONT><FONT COLOR="#000000">Refl
 </FONT><FONT COLOR="#000000">Exit
 </FONT><FONT COLOR="#000000">
-</FONT><FONT COLOR="#0000FF">Prove count_m_n_cons : @m,n:Nat.@l:List Nat. Not (m=n) -&gt; 
+</FONT><FONT COLOR="#0000FF">Prove count_m_n_cons : @m,n:Nat.@l:List Nat. Not (m=n) -&gt;
 </FONT><FONT COLOR="#0000FF">                          count m (n;l) = count m l
 </FONT><FONT COLOR="#000000">Intros
 </FONT><FONT COLOR="#000000">Rewrite neq__count_cons
@@ -322,7 +322,7 @@
 </FONT><FONT COLOR="#000000">Exit
 </FONT><FONT COLOR="#000000">
 </FONT><FONT COLOR="#000000">
-</FONT><FONT COLOR="#0000FF">Prove count_m_insert_m : @m:Nat.@l:List Nat. 
+</FONT><FONT COLOR="#0000FF">Prove count_m_insert_m : @m:Nat.@l:List Nat.
 </FONT><FONT COLOR="#0000FF">                         count m (insert m l) = S (count m l)
 </FONT><FONT COLOR="#000000">Intro
 </FONT><FONT COLOR="#000000">Apply indlist
@@ -348,7 +348,7 @@
 </FONT><FONT COLOR="#000000">Repeat Rewrite count_m_n_cons Then Try Assumption
 </FONT><FONT COLOR="#000000">Exit
 </FONT><FONT COLOR="#000000">
-</FONT><FONT COLOR="#0000FF">Prove count_m_insert_n : @m,n:Nat.@l:List Nat. Not (m=n) -&gt; 
+</FONT><FONT COLOR="#0000FF">Prove count_m_insert_n : @m,n:Nat.@l:List Nat. Not (m=n) -&gt;
 </FONT><FONT COLOR="#0000FF">                         count m (insert n l) = count m l
 </FONT><FONT COLOR="#000000">Intros 2
 </FONT><FONT COLOR="#000000">Apply indlist
@@ -563,7 +563,7 @@
 </FONT><FONT COLOR="#000000">Refl
 </FONT><FONT COLOR="#000000">Exit
 </FONT><FONT COLOR="#000000">
-</FONT><FONT COLOR="#0000FF">Prove Not_nil__init_cons : @A:*s.@a:A. @as:List A. Not (as=nil A) -&gt; 
+</FONT><FONT COLOR="#0000FF">Prove Not_nil__init_cons : @A:*s.@a:A. @as:List A. Not (as=nil A) -&gt;
 </FONT><FONT COLOR="#0000FF">                           init (a;as) = a; init as
 </FONT><FONT COLOR="#000000">Intros
 </FONT><FONT COLOR="#000000">OrE exh_list On as
@@ -604,7 +604,7 @@
 </FONT><FONT COLOR="#000000">-- last d nil = d
 </FONT><FONT COLOR="#000000">-- last d (a;as) = last a as
 </FONT><FONT COLOR="#000000">
-</FONT><FONT COLOR="#0000FF">Def last := \A:*s.\Def:A.\l:List A. 
+</FONT><FONT COLOR="#0000FF">Def last := \A:*s.\Def:A.\l:List A.
 </FONT><FONT COLOR="#0000FF">   iterlist (\Def:A.Def) (\hd:A. \last_tail:A-&gt;A. \dummy:A. last_tail hd) l Def
 </FONT><FONT COLOR="#000000">implicit 1 last
 </FONT><FONT COLOR="#000000">
@@ -622,7 +622,7 @@
 </FONT><FONT COLOR="#000000">Refl
 </FONT><FONT COLOR="#000000">Exit
 </FONT><FONT COLOR="#000000">
-</FONT><FONT COLOR="#0000FF">Prove Not_nil__last : @A:*s.@a1,a2:A.@as:List A. Not (as = nil A) -&gt; 
+</FONT><FONT COLOR="#0000FF">Prove Not_nil__last : @A:*s.@a1,a2:A.@as:List A. Not (as = nil A) -&gt;
 </FONT><FONT COLOR="#0000FF">                      last a1 as = last a2 as
 </FONT><FONT COLOR="#000000">Intros 3
 </FONT><FONT COLOR="#000000">Apply indlist
@@ -635,7 +635,7 @@
 </FONT><FONT COLOR="#000000">Refl
 </FONT><FONT COLOR="#000000">Exit
 </FONT><FONT COLOR="#000000">
-</FONT><FONT COLOR="#0000FF">Prove Not_nil__last_cons : @A:*s.@a,b:A.@as:List A. Not (as = nil A) -&gt; 
+</FONT><FONT COLOR="#0000FF">Prove Not_nil__last_cons : @A:*s.@a,b:A.@as:List A. Not (as = nil A) -&gt;
 </FONT><FONT COLOR="#0000FF">                           last a (b;as) = last a as
 </FONT><FONT COLOR="#000000">Intros
 </FONT><FONT COLOR="#000000">Rewrite last_cons
@@ -643,7 +643,7 @@
 </FONT><FONT COLOR="#000000">Assumption
 </FONT><FONT COLOR="#000000">Exit
 </FONT><FONT COLOR="#000000">
-</FONT><FONT COLOR="#0000FF">Prove last_concat : @A:*s.@a:A.@as,bs:List A. Not (bs = nil A) -&gt; 
+</FONT><FONT COLOR="#0000FF">Prove last_concat : @A:*s.@a:A.@as,bs:List A. Not (bs = nil A) -&gt;
 </FONT><FONT COLOR="#0000FF">                    last a (as++bs) = last a bs
 </FONT><FONT COLOR="#000000">Intros
 </FONT><FONT COLOR="#000000">Pattern as
@@ -682,7 +682,7 @@
 </FONT><FONT COLOR="#000000">Apply cons_is_nil_
 </FONT><FONT COLOR="#000000">Exit
 </FONT><FONT COLOR="#000000">
-</FONT><FONT COLOR="#0000FF">Prove Elem_Le_last : @l:List Nat. @m:Nat. Elem m l -&gt; 
+</FONT><FONT COLOR="#0000FF">Prove Elem_Le_last : @l:List Nat. @m:Nat. Elem m l -&gt;
 </FONT><FONT COLOR="#0000FF">                     @n:Nat. Ordered l -&gt; m &lt;= last n l
 </FONT><FONT COLOR="#000000">Intros 3
 </FONT><FONT COLOR="#000000">Pattern l

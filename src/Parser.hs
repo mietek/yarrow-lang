@@ -5,10 +5,10 @@ module Parser(-- GENERAL PARSING STUFF
               ParseS(..), Parse, readToken, nextToken, readToken', startsWith,
               eat, eateat, eatIdent, eatOper, eatNum,
               -- PARSING EXPRESSIONS
-              parseTerm, parseDecls, parseContextE, parseContext, parseDef, 
+              parseTerm, parseDecls, parseContextE, parseContext, parseDef,
               stop, parseVar, parseVarList, parseIdAsSort, parseFilename,
               -- MISCELLANEOUS
-              startNum, startVar, startBasic, pErr, separator, 
+              startNum, startVar, startBasic, pErr, separator,
               parseList, parseList1, parseList0) where
 
 import General
@@ -37,12 +37,12 @@ import Scanner
 -- implementation in an imperative language. Of course, we do this with
 -- help of monads.
 
--- the state used in the parser consists of 
+-- the state used in the parser consists of
 -- syntaxinfo and a list of tokens (with place-information)
 data ParseS = PARSES (SyntaxInfo,Tokens)
 
 type Parse a = State ParseS a
-                    
+
 instance PartSyntax ParseS where
      extractSyn (PARSES (si,_)) = si
      insertSyn f (PARSES (si,t)) = PARSES (f si,t)
@@ -57,9 +57,9 @@ instance PartSyntax ParseS where
 --      1. place information is combined
 --      2. dummies are inserted for sorts in Abs, All and Delta
 mkAppIT :: TermIT -> TermIT -> TermIT
-mkGenAbsIT :: (Vari,TermIT,Constraints,[TermIT]) -> TermIT -> PlaceInfo -> 
+mkGenAbsIT :: (Vari,TermIT,Constraints,[TermIT]) -> TermIT -> PlaceInfo ->
               TermIT
-mkGenAllIT :: (Vari,TermIT,Constraints,[TermIT]) -> TermIT -> PlaceInfo -> 
+mkGenAllIT :: (Vari,TermIT,Constraints,[TermIT]) -> TermIT -> PlaceInfo ->
               TermIT
 mkDeltaIT :: (Vari,TermIT,TermIT) -> TermIT -> PlaceInfo -> TermIT
 mkVrIT :: Vari -> PlaceInfo -> TermIT
@@ -79,7 +79,7 @@ mkDeltaIT = mkBindIT1 mkDelta
 mkVrIT v pi = (mkVr v,IT pi [])
 mkSrtIT s pi = (mkSrt s,IT pi [])
 mkHoleIT h pi = (mkHole h,IT pi [])
-mkArrowIT (t,tit) (u,uit) = 
+mkArrowIT (t,tit) (u,uit) =
            (mkArrow (t,dummySort) u,
             IT (combineIT tit uit) [dummyIT,tit,dummyIT,uit])
 -- Extension: Records:
@@ -88,26 +88,26 @@ mkRecValueIT ltits pi = let (ls,tits) = unzip ltits
                         (mkRecValue (zip ls ts),IT pi its)
 mkRecTypeIT ltits pi = let (ls,tits) = unzip ltits
                            (ts,its) = unzip tits in
-                       (mkRecType (zip ls ts),IT pi its) 
-mkRecSelectIT (t,it@(IT pil _)) (l,pir) = 
+                       (mkRecType (zip ls ts),IT pi its)
+mkRecSelectIT (t,it@(IT pil _)) (l,pir) =
            (mkRecSelect t l, IT (combinePlace pil pir) [it])
 -- End Extension: Records:
 
 -- mkBindIT0 is an auxilary function for mkGenAbsIT and mkGenAllIT etc.
-mkBindIT0 :: (((Vari,Term,Sort),Constraints,[Term])->Term->Term) -> 
+mkBindIT0 :: (((Vari,Term,Sort),Constraints,[Term])->Term->Term) ->
              (Vari,TermIT,Constraints,[TermIT]) -> TermIT ->
              PlaceInfo -> TermIT
-mkBindIT0 bind (v,(t,tit),constrs,tits) (u,uit@(IT upi _)) pi = 
-       (bind ((v,t,dummySort),constrs,map fst tits) u, 
+mkBindIT0 bind (v,(t,tit),constrs,tits) (u,uit@(IT upi _)) pi =
+       (bind ((v,t,dummySort),constrs,map fst tits) u,
         IT (combinePlace pi upi) ([dummyIT,tit,dummyIT,uit] ++ map snd tits))
 
 mkBindIT1 :: ((Vari,Term,Term,Sort)->Term->Term) -> (Vari,TermIT,TermIT) ->
              TermIT -> PlaceInfo -> TermIT
-mkBindIT1 bind (v,(d,dit),(t,tit@(IT upi _))) (u,uit) pi = 
-         (bind (v,d,t,dummySort) u, 
+mkBindIT1 bind (v,(d,dit),(t,tit@(IT upi _))) (u,uit) pi =
+         (bind (v,d,t,dummySort) u,
           IT (combinePlace pi upi) [dummyIT,tit,dummyIT,uit,dit])
 
-                                                            
+
 ----------------------------
 -- BASIC PARSING ROUTINES --
 ----------------------------
@@ -123,7 +123,7 @@ readToken = fetchS3 >>= \(PARSES (_,t:_)) ->
 
 fetchS3 :: State s s
 fetchS3 = fetch
- 
+
 -- nextToken  skips the first token
 nextToken :: Parse ()
 nextToken = update' (\(PARSES (si,_:t)) -> PARSES (si,t))
@@ -139,11 +139,11 @@ startsWith' :: Token -> Parse (Bool,PlaceInfo)
 startsWith' t = readToken >>= \(t',pi) ->
                 return (t==t',pi)
 
-              
+
 eat :: Token -> String -> Parse ()
 eat t s = eat' t s >>= \_ ->
           return ()
-      
+
 eat' :: Token -> String -> Parse PlaceInfo
 eat' t s = readToken >>= \(t',pi) ->
            if t==t' then
@@ -156,7 +156,7 @@ eateat :: [Token] -> Parse ()
 eateat []  = skip
 eateat (t:ts) = eat t "" >>
                 eateat ts
-     
+
 readIdent :: String -> Parse (String,PlaceInfo)
 readIdent s = readToken >>= \(t,pi) ->
               case t of
@@ -183,24 +183,24 @@ eatNum = readToken' >>= \t ->
 -------------------------
 -- PARSING EXPRESSIONS --
 -------------------------
-       
-     
+
+
 -- operators in order of precedence (weakest binders first)
 -- \, @, let
 -- ->          (right associative)
 -- user defined operators (associativity and precedence can be defined)
--- application (left associative)          
-  
+-- application (left associative)
+
 
 -- so the context-free grammar for lambda-terms is
 --
--- Term       = lambda ItemC dot Term | 
+-- Term       = lambda ItemC dot Term |
 --              all    ItemC dot Term |
---              let    ItemI dot Term | 
+--              let    ItemI dot Term |
 --              binder ItemC dot Term |
 --              Small
 -- Small      = Factor_1 arrow Small | Factor_1
--- Factor_i   = Factor_i+1 oper_n_i Factor_i+1 |  
+-- Factor_i   = Factor_i+1 oper_n_i Factor_i+1 |
 -- (i=1..9)     Factor_i   oper_l_i Factor_i+1 |
 --              Factor_i+1 oper_r_i Factor_i   |
 --              Factor_i+1
@@ -208,26 +208,26 @@ eatNum = readToken' >>= \t ->
 -- Basic      = sort | Var | '(' Expression ')'
 -- Var        = ident | '(' oper ')'
 -- Decls      = VarList colon Expression
--- Def        = Var is Expression [colon Expression]    
+-- Def        = Var is Expression [colon Expression]
 -- VarList    = Var | Var ',' VarList
 --
--- we wrote oper_l_i  for left-associative operators of precedence i 
---          oper_r_i  for right-associative operators of precedence i 
+-- we wrote oper_l_i  for left-associative operators of precedence i
+--          oper_r_i  for right-associative operators of precedence i
 --          oper_n_i  for non-associative operators of precedence i
---          oper      for any operator 
+--          oper      for any operator
 
--- lambda-term 
+-- lambda-term
 parseTerm :: Parse TermIT
 parseTerm = readToken >>= \(t,pi) ->
  case t of
  Lambda -> nextToken >>
-           fmap (changeStart pi) 
+           fmap (changeStart pi)
                (parseTermHelpL parseDecls (repeated mkGenAbsIT))
  At ->     nextToken >>
-           fmap (changeStart pi) 
+           fmap (changeStart pi)
                (parseTermHelpL parseDecls (repeated mkGenAllIT))
  Let ->    nextToken >>
-           fmap (changeStart pi) 
+           fmap (changeStart pi)
            (parseTermHelpD parseDef mkDeltaIT')
                where mkDeltaIT' ((v,pi),d,t) body =
                             mkDeltaIT (v,d,t) body pi
@@ -251,15 +251,15 @@ parseTerm = readToken >>= \(t,pi) ->
    this polymorphic definition is not accepted, so we have to have two
    copies of this function -}
 
-parseTermHelpD :: Parse ((Vari,PlaceInfo),TermIT,TermIT) -> 
-                  (((Vari,PlaceInfo),TermIT,TermIT) -> TermIT -> TermIT) -> 
+parseTermHelpD :: Parse ((Vari,PlaceInfo),TermIT,TermIT) ->
+                  (((Vari,PlaceInfo),TermIT,TermIT) -> TermIT -> TermIT) ->
                   Parse TermIT
 parseTermHelpD parseI const = parseI >>= \it ->
                               eat Dot "" >>
                               fmap (const it) parseTerm
 
-parseTermHelpL :: 
-    Parse ([(Vari,PlaceInfo)],TermIT,Constraints,[TermIT]) -> 
+parseTermHelpL ::
+    Parse ([(Vari,PlaceInfo)],TermIT,Constraints,[TermIT]) ->
     (([(Vari,PlaceInfo)],TermIT,Constraints,[TermIT]) -> TermIT -> TermIT) ->
     Parse TermIT
 parseTermHelpL parseI const = parseI >>= \it ->
@@ -267,8 +267,8 @@ parseTermHelpL parseI const = parseI >>= \it ->
                               fmap (const it) parseTerm
 
 
--- repeated make  generalizes make so it accepts a list of variables 
-repeated :: 
+-- repeated make  generalizes make so it accepts a list of variables
+repeated ::
     ((Vari,TermIT,Constraints,[TermIT]) ->TermIT->PlaceInfo->TermIT) ->
     ([(Vari,PlaceInfo)],TermIT,Constraints,[TermIT]) -> TermIT->TermIT
 repeated make ([],_,_,_) body = body
@@ -294,7 +294,7 @@ parseDeclsRest s =
              case tok of
              Colon -> nextToken >>
                       parseTerm >>= \t->
-                      return (t,CNone,[]) 
+                      return (t,CNone,[])
              -- Extension: Subtyping:
              LEC -> nextToken >>
                     parseTerm >>= \subConstr ->
@@ -306,8 +306,8 @@ parseDeclsRest s =
                     otherwise -> return (dummyTermIT,CSub,[subConstr])
              -- End Extension: Subtyping
              otherwise -> pErr s
- 
--- A definition, e.g. x := E or x := E : E                             
+
+-- A definition, e.g. x := E or x := E : E
 parseDef :: Parse ((Vari,PlaceInfo),TermIT,TermIT)
 parseDef = parseVarPi >>= \v ->
            eat Is "" >>
@@ -315,12 +315,12 @@ parseDef = parseVarPi >>= \v ->
            return (v,d,t)
 
 parseDefRest :: Parse (TermIT,TermIT)
-parseDefRest = 
+parseDefRest =
            parseTerm >>= \d ->
            readToken' >>= \tok ->
            case tok of
-           Colon -> nextToken >> 
-                    parseTerm >>= \t -> 
+           Colon -> nextToken >>
+                    parseTerm >>= \t ->
                     return (d,t)
            otherwise -> return (d,dummyTermIT)
 
@@ -328,13 +328,13 @@ parseDefRest =
 -- 'small' terms
 parseSmall = fmap (foldr1 mkArrowIT)
                  (parseList1 (separator Arrow) (parseFactor 0))
-           
+
 
 -- Factor
 
-                              
+
 -- parseFactor doesn't always give the full place info !
-parseFactor n | n <= maxPrec = 
+parseFactor n | n <= maxPrec =
      parseFactor (n+1) >>= \f ->
      readToken' >>= \t ->
      case t of
@@ -345,7 +345,7 @@ parseFactor n | n <= maxPrec =
                nextToken >>
                let plist = fmap (f:) (parseList1 (separator (Oper v))
                                                 (parseFactor (n+1)))
-                   oper l@(_,IT lpi _) r@(_,IT rpi _) = 
+                   oper l@(_,IT lpi _) r@(_,IT rpi _) =
                              changeStartEnd (combinePlace lpi rpi)
                                 (mkAppIT (mkAppIT (mkVrIT v dummyPI) l) r) in
                case vassoc of
@@ -354,7 +354,7 @@ parseFactor n | n <= maxPrec =
                RightAssoc   ->  fmap (foldr1 oper) plist
      otherwise -> return f
 
--- Factor_10      
+-- Factor_10
 parseFactor n = fmap (foldl1 mkAppIT)
                              (parseList1 startBasic parseBasic2)
 
@@ -374,13 +374,13 @@ parseBasic2 = parseBasic >>= \t ->
 -- End Extension: Records:
 
 -- Basic
-parseBasic = 
+parseBasic =
         readToken >>= \(t,pi) ->
         case t of
         Ident v -> fetchBind v >>= \b ->
                    if b then
                        parseTerm
-                   else 
+                   else
                      nextToken >>
                      fetchSyn >>= \si ->
                      if isIdentSort si v then
@@ -411,7 +411,7 @@ parseBasic =
         Lambda -> parseTerm
         At     -> parseTerm
         Let    -> parseTerm
-        otherwise -> pErr "Expected term"     
+        otherwise -> pErr "Expected term"
 
 -- for internal use
 parseVarPi :: Parse (Vari,PlaceInfo)
@@ -432,7 +432,7 @@ parseVarPi = let parseVError = pErr "Expected var" in
 
 parseVarPiList :: Parse [(Vari,PlaceInfo)]
 parseVarPiList = parseList1 (separator Comma) parseVarPi
-                 
+
 -- Extension: Records:
 parseFieldValue :: Parse (RecLabel,TermIT)
 parseFieldValue = eatIdent "Expected label" >>= \label ->
@@ -463,7 +463,7 @@ stop :: Parse a -> Parse a
 stop p = p >>= \a ->
          eat Eoln "" >>
          return a
-                                      
+
 
 parseContextE :: Parse ContextE
 parseContextE =
@@ -487,15 +487,15 @@ parseContext = fmap (listToLocCon . reverse)
 
 parseVar :: Parse Vari
 parseVar = fmap fst parseVarPi
-                        
+
 parseVarList :: Parse [Vari]
 parseVarList = fmap (fmap fst) parseVarPiList
-              
+
 -- parseIdAsSort  for use only of the "System" command, where a new
 --                set of sorts is introduced
 parseIdAsSort :: Parse Sort
 parseIdAsSort = fmap SORT (eatIdent "Expected sort")
-  
+
 parseFilename :: Parse String
 parseFilename = readToken' >>= \t ->
                 case t of
@@ -506,23 +506,23 @@ parseFilename = readToken' >>= \t ->
 -------------------
 -- MISCELLANEOUS --
 -------------------
-                                                       
+
 -- functions that give the first tokens a non-terminal can start with
 
 -- startBasic  determines the set of tokens that a Basic can begin with
 startBasic = readToken' >>= \t ->
          case t of
          Ident v -> return True
-         LeftP ->   return True            
+         LeftP ->   return True
          Lambda ->  return True
          At     ->  return True
-         Let    ->  return True            
+         Let    ->  return True
          -- Extension: Records:
          LeftB  ->  return True
          LeftBB ->  return True
          -- End Extension: Records:
          otherwise -> return False
-                       
+
 -- startVar  determines the set of tokens that a Var can begin with
 startVar = startBasic  -- ???
 
@@ -530,11 +530,11 @@ startVar = startBasic  -- ???
 startNum = readToken' >>= \t ->
            case t of
            Num _ -> return True
-           otherwise -> return False 
+           otherwise -> return False
 
 
--- error routines   
-   
+-- error routines
+
 parseErrSuffix :: String
 parseErrSuffix = " (parser error)"
 
@@ -556,10 +556,10 @@ separator t = readToken' >>= \u ->
                 return True
              else
                 return False
-                                                                       
+
 -- parseList1 sep pp tl  parses a list of pp's from tl; sep determines
 -- if parseList must continue (eating tokens by sep for each element),
--- or if it has to stop. parseList1 works for tl's of the form   
+-- or if it has to stop. parseList1 works for tl's of the form
 -- 'pp' 'sep' 'pp' 'sep' 'pp' etc, at least one 'pp'
 -- a is typically Term or Item
 -- typically used for non-empty lists

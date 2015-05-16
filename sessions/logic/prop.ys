@@ -13,11 +13,11 @@ Apply H
 Exit
 
 -- Indicate that this lemma must used by the falsee tactic
-Use FalseE ex_falso                           
-  
-                                   
+Use FalseE ex_falso
+
+
 Def Not := \P:*p. P->False
-      
+
 Prove Not_i : @P:*p. (P->False) -> Not P
 Intros
 Assumption
@@ -47,7 +47,7 @@ Exit
 -- Name in lemmas: And
 Def (/\) := \P,Q:*p. (@R:*p. (P->Q->R)->R)
 InfixR 3 (/\)
-           
+
 Prove And_i : @P,Q:*p. P -> Q -> P/\Q
 Unfold (/\)
 Intro P,Q,HP,HQ,R,HI

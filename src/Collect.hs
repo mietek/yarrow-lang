@@ -5,12 +5,12 @@
 module Collect((\\),
                Collection(..), single, isNotEmpty, notElemC,
                AssocList(..), foundI, setI, addListI,
-               union, removeDoubles, 
+               union, removeDoubles,
                IL, indexedToListIL, listToIndexedIL, breakIL, filterIL, concIL,
                keysIL,
                Tree,
                TreeWithOrder, indexedToListTWO, breakTWO, takeTWO, keysTWO,
-               ListsAndOTree, mkLAOT, unLAOT, makeLAOT, addLAOT, addMakeLAOT, 
+               ListsAndOTree, mkLAOT, unLAOT, makeLAOT, addLAOT, addMakeLAOT,
                keysLAOT,
                ListsAndTree,
                findAL, foundAL, findAll, findAll3, partA) where
@@ -21,7 +21,7 @@ import List((\\))
 
 {-
        OVERVIEW
-      
+
 We define two important classes here,
   - Collection
   - AssocList
@@ -51,7 +51,7 @@ infixr 5 +++
 -- We allow only collections of elements that have an order on them. This
 -- allows for more efficient implementations.
 -- (It would be more elegant to put this restriction in specific instances,
---  e.g. 
+--  e.g.
 --       data Eq k => IL k v = IL [(k,v)]
 --  but Gofer doesn't accept (the consequences of) this definition.)
 
@@ -81,8 +81,8 @@ isNotEmpty = not . isEmpty
 
 notElemC :: (Ord a, Collection c) => a -> c a -> Bool
 a `notElemC` as = not (a `elemC` as)
-  
-                                
+
+
 -----------------------
 -- ASSOCIATION LISTS --
 -----------------------
@@ -120,20 +120,20 @@ setI c k v = let (found,c') = updateI c k (const v) in
 
 -- Precondition for addListI l1 l2:
 --   No key of l1 occurs in l2
-addListI :: (AssocList c,Ord k) => [(k,v)] -> c k v -> c k v  
+addListI :: (AssocList c,Ord k) => [(k,v)] -> c k v -> c k v
 addListI l il = foldr addI il l
 
 -----------------------------------
 -- I M P L E M E N T A T I O N S --
 -----------------------------------
-                         
+
 -----------
 -- LISTS --
 -----------
 
 -- We use lists as representations of sets, where elements may be
 -- represented more than once.
-        
+
 
 instance Collection [] where
      empty = []
@@ -151,7 +151,7 @@ instance Collection [] where
 union :: [[a]] -> [a]
 union [] = []
 union (as:ass) = as ++ union ass
-  
+
 -- removeDoubles as  removes all double occurrences in as
 removeDoubles :: Ord a => [a] -> [a]
 removeDoubles [] = []
@@ -165,25 +165,25 @@ removeAll as a = filter (/=a) as
 ----------------------------------------
 -- ASSOCLIST :   IMPLEMENTED BY LISTS --
 ----------------------------------------
-                                          
+
 -- efficiency :
 --   findI   : ord(n)
 --   addI    : ord(1)
 --   removeI : ord(n)
-                                                    
-data IL k v = IL [(k,v)]                            
+
+data IL k v = IL [(k,v)]
 
 updateList :: Ord k => [(k,v)] -> k -> (v->v) -> (Bool,[(k,v)])
 updateList [] k f = (False,undefined)
 updateList ((k',v):l) k f | k==k' = (True, (k',f v) : l)
-updateList ((k',v):l) k f | otherwise = doSnd ((k',v):) (updateList l k f)               
+updateList ((k',v):l) k f | otherwise = doSnd ((k',v):) (updateList l k f)
 instance AssocList IL where
      emptyI = IL []
      addI x (IL l) = IL (x:l)
      findI (IL l) x = let l' = map snd (filter ((x==).fst) l) in
                       (not (null l'), head l')
      findIIndex (IL l) x = let len =length l
-                               l' = zip l [len,len-1..1] 
+                               l' = zip l [len,len-1..1]
                                l'' = filter ((x==).fst.fst) l'
                                ((_,v),n) = head l'' in
                        (not (null l''),(v,n))
@@ -200,7 +200,7 @@ instance AssocList IL where
 -- additional functions defined on ILs
 
 indexedToListIL :: IL k v -> [(k,v)]
-indexedToListIL (IL l) = l          
+indexedToListIL (IL l) = l
 
 listToIndexedIL :: [(k,v)] -> IL k v
 listToIndexedIL = IL
@@ -214,17 +214,17 @@ filterIL p (IL l) = IL (filter (p . snd) l)
 
 concIL :: IL k v -> IL k v -> IL k v
 concIL (IL l1) (IL l2) = IL (l1 ++ l2)
-      
+
 keysIL :: IL k v -> [k]
 keysIL (IL l) = map fst l
 
 ------------------------------------------
 -- COLLECTIONS :   IMPLEMENTED BY TREES --
 ------------------------------------------
-                                          
+
 
 data Tree a = Leaf | Node (Tree a) a (Tree a)
-    
+
 instance Functor Tree where
     fmap f Leaf = Leaf
     fmap f (Node t1 a t2) = Node (fmap f t1) (f a) (fmap f t2)
@@ -239,11 +239,11 @@ tsize (Node t1 a t2) = 1 + tsize t1 + tsize t2
 
 emptyTree :: Tree r
 emptyTree = Leaf
-                   
+
 isEmptyTree :: Tree r -> Bool
 isEmptyTree Leaf = True
 isEmptyTree _ = False
-    
+
 -- First, trees for collections
 elemTree :: Ord k => k -> Tree k -> Bool
 k `elemTree` Leaf = False
@@ -266,7 +266,7 @@ removeCTree (Node t1 k' t2) k | k < k' = Node (removeCTree t1 k) k t2
                               | k > k' = Node t1 k (removeCTree t2 k)
                               | k == k' = glueTrees t1 t2
 
-  
+
 filterTree :: Ord k => (k -> Bool) -> Tree k -> Tree k
 filterTree p Leaf = Leaf
 filterTree p (Node t1 k t2) = let t1' = filterTree p t1
@@ -294,11 +294,11 @@ removeBiggest (Node t1 k t2) = let (k',t2') = removeBiggest t2 in
 allTree :: (k->Bool) -> Tree k -> Bool
 allTree p Leaf = True
 allTree p (Node t1 k t2) = p k && allTree p t1 && allTree p t2
-                                  
+
 anyTree :: (k->Bool) -> Tree k -> Bool
 anyTree p Leaf = False
 anyTree p (Node t1 k t2) = p k || anyTree p t1 || anyTree p t2
-                          
+
 addListToTree :: Ord k => [k] -> Tree k -> Tree k
 addListToTree [] t = t
 addListToTree (k:ks) t = addCTree k (addListToTree ks t)
@@ -313,7 +313,7 @@ instance Collection Tree where
      allC = allTree
      anyC = anyTree
      removeC = removeCTree
-  
+
 treeToList :: Tree k -> [k]
 treeToList Leaf = []
 treeToList (Node t1 k t2) = k : (treeToList t1 ++ treeToList t2)
@@ -322,7 +322,7 @@ treeToList (Node t1 k t2) = k : (treeToList t1 ++ treeToList t2)
 ----------------------------------------
 -- ASSOCLIST :   IMPLEMENTED BY TREES --
 ----------------------------------------
-                                          
+
 
 
 
@@ -331,14 +331,14 @@ findTree Leaf a = (False,undefined)
 findTree (Node t1 (k',v) t2) k | k<k' = findTree t1 k
                                | k>k' = findTree t2 k
                                | otherwise = (True,v)
-                           
+
 addTree :: Ord k => (k,v) -> Tree (k,v) -> Tree (k,v)
 addTree kv Leaf = Node Leaf kv Leaf
 addTree kv@(k,v) (Node t1 kv'@(k',_) t2)
                      | k < k' = Node (addTree kv t1) kv' t2
                      | k > k' = Node t1 kv' (addTree kv t2)
                      | otherwise = Node t1 kv t2
-              
+
 
 updateTree :: Ord k => Tree (k,v) -> k -> (v->v) -> (Bool, Tree (k,v))
 updateTree Leaf k f = (False,undefined)
@@ -351,7 +351,7 @@ updateTree (Node t1 kv'@(k',v') t2) k f
 
 removeTree :: Ord k => Tree (k,v) -> k -> (Bool, Tree (k,v))
 removeTree Leaf k = (False, Leaf)
-removeTree (Node t1 kv@(k',v) t2) k 
+removeTree (Node t1 kv@(k',v) t2) k
                 | k < k' = let (b,t1') = removeTree t1 k in
                            (b,Node t1' kv t2)
                 | k > k' = let (b,t2') = removeTree t2 k in
@@ -384,7 +384,7 @@ instance AssocList TreeWithOrder where
      mapI f (TWO t l n) = TWO (fmap (doSnd (doFst f)) t) l n
      headI tl@(TWO t l _) = let h = head l in
                             (h, snd (findI tl h))
-     tailI (TWO t l n) = let k = head l in 
+     tailI (TWO t l n) = let k = head l in
                          TWO (snd (removeTree t k)) (tail l) (n-1)
 
 
@@ -393,7 +393,7 @@ instance AssocList TreeWithOrder where
 indexedToListTWO :: Ord k => TreeWithOrder k v -> [(k,v)]
 indexedToListTWO (TWO t l _) = map (\k -> (k,fst (snd (findTree t k)))) l
 
-breakTWO :: Ord k => (k -> Bool) -> TreeWithOrder k v -> 
+breakTWO :: Ord k => (k -> Bool) -> TreeWithOrder k v ->
             ([(k,v)],TreeWithOrder k v)
 breakTWO p (TWO t [] n) = ([],TWO t [] n)
 breakTWO p tl@(TWO t (x:xs') n)
@@ -403,10 +403,10 @@ breakTWO p tl@(TWO t (x:xs') n)
 
 takeTWO :: Ord k => Int -> TreeWithOrder k v -> [(k,v)]
 takeTWO n (TWO t l _) = map (\k -> (k,fst (snd (findTree t k)))) (take n l)
-                
 
--- Corresponding collection of keys: ListAndTree                   
-keysTWO :: TreeWithOrder k v -> Tree k  
+
+-- Corresponding collection of keys: ListAndTree
+keysTWO :: TreeWithOrder k v -> Tree k
 keysTWO (TWO t _ _) = fmap fst t
 
 ------------------------------
@@ -414,14 +414,14 @@ keysTWO (TWO t _ _) = fmap fst t
 ------------------------------
 
 -- We use the following representation for the combination of a number of
--- local and one global context                      
+-- local and one global context
 
 
-data ListsAndOTree k v = LAOT [IL k v] (TreeWithOrder k v) 
-                                                
-mkLAOT (a,b) = LAOT a b      
+data ListsAndOTree k v = LAOT [IL k v] (TreeWithOrder k v)
 
-unLAOT (LAOT as b) = (as,b)                                                
+mkLAOT (a,b) = LAOT a b
+
+unLAOT (LAOT as b) = (as,b)
 
 makeLAOT t = LAOT [] t
 
@@ -429,7 +429,7 @@ addLAOT l (LAOT ls t) = LAOT (l:ls) t
 
 addMakeLAOT l t = LAOT [l] t
 
-updateLAOT :: Ord k => ([IL k v], TreeWithOrder k v) -> k -> (v->v) -> 
+updateLAOT :: Ord k => ([IL k v], TreeWithOrder k v) -> k -> (v->v) ->
              (Bool,([IL k v], TreeWithOrder k v))
 updateLAOT ([], b) k f = doSnd (pair []) (updateI b k f)
 updateLAOT (a:as, b) k f = let (found, a') = updateI a k f in
@@ -456,18 +456,18 @@ instance AssocList ListsAndOTree where
     emptyI = LAOT [] emptyI
     addI kv (LAOT [] b) = LAOT [] (addI kv b)
     addI kv (LAOT (a:as) b) = LAOT (addI kv a : as) b
-    findI (LAOT [] b) k = findI b k 
+    findI (LAOT [] b) k = findI b k
     findI (LAOT (a:as) b) k = let (found,v) = findI a k in
                               if found then
                                  (True,v)
                               else
-                                 findI (LAOT as b) k 
+                                 findI (LAOT as b) k
     findIIndex (LAOT [] b) k = findIIndex b k
     findIIndex (LAOT (a:as) b) k = let (found,(v,n)) = findIIndex a k in
                                    if found then
                                       (found,(v,n+maxIndexI (LAOT as b)))
                                    else
-                                      findIIndex (LAOT as b) k        
+                                      findIIndex (LAOT as b) k
     maxIndexI (LAOT as b) = sum (map maxIndexI as) + maxIndexI b
     isEmptyI (LAOT as b) = all isEmptyI as && isEmptyI b
     updateI (LAOT as b) k f = doSnd mkLAOT (updateLAOT (as,b) k f)
@@ -484,11 +484,11 @@ instance AssocList ListsAndOTree where
 keysLAOT :: Ord k => ListsAndOTree k v -> ListsAndTree k
 keysLAOT (LAOT as t) = LAT (map keysIL as) (keysTWO t)
 
-  
+
 ------------------------------
 -- COLLECTION: ListAndTree  --
 ------------------------------
-                            
+
 
 data ListsAndTree k = LAT [[k]] (Tree k)
 
@@ -507,7 +507,7 @@ instance Collection ListsAndTree where
      toC a = LAT [toC a] empty
      removeC (LAT as t) k = LAT (map (flip removeC k) as) (removeC t k)
      toList (LAT as t) = concat (map toList as) ++ toList t
-             
+
 
 
 
@@ -515,7 +515,7 @@ instance Collection ListsAndTree where
 -- ASSOCIATION LIST AS LIST OF PAIRS --
 ---------------------------------------
 
- 
+
 findAL :: Ord a => [(a,b)] -> a -> (Bool,b)
 findAL l x = let l' = map snd (filter ((x==).fst) l)
                  empty = null l' in
@@ -524,17 +524,16 @@ findAL l x = let l' = map snd (filter ((x==).fst) l)
 foundAL :: Ord a => [(a,b)] -> b -> a -> (Bool,b)
 foundAL l def x = let (found,res) = findAL l x in
                 (found, if found then res else def)
- 
+
 
 
 findAll :: Ord k => [(k,v)] -> k -> [v]
 findAll l x = map snd (filter ((x==).fst) l)
 
 findAll3 :: Ord k => [(k,v,w)] -> k -> [(v,w)]
-findAll3 l x = map (\(_,b,c) -> (b,c)) (filter ((x==).fst3) l)             
-  
+findAll3 l x = map (\(_,b,c) -> (b,c)) (filter ((x==).fst3) l)
+
 
 -- partA l p  returns all elements of l for which key is in p
 partA :: Ord k => [(k,v)] -> [k] -> [(k,v)]
 partA l p = filter (\(k,_) -> k `elem` p) l
-

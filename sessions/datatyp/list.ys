@@ -16,14 +16,14 @@ Def nil := \A:*s. \B:*s. \b:B. \f:A->B->B. b : @A:*s. List A
 -- Name in lemmas: cons
 Def (;) := \A:*s. \a:A. \as:List A. \B:*s. \b:B.\f:A->B->B. f a (as B b f) :
            @A:*s. A -> List A -> List A
-Implicit 1 (;)    
-InfixR 5 (;)   
+Implicit 1 (;)
+InfixR 5 (;)
 -- primreclist is also known as foldr
 Def primreclist := \A:*s.\B:*s. \nv:B. \cv:A->B->B. \as:List A. as B nv cv :
                    @A,B:*s. B-> (A->B->B) -> List A -> B
 Implicit 2 primreclist
 
-Prove primreclist_nil : @A,B:*s. @nv:B. @cv:A->B->B. 
+Prove primreclist_nil : @A,B:*s. @nv:B. @cv:A->B->B.
                                     primreclist nv cv (nil A) = nv
 Intros
 Refl
@@ -38,10 +38,10 @@ Exit
 Var indlist : @A:*s. @P:List A->*p. P (nil A) ->
                                     (@a:A. @as:List A. P as -> P (a;as)) ->
                                     (@as:List A. P as)
-                                                                      
+
 -- Note that we can't make the function 'head', since it is undefined on the
 -- empty list. We also refrain from the function 'tail'.
-         
+
 -- Name in lemmas: concat
 Def (++) := \A:*s. \as,as' : List A. primreclist as' ((;) A) as :
             @A:*s. List A -> List A -> List A
@@ -56,7 +56,7 @@ Rewrite primreclist_nil
 Refl
 Exit
 
-Prove cons_concat : @A:*s. @a:A. @as,as': List A. 
+Prove cons_concat : @A:*s. @a:A. @as,as': List A.
                     (a;as) ++ as' = a ; (as++as')
 Intros
 Unfold (++)
@@ -86,7 +86,7 @@ Rewrite H
 Refl
 Exit
 
-                                          
+
 Def singleton := \A:*s. \a:A. a ; (nil A) : @A:*s. A -> List A
 Implicit 1 singleton
 
@@ -110,7 +110,7 @@ Rewrite primreclist_cons
 Refl
 Exit
 
-Prove reverse_concat : @A:*s. @bs,as:List A. 
+Prove reverse_concat : @A:*s. @bs,as:List A.
                        reverse (as++bs) = reverse bs ++ reverse as
 Intro A, bs
 Apply indlist
@@ -156,7 +156,7 @@ Rewrite primreclist_nil
 Refl
 Exit
 
-Prove map_cons : @A,B:*s. @f:A->B. @a:A. @as:List A. 
+Prove map_cons : @A,B:*s. @f:A->B. @a:A. @as:List A.
                  map f (a;as) = f a ; map f as
 Intros
 Unfold map

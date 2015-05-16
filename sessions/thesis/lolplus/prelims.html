@@ -43,7 +43,7 @@
 </FONT><FONT COLOR="#0000FF">                    (@y1,y2,y3:Y. R y1 y2 -&gt; R y2 y3 -&gt; R y1 y3)
 </FONT><FONT COLOR="#000000">Implicit 1 IsER
 </FONT><FONT COLOR="#000000">
-</FONT><FONT COLOR="#0000FF">Def IsERon := 
+</FONT><FONT COLOR="#0000FF">Def IsERon :=
 </FONT><FONT COLOR="#0000FF">     \Y:*s.\R:Y-&gt;Y-&gt;*p. \P:Y-&gt;*p.
 </FONT><FONT COLOR="#0000FF">         (@y:Y. P y -&gt; R y y) /\
 </FONT><FONT COLOR="#0000FF">         (@y1,y2:Y. P y1 -&gt; P y2 -&gt; R y1 y2 -&gt; R y2 y1) /\
@@ -130,7 +130,7 @@
 </FONT><FONT COLOR="#000000">Assumption
 </FONT><FONT COLOR="#000000">Exit
 </FONT><FONT COLOR="#000000">
-</FONT><FONT COLOR="#0000FF">Prove rel_LeftC : @A,B:*s. @(~):A-&gt;B-&gt;*p. 
+</FONT><FONT COLOR="#0000FF">Prove rel_LeftC : @A,B:*s. @(~):A-&gt;B-&gt;*p.
 </FONT><FONT COLOR="#0000FF">                  @a1,a2:A.@b:B. a1~b -&gt; a2~b -&gt; LeftC (~) a1 a2
 </FONT><FONT COLOR="#000000">Intros
 </FONT><FONT COLOR="#000000">Unfold LeftC

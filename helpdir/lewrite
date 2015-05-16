@@ -1,7 +1,7 @@
 <DL>
  <DT>Syntax:
  <DD>
-  <CODE>Lewrite</CODE> [<VAR>num</VAR>] <VAR>term</VAR> 
+  <CODE>Lewrite</CODE> [<VAR>num</VAR>] <VAR>term</VAR>
       [<CODE>On</CODE> <VAR>term-list</VAR>] [<CODE>In</CODE> <CODE>var</CODE>]
  <DT>Effect:
  <DD><VAR>term</VAR> should be the proof of an equality. This
@@ -15,13 +15,13 @@
                For more information we refer to 'Rewrite'.
  <DT>Shortcomings:
  <DD><UL>
-     <LI> This tactic cannot replace expressions 
+     <LI> This tactic cannot replace expressions
       containing variables that are local in the goal.
      <LI> If there are numbers in the list not
           corresponding to an occurrence, no error is given. Do not use the
           number 0, since that indicates a path
          (see <A HREF="#paths"><CODE>paths</CODE></A>).
-     </UL> 
+     </UL>
  <DT>See also:
  <DD><A HREF="#Rewrite"><CODE>Rewrite</CODE></A>,
      <A HREF="#Use"><CODE>Use</CODE></A>

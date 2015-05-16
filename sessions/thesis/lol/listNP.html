@@ -30,8 +30,8 @@
 </FONT><FONT COLOR="#000000">
 </FONT><FONT COLOR="#000000">-- Name in lemmas: cons
 </FONT><FONT COLOR="#FF0000">Var (;) : @A:*s. A -&gt; List A -&gt; List A
-</FONT><FONT COLOR="#000000">Implicit 1 (;)    
-</FONT><FONT COLOR="#000000">InfixR 5 (;)   
+</FONT><FONT COLOR="#000000">Implicit 1 (;)
+</FONT><FONT COLOR="#000000">InfixR 5 (;)
 </FONT><FONT COLOR="#000000">
 </FONT><FONT COLOR="#000000">
 </FONT><FONT COLOR="#FF0000">Var primreclist : @A,B:*s. B-&gt; (A -&gt; List A -&gt; B -&gt; B) -&gt; List A -&gt; B
@@ -42,7 +42,7 @@
 </FONT><FONT COLOR="#000000">
 </FONT><FONT COLOR="#FF0000">Var primreclist_cons : @A,B:*s. @nv:B. @sv: A -&gt; List A -&gt; B -&gt; B.
 </FONT><FONT COLOR="#FF0000">                         @head:A. @tail:List A.
-</FONT><FONT COLOR="#FF0000">                                  primreclist nv sv (head;tail) = 
+</FONT><FONT COLOR="#FF0000">                                  primreclist nv sv (head;tail) =
 </FONT><FONT COLOR="#FF0000">                                  sv head tail (primreclist nv sv tail)
 </FONT><FONT COLOR="#000000">
 </FONT><FONT COLOR="#FF0000">Var indlist : @A:*s. @P:List A-&gt;*p. P (nil A) -&gt;
@@ -72,7 +72,7 @@
 </FONT><FONT COLOR="#000000">
 </FONT><FONT COLOR="#0000FF">Prove iterlist_cons : @A,B:*s. @nv:B. @sv: A -&gt; B -&gt; B.
 </FONT><FONT COLOR="#0000FF">                         @head:A. @tail:List A.
-</FONT><FONT COLOR="#0000FF">                                  iterlist nv sv (head;tail) = 
+</FONT><FONT COLOR="#0000FF">                                  iterlist nv sv (head;tail) =
 </FONT><FONT COLOR="#0000FF">                                  sv head (iterlist nv sv tail)
 </FONT><FONT COLOR="#000000">
 </FONT><FONT COLOR="#000000">----------
@@ -106,7 +106,7 @@
 </FONT><FONT COLOR="#000000">
 </FONT><FONT COLOR="#0000FF">Prove cons_is_nil_ : @A:*s. @l:List A. @a:A. Not (a;l = nil A)
 </FONT><FONT COLOR="#000000">
-</FONT><FONT COLOR="#0000FF">Prove cons_is_cons_ : @A:*s. @l1,l2:List A. @a1,a2:A. 
+</FONT><FONT COLOR="#0000FF">Prove cons_is_cons_ : @A:*s. @l1,l2:List A. @a1,a2:A.
 </FONT><FONT COLOR="#0000FF">                             a1;l1 = a2;l2 -&gt; a1 = a2 /\ l1=l2
 </FONT><FONT COLOR="#000000">
 </FONT><FONT COLOR="#000000">
@@ -123,7 +123,7 @@
 </FONT><FONT COLOR="#000000">
 </FONT><FONT COLOR="#0000FF">Prove nil_concat : @A:*s. @as:List A. (nil A)++as = as
 </FONT><FONT COLOR="#000000">
-</FONT><FONT COLOR="#0000FF">Prove cons_concat : @A:*s. @a:A. @as,as': List A. 
+</FONT><FONT COLOR="#0000FF">Prove cons_concat : @A:*s. @a:A. @as,as': List A.
 </FONT><FONT COLOR="#0000FF">                    (a;as) ++ as' = a ; (as++as')
 </FONT><FONT COLOR="#000000">
 </FONT><FONT COLOR="#0000FF">Prove concat_assoc : @A:*s. @bs,cs,as : List A. (as++bs)++cs = as++(bs++cs)
@@ -133,7 +133,7 @@
 </FONT><FONT COLOR="#000000">---------------
 </FONT><FONT COLOR="#000000">-- singleton --
 </FONT><FONT COLOR="#000000">---------------
-</FONT><FONT COLOR="#000000">                                          
+</FONT><FONT COLOR="#000000">
 </FONT><FONT COLOR="#0000FF">Def singleton := \A:*s. \a:A. a ; (nil A) : @A:*s. A -&gt; List A
 </FONT><FONT COLOR="#000000">Implicit 1 singleton
 </FONT><FONT COLOR="#000000">
@@ -141,7 +141,7 @@
 </FONT><FONT COLOR="#000000">-- RELATION Elem --
 </FONT><FONT COLOR="#000000">-------------------
 </FONT><FONT COLOR="#000000">
-</FONT><FONT COLOR="#0000FF">Def Elem := \A:*s.\a:A.\l:List A. 
+</FONT><FONT COLOR="#0000FF">Def Elem := \A:*s.\a:A.\l:List A.
 </FONT><FONT COLOR="#0000FF">                 @P:List A -&gt; *p. (@m:List A. P (a;m)) -&gt;
 </FONT><FONT COLOR="#0000FF">                                  (@m:List A.@b:A. P m -&gt; P (b;m)) -&gt;
 </FONT><FONT COLOR="#0000FF">                                  P l :
@@ -158,10 +158,10 @@
 </FONT><FONT COLOR="#0000FF">                           (@m:List A. @b:A. Elem a m -&gt; P m -&gt; P (b;m)) -&gt;
 </FONT><FONT COLOR="#0000FF">                           P l
 </FONT><FONT COLOR="#000000">
-</FONT><FONT COLOR="#0000FF">Prove Elem_exh : @A:*s.@a:A.@l:List A. 
-</FONT><FONT COLOR="#0000FF">                     Elem a l -&gt; 
+</FONT><FONT COLOR="#0000FF">Prove Elem_exh : @A:*s.@a:A.@l:List A.
+</FONT><FONT COLOR="#0000FF">                     Elem a l -&gt;
 </FONT><FONT COLOR="#0000FF">                     (Ex m:List A. l = a;m) \/
-</FONT><FONT COLOR="#0000FF">                     (Ex m:List A. Ex b:A. l = b;m /\ Elem a m) 
+</FONT><FONT COLOR="#0000FF">                     (Ex m:List A. Ex b:A. l = b;m /\ Elem a m)
 </FONT><FONT COLOR="#000000">
 </FONT><FONT COLOR="#0000FF">Prove Elem_nil_ : @A:*s. @a:A. Not (Elem a (nil A))
 </FONT><FONT COLOR="#000000">

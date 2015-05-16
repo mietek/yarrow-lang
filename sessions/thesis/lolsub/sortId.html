@@ -17,10 +17,10 @@
 </FONT><FONT COLOR="#000000">-----------------------
 </FONT><FONT COLOR="#000000">
 </FONT><FONT COLOR="#0000FF">Def OrderedId := \B&lt;:{|id:Nat|}.
-</FONT><FONT COLOR="#0000FF">                 \l:List B. 
+</FONT><FONT COLOR="#0000FF">                 \l:List B.
 </FONT><FONT COLOR="#0000FF">                 @P:List B -&gt; *p.
 </FONT><FONT COLOR="#0000FF">                 P (nil B) -&gt;
-</FONT><FONT COLOR="#0000FF">                 (@a:B.@m:List B. P m -&gt; (@b:B. Elem b m -&gt; a`id&lt;=b`id) -&gt; 
+</FONT><FONT COLOR="#0000FF">                 (@a:B.@m:List B. P m -&gt; (@b:B. Elem b m -&gt; a`id&lt;=b`id) -&gt;
 </FONT><FONT COLOR="#0000FF">                                  P (a;m)) -&gt;
 </FONT><FONT COLOR="#0000FF">                 P l :
 </FONT><FONT COLOR="#0000FF">                 @B&lt;:{|id:Nat|}. List B -&gt; *p
@@ -33,8 +33,8 @@
 </FONT><FONT COLOR="#000000">Assumption
 </FONT><FONT COLOR="#000000">Exit
 </FONT><FONT COLOR="#000000">
-</FONT><FONT COLOR="#0000FF">Prove OrderedId_cons : @B&lt;:{|id:Nat|}.@a:B.@m:List B. OrderedId m -&gt; 
-</FONT><FONT COLOR="#0000FF">                                        (@b:B. Elem b m -&gt; a`id&lt;=b`id) -&gt; 
+</FONT><FONT COLOR="#0000FF">Prove OrderedId_cons : @B&lt;:{|id:Nat|}.@a:B.@m:List B. OrderedId m -&gt;
+</FONT><FONT COLOR="#0000FF">                                        (@b:B. Elem b m -&gt; a`id&lt;=b`id) -&gt;
 </FONT><FONT COLOR="#0000FF">                                        OrderedId (a;m)
 </FONT><FONT COLOR="#000000">Intros
 </FONT><FONT COLOR="#000000">Unfold OrderedId
@@ -53,7 +53,7 @@
 </FONT><FONT COLOR="#000000">Apply Elem_nil_ On H
 </FONT><FONT COLOR="#000000">Exit
 </FONT><FONT COLOR="#000000">
-</FONT><FONT COLOR="#0000FF">Prove OrderedId_exh : @B&lt;:{|id:Nat|}. @l:List B. OrderedId l -&gt; 
+</FONT><FONT COLOR="#0000FF">Prove OrderedId_exh : @B&lt;:{|id:Nat|}. @l:List B. OrderedId l -&gt;
 </FONT><FONT COLOR="#0000FF">                       l = nil B \/
 </FONT><FONT COLOR="#0000FF">                       Ex a:B. Ex m:List B. l = a;m /\
 </FONT><FONT COLOR="#0000FF">                                              (@b:B. Elem b m -&gt; a`id&lt;=b`id) /\
@@ -83,7 +83,7 @@
 </FONT><FONT COLOR="#000000">Assumption
 </FONT><FONT COLOR="#000000">Exit
 </FONT><FONT COLOR="#000000">
-</FONT><FONT COLOR="#0000FF">Prove OrderedId_cons_ : @B&lt;:{|id:Nat|}. @a:B.@m:List B. OrderedId (a;m) -&gt; 
+</FONT><FONT COLOR="#0000FF">Prove OrderedId_cons_ : @B&lt;:{|id:Nat|}. @a:B.@m:List B. OrderedId (a;m) -&gt;
 </FONT><FONT COLOR="#0000FF">                                          (@b:B. Elem b m -&gt; a`id&lt;=b`id) /\
 </FONT><FONT COLOR="#0000FF">                                          OrderedId m
 </FONT><FONT COLOR="#000000">Intros 4
@@ -105,10 +105,10 @@
 </FONT><FONT COLOR="#000000">-----------------------
 </FONT><FONT COLOR="#000000">
 </FONT><FONT COLOR="#0000FF">Def insertId := \B&lt;:{|id:Nat|}. \n:B. primreclist (singleton n) (
-</FONT><FONT COLOR="#0000FF">                      \head:B. \tail:List B. \insert_tail:List B. 
-</FONT><FONT COLOR="#0000FF">                         if (leq n`id head`id) 
+</FONT><FONT COLOR="#0000FF">                      \head:B. \tail:List B. \insert_tail:List B.
+</FONT><FONT COLOR="#0000FF">                         if (leq n`id head`id)
 </FONT><FONT COLOR="#0000FF">                            (n;head;tail)
-</FONT><FONT COLOR="#0000FF">                            (head;insert_tail)) : 
+</FONT><FONT COLOR="#0000FF">                            (head;insert_tail)) :
 </FONT><FONT COLOR="#0000FF">              @B&lt;:{|id:Nat|}. B -&gt; List B -&gt; List B
 </FONT><FONT COLOR="#000000">implicit 1 insertId
 </FONT><FONT COLOR="#000000">
@@ -118,7 +118,7 @@
 </FONT><FONT COLOR="#000000">Apply primreclist_nil
 </FONT><FONT COLOR="#000000">Exit
 </FONT><FONT COLOR="#000000">
-</FONT><FONT COLOR="#0000FF">Prove Le__insertId : @B&lt;:{|id:Nat|}. @m,n:B.@l:List B. m`id&lt;=n`id -&gt; 
+</FONT><FONT COLOR="#0000FF">Prove Le__insertId : @B&lt;:{|id:Nat|}. @m,n:B.@l:List B. m`id&lt;=n`id -&gt;
 </FONT><FONT COLOR="#0000FF">                                     insertId m (n;l) = m;n;l
 </FONT><FONT COLOR="#000000">Intros
 </FONT><FONT COLOR="#000000">Unfold insertId
@@ -128,7 +128,7 @@
 </FONT><FONT COLOR="#000000">Refl
 </FONT><FONT COLOR="#000000">Exit
 </FONT><FONT COLOR="#000000">
-</FONT><FONT COLOR="#0000FF">Prove Gt__insertId : @B&lt;:{|id:Nat|}. @m,n:B.@l:List B. n`id&lt;m`id -&gt; 
+</FONT><FONT COLOR="#0000FF">Prove Gt__insertId : @B&lt;:{|id:Nat|}. @m,n:B.@l:List B. n`id&lt;m`id -&gt;
 </FONT><FONT COLOR="#0000FF">                                     insertId m (n;l) = n;(insertId m l)
 </FONT><FONT COLOR="#000000">Intros
 </FONT><FONT COLOR="#000000">Unfold 1 insertId
@@ -139,7 +139,7 @@
 </FONT><FONT COLOR="#000000">Exit
 </FONT><FONT COLOR="#000000">
 </FONT><FONT COLOR="#0000FF">Prove Elem_insertId_ : @B&lt;:{|id:Nat|}. @m,n:B.@ns:List B.
-</FONT><FONT COLOR="#0000FF">                                           Elem m (insertId n ns) -&gt; 
+</FONT><FONT COLOR="#0000FF">                                           Elem m (insertId n ns) -&gt;
 </FONT><FONT COLOR="#0000FF">                                           m=n \/ Elem m ns
 </FONT><FONT COLOR="#000000">Intros 3
 </FONT><FONT COLOR="#000000">Apply indlist
@@ -229,7 +229,7 @@
 </FONT><FONT COLOR="#000000">------------
 </FONT><FONT COLOR="#000000">
 </FONT><FONT COLOR="#0000FF">Def sortId := \B&lt;:{|id:Nat|}.
-</FONT><FONT COLOR="#0000FF">              primreclist (nil B) (\head:B. \tail:List B. 
+</FONT><FONT COLOR="#0000FF">              primreclist (nil B) (\head:B. \tail:List B.
 </FONT><FONT COLOR="#0000FF">                             \sort_tail:List B. insertId head sort_tail) :
 </FONT><FONT COLOR="#0000FF">            @B&lt;:{|id:Nat|}. List B -&gt; List B
 </FONT><FONT COLOR="#000000">Implicit 1 sortId
@@ -265,7 +265,7 @@
 </FONT><FONT COLOR="#000000">Intros
 </FONT><FONT COLOR="#000000">Rewrite sortId_cons
 </FONT><FONT COLOR="#000000">Forward Perm_cons On a, H
-</FONT><FONT COLOR="#000000">Apply Perm_trans On H1                                               
+</FONT><FONT COLOR="#000000">Apply Perm_trans On H1
 </FONT><FONT COLOR="#000000">Apply Perm_insertId
 </FONT><FONT COLOR="#000000">Exit
 </FONT></PRE>

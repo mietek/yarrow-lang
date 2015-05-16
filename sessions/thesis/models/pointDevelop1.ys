@@ -25,15 +25,15 @@ Def setX := \st:PointRep. \n:Nat. {x=n} :
 
 Def bump := \st:PointRep. {x= S st`x} :
             PointRep -> PointRep
-                 
+
 Def pointMet := {getX = \st:PointRep. st`x,
                  setX = \st:PointRep. \n:Nat. {x=n},
                  bump = \st:PointRep. {x= S st`x}} :
-                {|getX:PointRep->Nat, 
+                {|getX:PointRep->Nat,
                   setX:PointRep->Nat->PointRep,
                   bump:PointRep->PointRep|}
 
-Def PointI := \R:*s. {|getX:R->Nat, 
+Def PointI := \R:*s. {|getX:R->Nat,
                        setX:R->Nat->R,
                        bump:R->R|}
 

@@ -2,7 +2,7 @@
  <DT>Syntax:
  <DD><CODE>InfixR</CODE> <VAR>num</VAR> <VAR>var</VAR>
  <DT>Effect:
- <DD> Sets the precedence of operator <VAR>var</VAR> to <VAR>num</VAR>, 
+ <DD> Sets the precedence of operator <VAR>var</VAR> to <VAR>num</VAR>,
                and makes it right-associative.
  <DT>Example:
  <DD><CODE>InfixR 7 (^)</CODE><BR>

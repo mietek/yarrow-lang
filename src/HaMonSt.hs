@@ -1,5 +1,5 @@
 -- File: HaMonSt
--- Description: This module defines error and state monads, for use in 
+-- Description: This module defines error and state monads, for use in
 --              Haskell
 
 module HaMonSt(skip, maplComs, mapL, trace,
@@ -44,11 +44,11 @@ class Monad m => PreErrorMonad m where -- a class of monads for describing
     err :: Error -> m a               -- computations that might go wrong
 
 
-class PreErrorMonad m => ErrorMonad m where 
+class PreErrorMonad m => ErrorMonad m where
     handle :: m a -> (Error -> b) -> (a -> b) -> b
 -- handle allows you to return to a normal datatype
 
-class PreErrorMonad m => ErrorSMonad m where 
+class PreErrorMonad m => ErrorSMonad m where
     handleS :: m a -> (Error -> m b) -> (a -> m b) -> m b
 -- handleS stays in the monad (e.g. for state monads)
 
@@ -70,14 +70,14 @@ instance Monad E where
        (Err e) >>= f = Err e
 
 instance PreErrorMonad E where
-     err = Err  
+     err = Err
 
 instance ErrorMonad E where
      handle (Err e) f g = f e
      handle (Suc a) f g = g a
 
 noErr :: ErrorMonad m => (Error -> String) -> m a -> a
-noErr mkErr x = handle x 
+noErr mkErr x = handle x
                 (error . mkErr) -- Gofer runtime error.
                 id
 
@@ -90,7 +90,7 @@ doFirstOk :: ErrorSMonad m =>
 doFirstOk p = doFirstOk' p []
 
 doFirstOk' p errs handle [] = handle (reverse errs)
-doFirstOk' p errs handle (x:xs) = 
+doFirstOk' p errs handle (x:xs) =
     handleS (p x)
     (\er -> doFirstOk' p ((er,x):errs) handle xs)
     return
@@ -112,7 +112,7 @@ instance Monad (State s) where
                                   Err e -> (s',Err e)
                                   Suc a -> let (ST f') = f a in
                                            f' s')
-                     
+
 
 instance PreErrorMonad (State s) where
      err e = ST (\s -> (s,Err e))
@@ -138,7 +138,7 @@ instance StateMonad State where
      update f = ST (\s -> (f s, Suc s))
      update' f = ST (\s -> (f s, Suc ())) -- map (const ()) (update f)
      set s = ST (\old -> (s,Suc ()))
- 
+
 perform :: s -> State s a -> State b (a,s)
 perform st (ST p) = let (st',ea) = p st in
                       case ea of
@@ -147,4 +147,3 @@ perform st (ST p) = let (st',ea) = p st in
 
 runState :: s -> State s b -> (s,E b)
 runState init (ST prog) = prog init
-

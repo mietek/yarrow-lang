@@ -1,6 +1,6 @@
 -- This is a project file suitable for loading Yarrow (on Unix and DOS like
 -- systems).
--- 
+--
 -- Load into Gofer using the command:   :p Yarrow
 --        or from command line using:   gofer + Yarrow
 
@@ -46,12 +46,10 @@ Modules.hs
 MainMod.hs
 
 -- USER INTERFACE
-PlatJU.hs 
+PlatJU.hs
 HText.hs
 GoMonIO.hs
 Errors.hs
 LatexPr.hs
 Deduct.hs
 CLIMain.hs
-
-

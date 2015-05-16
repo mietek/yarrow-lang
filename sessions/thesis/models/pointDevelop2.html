@@ -24,7 +24,7 @@
 </FONT><FONT COLOR="#000000">
 </FONT><FONT COLOR="#0000FF">Def pointInit := {x=O} : PointRep
 </FONT><FONT COLOR="#000000">
-</FONT><FONT COLOR="#0000FF">Def PointI := \R:*s. {|getX:R-&gt;Nat, 
+</FONT><FONT COLOR="#0000FF">Def PointI := \R:*s. {|getX:R-&gt;Nat,
 </FONT><FONT COLOR="#0000FF">                       setX:R-&gt;Nat-&gt;R,
 </FONT><FONT COLOR="#0000FF">                       bump:R-&gt;R|}
 </FONT><FONT COLOR="#000000">
@@ -37,7 +37,7 @@
 </FONT><FONT COLOR="#000000">-- Step 2: Encapsulation --
 </FONT><FONT COLOR="#000000">---------------------------
 </FONT><FONT COLOR="#000000">
-</FONT><FONT COLOR="#0000FF">Def newPoint := (pack (\X:*s. {| state : X, met : PointI X |}) PointRep 
+</FONT><FONT COLOR="#0000FF">Def newPoint := (pack (\X:*s. {| state : X, met : PointI X |}) PointRep
 </FONT><FONT COLOR="#0000FF">                       {state = pointInit,
 </FONT><FONT COLOR="#0000FF">                                        met = pointMet}) :
 </FONT><FONT COLOR="#0000FF">                Sig X:*s. {| state : X, met : PointI X |}
@@ -63,7 +63,7 @@
 </FONT><FONT COLOR="#0000FF">                                    met = x`met}) :
 </FONT><FONT COLOR="#0000FF">                  Point -&gt; Point
 </FONT><FONT COLOR="#000000">
-</FONT><FONT COLOR="#0000FF">Def point'setX := 
+</FONT><FONT COLOR="#0000FF">Def point'setX :=
 </FONT><FONT COLOR="#0000FF">          \p:Point. \n:Nat. unpack p (\X:*s.\x:{|state:X,met : PointI X|}.
 </FONT><FONT COLOR="#0000FF">                            pack (\X:*s. {| state : X, met : PointI X |})
 </FONT><FONT COLOR="#0000FF">                                 X {state= x`met`setX x`state n,
@@ -94,17 +94,17 @@
 </FONT><FONT COLOR="#FF0000">Var Colour : *s
 </FONT><FONT COLOR="#FF0000">Var red,white, blue : Colour
 </FONT><FONT COLOR="#000000">
-</FONT><FONT COLOR="#0000FF">Def ColPointI := \R:*s. {|getX:R-&gt;Nat, 
+</FONT><FONT COLOR="#0000FF">Def ColPointI := \R:*s. {|getX:R-&gt;Nat,
 </FONT><FONT COLOR="#0000FF">                          setX:R-&gt;Nat-&gt;R,
 </FONT><FONT COLOR="#0000FF">                          bump:R-&gt;R,
-</FONT><FONT COLOR="#0000FF">                          getC:R-&gt;Colour, 
+</FONT><FONT COLOR="#0000FF">                          getC:R-&gt;Colour,
 </FONT><FONT COLOR="#0000FF">                          setC:R-&gt;Colour-&gt;R|}
 </FONT><FONT COLOR="#000000">
 </FONT><FONT COLOR="#0000FF">Def ColPoint := Object ColPointI
 </FONT><FONT COLOR="#000000">
-</FONT><FONT COLOR="#0000FF">Def newColPoint := (pack (\X:*s. {| state : X, met : ColPointI X |}) {||} 
+</FONT><FONT COLOR="#0000FF">Def newColPoint := (pack (\X:*s. {| state : X, met : ColPointI X |}) {||}
 </FONT><FONT COLOR="#0000FF">                       {state = {},
-</FONT><FONT COLOR="#0000FF">                        met = {getX= \r:{||}.O, 
+</FONT><FONT COLOR="#0000FF">                        met = {getX= \r:{||}.O,
 </FONT><FONT COLOR="#0000FF">                               setX= \r:{||}.\n:Nat. r,
 </FONT><FONT COLOR="#0000FF">                               bump= \r:{||}.r,
 </FONT><FONT COLOR="#0000FF">                               getC= \r:{||}.red,

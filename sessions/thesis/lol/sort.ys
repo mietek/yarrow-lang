@@ -15,10 +15,10 @@ Load "list"
 -- This is a nice definition, since there are only two clauses, that follow
 -- the structure of lists.
 
-Def Ordered := \l:List Nat. 
+Def Ordered := \l:List Nat.
                @P:List Nat -> *p.
                P (nil Nat) ->
-               (@a:Nat.@m:List Nat. P m -> (@b:Nat. Elem b m -> a<=b) -> 
+               (@a:Nat.@m:List Nat. P m -> (@b:Nat. Elem b m -> a<=b) ->
                                     P (a;m)) ->
                P l :
                List Nat -> *p
@@ -29,8 +29,8 @@ Intros
 Assumption
 Exit
 
-Prove Ordered_cons : @a:Nat.@m:List Nat. Ordered m -> 
-                                        (@b:Nat. Elem b m -> a<=b) -> 
+Prove Ordered_cons : @a:Nat.@m:List Nat. Ordered m ->
+                                        (@b:Nat. Elem b m -> a<=b) ->
                                         Ordered (a;m)
 Intros
 Unfold Ordered
@@ -49,7 +49,7 @@ FalseE
 Apply Elem_nil_ On H
 Exit
 
-Prove Ordered_exh : @l:List Nat. Ordered l -> 
+Prove Ordered_exh : @l:List Nat. Ordered l ->
                      l = nil Nat \/
                      Ex a:Nat. Ex m:List Nat. l = a;m /\
                                               (@b:Nat. Elem b m -> a<=b) /\
@@ -79,7 +79,7 @@ Assumption
 Assumption
 Exit
 
-Prove Ordered_cons_ : @a:Nat.@m:List Nat. Ordered (a;m) -> 
+Prove Ordered_cons_ : @a:Nat.@m:List Nat. Ordered (a;m) ->
                                           (@b:Nat. Elem b m -> a<=b) /\
                                           Ordered m
 Intros 3
@@ -123,7 +123,7 @@ Intros
 Apply H
 Exit
 
-Prove Perm_trans : @A:*s. @xs,ys,zs:List A. Perm xs ys -> Perm ys zs -> 
+Prove Perm_trans : @A:*s. @xs,ys,zs:List A. Perm xs ys -> Perm ys zs ->
                                             Perm xs zs
 Intros
 Unfold Perm
@@ -133,12 +133,12 @@ Apply H Then Assumption
 Apply H1 Then Assumption
 Exit
 
-Prove Perm_swap : @A:*s. @xs,ys:List A.@x,y:A. 
+Prove Perm_swap : @A:*s. @xs,ys:List A.@x,y:A.
                                      Perm (xs++(x;y;ys)) (xs++(y;x;ys))
 Unfold Perm Then Intros
 Apply H2
 Exit
-                                                                 
+
 Prove Perm_cons : @A:*s. @a:A. @l,m:List A. Perm l m -> Perm (a;l) (a;m)
 Intros
 Apply H
@@ -168,8 +168,8 @@ Exit
 ---------------------
 
 Def insert := \n:Nat. primreclist (singleton n) (
-                      \head:Nat. \tail:List Nat. \insert_tail:List Nat. 
-                         if (leq n head) (n;head;tail) (head;insert_tail)) : 
+                      \head:Nat. \tail:List Nat. \insert_tail:List Nat.
+                         if (leq n head) (n;head;tail) (head;insert_tail)) :
               Nat -> List Nat -> List Nat
 
 Prove insert_nil : @m:Nat. insert m (nil Nat) = singleton m
@@ -196,7 +196,7 @@ Rewrite if_false
 Refl
 Exit
 
-Prove Elem_insert_ : @m,n:Nat.@ns:List Nat. Elem m (insert n ns) -> 
+Prove Elem_insert_ : @m,n:Nat.@ns:List Nat. Elem m (insert n ns) ->
                                             m=n \/ Elem m ns
 Intros 2
 Apply indlist
@@ -287,7 +287,7 @@ Exit
 -- sort [] = sort
 -- sort (x:xs) = insert x (sort xs)
 
-Def sort := primreclist (nil Nat) (\head:Nat. \tail:List Nat. 
+Def sort := primreclist (nil Nat) (\head:Nat. \tail:List Nat.
                                 \sort_tail:List Nat. insert head sort_tail) :
             List Nat -> List Nat
 -- bdRed sort (S O ; O ; nil Nat)
@@ -321,6 +321,6 @@ Apply Perm_refl
 Intros
 Rewrite sort_cons
 Forward Perm_cons On a, H
-Apply Perm_trans On H1                                               
+Apply Perm_trans On H1
 Apply Perm_insert
 Exit

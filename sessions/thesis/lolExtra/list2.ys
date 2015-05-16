@@ -7,10 +7,10 @@
 
 Path "../lol"
 Load "logic2"
-Load "bool2" 
-Load "nat2"  
+Load "bool2"
+Load "nat2"
 Load "list"
-Load "sort"  
+Load "sort"
 
 
 --------------------------------------------------------------------
@@ -44,7 +44,7 @@ Apply Perm_swap
 Exit
 
 -- Two lemmas about insert --
-Prove lemma_insert_m_n_is_insert_n_m : @m,n:Nat. m<n -> 
+Prove lemma_insert_m_n_is_insert_n_m : @m,n:Nat. m<n ->
                (@l:List Nat. insert m (insert n l) = insert n (insert m l))
 Intros 3
 Apply indlist
@@ -80,7 +80,7 @@ Rewrite H1
 Refl
 Exit
 
-Prove insert_m_n_is_insert_n_m : @m,n:Nat. @l:List Nat. 
+Prove insert_m_n_is_insert_n_m : @m,n:Nat. @l:List Nat.
                                  insert m (insert n l) = insert n (insert m l)
 Intros 2
 OrE Le_Or_Gt On m, n
@@ -97,7 +97,7 @@ Assumption
 Exit
 
 -- Lemma about concat
-Prove concat_is_nil_ : @A:*s. @as,bs:List A. as ++ bs = nil A -> 
+Prove concat_is_nil_ : @A:*s. @as,bs:List A. as ++ bs = nil A ->
                        as = nil A /\ bs = nil A
 Intros
 OrE exh_list On as
@@ -198,7 +198,7 @@ Exit
 -- elem --
 ----------
 
-Def elem := \m:Nat. iterlist false (\hd:Nat. \elem_tail:Bool. 
+Def elem := \m:Nat. iterlist false (\hd:Nat. \elem_tail:Bool.
                                     eq m hd || elem_tail) :
             Nat -> List Nat -> Bool
 
@@ -242,7 +242,7 @@ Exit
 -- genCount & count --
 ----------------------
 
-Def genCount := \A:*s.\p:A->Bool.\l:List A. iterlist O (\hd:A. \countTail:Nat. 
+Def genCount := \A:*s.\p:A->Bool.\l:List A. iterlist O (\hd:A. \countTail:Nat.
                                         if (p hd) (S countTail) countTail) l :
                 @A:*s. (A->Bool) -> List A -> Nat
 Implicit 1 genCount
@@ -254,7 +254,7 @@ Rewrite iterlist_nil
 Refl
 Exit
 
-Prove genCount_cons : @A:*s.@p:A->Bool. @a:A. @l:List A. 
+Prove genCount_cons : @A:*s.@p:A->Bool. @a:A. @l:List A.
                   genCount p (a;l) = if (p a) (S (genCount p l)) (genCount p l)
 Intros
 Unfold 1 genCount
@@ -272,7 +272,7 @@ Unfold count
 Apply genCount_nil
 Exit
 
-Prove count_cons : @m,n:Nat. @l:List Nat. 
+Prove count_cons : @m,n:Nat. @l:List Nat.
                    count m (n;l) = if (eq m n) (S (count m l)) (count m l)
 Intros
 Unfold count
@@ -306,7 +306,7 @@ Refl
 Refl
 Exit
 
-Prove count_m_n_cons : @m,n:Nat.@l:List Nat. Not (m=n) -> 
+Prove count_m_n_cons : @m,n:Nat.@l:List Nat. Not (m=n) ->
                           count m (n;l) = count m l
 Intros
 Rewrite neq__count_cons
@@ -317,7 +317,7 @@ Refl
 Exit
 
 
-Prove count_m_insert_m : @m:Nat.@l:List Nat. 
+Prove count_m_insert_m : @m:Nat.@l:List Nat.
                          count m (insert m l) = S (count m l)
 Intro
 Apply indlist
@@ -343,7 +343,7 @@ Intro
 Repeat Rewrite count_m_n_cons Then Try Assumption
 Exit
 
-Prove count_m_insert_n : @m,n:Nat.@l:List Nat. Not (m=n) -> 
+Prove count_m_insert_n : @m,n:Nat.@l:List Nat. Not (m=n) ->
                          count m (insert n l) = count m l
 Intros 2
 Apply indlist
@@ -558,7 +558,7 @@ Rewrite if_false
 Refl
 Exit
 
-Prove Not_nil__init_cons : @A:*s.@a:A. @as:List A. Not (as=nil A) -> 
+Prove Not_nil__init_cons : @A:*s.@a:A. @as:List A. Not (as=nil A) ->
                            init (a;as) = a; init as
 Intros
 OrE exh_list On as
@@ -599,7 +599,7 @@ Exit
 -- last d nil = d
 -- last d (a;as) = last a as
 
-Def last := \A:*s.\Def:A.\l:List A. 
+Def last := \A:*s.\Def:A.\l:List A.
    iterlist (\Def:A.Def) (\hd:A. \last_tail:A->A. \dummy:A. last_tail hd) l Def
 implicit 1 last
 
@@ -617,7 +617,7 @@ Rewrite iterlist_cons
 Refl
 Exit
 
-Prove Not_nil__last : @A:*s.@a1,a2:A.@as:List A. Not (as = nil A) -> 
+Prove Not_nil__last : @A:*s.@a1,a2:A.@as:List A. Not (as = nil A) ->
                       last a1 as = last a2 as
 Intros 3
 Apply indlist
@@ -630,7 +630,7 @@ Repeat Rewrite last_cons
 Refl
 Exit
 
-Prove Not_nil__last_cons : @A:*s.@a,b:A.@as:List A. Not (as = nil A) -> 
+Prove Not_nil__last_cons : @A:*s.@a,b:A.@as:List A. Not (as = nil A) ->
                            last a (b;as) = last a as
 Intros
 Rewrite last_cons
@@ -638,7 +638,7 @@ Apply Not_nil__last
 Assumption
 Exit
 
-Prove last_concat : @A:*s.@a:A.@as,bs:List A. Not (bs = nil A) -> 
+Prove last_concat : @A:*s.@a:A.@as,bs:List A. Not (bs = nil A) ->
                     last a (as++bs) = last a bs
 Intros
 Pattern as
@@ -677,7 +677,7 @@ Rewrite H5
 Apply cons_is_nil_
 Exit
 
-Prove Elem_Le_last : @l:List Nat. @m:Nat. Elem m l -> 
+Prove Elem_Le_last : @l:List Nat. @m:Nat. Elem m l ->
                      @n:Nat. Ordered l -> m <= last n l
 Intros 3
 Pattern l
@@ -763,4 +763,3 @@ Unfold singleton
 Rewrite last_cons
 Apply last_nil
 Exit
-

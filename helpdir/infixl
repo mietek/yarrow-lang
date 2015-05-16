@@ -2,7 +2,7 @@
  <DT>Syntax:
  <DD><CODE>InfixL</CODE> <VAR>num</VAR> <VAR>var</VAR>
  <DT>Effect:
- <DD> Sets the precedence of operator <VAR>var</VAR> to <VAR>num</VAR>, 
+ <DD> Sets the precedence of operator <VAR>var</VAR> to <VAR>num</VAR>,
                and makes it left-associative.
  <DT>Example:
  <DD><CODE>InfixL 5 (-)</CODE><BR>

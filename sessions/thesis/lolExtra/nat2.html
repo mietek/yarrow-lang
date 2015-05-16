@@ -14,7 +14,7 @@
 </FONT><FONT COLOR="#000000">-- eq --
 </FONT><FONT COLOR="#000000">--------
 </FONT><FONT COLOR="#000000">
-</FONT><FONT COLOR="#0000FF">Def eq := iternat (\n:Nat. isZero n) (\eq_Pm:Nat-&gt;Bool. 
+</FONT><FONT COLOR="#0000FF">Def eq := iternat (\n:Nat. isZero n) (\eq_Pm:Nat-&gt;Bool.
 </FONT><FONT COLOR="#0000FF">          primrecnat false (\Pn:Nat. \dummy:Bool. eq_Pm Pn))
 </FONT><FONT COLOR="#000000">
 </FONT><FONT COLOR="#0000FF">Prove eq_O_O : eq O O = true
@@ -122,9 +122,9 @@
 </FONT><FONT COLOR="#000000">Rewrite iternat_Sm
 </FONT><FONT COLOR="#000000">Refl
 </FONT><FONT COLOR="#000000">Exit
-</FONT><FONT COLOR="#000000">    
+</FONT><FONT COLOR="#000000">
 </FONT><FONT COLOR="#0000FF">Prove plus_O : @n:Nat. n+O = n
-</FONT><FONT COLOR="#000000">Apply indnat  
+</FONT><FONT COLOR="#000000">Apply indnat
 </FONT><FONT COLOR="#000000">
 </FONT><FONT COLOR="#000000">Rewrite O_plus
 </FONT><FONT COLOR="#000000">Refl
@@ -185,7 +185,7 @@
 </FONT><FONT COLOR="#000000">
 </FONT><FONT COLOR="#0000FF">Def max := \m,n:Nat. if (leq n m) m n
 </FONT><FONT COLOR="#000000">
-</FONT><FONT COLOR="#0000FF">Prove Le_max1 : @m,n:Nat. m &lt;= max m n 
+</FONT><FONT COLOR="#0000FF">Prove Le_max1 : @m,n:Nat. m &lt;= max m n
 </FONT><FONT COLOR="#000000">Intros
 </FONT><FONT COLOR="#000000">Unfold max
 </FONT><FONT COLOR="#000000">OrE exh_bool On leq n m
@@ -219,7 +219,7 @@
 </FONT><FONT COLOR="#000000">Refl
 </FONT><FONT COLOR="#000000">Exit
 </FONT><FONT COLOR="#000000">
-</FONT><FONT COLOR="#0000FF">Prove Le_max2 : @m,n:Nat. n &lt;= max m n 
+</FONT><FONT COLOR="#0000FF">Prove Le_max2 : @m,n:Nat. n &lt;= max m n
 </FONT><FONT COLOR="#000000">Intros
 </FONT><FONT COLOR="#000000">Rewrite max_comm
 </FONT><FONT COLOR="#000000">Apply Le_max1

@@ -10,8 +10,8 @@ symbols arrow and at!
 </P>
 
 <P>
-An operator must be used infix. Sometimes you wish to use it in 
-a prefix-way, or without two arguments. Then you have to enclose 
+An operator must be used infix. Sometimes you wish to use it in
+a prefix-way, or without two arguments. Then you have to enclose
 the operator in parentheses. Some examples:<BR>
 <CODE>
 Var (+) : Nat -&gt; Nat -&gt; Nat<BR>
@@ -21,13 +21,12 @@ Def S := (+) one<BR>
 </P>
 
 <P>
-An infix operator binds weaker than application, but stronger 
-than -&gt;. For information concerning associativity and precedence 
+An infix operator binds weaker than application, but stronger
+than -&gt;. For information concerning associativity and precedence
 between operators see
 <A HREF ="#Infix"><CODE>Infix</CODE></A>,
 <A HREF ="#InfixL"><CODE>InfixL</CODE></A> and
 <A HREF ="#InfixR"><CODE>InfixR</CODE></A>.
-This infix system is quite similar to that 
+This infix system is quite similar to that
 used in the functional programming languages Gofer and Haskell.
 </P>
-

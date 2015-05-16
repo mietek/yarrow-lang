@@ -12,10 +12,10 @@ Load "sort"  -- so we have Perm
 -----------------------
 
 Def OrderedId := \B<:{|id:Nat|}.
-                 \l:List B. 
+                 \l:List B.
                  @P:List B -> *p.
                  P (nil B) ->
-                 (@a:B.@m:List B. P m -> (@b:B. Elem b m -> a`id<=b`id) -> 
+                 (@a:B.@m:List B. P m -> (@b:B. Elem b m -> a`id<=b`id) ->
                                   P (a;m)) ->
                  P l :
                  @B<:{|id:Nat|}. List B -> *p
@@ -28,8 +28,8 @@ Intros
 Assumption
 Exit
 
-Prove OrderedId_cons : @B<:{|id:Nat|}.@a:B.@m:List B. OrderedId m -> 
-                                        (@b:B. Elem b m -> a`id<=b`id) -> 
+Prove OrderedId_cons : @B<:{|id:Nat|}.@a:B.@m:List B. OrderedId m ->
+                                        (@b:B. Elem b m -> a`id<=b`id) ->
                                         OrderedId (a;m)
 Intros
 Unfold OrderedId
@@ -48,7 +48,7 @@ FalseE
 Apply Elem_nil_ On H
 Exit
 
-Prove OrderedId_exh : @B<:{|id:Nat|}. @l:List B. OrderedId l -> 
+Prove OrderedId_exh : @B<:{|id:Nat|}. @l:List B. OrderedId l ->
                        l = nil B \/
                        Ex a:B. Ex m:List B. l = a;m /\
                                               (@b:B. Elem b m -> a`id<=b`id) /\
@@ -78,7 +78,7 @@ Assumption
 Assumption
 Exit
 
-Prove OrderedId_cons_ : @B<:{|id:Nat|}. @a:B.@m:List B. OrderedId (a;m) -> 
+Prove OrderedId_cons_ : @B<:{|id:Nat|}. @a:B.@m:List B. OrderedId (a;m) ->
                                           (@b:B. Elem b m -> a`id<=b`id) /\
                                           OrderedId m
 Intros 4
@@ -100,10 +100,10 @@ Exit
 -----------------------
 
 Def insertId := \B<:{|id:Nat|}. \n:B. primreclist (singleton n) (
-                      \head:B. \tail:List B. \insert_tail:List B. 
-                         if (leq n`id head`id) 
+                      \head:B. \tail:List B. \insert_tail:List B.
+                         if (leq n`id head`id)
                             (n;head;tail)
-                            (head;insert_tail)) : 
+                            (head;insert_tail)) :
               @B<:{|id:Nat|}. B -> List B -> List B
 implicit 1 insertId
 
@@ -113,7 +113,7 @@ Unfold insertId
 Apply primreclist_nil
 Exit
 
-Prove Le__insertId : @B<:{|id:Nat|}. @m,n:B.@l:List B. m`id<=n`id -> 
+Prove Le__insertId : @B<:{|id:Nat|}. @m,n:B.@l:List B. m`id<=n`id ->
                                      insertId m (n;l) = m;n;l
 Intros
 Unfold insertId
@@ -123,7 +123,7 @@ Rewrite if_true
 Refl
 Exit
 
-Prove Gt__insertId : @B<:{|id:Nat|}. @m,n:B.@l:List B. n`id<m`id -> 
+Prove Gt__insertId : @B<:{|id:Nat|}. @m,n:B.@l:List B. n`id<m`id ->
                                      insertId m (n;l) = n;(insertId m l)
 Intros
 Unfold 1 insertId
@@ -134,7 +134,7 @@ Refl
 Exit
 
 Prove Elem_insertId_ : @B<:{|id:Nat|}. @m,n:B.@ns:List B.
-                                           Elem m (insertId n ns) -> 
+                                           Elem m (insertId n ns) ->
                                            m=n \/ Elem m ns
 Intros 3
 Apply indlist
@@ -224,7 +224,7 @@ Exit
 ------------
 
 Def sortId := \B<:{|id:Nat|}.
-              primreclist (nil B) (\head:B. \tail:List B. 
+              primreclist (nil B) (\head:B. \tail:List B.
                              \sort_tail:List B. insertId head sort_tail) :
             @B<:{|id:Nat|}. List B -> List B
 Implicit 1 sortId
@@ -260,6 +260,6 @@ Apply Perm_refl
 Intros
 Rewrite sortId_cons
 Forward Perm_cons On a, H
-Apply Perm_trans On H1                                               
+Apply Perm_trans On H1
 Apply Perm_insertId
 Exit

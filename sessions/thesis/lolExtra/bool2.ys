@@ -44,7 +44,7 @@ Exit
 Prove not_not : @b:Bool. not (not b) = b
 Apply indbool
 Rewrite not_true
-Apply not_false 
+Apply not_false
 Rewrite not_false
 Apply not_true
 Exit
@@ -72,7 +72,7 @@ Refl
 Exit
 
 Prove and_true : @b:Bool. b && true = b
-Apply indbool 
+Apply indbool
 Rewrite true_and
 Refl
 Rewrite false_and
@@ -80,7 +80,7 @@ Refl
 Exit
 
 Prove and_false : @b:Bool. b && false = false
-Apply indbool 
+Apply indbool
 Rewrite true_and
 Refl
 Rewrite false_and
@@ -145,7 +145,7 @@ Refl
 Exit
 
 Prove or_true : @b:Bool. b || true = true
-Apply indbool 
+Apply indbool
 Rewrite true_or
 Refl
 Rewrite false_or
@@ -153,7 +153,7 @@ Refl
 Exit
 
 Prove or_false : @b:Bool. b || false = b
-Apply indbool 
+Apply indbool
 Rewrite true_or
 Refl
 Rewrite false_or
@@ -203,7 +203,7 @@ Assumption
 Exit
 
 Prove or_is_false_ : @b,c:Bool. b || c = false -> b=false /\ c=false
-Apply indbool Then Apply indbool 
+Apply indbool Then Apply indbool
 Rewrite true_or Then Intro Then AndI Then Try Assumption Then Try Refl
 Rewrite true_or Then Intro Then AndI Then Try Assumption Then Try Refl
 Rewrite false_or Then Intro Then AndI Then Try Assumption Then Try Refl
@@ -231,4 +231,3 @@ Rewrite true_or Then Refl
 Rewrite false_and Then Repeat Rewrite not_false
 Rewrite true_or Then Refl
 Exit
-

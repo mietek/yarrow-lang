@@ -30,7 +30,7 @@ printGoal stuff@(conc,_,bas,label) si path (n,(term,_,_)) =
                   else
                      ""),
              printTerm stuff si path term]
-  
+
 -------------------------------------
 -- P R I N T I N G   T A C T I C S --
 -------------------------------------
@@ -41,11 +41,11 @@ showNumHistory si (tacPaths,tacTree) =
        map snd (printStructTacTree si tacTree)
     else
        let tacPath = head tacPaths
-           len = length tacPath                 
+           len = length tacPath
            showNumBas n = show (len - n) ++ ") "
            maxShowLen = length (showNumBas 0)
            showNum n = let s = showNumBas n in
-                       s ++ replicate (maxShowLen - length s) ' ' 
+                       s ++ replicate (maxShowLen - length s) ' '
            makeNum path = if tacPath `beginsWith` path then
                              showNum (length path)
                           else
@@ -56,8 +56,8 @@ showNumHistory si (tacPaths,tacTree) =
 -- this command is used when exiting the prover
 showHistory :: SyntaxInfo -> String -> TacticTree -> [String]
 showHistory si s tacTree = printTacTree si tacTree ++ [s]
-   
--- printTacTree just prints the tree pre-order          
+
+-- printTacTree just prints the tree pre-order
 printTacTree :: SyntaxInfo -> TacticTree -> [String]
 printTacTree si (TTHole (_,_)) = ["?"]
 printTacTree si (TTTac tac _ trees) =
@@ -69,11 +69,11 @@ dummyTacPath = [-1]
 
 -- printStructTacTree prints the tree in a structured way, and annotates
 -- each line that displays a tactic with the path of that tactic
-printStructTacTree :: SyntaxInfo -> TacticTree -> [(TacPath,String)]   
+printStructTacTree :: SyntaxInfo -> TacticTree -> [(TacPath,String)]
 printStructTacTree si tacTree = printStructTacTree' si (tacTree,[])
 
-printStructTacTree' :: SyntaxInfo -> (TacticTree,TacPath) -> 
-                       [(TacPath,String)]   
+printStructTacTree' :: SyntaxInfo -> (TacticTree,TacPath) ->
+                       [(TacPath,String)]
 printStructTacTree' si (TTHole (_,_), tp) = [(tp,"?")]
 printStructTacTree' si (TTTac tac _ trees, tp) =
    (tp,printTac si tac) :
@@ -96,7 +96,7 @@ indent s1 s2 (s:ss) = (doSnd (s1++) s) : map (doSnd (s2++)) ss
 
 
 printTac :: SyntaxInfo -> TacticTerm -> String
-printTac si =                                               
+printTac si =
    -- Set all the number of implicit arguments for each variable to zero,
    -- since the terms
    -- in tactics are pseudo-terms; they are not typed, and implicit
@@ -111,7 +111,7 @@ printTacticTerm si t = let deconstructElse (t1 `TElse` t2) = (True,t1,t2)
                            deconstructElse _ = (False,undefined,undefined)
                            ts = breakListR deconstructElse t in
                        prList (printTacticFactor si) " Else " ts
-                           
+
 printTacticFactor :: SyntaxInfo -> TacticTerm -> String
 printTacticFactor si t = let deconstructThen (t1 `TThen` ts) = (True,t1,ts)
                              deconstructThen _ = (False,undefined,undefined)
@@ -132,7 +132,7 @@ breakListL' dec x = let (ok,l,r) = dec x
 
 printTacticAltList si [t] = printTactic si t
 printTacticAltList si ts = "(" ++ prList (printTac si) " | " ts ++ ")"
-                            
+
 
 printTactic :: SyntaxInfo -> TacticTerm -> String
 printTactic si (TIntroVar vs) =        "Intro " ++ printVarListSt si vs
@@ -143,7 +143,7 @@ printTactic si TAssumption =           "Assumption"
 printTactic si (TLet v t) =            "Let " ++ printShortDefSt si (v,t)
 printTactic si (TLetW v t u) =         "Let " ++ printDefSt si (v,t,u)
 printTactic si (TUnfold (occ,v)) =     "Unfold " ++ printOccs occ ++
-                                       printVarSt si v 
+                                       printVarSt si v
 printTactic si (TUnfoldIn (occ,v,h)) = "Unfold " ++ printOccs occ ++
                                        printVarSt si v ++ " In " ++
                                        printVarSt si h
@@ -177,7 +177,7 @@ printTactic si TFalseE =               "FalseE"
 printTactic si (TExistsI t) =          "ExistsI " ++ printTermITSt si t
 printTactic si (TExistsE t) =          "ExistsE " ++ printExtTermITSt si t
 printTactic si (TApply t) =            "Apply " ++ printExtTermITSt si t
-printTactic si (TPattern (occ,t)) =    "Pattern " ++ printOccs occ ++ 
+printTactic si (TPattern (occ,t)) =    "Pattern " ++ printOccs occ ++
                                        printTermITSt si t
 printTactic si (THide vs) =            "Hide " ++ printVarListSt si vs
 printTactic si (TUnhide vs) =          "Unhide " ++ printVarListSt si vs
@@ -200,13 +200,13 @@ printOccs occs = commas (map printOcc occs) ++ " "
 
 
 printDefSt :: SyntaxInfo -> (Vari,TermIT,TermIT) -> String
-printDefSt si (v,d,t) = printVarSt si v ++ " := "  ++ 
+printDefSt si (v,d,t) = printVarSt si v ++ " := "  ++
                         printTermITSt si d ++ " : " ++
                         printTermITSt si t
 
 printShortDefSt :: SyntaxInfo -> (Vari,TermIT) -> String
 printShortDefSt si (v,d) = printVarSt si v ++ " := " ++ printTermITSt si d
-    
+
 printTermITSt :: SyntaxInfo -> TermIT -> String
 printTermITSt si t = printTermSt si (forgetIT t)
 
@@ -216,9 +216,8 @@ printExtTermITSt si (t,ts) = printTermITSt si t ++ " On " ++
                              printTermsITSt si ts
 
 printTermsITSt :: SyntaxInfo -> [TermIT] -> String
-printTermsITSt si (t:ts) = printTermITSt si t ++ 
+printTermsITSt si (t:ts) = printTermITSt si t ++
                            concat (map ((", "++).printTermITSt si) ts)
 
 printTermSt :: SyntaxInfo -> Term -> String
 printTermSt si t = printTerm displayString si dummyPath t
-

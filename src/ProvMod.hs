@@ -72,14 +72,14 @@ nameToTactic TSimplify =             simplify
 nameToTactic (TConvert t) =          checkInputS convertTac t
 nameToTactic (TCut t) =              checkInputS cut t
 nameToTactic (TFirst t) =            checkInputS firstTac t
-nameToTactic (TForward et) =         checkInputETS 
+nameToTactic (TForward et) =         checkInputETS
                                          (forwardTac alwaysUnfold) et
 nameToTactic (TExact t) =            checkInputTS exact t
-nameToTactic (TLewrite (occ,et)) =   checkInputETS 
+nameToTactic (TLewrite (occ,et)) =   checkInputETS
                                          (rewriteRToL (makeOneSelect occ)) et
 nameToTactic (TRewrite (occ,et)) =   checkInputETS
                                          (rewriteLToR (makeOneSelect occ)) et
-nameToTactic (TLewriteIn (occ,et,h))=checkInputETS 
+nameToTactic (TLewriteIn (occ,et,h))=checkInputETS
                                        (rewriteRToLin (makeOneSelect occ) h) et
 nameToTactic (TRewriteIn (occ,et,h))=checkInputETS
                                        (rewriteLToRin (makeOneSelect occ) h) et
@@ -96,7 +96,7 @@ nameToTactic (TNotE et) =            checkInputETS notETac et
 nameToTactic TFalseE =               falseETac
 nameToTactic (TExistsI t) =          checkInputTS existsITac t
 nameToTactic (TExistsE et) =         checkInputETS existsETac et
-nameToTactic (TApply et) =           checkInputETS 
+nameToTactic (TApply et) =           checkInputETS
                                          (applyTac alwaysUnfold) et
 nameToTactic (TPattern (occs,t)) =   \p -> makeAllSelect occs >>= \sel ->
                                            checkInputTS (pattern sel) t p
@@ -105,33 +105,33 @@ nameToTactic (TUnhide vs) =          unhideTac vs
 nameToTactic TUnhideAll =            unhideAllTac
 
 
--- checkInputTS tac term0  type-checks term0 and applies tac to 
+-- checkInputTS tac term0  type-checks term0 and applies tac to
 -- the triple (term,type of term0,sort of term0)
 checkInputTS :: ((Term,Term,Sort) -> Tactic) -> TermIT -> Tactic
 checkInputTS tac term0 tr@(_,_,_,totCon) =
     getTypeRet totCon term0 >>= \tts ->
     tac tts tr
-              
--- checkInputETS tac (term0,terms0)  type-checks term0 and terms0 and 
+
+-- checkInputETS tac (term0,terms0)  type-checks term0 and terms0 and
 -- applies tac to the triple (term,type of term0,sort of term0)
 checkInputETS :: (ExtTermTS -> Tactic) -> ExtTermIT -> Tactic
 checkInputETS tac (term0,terms0) tr@(_,_,_,totCon) =
     getTypeRet totCon term0 >>= \tts ->
     mapL (getTypeRet totCon) terms0 >>= \ttss ->
     tac (tts,ttss) tr
-              
--- checkInputS tac term0  type-checks term0 and applies tac to 
+
+-- checkInputS tac term0  type-checks term0 and applies tac to
 -- the triple (term,type of term0)
 checkInputS :: ((Term,Sort)->Tactic) -> TermIT -> Tactic
 checkInputS tac term0 tr@(_,_,_,totCon) =
     getSortRet totCon term0 >>= \ts ->
     tac ts tr
-              
+
 
 
 -- doTac handles all tactics
 doTac :: TaskId -> TacticTerm -> M Result
-doTac taskId tacTerm =                              
+doTac taskId tacTerm =
    let tactic = nameToTactic tacTerm in
    fetchTacticTree taskId >>= \tacTree ->
    getPath1 taskId >>= \tacPath ->
@@ -139,14 +139,14 @@ doTac taskId tacTerm =
    setTaskId taskId >>  -- store this task number so we don't have to
                         -- give it as parameter to all tactics
    fetchCon >>= \globCon ->
-   let TTHole (hn,(goal,locCon,gi)) = findSubtree tacTree tacPath 
+   let TTHole (hn,(goal,locCon,gi)) = findSubtree tacTree tacPath
        totCon = locCon `addLocG` globCon in
    tactic (goal,locCon,gi,totCon) >>= \(term, newGoals) ->
-   let tacTree' = replaceTPath tacTree tacPath 
-                  (TTTac tacTerm (hn,(goal,locCon,gi),term) 
+   let tacTree' = replaceTPath tacTree tacPath
+                  (TTTac tacTerm (hn,(goal,locCon,gi),term)
                          (fmap TTHole newGoals)) in
    setTacticTree taskId tacTree' >>
-   let newTacPaths = fmap (\n -> tacPath ++ [n]) 
+   let newTacPaths = fmap (\n -> tacPath ++ [n])
                          (take (length newGoals) [0..]) in
    setTacPaths taskId (newTacPaths ++ tail tacPaths) >>
    fmap (RTactic (hn,term)) (makeToProve taskId)
@@ -191,7 +191,7 @@ initGoalInfo :: GoalInfo
 initGoalInfo = []
 
 setUpProveMode :: Item -> M Result
-setUpProveMode it@(v,_,_) = 
+setUpProveMode it@(v,_,_) =
            fetchTasks >>= \(_,tasks) ->
            let taskId = v in
            setTasks (undefined,tasks ++ [initProver it]) >>
@@ -202,7 +202,7 @@ setUpProveMode it@(v,_,_) =
 ----------------------------------------------------------------------
 --  C O M M A N D S   S P E C I F I C   F O R   T H E   P R O V E R --
 ----------------------------------------------------------------------
-  
+
 -- Exiting prove mode
 
 abortCom :: TaskId -> M Result
@@ -211,12 +211,12 @@ abortCom taskId =
              fetchTacticTree taskId >>= \history ->
              removeTask taskId >>
              fetchCon >>= \con ->
-             return (RExit [] (v,t,history,Abort)) 
+             return (RExit [] (v,t,history,Abort))
 
 exitCom :: TaskId -> M Result
-exitCom taskId = 
+exitCom taskId =
             fetchTaskItem taskId >>= \(v,t,_) ->
-            makeToProve taskId >>= \(proofterm,goals) -> 
+            makeToProve taskId >>= \(proofterm,goals) ->
             if null goals then
                fetchTacticTree taskId >>= \history ->
                addLemma taskId proofterm >>
@@ -226,21 +226,21 @@ exitCom taskId =
                genErrS "Proof is not finished"
 
 removeTask :: TaskId -> M ()
-removeTask taskId = 
+removeTask taskId =
      fetchTasks >>= \(_,tasks) ->
      let (task1,rest) = break (taskHasId taskId) tasks in
      setTasks (undefined, task1 ++ tail rest)
- 
+
 
 addLemma :: TaskId -> Term -> M ()
-addLemma taskId proofterm = 
+addLemma taskId proofterm =
          fetchTaskItem taskId >>= \(v,t,s) ->
          removeTask taskId >>
          fetchCon >>= \globCon ->
          fetchSyn >>= \si ->
-         let newCon = mkDef (v,proofterm,t,s) `addI` globCon 
+         let newCon = mkDef (v,proofterm,t,s) `addI` globCon
              errText = "Prover gave UNCORRECT PROOF TERM!!!" in
-         handle (contnOk si 1 newCon) 
+         handle (contnOk si 1 newCon)
          (\_ -> internalErr errText)
          (\_ -> setCon newCon)
 
@@ -248,7 +248,7 @@ addLemma taskId proofterm =
 -- Some commands for handling the history
 
 doUndo :: TaskId -> Int -> M Result
-doUndo taskId n = 
+doUndo taskId n =
     fetchTacticTree taskId >>= \tacTree ->
     fetchTacPaths taskId >>= \tacPaths ->
     if null tacPaths then
@@ -257,20 +257,20 @@ doUndo taskId n =
     let tacPath = head tacPaths in
     if n<0 || n > length tacPath then
        genErrS "Cannot go back that far"
-    else 
-    (if n == 0 then 
+    else
+    (if n == 0 then
         skip
-     else      
+     else
         let tacPath' = take (length tacPath - n) tacPath
             TTTac _ (hnum,goal,_) _ = findSubtree tacTree tacPath'
-            tacTree' = replaceTPath tacTree tacPath' (TTHole (hnum,goal)) 
+            tacTree' = replaceTPath tacTree tacPath' (TTHole (hnum,goal))
             tacPaths' = filter (not . (flip beginsWith tacPath')) tacPaths in
         setTacticTree taskId tacTree' >>
         setTacPaths taskId (tacPath':tacPaths')
     ) >>
     makeToProve taskId >>= \toProve ->
     return (RTaskIs toProve)
-       
+
 restart :: TaskId -> M Result
 restart taskId = fetchTaskItem taskId >>= \it ->
                  setTask taskId (initProver it) >>
@@ -278,7 +278,7 @@ restart taskId = fetchTaskItem taskId >>= \it ->
 
 
 focus :: TaskId -> Int -> M Result
-focus taskId n = 
+focus taskId n =
     fetchTacPaths taskId >>= \tacPaths ->
     if n > length tacPaths then
        genErrS ("Goal " ++ show n ++ " doesn't exist")

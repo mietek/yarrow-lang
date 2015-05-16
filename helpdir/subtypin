@@ -5,16 +5,16 @@
   <DD>Subtyping is activitated by giving two additional
       parameters to the 'System' command:
       the list of subtyping sorts and the list of subtyping rules.
-      For example:<BR>  
+      For example:<BR>
       <CODE>System (*,#),(*:#),((*,*),(#,*)),(#),((#,*))</CODE>
       for the second order lambda calculus with subtyping and
       bounded quantification.
   <DT>Syntax:
   <DD>There are two additional constructions:
       <DL COMPACT>
-      <DT><CODE>\x &lt;: t : T. e</CODE><DD> for a bounded abstraction. 
+      <DT><CODE>\x &lt;: t : T. e</CODE><DD> for a bounded abstraction.
       <DT><CODE>@x &lt;: t : T. e</CODE><DD> for a bounded quantification.
-      </DL>          
+      </DL>
       We use <CODE>\x &lt;: t. e</CODE> as shorthand for
       <CODE>\x &lt;: t : T. e</CODE> if <CODE>t : T</CODE>. This shorthand is
       also available for bounded quantifications.
@@ -28,10 +28,7 @@
           variable.
       </UL>
       All other commands are adapted to handle subtyping as well.
-      For example, <CODE>Type</CODE> gives a minimal type, and 
+      For example, <CODE>Type</CODE> gives a minimal type, and
       <CODE>Intro</CODE> and <CODE>Apply</CODE> work also for bounded
       quantifications.
 </DL>
-
-
-

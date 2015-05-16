@@ -2,11 +2,11 @@
  <DT>Syntax:
  <DD><OL>
      <LI><CODE>Forward</CODE> <VAR>term</VAR>
-     <LI><CODE>Forward</CODE> <VAR>term</VAR> <CODE>On</CODE> 
+     <LI><CODE>Forward</CODE> <VAR>term</VAR> <CODE>On</CODE>
                                               <VAR>term-list</VAR>
      </OL>
  <DT>Effect 1:
- <DD> <P>      
+ <DD> <P>
       Introduce a variable with the same type as <VAR>term</VAR>.
       Suppose <VAR>term</VAR> is of type <VAR>T</VAR>.
       Then this tactic is a shortcut for the consecutive tactics<BR>
@@ -34,7 +34,7 @@
      <CODE>---------</CODE><BR>
      <CODE>R</CODE><BR>
  <DT>Effect 2:
- <DD> <P>      
+ <DD> <P>
       The disadvantage of Forward 1 is that often big applications have
       to be typed in, with many arguments that are clear from the context.
       In example 1 above, the argument y of H2 is clear from the context.
@@ -47,7 +47,7 @@
       <P>
       The second variant of Forward tries to make a proof-term of the
       form<BR>
-      <VAR>term</VAR> .. <VAR>term1</VAR> .. <VAR>term2</VAR> .. etc. .. 
+      <VAR>term</VAR> .. <VAR>term1</VAR> .. <VAR>term2</VAR> .. etc. ..
       <VAR>termn</VAR><BR>
       where on each place with dots zero or more terms are inserted, to
       make the term well-typed. The terms that are inserted are either
@@ -55,10 +55,10 @@
       In this way, forward reasoning is much easier.
       </P>
 
-      <P> 
+      <P>
       If <VAR>term</VAR> is a local variable <VAR>v</VAR>,
       and we use only 'arrow-elimination' to obtain the new assumption,
-      this variable <VAR>v</VAR> is hidden.<BR> 
+      this variable <VAR>v</VAR> is hidden.<BR>
       </P>
  <DT>Example 2:
  <DD>Suppose our goal is<BR>

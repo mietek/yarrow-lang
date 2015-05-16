@@ -3,7 +3,7 @@
 --              text
 
 module Display(Display, displayString) where
- 
+
 -- This module defines polymorphic printing routines.
 -- The polymorphism means that these routines can be used both by a
 -- textual and a graphical user interface.
@@ -15,10 +15,10 @@ module Display(Display, displayString) where
 -- Therefore, Display contains a labelling function.
 -- It also contains a 'basic' function for (unstructured) pieces of text,
 -- and two concatenation functions for glueing stuff together
--- (horizontally or vertically)  
+-- (horizontally or vertically)
 
 
-                
+
 type Display label output =
       ([output]->output,           -- the horizontal concatenation function
        [output]->output,           -- the vertical concatenation function
@@ -30,7 +30,7 @@ displayString = (concat, concat . (map (++"\n")), id, const id)
 
 {-
 -- for testing
-displayString = 
+displayString =
          (concat,
           concat . (map (++"\n")),
           id,
@@ -52,6 +52,6 @@ class Display label output where
 instance Display a => Display [a] where
          conc = concat
          bas = id
-         label _ s = s    -- we don't use the labels in the string 
+         label _ s = s    -- we don't use the labels in the string
                           -- representation
 -}

@@ -5,7 +5,7 @@ properties about these types.
 
 Description of the files:
  - bool     defines the booleans
- - nat      defines the natural numbers 
+ - nat      defines the natural numbers
  - plus     defines addition on natural numbers
  - list     defines the lists
 

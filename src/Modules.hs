@@ -50,7 +50,7 @@ Var ::= every char except from ":).,"
 Sort ::= Var
 
 Context ::= '}' |                  -- empty
-            ContextE '\n' Context 
+            ContextE '\n' Context
 ContextE ::= ContCat Terms Item
 ContCat ::= '=' |    -- Def
             ':'      -- Decl
@@ -65,14 +65,14 @@ ContCat ::= '=' |    -- Def
    because Vari is not declared as a 'datatype'. This severely limits the
    use of classes.
 -}
-   
+
 
 -------------------------------------
 --  S A V I N G   C O N T E X T S  --
 -------------------------------------
 
 -- we use simple state monads for loading and saving to limit the overhead.
-                   
+
 type MOState = (String->String,Checksum)
 type ModulesO a = State MOState a
 
@@ -98,7 +98,7 @@ fetchS2 = fetch
 setS :: s -> State s ()
 setS = set
 
-                
+
 mWriteS :: String -> ModulesO ()
 mWriteS s = fetchS2 >>= \(f,checksum) ->
             let checksum' = foldl computeChecksum checksum s
@@ -124,7 +124,7 @@ saveTerm term | isBind term = let (_,cat,ts,it,u) = deconstructBind term in
                               saveTerms ts >>
                               saveItem it >>
                               saveTerm u
-                               
+
 saveTerms :: [Term] -> ModulesO ()
 saveTerms = saveList saveTerm
 
@@ -161,11 +161,11 @@ saveConstraints CNone = mWriteC 'N'
 saveConstraints CSub = mWriteC 'S'
 -- End Extension: Subtyping
 
-                                  
+
 saveItem :: Item -> ModulesO ()
 saveItem (v,t,s) = saveVar v >>
-                   mWriteC ':' >> 
-                   saveTerm t >> 
+                   mWriteC ':' >>
+                   saveTerm t >>
                    mWriteC ':' >>
                    saveSort s >>
                    mWriteC '.'
@@ -176,13 +176,13 @@ saveVar :: Vari -> ModulesO ()
 saveVar v = mWriteS v
 
 saveSort (SORT s) = mWriteS s
-                    
+
 -- CONTEXTS
-         
+
 saveContextE :: ContextE -> ModulesO ()
 saveContextE (v,((t,s),cat,ts)) = saveContCat cat >>
                                   saveTerms ts >>
-                                  saveItem (v,t,s)   
+                                  saveItem (v,t,s)
 
 saveContCat :: ContCat -> ModulesO ()
 saveContCat Def = mWriteC '='
@@ -197,12 +197,12 @@ saveSystem (pts,exs) = savePTSystem pts >>
                        saveExSystem exs
 
 savePTSystem :: PTSystem -> ModulesO ()
-savePTSystem (sorts,axioms,rules,sortsSub,rulesSub) = 
+savePTSystem (sorts,axioms,rules,sortsSub,rulesSub) =
     saveList save1Sort sorts >>
-    saveList save2Sort axioms >> 
-    saveList save3Sort rules >> 
+    saveList save2Sort axioms >>
+    saveList save3Sort rules >>
     saveList save1Sort sortsSub >>
-    saveList save3Sort rulesSub >> 
+    saveList save3Sort rulesSub >>
     mWriteC '\n'
 
 saveExSystem :: ExSystem -> ModulesO ()
@@ -218,31 +218,31 @@ saveExtension :: Extension -> ModulesO ()
 -- Extension: Records:
 saveExtension Records = mWriteC 'R'
 -- End Extension: Records:
-                                  
+
 save1Sort s = saveSort s
-save2Sort (s1,s2) = saveSort s1 >> 
-                    mWriteC ':' >> 
+save2Sort (s1,s2) = saveSort s1 >>
+                    mWriteC ':' >>
                     saveSort s2
-save3Sort (s1,s2,s3) = saveSort s1 >> 
-                       mWriteC ':' >> 
-                       saveSort s2 >> 
-                       mWriteC ':' >> 
+save3Sort (s1,s2,s3) = saveSort s1 >>
+                       mWriteC ':' >>
+                       saveSort s2 >>
+                       mWriteC ':' >>
                        saveSort s3
 
 saveImport :: (String,Checksum) -> ModulesO ()
-saveImport (s,c) = mWriteC '\"' >> 
-                   mWriteS s >> 
-                   mWriteC '\"' >> 
+saveImport (s,c) = mWriteC '\"' >>
+                   mWriteS s >>
+                   mWriteC '\"' >>
                    saveChecksum c
 
 saveImports :: [(String,Checksum)] -> ModulesO ()
 saveImports ms = saveList saveImport (reverse ms) >>
                  mWriteC '\n'
-                         
+
 savePrec :: (Vari,(Int,Assoc)) -> ModulesO ()
-savePrec (v,(n,a)) = mWriteS v >> 
-                     mWriteC ':' >> 
-                     mWriteS (show n) >> 
+savePrec (v,(n,a)) = mWriteS v >>
+                     mWriteC ':' >>
+                     mWriteS (show n) >>
                      mWriteC (showA a)
                       where showA NoAssoc = 'n'
                             showA LeftAssoc = 'l'
@@ -250,37 +250,37 @@ savePrec (v,(n,a)) = mWriteS v >>
 
 savePrecs :: [(Vari,(Int,Assoc))] -> ModulesO ()
 savePrecs precs = mWriteC 'p' >>
-                  saveList savePrec precs  >> 
+                  saveList savePrec precs  >>
                   mWriteC '\n'
 
 saveBinds :: [Vari] -> ModulesO ()
 saveBinds binds = mWriteC 'b' >>
-                  saveList saveVar binds  >> 
+                  saveList saveVar binds  >>
                   mWriteC '\n'
 
 saveLatexs :: [(Vari,Int)] -> ModulesO ()
 saveLatexs latexs = mWriteC 'l' >>
-                    saveList saveImpl latexs  >> 
+                    saveList saveImpl latexs  >>
                     mWriteC '\n'
 
-                     
+
 
 saveImpl :: (Vari,Int) -> ModulesO ()
-saveImpl (v,n) = mWriteS v >> 
-                 mWriteC ':' >> 
+saveImpl (v,n) = mWriteS v >>
+                 mWriteC ':' >>
                  mWriteS (show n)
 
 saveImpls :: [(Vari,Int)] -> ModulesO ()
 saveImpls impls = mWriteC 'i' >>
-                  saveList saveImpl impls >> 
+                  saveList saveImpl impls >>
                   mWriteC '\n'
 
 saveLemma :: ((Vari,String,[Sort]),(Vari,Int)) -> ModulesO ()
-saveLemma ((w,s,sorts),(v,i)) = 
-    mWriteS v >> 
-    mWriteC ':' >> 
-    mWriteS (show i) >> 
-    mWriteC ':' >> 
+saveLemma ((w,s,sorts),(v,i)) =
+    mWriteS v >>
+    mWriteC ':' >>
+    mWriteS (show i) >>
+    mWriteC ':' >>
     mWriteS w >>
     mWriteC ':' >>
     mWriteS s >>
@@ -289,22 +289,22 @@ saveLemma ((w,s,sorts),(v,i)) =
 
 saveLemmas :: [((Vari,String,[Sort]),(Vari,Int))] -> ModulesO ()
 saveLemmas lemmas = mWriteC 'l' >>
-                    saveList saveLemma lemmas >> 
+                    saveList saveLemma lemmas >>
                     mWriteC '\n'
 
 
-                  
+
 saveModule :: (System,[(String,Checksum)],[(Vari,(Int,Assoc))],[Vari],
                       [(Vari,Int)],
                       [(Vari,Int)],[((Vari,String,[Sort]),(Vari,Int))],
                       [ContextE]) ->
               ModulesO ()
-saveModule (sys,ms,prec,binds,latexs,impl,lemmas,con) = 
+saveModule (sys,ms,prec,binds,latexs,impl,lemmas,con) =
         saveSystem sys >> saveImports ms >> savePrecs prec >>
         saveBinds binds >> saveLatexs latexs >>
         saveImpls impl >> saveLemmas lemmas >> saveContext con
 
-performSaveModule :: 
+performSaveModule ::
               (System,[(String,Checksum)],[(Vari,(Int,Assoc))],[Vari],
                       [(Vari,Int)],
                       [(Vari,Int)],[((Vari,String,[Sort]),(Vari,Int))],
@@ -323,7 +323,7 @@ saveList sa as = mWriteC '(' >>
 ---------------------------------------
 --  L O A D I N G   C O N T E X T S  --
 ---------------------------------------
-                       
+
 -- we use simple state monads for loading to limit the overhead.
 
 type MState = (String,Checksum)
@@ -332,7 +332,7 @@ type ModulesI a = State MState a
 makeErrorMP :: PreErrorMonad m => String -> m a
 makeErrorMP s = genErrS ("Not a module at "++ take 10 s)
 
-loadErr :: ModulesI a      
+loadErr :: ModulesI a
 loadErr = fetchS2 >>= \(s,_) ->
           makeErrorMP s
 
@@ -341,12 +341,12 @@ mReadChar = fetchS2 >>= \((c:_),_) ->
             return c
 
 mNextChar :: ModulesI ()
-mNextChar = fetchS2 >>= \(c:s,checksum) -> 
+mNextChar = fetchS2 >>= \(c:s,checksum) ->
             if checksum/=checksum+1 then -- force strictness!
                set (s,computeChecksum checksum c)
             else
                loadErr
-  
+
 mTakeUntil :: (Char -> Bool) -> ModulesI String
 mTakeUntil p = mReadChar >>= \c ->
                if p c then
@@ -364,7 +364,7 @@ mEat t = mReadChar >>= \u ->
          else loadErr
 
 loadTerm :: ModulesI Term
-loadTerm  = 
+loadTerm  =
     mReadChar >>= \t ->
     case t of
     'B' -> mNextChar >>
@@ -384,14 +384,14 @@ loadTerm  =
 
 loadTerms :: ModulesI [Term]
 loadTerms = loadList loadTerm
-                        
+
 loadBasic :: ModulesI BasicCat
-loadBasic = 
+loadBasic =
     mReadChar >>= \c ->
     case c of
-    'S' -> mNextChar >>  
+    'S' -> mNextChar >>
            loadSort >>= \s ->
-           return (Srt s) 
+           return (Srt s)
     'V' -> mNextChar >>
            loadVar >>= \v->
            return (Vr v)
@@ -414,7 +414,7 @@ loadNonb =
            loadLabel >>= \l ->
            return (RecSelect l)
     -- End Extension: Records:
-    otherwise -> loadErr      
+    otherwise -> loadErr
 
 -- Extension: Records:
 loadLabels :: ModulesI [RecLabel]
@@ -438,7 +438,7 @@ loadBind =
     '=' -> mNextChar >>
            return Delta
     otherwise -> loadErr
-                              
+
 loadConstraints :: ModulesI Constraints
 loadConstraints =
     mReadChar >>= \c ->
@@ -491,7 +491,7 @@ loadContext = mReadChar >>= \t ->
               otherwise -> loadContextE >>= \ce ->
                            mEat '\n' >>
                            fmap (ce :) loadContext
-                                      
+
 loadSystem :: ModulesI System
 loadSystem = loadPTSystem >>= \pts ->
              loadExSystem >>= \exs ->
@@ -538,20 +538,20 @@ loadExtension = mReadChar >>= \c ->
 load1Sort = loadSort
 
 load2Sort = loadSort >>= \s1 ->
-            mEat ':' >>                                 
+            mEat ':' >>
             loadSort >>= \s2 ->
             return (s1,s2)
 
 load3Sort = loadSort >>= \s1 ->
-            mEat ':' >>                                 
+            mEat ':' >>
             loadSort >>= \s2 ->
-            mEat ':' >>                                 
+            mEat ':' >>
             loadSort >>= \s3 ->
             return (s1,s2,s3)
 
 
-            
-loadFilename :: ModulesI String      
+
+loadFilename :: ModulesI String
 loadFilename = mTakeUntil (=='"')
 
 loadInt :: ModulesI Int
@@ -580,7 +580,7 @@ loadPrec = loadVar >>= \v ->
                conv 'r' = RightAssoc
                conv _ = NoAssoc in
            return (v,(i,conv c))
-                  
+
 loadPrecs = mEat 'p' >>
             loadList loadPrec >>= \precs ->
             mEat '\n' >>
@@ -606,10 +606,10 @@ loadImpl = loadVar >>= \v ->
            mEat ':' >>
            loadInt >>= \i ->
            return (v,i)
-                  
+
 loadImpls = mEat 'i' >>
             loadList loadImpl >>= \impls ->
-            mEat '\n' >>                          
+            mEat '\n' >>
             return impls
 
 loadLemma :: ModulesI ((Vari,Int),(Vari,String,[Sort]))
@@ -623,10 +623,10 @@ loadLemma = loadVar >>= \v ->
             mEat ':' >>
             loadList loadSort >>= \sorts ->
             return ((v,i),(w,s,sorts))
-                  
+
 loadLemmas = mEat 'l' >>
              loadList loadLemma >>= \lemmas ->
-             mEat '\n' >>                          
+             mEat '\n' >>
              return lemmas
 
 
@@ -641,30 +641,30 @@ loadModule2 :: ModulesI ([(Vari,(Int,Assoc))],[Vari],[(Vari,Int)],[(Vari,Int)],
 loadModule2 = loadPrecs >>= \precs ->
               loadBinds >>= \binds ->
               loadLatexs >>= \latexs ->
-              loadImpls >>= \impls ->                  
+              loadImpls >>= \impls ->
               loadLemmas >>= \lemmas ->
               loadContext >>= \con ->
               return (precs,binds,latexs,impls,lemmas,con)
 
 performLoadMod1 :: String -> M (System,[(String,Checksum)],(String,Checksum))
-performLoadMod1 s = 
-  perform (s++"}",startChecksum) loadModule1 >>= 
+performLoadMod1 s =
+  perform (s++"}",startChecksum) loadModule1 >>=
                                     \((sys,imp),st) ->
   return (sys,imp,st)
 
-performLoadMod2 :: (String,Checksum) -> 
+performLoadMod2 :: (String,Checksum) ->
                    M ([(Vari,(Int,Assoc))],[Vari],[(Vari,Int)],[(Vari,Int)],
-                      [((Vari,Int),(Vari,String,[Sort]))],[ContextE],Checksum) 
-performLoadMod2 st = 
+                      [((Vari,Int),(Vari,String,[Sort]))],[ContextE],Checksum)
+performLoadMod2 st =
  perform st loadModule2 >>= \((precs,binds,latexs,impls,lemmas,con),(s',cs)) ->
- if s'/="}" then makeErrorMP s' 
- else 
+ if s'/="}" then makeErrorMP s'
+ else
  return (precs,binds,latexs,impls,lemmas,con,cs)
 
 
-           
+
 loadList :: ModulesI a -> ModulesI [a]
-loadList la =                         
+loadList la =
     mEat '(' >>
     loadList' >>= \ts ->
     mEat ')' >>
@@ -696,7 +696,7 @@ saveChecksum = mWriteS . show
 
 -------------------------------------------
 --  A U X I L A R Y   F U N C T I O N S  --
-------------------------------------------- 
+-------------------------------------------
 
 -- splitContext splits the current context into two pieces.
 -- The second piece is the part of the context corresponding to modules,
@@ -728,19 +728,19 @@ checkConflicts ids =
     let nameName = if null conflicts' then "name: " else "names, e.g.: " in
     loadMainErr [ES ("Conflicting " ++ nameName ++
                           printVarSt si conflict1), ES genErrSuffix]
-                    
-                     
 
-                        
+
+
+
 headOrDummy :: [Vari] -> Vari
 headOrDummy [] = dummyVar
 headOrDummy (v:_) = v
-                        
+
 ------------------------------
 --  L O A D  C O M M A N D  --
 ------------------------------
-                      
-loadMainErr :: PreErrorMonad m => Error -> m a                   
+
+loadMainErr :: PreErrorMonad m => Error -> m a
 loadMainErr er = err (er `errConc` loadMainErrMess)
 loadMainErrMess = "\nLoading aborted"
 
@@ -757,7 +757,7 @@ checkChecksums ((name,checksum):ms) =
             else if presentChecksum /= checksum then
                return False
             else
-               checkChecksums ms    
+               checkChecksums ms
 
 
 setPrecs :: [(Vari,(Int,Assoc))] -> M ()
@@ -779,12 +779,12 @@ setImpls :: [(Vari,Int)] -> M ()
 setImpls [] = skip
 setImpls ((v,i):l) = setImplicit v i >>
                      setImpls l
-      
+
 setLemmas :: [((Vari,Int),(Vari,String,[Sort]))] -> M ()
 setLemmas [] = skip
 setLemmas ((v,key):l) = setLemma key v >>
                         setLemmas l
-      
+
 
 
 -- qLoadModuleInput loads a module.
@@ -800,7 +800,7 @@ qLoadModuleInput :: ModuleName -> String -> M Result
 qLoadModuleInput modName contents =
         fetchModulesInfo >>= \mi ->
         if modName `elem` fmap fst3 mi then -- module already loaded
-           return RDone -- of (RModulesAre mi)  -- nothing 
+           return RDone -- of (RModulesAre mi)  -- nothing
         else
         performLoadMod1 contents >>= \(sys,imports,st)->
         fetchSys >>= \curSys ->
@@ -833,14 +833,14 @@ qContinueLoad (StartLoading modName sys st imports) =
      let fileCon' = updateSortsOfDefsInContextEList sys curSys fileCon
          newModCon = fileCon' `addListI` modCon
          tup' = (t1,t2,t3,t4,t5,varsOfFile,t7) in
-     if b then 
+     if b then
         let newCon = userCon `addListI` newModCon in
         continueLoad modName tup' newCon
      else
         return (RLoadMessage ("Rechecking module \"" ++ modName ++ "\"")
                              (StartChecking modName tup' userCon newModCon))
-             
-qContinueLoad (StartChecking modName tup@(_,_,_,_,_,vars,_) 
+
+qContinueLoad (StartChecking modName tup@(_,_,_,_,_,vars,_)
               userCon newModCon) =
         fetchSyn >>= \si ->
         handle (contnOk si (length vars) newModCon)
@@ -859,7 +859,7 @@ continueLoad modName (precs,binds,latexs,impls,lemmas,varsOfFile,checksum)
         setLemmas lemmas >>
         fetchModulesInfo >>= \mi ->
         let firstOfFile = headOrDummy (reverse varsOfFile)
-            lastOfFile = headOrDummy varsOfFile 
+            lastOfFile = headOrDummy varsOfFile
             mi' = (modName,(firstOfFile,lastOfFile),checksum) : mi in
         setModulesInfo mi' >>
         return (RModulesAre mi')
@@ -867,7 +867,7 @@ continueLoad modName (precs,binds,latexs,impls,lemmas,varsOfFile,checksum)
 
 
 -- type StatusLoad = defined in MainSta.hs
-                              
+
 
 
 -------------------------------
@@ -882,7 +882,7 @@ continueLoad modName (precs,binds,latexs,impls,lemmas,varsOfFile,checksum)
 -- 3. The name is a loaded module, but not the most recent. An error
 --    message is issued.
 qSaveModule :: ModuleName -> M Result
-qSaveModule modName = 
+qSaveModule modName =
             fetchModulesInfo >>= \mi ->
             let miModNames = fmap fst3 mi in
             if take 1 miModNames == [modName] then
@@ -898,7 +898,7 @@ qSaveModule modName =
 -- saveMod1 saves the new part of the context in the file, and registers
 -- the new module in the module list.
 saveMod1 :: String -> [ModuleInfo] -> M Result
-saveMod1 modName mi = 
+saveMod1 modName mi =
      fetchSys >>= \sys ->
      splitContext mi >>= \(newCon,_) ->
      fetchPrecedence >>= \allPrec ->
@@ -912,7 +912,7 @@ saveMod1 modName mi =
          bindInfo = filter (`elem` varsOfF) allBind
          latexInfo = partA (indexedToListIL allLatex) varsOfF
          implicitInfo = partA (indexedToListIL allImplicits) varsOfF
-         lemmasInfo = filter (\(_,(v,_)) -> v `elem` varsOfF) 
+         lemmasInfo = filter (\(_,(v,_)) -> v `elem` varsOfF)
                                  (indexedToListIL allLemmas)  in
      performSaveModule (sys,imports,precInfo,bindInfo,latexInfo,implicitInfo,
                         lemmasInfo,newCon)       >>= \(contents,checksum) ->
@@ -920,7 +920,7 @@ saveMod1 modName mi =
          lastOfF = headOrDummy varsOfF
          mi' = ((modName,(firstOfF,lastOfF),checksum) : mi) in
      return (RTrySaveThis contents mi')
-              
+
 -- Only when the data is really saved to disk, update the ModulesInfo-part
 -- of the state
 qSaveCompleted :: StatusSave -> M Result
@@ -948,13 +948,13 @@ lastVarModuleDefined :: [ModuleInfo] -> Vari
 lastVarModuleDefined [] = dummyVar
 lastVarModuleDefined ((_,(_,id),_):mi) = if id == dummyVar then
                                              lastVarModuleDefined mi
-                                         else id                           
+                                         else id
 
 qGiveModuleContents :: String -> M Result
-qGiveModuleContents m = 
+qGiveModuleContents m =
                     fetchCon >>= \c ->
                     fetchModulesInfo >>= \mi ->
-                    let mfs = findAll3 mi m  
+                    let mfs = findAll3 mi m
                         (first,last) = fst (head mfs) in
                     if null mfs then
                        genErrS ("No module \""++m++"\" loaded")
@@ -965,4 +965,3 @@ qGiveModuleContents m =
                                 (dropWhile (\it -> domConE it /= last)
                                  (globConToList c)) in
                     return (RModuleContentsIs partC)
-

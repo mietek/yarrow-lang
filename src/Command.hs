@@ -15,26 +15,26 @@ import Engine
 
 --------------------------------
 -- COMMAND STRUCTURE FOR MAIN --
---------------------------------  
+--------------------------------
 
 data OutputMode = OutAscii | OutLatex | OutJava | OutFrank
 
-data Command = 
+data Command =
 -- all commands that are available in both prover and main mode
 -- (and do not depend on the context)
-                   CSkip | CHelp | CHelpOn String | 
-                   CGiveContext OutputMode ConPart [Sort] ConToFile | 
+                   CSkip | CHelp | CHelpOn String |
+                   CGiveContext OutputMode ConPart [Sort] ConToFile |
                    CSize |
                    CSetOptions OptList | CGiveOptions |
                    CSetPrecAndAss (Vari,Int,Assoc) |
-                   CSetBinder Vari | 
+                   CSetBinder Vari |
                    CSetImplArgs (Vari,Int) |
                    CSetLaTeX (Vari,Int) |
                    CGiveUseFor |
                    CUseFor String Vari |
                    CProveVar (Vari,TermIT) |
                    CDefVar (Vari,TermIT) |
-                   CDefVarW (Vari,TermIT,TermIT) | 
+                   CDefVarW (Vari,TermIT,TermIT) |
                    CDeclareVars ([Vari],TermIT) |
                    -- Extension: Subtyping:
                    CDeclareVarsSub ([Vari],TermIT) |
@@ -43,7 +43,7 @@ data Command =
 
                    CRead String |
                    CGiveTypingSystem |
-                   CGiveModules | CLoadModule ModuleName | 
+                   CGiveModules | CLoadModule ModuleName |
                    CSaveModule ModuleName | CClearModule |
                    CAddPath String | CShowPath |
                    CSetTask TaskId | CGiveTasks |
@@ -53,10 +53,10 @@ data Command =
                    CGiveBReductionPath TaskId (LContext,TermIT) |
                    CGiveDReductionPath TaskId (LContext,TermIT) |
                    CGiveBDReductionPath TaskId (LContext,TermIT) |
-                   CGiveType TaskId (LContext,TermIT) | 
-                   CCheckTyping TaskId (LContext,TermIT,TermIT) | 
+                   CGiveType TaskId (LContext,TermIT) |
+                   CCheckTyping TaskId (LContext,TermIT,TermIT) |
                    -- Extension: Subtyping:
-                   CCheckSubtype TaskId (LContext,TermIT,TermIT) | 
+                   CCheckSubtype TaskId (LContext,TermIT,TermIT) |
                    -- End Extension: Subtyping
                    CCheckBDConv TaskId (LContext,TermIT,TermIT) |
                    CZMatch TaskId (LContext,[Vari],TermIT,TermIT) |
@@ -74,7 +74,7 @@ data Command =
                    CProverCommand TaskId ProverCommand |
                    CHistory TaskId |
                    CShow TaskId GoalNr |
-                                    
+
 -- Commands for testing
                    CZwerver (TermIT,TermIT) |
 -- CNoParse is delivered when an unknown command is offered for parsing

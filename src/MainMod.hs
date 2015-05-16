@@ -23,7 +23,7 @@ import YarMsg
 import TacSpec(qGiveUseFor,qUseFor)
 import Modules
 
-      
+
 ------------------------------------------------
 -- S E L E C T I O N   O F   C O M M A N D S  --
 ------------------------------------------------
@@ -31,9 +31,9 @@ import Modules
 -- parsing and executing commands
 
 doQuery :: Query -> M Result
-doQuery query = 
+doQuery query =
           handleS (doQuery1 query)
-          (\errMess -> return (RError errMess)) 
+          (\errMess -> return (RError errMess))
           return
 
 -- First, we handle requests for information
@@ -91,17 +91,17 @@ doQueryM _ = errNotInMainMode
 errNotInMainMode :: PreErrorMonad m => m a
 errNotInMainMode = genErrS "This command is not available in main-mode"
 
- 
-       
+
+
 ---------------------
 -- C O M M A N D S --
 ---------------------
-     
--- commands for extending the context 
+
+-- commands for extending the context
 
 addVar :: ([Vari],TermIT) -> M Result
 addVar (vars,(t0,it)) =
-            checkVars vars >> 
+            checkVars vars >>
             let oneDecl = mkDecl (head vars,t0,dummySort)
                 allDecls = multDecl vars oneDecl in
             fetchCon >>= \c ->
@@ -118,7 +118,7 @@ addVarSubW (vars,(bound0,itb),(t0,it)) =
             checkVars vars >>
             let oneDecl = mkSubDecl (head vars,bound0,t0,dummySort)
                 allDecls = multDecl vars oneDecl in
-            fetchCon >>= \c -> 
+            fetchCon >>= \c ->
             getLContextRet (globToTot c) allDecls it itb >>= \allDecls' ->
             addConElems allDecls'
 -- End Extension: Subtyping
@@ -134,7 +134,7 @@ addDefW (v,(d0,itd),(t0,it)) =
             fetchCon >>= \c ->
             getLContextRet (globToTot c) allDecls it itd >>= \allDecls' ->
             addConElems allDecls'
-                          
+
 totallyFresh :: Vari -> M ()
 totallyFresh v = fetchSyn >>= \si ->
                  fetchCon >>= \c ->
@@ -147,19 +147,19 @@ totallyFresh v = fetchSyn >>= \si ->
                  skip)
 
 checkVars :: [Vari] -> M ()
-checkVars vars = 
+checkVars vars =
             maplComs totallyFresh vars >>
             let len = length vars
                 conflicts = filter (\v -> v `elem` (vars\\[v])) vars in
             if not (null conflicts) then
                fetchSyn >>= \si ->
-               genErrS ("Variable "++printVarSt si (head conflicts) ++ 
+               genErrS ("Variable "++printVarSt si (head conflicts) ++
                         " declared twice")
-            else                              
+            else
             skip
 
 addConElems :: LContext -> M Result
-addConElems lc = 
+addConElems lc =
             fetchCon >>= \c ->
             let lc' = locConToList lc
                 len = length lc'
@@ -175,8 +175,8 @@ addConElems lc =
                 skip
              ) >>
              return (RGlobConExt (takeTWO len cc))
-            
-                 
+
+
 -- if finalCheck  is true, every addition to the context (var,def) is also
 -- checked by the ordinary type-checking routine, instead of just the
 -- fancy type-checking routine.
@@ -197,7 +197,7 @@ resetVar v =
          let (c1,c2) = breakTWO (==v) c in
          if isEmptyI c2 then
             genErrS ("Variable "++v++" is not declared")
-         else                                       
+         else
          let (_,cKeep) = removeI c2 v
              cDelete = fmap fst c1 ++ [v] in
          fetchModulesInfo >>= \mi ->
@@ -216,12 +216,12 @@ resetVar v =
 removeInfo :: Vari -> M ()
 removeInfo v = removeImplicit v >>
                removeLemmas v
-  
-                                  
+
+
 -- changing and showing the PTS
 
 changeSystem :: System -> M Result
-changeSystem sys = 
+changeSystem sys =
       let ((sorts,axioms,rules,sortsSub,rulesSub),exs) = sys in
       if not (allDifferent sorts) then
          genErrS "Same sort occurs more than once in list of sorts"
@@ -263,7 +263,7 @@ changeSystem sys =
 -- the prove command
 callProver :: (Vari,TermIT) -> M Result
 callProver (v,goal0) =
-         totallyFresh v >> 
-         fetchCon >>= \globCon -> 
+         totallyFresh v >>
+         fetchCon >>= \globCon ->
          getSortRet (globToTot globCon) goal0 >>= \(goal,goalSrt) ->
          setUpProveMode (v,goal,goalSrt)

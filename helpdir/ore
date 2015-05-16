@@ -2,7 +2,7 @@
  <DT>Syntax:
  <DD><OL>
      <LI><CODE>OrE</CODE> <VAR>term</VAR>
-     <LI><CODE>OrE</CODE> <VAR>term</VAR> <CODE>On</CODE> 
+     <LI><CODE>OrE</CODE> <VAR>term</VAR> <CODE>On</CODE>
                                             <VAR>term-list</VAR>
      </OL>
  <DT>Effect:
@@ -12,8 +12,8 @@
      The two new goals have the same conclusion as
      the old goal, but the local context of the first goal is augmented by
      the disjunct on the left hand side, and likewise for the second goal
-     and the disjunct on the right hand side.   
-     If <VAR>term</VAR> is a local variable, this variable is hidden.<BR>                    
+     and the disjunct on the right hand side.
+     If <VAR>term</VAR> is a local variable, this variable is hidden.<BR>
      The second variant is a combination of 'Forward' and 'OrE 1'.<BR>
      This tactic needs an elimation lemma for disjunction of the
      following form:<BR>

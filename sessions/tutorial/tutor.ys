@@ -3,7 +3,7 @@
 -- preliminaries
 option +p
 help syntax
- 
+
 -- example 1
 
 prove example1 :  @P,Q,R:*. (P->Q->R) -> (P->Q) -> (P->R)
@@ -36,7 +36,7 @@ apply refl
 abort
 
 
--- example 3 
+-- example 3
 
 def false := @P:*. P
 def not := \P:*. P->false
@@ -62,7 +62,7 @@ abort
 
 -- example 4
 
-prove example4 : @A:*. @P,Q:A->*. (@x:A. P x -> Q x) -> (@y:A. P y) -> 
+prove example4 : @A:*. @P,Q:A->*. (@x:A. P x -> Q x) -> (@y:A. P y) ->
                                     (@z:A. Q z)
 intros
 apply H

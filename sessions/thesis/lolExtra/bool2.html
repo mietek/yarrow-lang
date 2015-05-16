@@ -49,7 +49,7 @@
 </FONT><FONT COLOR="#0000FF">Prove not_not : @b:Bool. not (not b) = b
 </FONT><FONT COLOR="#000000">Apply indbool
 </FONT><FONT COLOR="#000000">Rewrite not_true
-</FONT><FONT COLOR="#000000">Apply not_false 
+</FONT><FONT COLOR="#000000">Apply not_false
 </FONT><FONT COLOR="#000000">Rewrite not_false
 </FONT><FONT COLOR="#000000">Apply not_true
 </FONT><FONT COLOR="#000000">Exit
@@ -77,7 +77,7 @@
 </FONT><FONT COLOR="#000000">Exit
 </FONT><FONT COLOR="#000000">
 </FONT><FONT COLOR="#0000FF">Prove and_true : @b:Bool. b &amp;&amp; true = b
-</FONT><FONT COLOR="#000000">Apply indbool 
+</FONT><FONT COLOR="#000000">Apply indbool
 </FONT><FONT COLOR="#000000">Rewrite true_and
 </FONT><FONT COLOR="#000000">Refl
 </FONT><FONT COLOR="#000000">Rewrite false_and
@@ -85,7 +85,7 @@
 </FONT><FONT COLOR="#000000">Exit
 </FONT><FONT COLOR="#000000">
 </FONT><FONT COLOR="#0000FF">Prove and_false : @b:Bool. b &amp;&amp; false = false
-</FONT><FONT COLOR="#000000">Apply indbool 
+</FONT><FONT COLOR="#000000">Apply indbool
 </FONT><FONT COLOR="#000000">Rewrite true_and
 </FONT><FONT COLOR="#000000">Refl
 </FONT><FONT COLOR="#000000">Rewrite false_and
@@ -150,7 +150,7 @@
 </FONT><FONT COLOR="#000000">Exit
 </FONT><FONT COLOR="#000000">
 </FONT><FONT COLOR="#0000FF">Prove or_true : @b:Bool. b || true = true
-</FONT><FONT COLOR="#000000">Apply indbool 
+</FONT><FONT COLOR="#000000">Apply indbool
 </FONT><FONT COLOR="#000000">Rewrite true_or
 </FONT><FONT COLOR="#000000">Refl
 </FONT><FONT COLOR="#000000">Rewrite false_or
@@ -158,7 +158,7 @@
 </FONT><FONT COLOR="#000000">Exit
 </FONT><FONT COLOR="#000000">
 </FONT><FONT COLOR="#0000FF">Prove or_false : @b:Bool. b || false = b
-</FONT><FONT COLOR="#000000">Apply indbool 
+</FONT><FONT COLOR="#000000">Apply indbool
 </FONT><FONT COLOR="#000000">Rewrite true_or
 </FONT><FONT COLOR="#000000">Refl
 </FONT><FONT COLOR="#000000">Rewrite false_or
@@ -208,7 +208,7 @@
 </FONT><FONT COLOR="#000000">Exit
 </FONT><FONT COLOR="#000000">
 </FONT><FONT COLOR="#0000FF">Prove or_is_false_ : @b,c:Bool. b || c = false -&gt; b=false /\ c=false
-</FONT><FONT COLOR="#000000">Apply indbool Then Apply indbool 
+</FONT><FONT COLOR="#000000">Apply indbool Then Apply indbool
 </FONT><FONT COLOR="#000000">Rewrite true_or Then Intro Then AndI Then Try Assumption Then Try Refl
 </FONT><FONT COLOR="#000000">Rewrite true_or Then Intro Then AndI Then Try Assumption Then Try Refl
 </FONT><FONT COLOR="#000000">Rewrite false_or Then Intro Then AndI Then Try Assumption Then Try Refl

@@ -33,7 +33,7 @@
 </FONT><FONT COLOR="#000000">Implicit 1 primrecnat
 </FONT><FONT COLOR="#000000">
 </FONT><FONT COLOR="#FF0000">Var primrecnat_O : @B:*s.@nv:B.@sv:Nat-&gt;B-&gt;B. primrecnat nv sv O = nv
-</FONT><FONT COLOR="#FF0000">Var primrecnat_Sm : @B:*s.@nv:B.@sv:Nat-&gt;B-&gt;B.@m:Nat. 
+</FONT><FONT COLOR="#FF0000">Var primrecnat_Sm : @B:*s.@nv:B.@sv:Nat-&gt;B-&gt;B.@m:Nat.
 </FONT><FONT COLOR="#FF0000">                       primrecnat nv sv (S m) = sv m (primrecnat nv sv m)
 </FONT><FONT COLOR="#000000">
 </FONT><FONT COLOR="#FF0000">Var indnat : @P:Nat-&gt;*p. (P O) -&gt; (@m:Nat.P m -&gt; P (S m)) -&gt; (@m:Nat.P m)
@@ -79,17 +79,17 @@
 </FONT><FONT COLOR="#000000">
 </FONT><FONT COLOR="#0000FF">Prove iternat_O : @B:*s.@nv:B.@sv: B-&gt;B. iternat nv sv O = nv
 </FONT><FONT COLOR="#000000">
-</FONT><FONT COLOR="#0000FF">Prove iternat_Sm : @B:*s.@nv:B.@sv:B-&gt;B.@m:Nat. 
+</FONT><FONT COLOR="#0000FF">Prove iternat_Sm : @B:*s.@nv:B.@sv:B-&gt;B.@m:Nat.
 </FONT><FONT COLOR="#0000FF">                       iternat nv sv (S m) = sv (iternat nv sv m)
 </FONT><FONT COLOR="#000000">
 </FONT><FONT COLOR="#000000">----------------------------
 </FONT><FONT COLOR="#000000">-- double induction lemma --
 </FONT><FONT COLOR="#000000">----------------------------
-</FONT><FONT COLOR="#000000">  
+</FONT><FONT COLOR="#000000">
 </FONT><FONT COLOR="#000000">-- This lemma of double induction will be very useful for proving properties
 </FONT><FONT COLOR="#000000">-- about functions that compare two natural numbers in some way.
-</FONT><FONT COLOR="#0000FF">Prove nat_double_ind : @R:Nat-&gt;Nat-&gt;*p. (@m:Nat.R O m) -&gt; 
-</FONT><FONT COLOR="#0000FF">                                        (@m:Nat. R (S m) O) -&gt; 
+</FONT><FONT COLOR="#0000FF">Prove nat_double_ind : @R:Nat-&gt;Nat-&gt;*p. (@m:Nat.R O m) -&gt;
+</FONT><FONT COLOR="#0000FF">                                        (@m:Nat. R (S m) O) -&gt;
 </FONT><FONT COLOR="#0000FF">                                        (@m,n:Nat. R m n -&gt; R (S m) (S n)) -&gt;
 </FONT><FONT COLOR="#0000FF">                                        (@m,n:Nat. R m n)
 </FONT><FONT COLOR="#000000">
@@ -197,7 +197,7 @@
 </FONT><FONT COLOR="#000000">-- leq
 </FONT><FONT COLOR="#000000">
 </FONT><FONT COLOR="#0000FF">Def leq := \m,n:Nat. iternat (\m:Nat.isZero m) (
-</FONT><FONT COLOR="#0000FF">                         \le_Pn:Nat-&gt;Bool. \m:Nat.le_Pn (pred m)) n m: 
+</FONT><FONT COLOR="#0000FF">                         \le_Pn:Nat-&gt;Bool. \m:Nat.le_Pn (pred m)) n m:
 </FONT><FONT COLOR="#0000FF">           Nat -&gt; Nat -&gt; Bool
 </FONT><FONT COLOR="#000000">
 </FONT><FONT COLOR="#0000FF">Prove leq_O_m : @m:Nat. leq O m = true

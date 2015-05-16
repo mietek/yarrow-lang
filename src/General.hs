@@ -1,6 +1,6 @@
 -- File: General
 -- Description: This module contains general-purpose functions.
-           
+
 module General(pair, flipPair, const', beginsWith, endsWith, takeWhiles',
                splitFilter,
                allDifferent, changeList1, doInList, sublist, sortOrd, notELem,
@@ -18,8 +18,8 @@ import Char(isDigit,toLower)
 
 
 pair :: a -> b -> (a,b)
-pair a b = (a,b)       
-                                                                   
+pair a b = (a,b)
+
 flipPair :: (a,b) -> (b,a)
 flipPair (a,b) = (b,a)
 
@@ -33,17 +33,17 @@ beginsWith xs ys = take (length ys) xs == ys
 -- endsWith xs ys  checks whether xs ends with the list ys
 -- endsWith :: Eq a => [a] -> [a] -> Bool
 endsWith xs ys = beginsWith (reverse xs) (reverse ys)
-            
+
 -- takeWhile' p l  splits the list l in two parts, so that the first part
 -- just doesn't satisfy p
 takeWhile' :: ([a] -> Bool) -> [a] -> ([a],[a])
 takeWhile' = tW [] where
                      tW xs p [] = (xs,[])
                      tW xs p (x:xs') = let xs'' = xs ++ [x] in
-                                       if p xs'' then 
+                                       if p xs'' then
                                           tW xs'' p xs'
                                        else
-                                          (xs,x:xs')                 
+                                          (xs,x:xs')
 
 -- takeWhiles' p xs  splits xs so that every part satisfies p
 takeWhiles' :: ([a] -> Bool) -> [a] -> [[a]]
@@ -91,7 +91,7 @@ insertOrd ord x (y:ys) | x `ord` y = x:y:ys
 -- due to an error in the definition of notElem in the Glasgow
 -- Haskell compiler we have to give our own definition of notElem.
 notELem :: Eq a => a -> [a] -> Bool
-notELem x = not . elem x 
+notELem x = not . elem x
 
 
 
@@ -106,16 +106,16 @@ readNum = readNum' 0
               where readNum' n [] = (n,[])
                     readNum' n (c:s) | isDigit c = readNum' (10*n+ord c-48) s
                     readNum' n s = (n,s)
- 
+
 -- prstrings prints a list of strings, with a marker between
 prStrings :: [a] -> [[a]] -> [a]
 prStrings _ [] = []
 prStrings _ [s] = s
 prStrings m (s:ls) = s ++ m ++ prStrings m ls
-                      
+
 -- prthings prints a list of things, with a marker between
 prList :: (b->[a])->[a]->[b]->[a]
-prList f m l = prStrings m (map f l)  
+prList f m l = prStrings m (map f l)
 
 commas :: [String] -> String
 commas = prStrings ","
@@ -125,12 +125,12 @@ commaSpaces = prStrings ", "
 
 plusCR :: String -> String
 plusCR = (++"\n")
-                    
+
 toLowers :: String -> String
-toLowers = map toLower             
+toLowers = map toLower
 
 -- pretty-printing of tables
-                         
+
 data Align = LeftAl | CentreAl | RightAl
 
 align :: Align -> String -> Int -> String
@@ -140,7 +140,7 @@ align CentreAl s max = let nsp = max - length s
                        space nsp2 ++ s ++ space (nsp - nsp2)
 align RightAl  s max = space (max - length s) ++ s
 
-showTable3 :: String -> String -> (Align,Align,Align) -> 
+showTable3 :: String -> String -> (Align,Align,Align) ->
               [(String,String,String)] -> [String]
 showTable3 sep1 sep2 (al1,al2,al3) table =
         let max1 = maximum (map (length.fst3) table)
@@ -150,4 +150,3 @@ showTable3 sep1 sep2 (al1,al2,al3) table =
                                 align al2 b max2 ++ sep2 ++
                                 align al3 c max3 in
         map showEntry table
-

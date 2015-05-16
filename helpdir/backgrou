@@ -7,10 +7,10 @@ Yarrow started off as an implementation of a typing algorithm for PTSs.
 <LI> A particular pure type system (with subtyping) can be chosen at run-time.
 <LI> There are general tactics for proving propositions.
 <LI> Tactics for forward reasoning.
-<LI> Special rewriting tactics for the Leibniz-equality, and tactics for 
+<LI> Special rewriting tactics for the Leibniz-equality, and tactics for
      propositional and predicate logic.
 <LI> An easy-to-use system for infix notation, implicit arguments and binders.
-<LI> It is portable, because it runs on any platform on which 
+<LI> It is portable, because it runs on any platform on which
      Haskell runs. This includes <!--PC's and--> most Unix systems.
 <LI> It has a built-in help system.
 <!-- <LI> The implementation is well documented. There is extensive
@@ -28,7 +28,7 @@ This program has some disadvantages compared to other proof-assistants:
 </UL>
 
 <P>
-This program was developed by Jan Zwanenburg. 
+This program was developed by Jan Zwanenburg.
 Questions and remarks will be gratefully received and answered.
 You can reach the author at the following address.
 </P>
@@ -43,7 +43,7 @@ The Netherlands<BR>
 e-mail: <A HREF="mailto:janz@cs.kun.nl">janz@cs.kun.nl</A><BR>
 Homepage: <A HREF="http://www.cs.kun.nl/~janz/">
      http://www.cs.kun.nl/~janz/</A><BR>
-Yarrow homepage: 
+Yarrow homepage:
      <A HREF="http://www.cs.kun.nl/~janz/yarrow/index.html">
      http://www.cs.kun.nl/~janz/yarrow/index.html</A><BR>
 </P>

@@ -3,7 +3,7 @@
 It is important to have some conventions for naming lemmas, because it makes
 it easier to remember names.
 We adopt the following conventions:
-- The main idea is to name a lemma after its conclusion, where spaces 
+- The main idea is to name a lemma after its conclusion, where spaces
   (applications) are replaced by underscore characters. This will only work
   when the conclusion is distinctive enough.
   E.g. prove issquare_m : @m,n:Nat. m = mult n n -> issquare m
@@ -32,7 +32,7 @@ We adopt the following conventions:
   E.g. plus_O : @m:Nat. m+O = m
 - Often the lemma describes a property of some operation. In this case the
   name of the lemma consists of the name of the operation, an underscore,
-  and the name of the property. We use the following abbreviations for 
+  and the name of the property. We use the following abbreviations for
   some of the standard properties:
     sym, comm, trans, assoc, antisym, refl, idemp
   E.g. prove le_trans : @m,n,p:Nat. m<=n -> n<=p -> m<=p
@@ -41,4 +41,3 @@ We adopt the following conventions:
   E.g. prove And_i : @P,Q:*p. P -> Q -> P /\ Q
 
 Jan Zwanenburg, 19-1-'97
-

@@ -31,8 +31,8 @@ Load "parametricity"
 ----------------------
 ----------------------
 
-Var axiom_choice :  @A,B:*s.@P:A->B->*p. 
-                    (@x:A.Ex y:B. P x y) -> 
+Var axiom_choice :  @A,B:*s.@P:A->B->*p.
+                    (@x:A.Ex y:B. P x y) ->
                      Ex f:A->B. @x:A. P x (f x)
 
 Def IsQuotType := \R:*s. \(~~):R->R->*p. \Q:*s.
@@ -59,12 +59,12 @@ Def IsQuotSubsetType := \R:*s. \(~~):R->R->*p. \Inv:R->*p. \Q:*s.
                      ExR rel:R->Q->*p.
                      (Inv <==> Dom rel) /\
                      (@q:Q. Ex r:R. rel r q) /\
-                     (@r,r':R. @q,q':Q. rel r q -> rel r' q' -> 
+                     (@r,r':R. @q,q':Q. rel r q -> rel r' q' ->
                                         r~~r' <=> q=q') :
                      @R:*s. (R->R->*p) -> (R->*p) -> *s -> *p
 
 Prove exis_QuotSubsetType : @R:*s. @(~~):R->R->*p. @Inv:R->*p.
-                     IsERon (~~) Inv -> 
+                     IsERon (~~) Inv ->
                      ExK Q:*s.
                      IsQuotSubsetType R (~~) Inv Q
 Intros
@@ -190,7 +190,7 @@ Assumption
 Exit
 
 -- induction-step for Sim_LeftC for the case I = I1 -> I2
-prove Sim_lemma : 
+prove Sim_lemma :
       @I1,I2 : *s->*s. SimplyT I1 -> SimplyT I2 ->
       @Y,Z : *s. (Ex r:Y. True) -> (Ex s:Z. True) ->
       @(~) : Y->Z->*p.
@@ -220,7 +220,7 @@ Forward H11 On H14
 ExistsI z1 z2
 AndI Then Assumption
 Intros
-Cut Ex z:I1 Z -> I2 Z. @z1:I1 Z. (\a:I1 Z.\fa:I2 Z. 
+Cut Ex z:I1 Z -> I2 Z. @z1:I1 Z. (\a:I1 Z.\fa:I2 Z.
          (@y1:I1 Y. Sim I1 Y Z (~) y1 a -> Sim I2 Y Z (~) (x y1) fa) /\
          (@y1:I1 Y. Sim I1 Y Z (~) y1 a -> Sim I2 Y Z (~) (y y1) fa)) z1 (z z1)
 Intro
@@ -406,22 +406,22 @@ Def IsSubsetAlg := \I:*s->*s.\R:*s. \opsR : I R. \Inv:R->*p. \S:*s.\opsS : I S.
                 @I:*s->*s. @R:*s. I R -> (R->*p) -> @S:*s. I S -> *p
 
 Def IsQuotSubsetAlg := \I:*s->*s.
-               \R:*s. \opsR : I R. \(~~) : R->R->*p. \Inv:R->*p. 
+               \R:*s. \opsR : I R. \(~~) : R->R->*p. \Inv:R->*p.
                \Q:*s. \opsQ : I Q.
                      ExR rel:R->Q->*p.
                      (Inv <==> Dom rel) /\
                      (@q:Q. Ex r:R. rel r q) /\
-                     (@r,r':R. @q,q':Q. rel r q -> rel r' q' -> 
+                     (@r,r':R. @q,q':Q. rel r q -> rel r' q' ->
                                         r~~r' <=> q=q') /\
-                     Sim I R Q rel opsR opsQ : 
+                     Sim I R Q rel opsR opsQ :
               @I:*s->*s.@R:*s. I R -> (R->R->*p) -> (R->*p) -> @Q:*s. I Q -> *p
 
 Prove exis_QuotSubsetAlgHO : @I:*s->*s. SimplyT I ->
                 @R:*s. @opsR:I R. @(~~):R->R->*p. @Inv:R->*p.
-                IsERon (~~) Inv -> 
+                IsERon (~~) Inv ->
                 (Ex r:R. Inv r) ->
-                Bisim I R (Restr (~~) Inv) opsR -> 
-                ExK Q:*s. Ex opsQ: I Q. 
+                Bisim I R (Restr (~~) Inv) opsR ->
+                ExK Q:*s. Ex opsQ: I Q.
                 IsQuotSubsetAlg I R opsR (~~) Inv Q opsQ
 Intros
 ExistsE exis_QuotSubsetType On Inv, H1
@@ -496,9 +496,9 @@ Repeat AndI Then Try Assumption
 Exit
 
 Prove exis_QuotAlgHO : @I:*s->*s. SimplyT I ->
-                  @R:*s. @opsR:I R. @(~~):R->R->*p. 
+                  @R:*s. @opsR:I R. @(~~):R->R->*p.
                   Bisim I R (~~) opsR -> IsER (~~) ->
-                  ExK Q:*s. Ex opsQ: I Q. 
+                  ExK Q:*s. Ex opsQ: I Q.
                   IsQuotAlg I R opsR (~~) Q opsQ
 Intros 5
 OrE exm (Ex r:R. True)
@@ -578,7 +578,7 @@ Exit
 Prove exis_SubsetAlgHO : @I:*s->*s. SimplyT I ->
                     @R:*s. @opsR:I R. @Inv:R->*p. (Ex r:R. Inv r) ->
                     Bisim I R (\r1,r2:R. Inv r1 /\ r1=r2) opsR ->
-                    ExK S:*s. Ex opsS: I S. 
+                    ExK S:*s. Ex opsS: I S.
                     IsSubsetAlg I R opsR Inv S opsS
 Intros
 ExistsE exis_SubsetType On Inv
@@ -653,9 +653,9 @@ Exit
 ---------------
 
 Prove exis_QuotAlg :@I:*s->*s. FirstO I ->
-                  @R:*s. @opsR:I R. @(~~):R->R->*p. 
+                  @R:*s. @opsR:I R. @(~~):R->R->*p.
                   Bisim I R (~~) opsR -> IsER (~~) ->
-                  ExK Q:*s. Ex opsQ: I Q. 
+                  ExK Q:*s. Ex opsQ: I Q.
                   IsQuotAlg I R opsR (~~) Q opsQ
 Intros 2
 Apply exis_QuotAlgHO
@@ -672,7 +672,7 @@ Exit
 --                  @I:*s->*s. FirstO I ->
 --                  @R:*s. @Inv:R->*p.  @opsR:I R.
 --                  Bisim I R (\r1,r2:R. Inv r1 /\ r1=r2) opsR ->
---                  ExK S:*s. Ex opsS: I S. 
+--                  ExK S:*s. Ex opsS: I S.
 --                  IsSubsetAlg I R opsR Inv S opsS
 -- This requires three auxiliary results.
 -- Then it is easy to prove exis_SubsetAlg.
@@ -760,9 +760,9 @@ Exit
 prove Sim_FirstO_LeftC_weak : @I:*s->*s. FirstO I ->
             @Y : *s.
             @Z : *s.
-            @(~) : Y->Z->*p. 
+            @(~) : Y->Z->*p.
             IsZclosed (~) -> (@z:Z. Ex y:Y. y~z) ->
-            @opsY,opsY':I Y. Sim I Y Y (LeftC (~)) opsY opsY' -> 
+            @opsY,opsY':I Y. Sim I Y Y (LeftC (~)) opsY opsY' ->
             LeftC (Sim I Y Z (~)) opsY opsY'
 Intros 6
 Intro prop_twig
@@ -776,7 +776,7 @@ Intros 4
 Repeat Rewrite Sim_arrow
 Intro Then Intro x,y Then Intros
 Unfold LeftC
-Cut Ex z:I2 Z -> I3 Z. @z1:I2 Z. (\z1:I2 Z.\zz1:I3 Z. 
+Cut Ex z:I2 Z -> I3 Z. @z1:I2 Z. (\z1:I2 Z.\zz1:I3 Z.
          @y1:I2 Y. Sim I2 Y Z (~) y1 z1 -> Sim I3 Y Z (~) (x y1) zz1 /\
                                            Sim I3 Y Z (~) (y y1) zz1) z1 (z z1)
 Simplify
@@ -883,7 +883,7 @@ Exit
 Prove exis_SubsetAlg_Bisim : @I:*s->*s. FirstO I ->
                     @R:*s. @Inv:R->*p.  @opsR:I R.
                     Bisim I R (\r1,r2:R. Inv r1 /\ r1=r2) opsR ->
-                    ExK S:*s. Ex opsS: I S. 
+                    ExK S:*s. Ex opsS: I S.
                     IsSubsetAlg I R opsR Inv S opsS
 Intros
 ExistsE exis_SubsetType On Inv
@@ -943,11 +943,11 @@ ExistsI inj
 Repeat AndI Then Try Assumption
 Exit
 
-Prove exis_SubsetAlg : 
+Prove exis_SubsetAlg :
                     @I:*s->*s. FirstO I ->
                     @R:*s. @opsR:I R. @Inv:R->*p.
                     IsInvar I R Inv opsR ->
-                    ExK S:*s. Ex opsS: I S. 
+                    ExK S:*s. Ex opsS: I S.
                     IsSubsetAlg I R opsR Inv S opsS
 Intros
 Apply exis_SubsetAlg_Bisim
@@ -984,10 +984,10 @@ Exit
 -- By combining exis_QuotAlg and exis_SubsetAlg
 prove exis_QuotSubsetAlg : @I:*s->*s. FirstO I ->
                 @R:*s. @opsR:I R. @(~~):R->R->*p. @Inv:R->*p.
-                IsERon (~~) Inv -> 
+                IsERon (~~) Inv ->
                 Bisim I R (~~) opsR ->
-                IsInvar I R Inv opsR -> 
-                ExK Q:*s. Ex opsQ: I Q. 
+                IsInvar I R Inv opsR ->
+                ExK Q:*s. Ex opsQ: I Q.
                 IsQuotSubsetAlg I R opsR (~~) Inv Q opsQ
 Intros
 ExistsE exis_SubsetAlg On H3
@@ -1007,7 +1007,7 @@ Repeat AndI Then Assumption
 Intro
 Forward SimFirstO_Trans On H12, H11
 Assumption
-First Comp (Restr (~~) Inv) (\r:R.\s:S. r = inj s) <===> 
+First Comp (Restr (~~) Inv) (\r:R.\s:S. r = inj s) <===>
       (\r:R.\s:S. Inv r /\ r ~~ inj s)
 Apply equiv_predR
 Intros
@@ -1037,7 +1037,7 @@ Apply FirstO__SimplyT
 Assumption
 Forward SimFirstO_Trans On H16, H15
 Assumption
-First (Comp (Inverse (\r:R.\s:S. Inv r /\ r ~~ inj s)) 
+First (Comp (Inverse (\r:R.\s:S. Inv r /\ r ~~ inj s))
             (\r:R.\s:S. Inv r /\ r ~~ inj s)) <===> (~)
 Apply equiv_predR
 Intros
@@ -1159,4 +1159,3 @@ Intro
 Lewrite H23
 Assumption
 Exit
-

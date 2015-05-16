@@ -1,6 +1,6 @@
 -- functio
 -- This file defines some basic operations on functions
-        
+
 Read "lambdaL"
 Load "is"
 

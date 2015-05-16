@@ -22,7 +22,7 @@
  <DD>This command is not available in prove-mode.
  <DT>Shortcoming:
  <DD>You cannot delete entries from the path.
- <DT>See also:                          
+ <DT>See also:
  <DD><A HREF="#Load"><CODE>Load</CODE></A>,
      <A HREF="#Read"><CODE>Read</CODE></A>
-</DL>  
+</DL>

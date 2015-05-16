@@ -38,35 +38,35 @@ Def IsSubsetAlg := \I:*s->*s.\R:*s. \opsR : I R. \Inv:R->*p. \S:*s.\opsS : I S.
                 @I:*s->*s. @R:*s. I R -> (R->*p) -> @S:*s. I S -> *p
 
 Def IsQuotSubsetAlg := \I:*s->*s.
-               \R:*s. \opsR : I R. \(~~) : R->R->*p. \Inv:R->*p. 
+               \R:*s. \opsR : I R. \(~~) : R->R->*p. \Inv:R->*p.
                \Q:*s. \opsQ : I Q.
                      ExR Rel:R->Q->*p.
                      (Inv <==> Dom Rel) /\
                      (@q:Q. Ex r:R. Rel r q) /\
-                     (@r,r':R. @q,q':Q. Rel r q -> Rel r' q' -> 
+                     (@r,r':R. @q,q':Q. Rel r q -> Rel r' q' ->
                                         r~~r' <=> q=q') /\
-                     Sim I R Q Rel opsR opsQ : 
+                     Sim I R Q Rel opsR opsQ :
               @I:*s->*s.@R:*s. I R -> (R->R->*p) -> (R->*p) -> @Q:*s. I Q -> *p
 
 var exis_QuotAlg :@I:*s->*s. FirstO I ->
-                  @R:*s. @opsR:I R. @(~~):R->R->*p. 
+                  @R:*s. @opsR:I R. @(~~):R->R->*p.
                   Bisim I R (~~) opsR -> IsER (~~) ->
-                  ExK Q:*s. Ex opsQ: I Q. 
+                  ExK Q:*s. Ex opsQ: I Q.
                   IsQuotAlg I R opsR (~~) Q opsQ
 
 
 var exis_SubsetAlg :  @I:*s->*s. FirstO I ->
                     @R:*s. @opsR:I R. @Inv:R->*p.
                     IsInvar I R Inv opsR ->
-                    ExK S:*s. Ex opsS: I S. 
+                    ExK S:*s. Ex opsS: I S.
                     IsSubsetAlg I R opsR Inv S opsS
 
 Prove exis_QuotSubsetAlg : @I:*s->*s. FirstO I ->
                 @R:*s. @opsR:I R. @(~~):R->R->*p. @Inv:R->*p.
-                IsERon (~~) Inv -> 
+                IsERon (~~) Inv ->
                 Bisim I R (~~) opsR ->
-                IsInvar I R Inv opsR -> 
-                ExK Q:*s. Ex opsQ: I Q. 
+                IsInvar I R Inv opsR ->
+                ExK Q:*s. Ex opsQ: I Q.
                 IsQuotSubsetAlg I R opsR (~~) Inv Q opsQ
 Intros
 ExistsE exis_SubsetAlg On H3
@@ -86,7 +86,7 @@ Repeat AndI Then Assumption
 Intro
 Forward SimFirstO_Trans On H12, H11
 Assumption
-First Comp (Restr (~~) Inv) (\r:R.\s:S. r = inj s) <===> 
+First Comp (Restr (~~) Inv) (\r:R.\s:S. r = inj s) <===>
       (\r:R.\s:S. Inv r /\ r ~~ inj s)
 Apply equiv_predR
 Intros
@@ -116,7 +116,7 @@ Apply FirstO__SimplyT
 Assumption
 Forward SimFirstO_Trans On H16, H15
 Assumption
-First (Comp (Inverse (\r:R.\s:S. Inv r /\ r ~~ inj s)) 
+First (Comp (Inverse (\r:R.\s:S. Inv r /\ r ~~ inj s))
             (\r:R.\s:S. Inv r /\ r ~~ inj s)) <===> (~)
 Apply equiv_predR
 Intros
@@ -270,7 +270,7 @@ Def Sensible := \I:*s->*s. \Spec : @R:*s.(R->R->*p) -> (R->*p) -> I R -> *p.
 
 Def WB := \I:*s->*s.
      \Spec: (@R:*s.(R->R->*p) -> (R->*p) -> I R -> *p).
-     @Y,Z:*s. 
+     @Y,Z:*s.
      @RelY:Y->Y->*p.  @RelZ:Z->Z->*p.
      @InvY:Y->*p. @InvZ:Z->*p. IsERon RelY InvY -> IsERon RelZ InvZ ->
      @opsY:I Y. @opsZ : I Z.
@@ -317,7 +317,7 @@ ExistsI (~)
 Repeat AndI Then Assumption
 Exit
 
-Prove WB__Sensible : @I:*s->*s. SimplyT I -> 
+Prove WB__Sensible : @I:*s->*s. SimplyT I ->
             @Spec: (@R:*s. (R->R->*p)->(R->*p)->I R->*p).
             WB' I Spec -> Sensible I Spec
 Intros
@@ -426,7 +426,7 @@ Exit
 Prove WB_Impl : @I:*s->*s. SimplyT I ->
    @P,Q:(@R:*s. (R->R->*p)->(R->*p)->I R->*p).
    WB' P -> WB' Q ->
-   WB' (\R:*s.\(~~):R->R->*p.\Inv:R->*p.\ops:I R. 
+   WB' (\R:*s.\(~~):R->R->*p.\Inv:R->*p.\ops:I R.
                      P R (~~) Inv ops -> Q R (~~) Inv ops)
 Intros
 Unfold WB'
@@ -442,7 +442,7 @@ Exit
 
 Prove WB_Pred : @I:*s->*s. SimplyT I ->
     @A:*s. @f: @R:*s. I R -> A. @P:A->*p.
-    WB' (\R:*s.\(~~):R->R->*p. \Inv:R->*p.\ops:I R. 
+    WB' (\R:*s.\(~~):R->R->*p. \Inv:R->*p.\ops:I R.
                               P (f R ops))
 Intros
 Unfold WB'
@@ -462,8 +462,8 @@ Exit
 
 Prove WB_Univ : @I:*s->*s.
   @A:*s. @P:A->(@R:*s. (R->R->*p)->(R->*p)->I R->*p).
-  (@a:A. WB' (P a)) -> 
-  WB' (\R:*s.\(~~):R->R->*p.\Inv:R->*p.\ops:I R. 
+  (@a:A. WB' (P a)) ->
+  WB' (\R:*s.\(~~):R->R->*p.\Inv:R->*p.\ops:I R.
                     @a:A. P a R (~~) Inv ops)
 Intros
 Unfold WB'
@@ -536,9 +536,9 @@ Exit
 Prove WB_UnivRep : @I:*s->*s. SimplyT I ->
      @P:(@R:*s. (R->R->*p)->(R->*p)->I R-> R->*p).
      WB' (\R:*s.\(~~):R->R->*p. \Inv:R->*p.
-                       \ops: {|l:I R, r: R|}. 
+                       \ops: {|l:I R, r: R|}.
                                P R (~~) Inv ops`l ops`r) ->
-     WB' (\R:*s.\(~~):R->R->*p. \Inv:R->*p.\ops:I R. 
+     WB' (\R:*s.\(~~):R->R->*p. \Inv:R->*p.\ops:I R.
                         @r:R. Inv r -> P R (~~) Inv ops r)
 Intros
 Unfold WB'
@@ -592,10 +592,10 @@ Def MkImplemSpec := \I:*s->*s.
            \Spec:(@R:*s. (R->R->*p) -> (R->*p) -> I R -> *p).
            \R:*s. \ops:I R.
                            ExR (~~) : R->R->*p. ExQ Inv:R->*p.
-                                Spec R (~~) Inv ops /\ 
+                                Spec R (~~) Inv ops /\
                                 Bisim I R (~~) ops /\
                                 IsInvar I R Inv ops /\
-                                IsERon (~~) Inv  : 
+                                IsERon (~~) Inv  :
            @I:*s->*s.(@R:*s. (R->R->*p) -> (R->*p) -> I R -> *p) ->
            @R:*s. I R -> *p
 
@@ -631,7 +631,7 @@ Exit
 Prove principle : @I:*s->*s.
                   @Spec:(@Rep:*s. (Rep->Rep->*p) -> (Rep->*p) -> I Rep -> *p).
                   @imp: (Sig X:*s. I X). MkUserSpec I Spec imp ->
-                  @A:*s. @Q:A->*p. @body:(@X:*s.I X -> A). 
+                  @A:*s. @Q:A->*p. @body:(@X:*s.I X -> A).
                   (@X:*s.@ops:I X. Spec X ((=) X) (\r:X. True) ops ->
                                        Q (body X ops)) ->
                  Q (unpack imp (\X:*s.\ops:I X. body X ops))
@@ -646,4 +646,3 @@ Rewrite beta_Sig
 Apply H1
 Assumption
 Exit
-

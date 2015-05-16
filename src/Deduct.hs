@@ -26,15 +26,15 @@ import Command(OutputMode(..))
 -------------------
 --  B L O C K S  --
 -------------------
-                           
+
 type Label = Int
 
 data Block = Composite [Block] |     -- 0 or more blocks
-             Line OneLine | 
+             Line OneLine |
              Flag Label [OneLine] Block   -- 1 or more declarations
 
 
-                              
+
 type Justif = (String,[Refer])
 data Refer = RS String | RL Label | RF Formula
 
@@ -42,9 +42,9 @@ type Formula = String
 
 type OneLine = (Label,String,Justif)
 
-                      
 
-         
+
+
 hypJustif :: Justif
 hypJustif = ("hyp",[])
 
@@ -61,7 +61,7 @@ ex2 = Flag 1010 [(1011,"Q",hypJustif)]
 ex3 :: Block
 ex3 = Flag 900 [(901,"P\\/Q",hypJustif)]
                (Composite [ex1,
-                           ex2, 
+                           ex2,
                            Line (902,"Q\\/P", ("\\/E",[RL 901,RL 1000,RL 1010]))
                           ]
                )
@@ -74,7 +74,7 @@ data ReferTerm = RefLine String | RefTerm Term | RefRange ReferTerm ReferTerm
 ------------------------------
 
 
- 
+
 
 printBlock :: DedOptions -> Block -> [String]
 printBlock opt block =
@@ -83,10 +83,10 @@ printBlock opt block =
    (\e -> [])
    (\trips -> showTable3 " " "  " (RightAl,LeftAl,LeftAl) trips)
 
-                 
+
 test :: Block -> String
 test block = concat (fmap (++"\n") (printBlock testOptions block))
-                                      
+
 testOptions = (False,False,False,False,False,False,False,False,False,False,
                OutAscii)
 
@@ -111,7 +111,7 @@ incLineNo = update' (doFst (+1))
 fetchHypsNo :: B Int
 fetchHypsNo = fmap snd3 fetch
 -}
-         
+
 lookupLabel :: Label -> B ReferTerm
 lookupLabel label = fmap snd fetchS4 >>= \table ->
                     let (ok,ref) = findAL table label in
@@ -126,7 +126,7 @@ addLabel label ref = update' (doSnd ((label,ref):))
 
 
 printBlock1 :: DedOptions -> Int -> Block -> B [(String,String,String)]
-printBlock1 opt noHyps (Composite blocks) = 
+printBlock1 opt noHyps (Composite blocks) =
         fmap concat (mapL (printBlock1 opt noHyps) blocks)
 printBlock1 opt noHyps (Line line) =
      fmap (\x -> [x]) (printLine opt noHyps "" "" line)
@@ -136,13 +136,13 @@ printBlock1 opt noHyps (Flag label lines block) =
          bar = replicate (4+sizeFlag) '-'
          trips0 = [("",pole noHyps ++ bar,"")]
          trips2 = [("",pole noHyps ++ '|':tail bar,"")]
-         printLine' line@(_,form,_) = 
-            printLine opt noHyps "| " 
+         printLine' line@(_,form,_) =
+            printLine opt noHyps "| "
                       (replicate (sizeFlag-length form) ' ' ++ " |") line in
      mapL printLine' lines >>= \trips1 ->
      printBlock1 opt (noHyps+1) block >>= \trips3 ->
      fetchLineNo >>= \lineEnd ->
-     addLabel label (RefRange (RefLine (show lineStart)) 
+     addLabel label (RefRange (RefLine (show lineStart))
                               (RefLine (show (lineEnd-1)))) >>
      return (trips0++trips1++trips2++trips3)
 
@@ -151,12 +151,12 @@ printLine opt noHyps extraBefore extraAfter (label,form,just) =
      printJustif opt just >>= \justifString ->
      addLabel label (RefLine (show lineNo)) >>
      incLineNo >>
-     return (show lineNo, 
+     return (show lineNo,
              pole noHyps ++ extraBefore ++ form ++ extraAfter,
              justifString)
 
 pole noHyps = concat (replicate noHyps "| ")
-     
+
 
 printJustif :: DedOptions -> Justif -> B String
 printJustif opt (s,refers) = printRefers opt refers >>= \ss ->
@@ -164,7 +164,7 @@ printJustif opt (s,refers) = printRefers opt refers >>= \ss ->
 
 printRefers :: DedOptions -> [Refer] -> B [String]
 printRefers opt [] = return []
-printRefers opt (refer:refers) = 
+printRefers opt (refer:refers) =
     printRefer refer >>= \r ->
     fmap (r:) (mapL printRefer refers)
 
@@ -177,20 +177,20 @@ printRefer (RL label) = fmap printRef (lookupLabel label)
 printRef :: ReferTerm -> String
 printRef (RefLine n) = n
 printRef (RefRange ref1 ref2) = printRef ref1 ++ "-" ++ printRef ref2
-                          
+
 ------------------------------
 -- PRINTING BLOCKS IN JAVA --
 ------------------------------
 
 -- Borrows from ASCII printing:
--- 
+--
 -- type B a =      State ( Int,          [(Label,ReferTerm)]) a
 -- fetchLineNo :: B Int
 -- incLineNo :: B ()
 -- lookupLabel
 -- addLabel
 -- printJustif
-  
+
 javaPrintBlock :: DedOptions -> Block -> [String]
 javaPrintBlock opt block =
    let (_,ss) = runState (1,[]) (javaPrintBlock1 opt (flattenBlock block)) in
@@ -205,10 +205,10 @@ flattenBlock bl = case flattenBlock' bl of
                   bs -> Composite bs
 
 flattenBlock' :: Block -> [Block]
-flattenBlock' (Composite blocks) = 
+flattenBlock' (Composite blocks) =
   concat (fmap flattenBlock' blocks)
 flattenBlock' l@(Line _) = [l]
-flattenBlock' (Flag label lines block) = 
+flattenBlock' (Flag label lines block) =
   [Flag label lines (flattenBlock block)]
 
 
@@ -223,7 +223,7 @@ addTail s [s1] = [s1++s]
 addTail s (s1:ss) = s1 : addTail s ss
 
 javaPrintBlock1 :: DedOptions -> Block -> B [String]
-javaPrintBlock1 opt (Composite blocks) = 
+javaPrintBlock1 opt (Composite blocks) =
      fmap (addHead "C ") (javaPrintList (javaPrintBlock1 opt) blocks)
 javaPrintBlock1 opt (Line line) =
      fmap (addHead "L ") (javaPrintLine opt line)
@@ -232,12 +232,12 @@ javaPrintBlock1 opt (Flag label lines block) =
      javaPrintList (javaPrintLine opt) lines >>= \ss1 ->
      javaPrintBlock1 opt block >>= \ss2 ->
      fetchLineNo >>= \lineEnd ->
-     addLabel label (RefRange (RefLine (show lineStart)) 
+     addLabel label (RefRange (RefLine (show lineStart))
                               (RefLine (show (lineEnd-1)))) >>
      return (addHead "F " ss1 ++ ss2)
 
 javaPrintList :: (a -> B [String]) -> [a] -> B [String]
-javaPrintList printItem items = 
+javaPrintList printItem items =
      mapL printItem items >>= \pItems ->
      (return . addHead "(" . addTail ")" . concat) (fmap (addHead ",") pItems)
 
@@ -246,10 +246,10 @@ javaPrintLine opt (label,form,just) =
      printJustif opt just >>= \justifString ->
      addLabel label (RefLine (show lineNo)) >>
      incLineNo >>
-     return ["\"" ++ show lineNo ++ "\" \"" ++ form ++ "\" \"" ++ 
+     return ["\"" ++ show lineNo ++ "\" \"" ++ form ++ "\" \"" ++
              justifString ++ "\""]
-     
-                   
+
+
 ------------------------------
 -- PRINTING BLOCKS IN LaTeX --
 ------------------------------
@@ -286,7 +286,7 @@ latexPrintBlock name opt block =
               ["\\end{derivation}"])
 
 latexPrintBlock1 :: Vari -> DedOptions -> Block -> B [String]
-latexPrintBlock1 name opt (Composite blocks) = 
+latexPrintBlock1 name opt (Composite blocks) =
      fmap concat (mapL (latexPrintBlock1 name opt) blocks)
 latexPrintBlock1 name opt (Line line) =
      latexPrintLine name opt "\\derline" line
@@ -304,8 +304,8 @@ latexPrintBlock1 name opt (Flag label lines block) =
 latexPrintHyps name opt lines =
      fetchLineNo >>= \lineNo ->
      latexPrintJustif name opt (thd3 (head lines)) >>= \justifString ->
-     maplComs (\((l,_,_),fl) -> addLabel l 
-                                (RefLine (show lineNo ++ flagInf ++ show fl))) 
+     maplComs (\((l,_,_),fl) -> addLabel l
+                                (RefLine (show lineNo ++ flagInf ++ show fl)))
               (zip lines [1..]) >>
      incLineNo >>
      return ["\\flagstart{" ++ name ++ show lineNo ++ flagInf ++ "}{" ++
@@ -316,7 +316,7 @@ latexPrintHyps name opt lines =
 -- flagInf is used to separate the number of the flag and the number of the
 -- formula of the flag
 flagInf = "f"
-     
+
 latexPrintLine name opt com (label,form,just) =
      fetchLineNo >>= \lineNo ->
      latexPrintJustif name opt just >>= \justifString ->
@@ -324,18 +324,18 @@ latexPrintLine name opt com (label,form,just) =
      incLineNo >>
      return [com ++ "{" ++ name ++ show lineNo ++ "}{" ++
              form ++ "}{"++justifString++"}"]
-     
+
 latexPrintJustif :: Vari -> DedOptions -> Justif -> B String
-latexPrintJustif name opt (s,refers) = 
+latexPrintJustif name opt (s,refers) =
     latexPrintRefers name opt refers >>= \ss ->
     return (s++" "++commas ss)
 
 latexPrintRefers :: Vari -> DedOptions -> [Refer] -> B [String]
 latexPrintRefers name opt [] = return []
-latexPrintRefers name opt (refer:refers) = 
+latexPrintRefers name opt (refer:refers) =
     latexPrintRefer name refer >>= \r ->
     fmap (r:) (mapL (latexPrintRefer name) refers)
-                                                                               
+
 latexPrintRefer :: Vari -> Refer -> B String
 latexPrintRefer _ (RS s) = return s
 latexPrintRefer _ (RF s) = return ("$"++s++"$")
@@ -343,7 +343,7 @@ latexPrintRefer name (RL label) = fmap (latexPrintRef name) (lookupLabel label)
 
 latexPrintRef :: Vari -> ReferTerm -> String
 latexPrintRef name (RefLine n) = "\\ref{" ++ name ++ n ++ "}"
-latexPrintRef name (RefRange ref1 ref2) = 
+latexPrintRef name (RefRange ref1 ref2) =
     latexPrintRef name ref1 ++ "-" ++ latexPrintRef name ref2
 
 
@@ -360,26 +360,26 @@ type SLemmas = [(Vari,(Int,Vari,String))]
 
 type Stuff = (SyntaxInfo, DedOptions, SLemmas, Context, Sort, [(Vari,Refer)])
 
-printDeduct :: SyntaxInfo -> SpecialLemmas -> Context -> Vari -> 
+printDeduct :: SyntaxInfo -> SpecialLemmas -> Context -> Vari ->
                (Term,Term,Sort) -> Int -> OutputMode -> E [String]
-printDeduct si lemmas con name (t,typ,sort) opt0 outputMode = 
+printDeduct si lemmas con name (t,typ,sort) opt0 outputMode =
   let opt = makeOpt opt0 outputMode
       lemmas' = fmap (\((a,b,_),(c,d)) -> (c,(d,a,b))) (indexedToListIL lemmas)
-      (_,eBlock) = runState 100 
+      (_,eBlock) = runState 100
                    (makeDeduct' (si,opt,lemmas',con,sort,[]) (t,typ,sort)) in
   handle eBlock
   (\e -> err e)
-  (\block -> return ((case outputMode of 
+  (\block -> return ((case outputMode of
                       OutLatex -> latexPrintBlock name
                       OutAscii -> printBlock
                       OutJava -> javaPrintBlock) opt block))
-                            
+
 
 type DedOptions = (Bool,Bool,Bool,Bool,Bool,Bool,Bool,Bool,Bool,Bool,OutputMode)
 
-makeOpt :: Int -> OutputMode -> DedOptions 
+makeOpt :: Int -> OutputMode -> DedOptions
 makeOpt (-1) latex = makeOpt 0 latex
-makeOpt n0 latex = 
+makeOpt n0 latex =
              let shift n = (n `mod` 10 /= 0, n `div` 10)
                  (optTerm,n1) = shift n0
                  (optVar,n2) = shift n1
@@ -389,14 +389,14 @@ makeOpt n0 latex =
                  (optCutFree,n6) = shift n5
                  (optIgnoreConv,n7) = shift n6
                  (optBetaConv,n8) = shift n7
-                 (optTermJust,n9) = shift n8 
+                 (optTermJust,n9) = shift n8
                  (optSmallFlags,n10) = shift n9 in
              (optTerm,optVar,optBindType,optAllSorts,optMax1App,optCutFree,
               optIgnoreConv,optBetaConv,optTermJust,optSmallFlags,latex)
 
- 
--- Options -> False = shorter          
-    
+
+-- Options -> False = shorter
+
 -- print also terms?
 optTerm :: DedOptions -> Bool
 optTerm (b,_,_,_,_,_,_,_,_,_,_) = b
@@ -411,7 +411,7 @@ optBindType (_,_,b,_,_,_,_,_,_,_,_) = b
 
 -- print inhabitants of all sorts, or only proofterms
 optAllSorts :: DedOptions -> Bool
-optAllSorts (_,_,_,b,_,_,_,_,_,_,_) = b  
+optAllSorts (_,_,_,b,_,_,_,_,_,_,_) = b
 
 -- maximal one application at a time? (Also prohibits special lemmas)
 optMax1App :: DedOptions -> Bool
@@ -438,14 +438,14 @@ optSmallFlags :: DedOptions -> Bool
 optSmallFlags (_,_,_,_,_,_,_,_,_,b,_) = b
 
 -- latex/java/ascii output?
--- java is very similar to latex  
+-- java is very similar to latex
 optOutputMode :: DedOptions -> OutputMode
 optOutputMode (_,_,_,_,_,_,_,_,_,_,m) = m
 
 -- optLatex means real latex or java
 optLatex :: DedOptions -> Bool
 optLatex opt = case optOutputMode opt of
-                  OutLatex -> True 
+                  OutLatex -> True
                   OutJava -> True
                   otherwise -> False
 
@@ -454,7 +454,7 @@ optJava opt = case optOutputMode opt of
                   OutJava -> True
                   otherwise -> False
 
--- Shortcomings:                                             
+-- Shortcomings:
 --   * Conversions are not always shown
 --     (In the existential quantification special lemma, and in the
 --      cut elimination scheme)
@@ -464,7 +464,7 @@ optJava opt = case optOutputMode opt of
 --   * It would be nice not to repeat pieces of derivations that have
 --     occurred before.
 --   * Sometimes it is nice to have multiple conversion steps.
---     See e.g. lemma pb (from practic.ys) 
+--     See e.g. lemma pb (from practic.ys)
 --   * Rewriting is often done in two steps; one @ elimination and a proper
 --     rewrite step. It would nice to combine the two steps into one step.
 --   * The Rewrite In tactic results in ugly proof-terms.
@@ -472,13 +472,13 @@ optJava opt = case optOutputMode opt of
 
 -- There are two kinds of routines here.
 -- 1. makeDeductBla t :: (Block,Refer)
---    These routines deliver a complete deduction for a term, and a 
---    reference to that deduction.                           
+--    These routines deliver a complete deduction for a term, and a
+--    reference to that deduction.
 --    E.g. a result could be (block below, 12)
 --      11 P/\Q    @E 6,10
 --      12 P       /\EL 11
 -- 2. makeSubDeductBla t :: (Block,Justif)
---    These routines deliver a deduction for all subterms of t, and a 
+--    These routines deliver a deduction for all subterms of t, and a
 --    justification how t is obtained from thos subterms.
 --    E.g. the result for the same term would be (thing below, /\EL 11)
 --      11 P/\Q    @E 6,10
@@ -487,9 +487,9 @@ optJava opt = case optOutputMode opt of
 -- ps are considered logical proof-terms; only those terms generate
 -- structured deductions.
 makeDeduct' :: Stuff -> (Term,Term,Sort) -> D Block
-makeDeduct' stuff@(_,opt,_,_,_,_) tts = 
+makeDeduct' stuff@(_,opt,_,_,_,_) tts =
       fmap fst (makeDeduct stuff tts)
-                                       
+
 dedNf opt term = if optBetaConv opt then term else bnf emptyCon term
 
 -- makeDeduct delivers apart from the block also a reference to that block.
@@ -499,12 +499,12 @@ dedNf opt term = if optBetaConv opt then term else bnf emptyCon term
 -- Of course the expected and the actual type are bd-convertible.)
 makeDeduct :: Stuff -> (Term,Term,Sort) -> D (Block,Refer)
 -- first: is the term is not of the proper sort, make a fake block.
-makeDeduct stuff@(_,opt,_,_,ps,_) tts@(_,_,sort) 
+makeDeduct stuff@(_,opt,_,_,ps,_) tts@(_,_,sort)
        | not (optAllSorts opt || sort == ps) =
     fakeDeduct stuff tts
 makeDeduct stuff tts@(var,_,_) | isVar var =
-    makeDeductVar stuff False tts      
-makeDeduct stuff@(si,opt,lemmas,con,ps,varRefs) tts@(term,_,_) 
+    makeDeductVar stuff False tts
+makeDeduct stuff@(si,opt,lemmas,con,ps,varRefs) tts@(term,_,_)
                                                       | isCut stuff term =
     -- make a cut-free proof from a term which has a cut
     let (_,abs,arg) = deconstructApp term in
@@ -516,16 +516,16 @@ makeDeduct stuff@(si,opt,lemmas,con,ps,varRefs) tts@(term,_,_)
         stuff' = (si,opt,lemmas,con',ps,varRefs') in
     makeDeductGT stuff' u >>= \(block2,ref) ->
     return (Composite [block1,block2], ref)
-makeDeduct stuff@(si,opt,_,con,ps,varRefs) (term,typ,sort) = 
+makeDeduct stuff@(si,opt,_,con,ps,varRefs) (term,typ,sort) =
     let tts = (term, dedNf opt typ, sort) in
     makeSubDeduct stuff tts >>= \res ->
     subDeductToDeduct stuff res tts
 
 tchangeVar s term l | isBind term = changeVar term l
-tchangeVar s term l = error ("Unpermitted changeVar at "++s) 
+tchangeVar s term l = error ("Unpermitted changeVar at "++s)
 
 isCut :: Stuff -> Term -> Bool
-isCut stuff@(si,opt,_,con,ps,_) term =   
+isCut stuff@(si,opt,_,con,ps,_) term =
   let (isMaybeCut,term1,term2) = deconstructApp term
       (typ2,sort2) = getTypSort stuff con term2 in
   not (optKeepCut opt) && isMaybeCut && isAbs term1 && sort2 == ps
@@ -534,9 +534,9 @@ isCut stuff@(si,opt,_,con,ps,_) term =
 -- type for thw whole derivation as argument.
 -- It adds a conversion/subsumption step if necessary from the inferred type
 -- to the desired type to the block, if this option is set.
-addDeductConv :: Stuff -> (Block,Refer) -> Term -> (Term,Term,Sort) -> 
+addDeductConv :: Stuff -> (Block,Refer) -> Term -> (Term,Term,Sort) ->
                    D (Block,Refer)
-addDeductConv stuff@(si,opt,_,_,_,_) (block,refer) subderivTyp 
+addDeductConv stuff@(si,opt,_,_,_,_) (block,refer) subderivTyp
               (term,derivTyp,sort) =
  if optIgnoreConv opt || deductEqual opt subderivTyp derivTyp then
     return (block,refer)
@@ -545,7 +545,7 @@ addDeductConv stuff@(si,opt,_,_,_,_) (block,refer) subderivTyp
                       (term,derivTyp,sort)
 
 -- addSubDeductConv is similar, but works with a SubDeduction.
-addSubDeductConv :: Stuff -> (Block,Justif) -> Term -> (Term,Term,Sort) -> 
+addSubDeductConv :: Stuff -> (Block,Justif) -> Term -> (Term,Term,Sort) ->
                    D (Block,Justif)
 addSubDeductConv stuff@(si,opt,_,_,_,_) bj subderivTyp (term,derivTyp,sort)=
   if optIgnoreConv opt || deductEqual opt subderivTyp derivTyp then
@@ -571,7 +571,7 @@ mkSubsum opt | otherwise = "subsum"
 -- fakeDeduct just delivers an empty block, and as reference the printed
 -- term.
 fakeDeduct :: Stuff -> (Term,Term,Sort) -> D (Block,Refer)
-fakeDeduct stuff@(si,opt,_,con,_,_) (term,typ,sort) = 
+fakeDeduct stuff@(si,opt,_,con,_,_) (term,typ,sort) =
        let prin = myPrintTermSt si con opt term
            prin' = if isVar term then prin else "(" ++ prin ++ ")" in
        return (Composite [], RF prin')
@@ -594,7 +594,7 @@ fakeDeduct stuff@(si,opt,_,con,_,_) (term,typ,sort) =
 -- E) if not optVar and we have no conversion and force
 --   125 |  H : odd 7          var 123
 --   reference = 125
--- So force plays only a role when not optVar and no conversion 
+-- So force plays only a role when not optVar and no conversion
 makeDeductVar :: Stuff -> Bool -> (Term,Term,Sort) -> D (Block,Refer)
 makeDeductVar stuff@(si,opt,_,con,_,varRefs) force (var,typ,sort) =
     let (_,v) = deconstructVar var
@@ -609,7 +609,7 @@ makeDeductVar stuff@(si,opt,_,con,_,varRefs) force (var,typ,sort) =
      else
         return (block1,refer1)
     ) >>= \(block2,refer2) ->
-    addDeductConv stuff (block2,refer2) typ' 
+    addDeductConv stuff (block2,refer2) typ'
                   (mkVr v,typ,sort) >>= \(block3,refer3) ->
     let isEmpty (Composite []) = True
         isEmpty _ = False in
@@ -632,7 +632,7 @@ makeDeductVar stuff@(si,opt,_,con,_,varRefs) force (var,typ,sort) =
         return (block1,refer1)
     ) >>= \(block2,refer2) ->
     if equal then
-       return (block2,refer2)  
+       return (block2,refer2)
     else
        addDeductConv stuff (block2,refer2) typ' (mkVr v,typ,sort)
 -}
@@ -641,7 +641,7 @@ deductEqual :: DedOptions -> Term -> Term -> Bool
 deductEqual opt = (if optBetaConv opt then (==) else bEqual)
 
 
-subDeductToDeduct :: Stuff -> (Block,Justif) -> (Term,Term,Sort) -> 
+subDeductToDeduct :: Stuff -> (Block,Justif) -> (Term,Term,Sort) ->
                      D (Block,Refer)
 subDeductToDeduct stuff@(si,opt,_,con,_,_) (block,just) (term,typ,sort) =
         let body0 = if optTerm opt then
@@ -653,7 +653,7 @@ subDeductToDeduct stuff@(si,opt,_,con,_,_) (block,just) (term,typ,sort) =
                 RL label)
 
 
-                   
+
 
 
 -- makeSubDeduct does not print the type of the term itself, but prints
@@ -662,8 +662,8 @@ subDeductToDeduct stuff@(si,opt,_,con,_,_) (block,just) (term,typ,sort) =
 -- adds a line with the conversion step
 -- Pre: typ in dedNf
 makeSubDeduct :: Stuff -> (Term,Term,Sort) -> D (Block,Justif)
-makeSubDeduct stuff@(si,opt,_,con,_,_) (term,typ,sort) = 
-    let (isOk,okTyp) 
+makeSubDeduct stuff@(si,opt,_,con,_,_) (term,typ,sort) =
+    let (isOk,okTyp)
             -- isOk==True means that we do not wish a conversion step
             --            e.g. we want to postpone such a step
             -- isOk==False means that we want a conversion step if necessary.
@@ -695,11 +695,11 @@ makeSubDeduct stuff@(si,opt,_,con,_,_) (term,typ,sort) =
           | isGenAll term= (False, bdswhnf con typ)
           | isSort term  = (False, bdswhnf con typ)
           | otherwise    = (True, typ) in
-                           -- leave conversion steps to makeSubDeduct2 
+                           -- leave conversion steps to makeSubDeduct2
     makeSubDeduct2 stuff (term,okTyp,sort) >>= \br ->
     if isOk then
        return br
-    else 
+    else
        addSubDeductConv stuff br okTyp (term,typ,sort)
 
 countAbss :: Term -> Int
@@ -713,7 +713,7 @@ countAlls _ = 0
 -- Pre: the type is already of the proper form (see makeSubDeduct), i.e.
 --      the most outer construct in the term and in the type correspond.
 makeSubDeduct2 :: Stuff -> (Term,Term,Sort) -> D (Block,Justif)
-makeSubDeduct2 stuff@(si,opt,_,con,_,_) (app,typ,sort) | isApp app = 
+makeSubDeduct2 stuff@(si,opt,_,con,_,_) (app,typ,sort) | isApp app =
      if optMax1App opt then
         let (_,t1,t2) = deconstructApp app in
         makeDeductApp stuff t1 [t2]
@@ -751,7 +751,7 @@ makeSubDeduct2 stuff@(si,opt,_,con,_,_) (all,typ,sort) | isGenAll all  =
      else
         return (id, [])) >>= \(mkTotal, refsHyp) ->
     makeFlag stuff (all,typ,sort) refsHyp>>= \(block,refer) ->
-    return (mkTotal block,(allFormString stuff all,[refer]))    
+    return (mkTotal block,(allFormString stuff all,[refer]))
 
 makeSubDeduct2 stuff@(_,opt,_,_,_,_) (delta,typ,sort) | isDelta delta =
     (if optBindType opt then
@@ -762,7 +762,7 @@ makeSubDeduct2 stuff@(_,opt,_,_,_,_) (delta,typ,sort) | isDelta delta =
         return (id, [])) >>= \(mkTotal, refsHyp) ->
     makeCombFlag stuff 1 (delta,typ,sort) refsHyp>>= \(block,refer) ->
     return (mkTotal block,(defIntroString,[refer]))
-  
+
 -- Only necessary for elaborate representations
 makeSubDeduct2 stuff (sort,_,_) | isSort sort =
     return (Composite [],("axiom",[]))
@@ -771,7 +771,7 @@ makeSubDeduct2 _ _ = genErrS "Can't make deductions for this kind of term"
 
 
 allFIEString (si,opt,_,con,_,_) all =
-    if optLatex opt then 
+    if optLatex opt then
        let (_,it,cts,ts,body) = deconstructGenAll all
            con' = mkGenDecl (it,cts,ts) `addC` con
            s = noErrDed si (inferSort si con' body) in
@@ -779,7 +779,7 @@ allFIEString (si,opt,_,con,_,_) all =
           maybeDollar opt ("\\arrow" ++ sortToName s)
        else
           maybeDollar opt ("\\pi" ++ sortToName s)
-    else 
+    else
        if isArrow all then
           "->"
        else
@@ -788,15 +788,15 @@ allFIEString (si,opt,_,con,_,_) all =
 maybeDollar opt s =
     let (ds,de) = if optJava opt then ("{","}") else ("$","$") in
     ds ++ s ++ de
- 
+
 
 allFormString  si all = allFIEString si all ++ "F"
-allIntroString si all = allFIEString si all ++ "I"  
-allElimString  si all = allFIEString si all ++ "E"  
-defIntroString = "defI"                        
+allIntroString si all = allFIEString si all ++ "I"
+allElimString  si all = allFIEString si all ++ "E"
+defIntroString = "defI"
 
-hasString opt = if optLatex opt then "\\has" else " : "  
-subString opt = if optLatex opt then "\\sub" else " <: "  
+hasString opt = if optLatex opt then "\\has" else " : "
+subString opt = if optLatex opt then "\\sub" else " <: "
 isDefString opt = if optLatex opt then "\\isd" else " := "
 
 makeDeductApp :: Stuff -> Term -> [Term] -> D (Block,Justif)
@@ -808,26 +808,26 @@ makeDeductApp stuff@(si,opt,lemmas,con,_,_) t args =
  if not (optMax1App opt) && isVar && isLemma then
     let --  hack to delete brackets around variable
         pconn1 = myPrintVarSt si con opt conn
-        pconn2 = if head pconn1 == '(' then 
+        pconn2 = if head pconn1 == '(' then
                     drop 1 (take (length pconn1 -1) pconn1)
                  else
                     pconn1
-        pconn = if optLatex opt then maybeDollar opt pconn2 else pconn2 
+        pconn = if optLatex opt then maybeDollar opt pconn2 else pconn2
         (typ,_) = getTypSort stuff con t
         args' = drop noAA (addTypesSorts con typ args) in
     handleS (makeDeductLemma nameLemma pconn stuff args')
     (\mess -> case mess of
               [ES s] | s == mdlError -> defaul   -- | False -> err mess
               otherwise -> err mess)
-    (\(rest,bj) -> if null rest then 
+    (\(rest,bj) -> if null rest then
                          return bj
                       else
                          let usedArgs = take (length args-length rest) args
                              tUsedArgs = unstandard (t:usedArgs)
                              (typ,sort) = getTypSort stuff con tUsedArgs in
-                         subDeductToDeduct stuff bj 
+                         subDeductToDeduct stuff bj
                                            (tUsedArgs,typ,sort) >>= \br ->
-                         makeDeductAppTail stuff (br,tUsedArgs,typ,sort) 
+                         makeDeductAppTail stuff (br,tUsedArgs,typ,sort)
                                            (fmap fst3 rest))
  else
     defaul
@@ -870,22 +870,22 @@ mkAlls con n term =
          (_,it,cts,ts,u) = deconstructGenAll term''
          con' = mkGenDecl (it,cts,ts) `addC` con in
      if isAll then
-        oldVarG oldv mkGenAll (it,cts,ts) (mkAlls con' (n-1) u)     
+        oldVarG oldv mkGenAll (it,cts,ts) (mkAlls con' (n-1) u)
      else
         term
 
 addTypesSorts :: Context -> Term -> [Term] -> [(Term,Term,Sort)]
-addTypesSorts con typ args = 
+addTypesSorts con typ args =
      let typs = typeOfArgs con typ args in
      zipWith (\term (typ,sort) -> (term,typ,sort)) args typs
 
 
--- typeOfArgs "@A,B:*.A -> (A->B) -> B" "[Nat,Bool,f,g]" = 
+-- typeOfArgs "@A,B:*.A -> (A->B) -> B" "[Nat,Bool,f,g]" =
 --            "[(*,#),(*,#),(Nat,*),(Nat->Bool,*)]"
 -- Pre for typeOfArgs typ args: there are at least (length args) all's in typ
 typeOfArgs :: Context -> Term -> [Term] -> [(Term,Sort)]
 typeOfArgs con typ [] = []
-typeOfArgs con typ (arg:args) = 
+typeOfArgs con typ (arg:args) =
     let typ' = bdswhnf con typ
         (_,(v,t,s),_,_,u) = deconstructGenAll typ' in
     (t,s) : typeOfArgs con (subst u v arg) args
@@ -894,7 +894,7 @@ makeDeductLemma :: String -> Vari -> Stuff -> [(Term,Term,Sort)] ->
                    D ([(Term,Term,Sort)],(Block,Justif))
 makeDeductLemma "AndI" conn stuff (_:_:lhs:rhs:rest) =
   fmap (pair rest) (combineLines stuff [lhs,rhs] (conn ++ "I"))
-                                             
+
 makeDeductLemma ('A':'n':'d':'E':dir) conn stuff (_:_:conj:rest) =
   fmap (pair rest) (combineLines stuff [conj] (conn++"E"++dir++" "))
 
@@ -906,7 +906,7 @@ makeDeductLemma "OrE" conn stuff (_:_:_:disj:lhs:rhs:rest) =
   combineLinesGen stuff [(makeDeduct,disj),
                          (makeAbsFlagNH,lhs),
                          (makeAbsFlagNH,rhs)] (conn++"E"))
-   
+
 makeDeductLemma "NotI" conn stuff (_:t:rest) =
   fmap (pair rest) (combineLinesGen stuff [(makeAbsFlagNH,t)] (conn ++ "I"))
 
@@ -915,7 +915,7 @@ makeDeductLemma "NotE" conn stuff (_:t1:t2:rest) =
 
 makeDeductLemma "FalseE" conn stuff (_:t:rest) =
   fmap (pair rest) (combineLines stuff [t] "FalseE")
-      
+
 makeDeductLemma "ExistsI" conn stuff (wit:_:t:rest) =
   fmap (pair rest) (combineLines stuff [wit,t] (conn ++ "I"))
 
@@ -947,7 +947,7 @@ rewrJust stuff@(_,opt,_,_,_,_) conn False | optLatex opt =
     "\\leibnizlr{" ++ conn ++ "}"
 rewrJust stuff@(_,opt,_,_,_,_) conn True  = conn ++ "<-"
 rewrJust stuff@(_,opt,_,_,_,_) conn False = conn ++ "->"
-                                 
+
 makeDeductGT :: Stuff -> Term -> D (Block,Refer)
 makeDeductGT stuff@(si,_,_,con,_,_) term =
        let (typ,sort) = getTypSort stuff con term in
@@ -958,14 +958,14 @@ combineLines :: Stuff -> [(Term,Term,Sort)] ->
 combineLines stuff terms just =
     let funTerms = fmap (pair makeDeduct) terms in
     combineLinesGen stuff funTerms just
-      
+
 -- t is typically (Term,Term,Sort)
 combineLinesGen :: Stuff -> [(Stuff->t->D (Block,Refer) , t)] ->
                    String -> D (Block,Justif)
-combineLinesGen stuff funTerms just = 
+combineLinesGen stuff funTerms just =
    combineLinesGen' stuff funTerms >>= \ress ->
    return (Composite (fmap fst ress), (just,fmap snd ress))
-                                     
+
 -- t is typically (Term,Term,Sort)
 combineLinesGen' :: Stuff -> [(Stuff->t->D (Block,Refer) , t)] ->
                     D [(Block,Refer)]
@@ -976,24 +976,24 @@ combineLinesGen' stuff ((f,term):terms) =
 
 
 -- no references for hypothesis
-makeAbsFlagNH stuff tts = 
-    makeAbsFlag stuff 1 tts [] 
+makeAbsFlagNH stuff tts =
+    makeAbsFlag stuff 1 tts []
 
 -- Pre: typ is an all-type
---makeAbsFlag :: Stuff -> Int -> (Term,Term,Sort) -> a -> 
-makeAbsFlag stuff@(si,_,_,con,_,_) n trip@(term,typ,sort) hypRefs= 
+--makeAbsFlag :: Stuff -> Int -> (Term,Term,Sort) -> a ->
+makeAbsFlag stuff@(si,_,_,con,_,_) n trip@(term,typ,sort) hypRefs=
     if isGenAbs term then
        makeCombFlag stuff n trip hypRefs
-    else                    
+    else
        makeDeduct stuff trip
-  
+
 -- Pre: term and typ are n times the same kind of binders
-makeCombFlag stuff@(si,_,_,con,_,_) n (term,typ,sort) hypRefs= 
+makeCombFlag stuff@(si,_,_,con,_,_) n (term,typ,sort) hypRefs=
     newLabel >>= \labelF ->
     doNHyp stuff n (term,typ) hypRefs >>= \(stuff',(u, uType), l) ->
     let (_,_,_,con',_,_) = stuff'
         uSort = getSor si con' uType in
-    (if isVar u then                 
+    (if isVar u then
         -- This is a bit of heck, but very necessary to prevent empty blocks.
         makeDeductVar stuff' True (u,uType,uSort)
      else
@@ -1030,16 +1030,16 @@ doNHyp stuff@(_,_,_,con,_,_) 1 (term,typ) hypRefs=
     let (hyp,just,stuff'@(_,_,_,con',_,_)) = doHyp stuff (cat,ts,it) labelH in
     return (stuff', (u, uType), [(labelH, hyp, (just,hypRefs))])
 -}
-  
+
 -- Pre: term is an binder
-makeFlag stuff@(si,_,_,con,_,_) (term,typ,sort) hypRefs = 
+makeFlag stuff@(si,_,_,con,_,_) (term,typ,sort) hypRefs =
     let term' = tchangeVar "plaats 4" term (domCon con)
         (_,cat,ts,it,u) = deconstructBind term' in
     newLabel >>= \labelF ->
     newLabel >>= \labelH ->
     let (hyp,just,stuff'@(_,_,_,con',_,_)) = doHyp stuff (cat,ts,it) labelH
         (uType,uSort) = getTypSort stuff con' u in
-    (if isVar u then                 
+    (if isVar u then
         -- This is a bit of heck, but very necessary to prevent empty blocks.
         makeDeductVar stuff' True (u,uType,uSort)
      else
@@ -1048,7 +1048,7 @@ makeFlag stuff@(si,_,_,con,_,_) (term,typ,sort) hypRefs =
     return (Flag labelF [(labelH, hyp, (just,hypRefs))]
                   block,
             RL labelF)
-  
+
 -- makeAbsFlag2 prints a flag with two items, if the term consists of
 -- two abstractions
 makeAbsFlag2 stuff@(_,_,_,con,_,_) tts@(term,_,_) =
@@ -1076,59 +1076,58 @@ doAbsHyp :: Stuff -> Item -> Label -> (String,Stuff)
 doAbsHyp (si,opt,lemmas,con,ps,varRefs) it@(v,t,s) label =
   let isLogical = s == ps
       con' = mkDecl it `addC` con
-      hyp1 = if isLogical && not (optTerm opt) then 
-                "" 
-             else 
+      hyp1 = if isLogical && not (optTerm opt) then
+                ""
+             else
                 myPrintVarSt si con' opt v ++ hasString opt
       varRefs' = if isLogical then (v,RL label) : varRefs else varRefs in
   (hyp1 ++ myPrintTermSt si con opt t, (si,opt,lemmas,con',ps,varRefs'))
-              
+
 doHyp :: Stuff -> (BindCat,[Term],Item) -> Label -> (String,String,Stuff)
-doHyp (si,opt,lemmas,con,ps,varRefs) (cat,ts,it@(v,t,s)) label = 
+doHyp (si,opt,lemmas,con,ps,varRefs) (cat,ts,it@(v,t,s)) label =
   let isLogical = s == ps
       contCat = convBindToCont cat
       con' = mkContextE contCat ts it `addC` con
       -- we have to supply new context for correct latex-printing, which
       -- needs declaration of vars in context
-      (hyp,just) = 
+      (hyp,just) =
              case contCat of
-             Decl CNone -> (if isLogical && not (optTerm opt) then 
+             Decl CNone -> (if isLogical && not (optTerm opt) then
                                myPrintTermSt si con' opt t
-                            else 
-                               myPrintVarSt si con' opt v ++ hasString opt ++ 
+                            else
+                               myPrintVarSt si con' opt v ++ hasString opt ++
                                myPrintTermSt si con' opt t,
                             "hyp")
              Decl CSub -> (myPrintVarSt si con' opt v ++ subString opt ++
                            myPrintTermSt si con' opt (head ts) ++
                            hasString opt ++ myPrintTermSt si con' opt t,
                            "hyp")
-             Def -> (myPrintVarSt si con' opt v ++ isDefString opt ++ 
-                     myPrintTermSt si con' opt (head ts) ++ hasString opt ++ 
+             Def -> (myPrintVarSt si con' opt v ++ isDefString opt ++
+                     myPrintTermSt si con' opt (head ts) ++ hasString opt ++
                      myPrintTermSt si con' opt t,
                      "def")
              otherwise -> error "Can't handle these binders"
       varRefs' = if isLogical then (v,RL label) : varRefs else varRefs in
   (hyp, just, (si,opt,lemmas,con',ps,varRefs'))
-           
+
 {- For testing
 printCon si con = concat (fmap (++"\n") (printContext displayString si (const True) (tol con)))
 
 tol :: Ord k => ListsAndOTree k v -> [(k,v)]
 tol (LAOT as t) = take 5 (concat (fmap indexedToListIL as) ++ indexedToListTWO t)
 -}
- 
-getTypSort :: Stuff -> Context -> Term -> (Term,Sort)  
-getTypSort stuff@(si,opt,_,_,_,_) con t = 
+
+getTypSort :: Stuff -> Context -> Term -> (Term,Sort)
+getTypSort stuff@(si,opt,_,_,_,_) con t =
     let (typ,sort) = noErrDed si (inferType si con t) in
     (dedNf opt typ, sort)
 
 
-myPrintTermSt si con opt = if optLatex opt then 
+myPrintTermSt si con opt = if optLatex opt then
                               latexPrintTermSt si con
                            else
                               printTermSt si
 myPrintVarSt si con opt = if optLatex opt then
                              latexPrintVarSt si con
-                          else 
+                          else
                              printVarSt si
-

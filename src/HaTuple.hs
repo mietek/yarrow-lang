@@ -1,5 +1,5 @@
 -- File: HaTuple
--- Description: This module defines operations on tuples, and some other 
+-- Description: This module defines operations on tuples, and some other
 -- Haskell specific definitions
 
 module HaTuple(doFst, doSnd,
@@ -49,7 +49,7 @@ snd5 (_,b,_,_,_) = b
 thd5 (_,_,c,_,_) = c
 fth5 (_,_,_,d,_) = d
 ffh5 (_,_,_,_,e) = e
-               
+
 doFst6 z (a,b,c,d,e,f) = (z a,  b,  c,  d,  e,  f)
 doSnd6 z (a,b,c,d,e,f) = (  a,z b,  c,  d,  e,  f)
 doThd6 z (a,b,c,d,e,f) = (  a,  b,z c,  d,  e,  f)
@@ -63,7 +63,7 @@ thd6 (_,_,c,_,_,_) = c
 fth6 (_,_,_,d,_,_) = d
 ffh6 (_,_,_,_,e,_) = e
 sxh6 (_,_,_,_,_,f) = f
-               
+
 --------------------------------------------------------
 -- GENERAL FUNCTIONS OF GOFER, NOT PRESENT IN HASKELL --
 --------------------------------------------------------
@@ -90,8 +90,8 @@ insert x (y:ys)
 
 
 -- The definition of 'ord' should be removed for HUGS !
-ord :: Char -> Int           
-ord = fromEnum    
+ord :: Char -> Int
+ord = fromEnum
 
 zip4 :: [a] -> [b] -> [c] -> [d] -> [(a,b,c,d)]
 zip4 (a:as) (b:bs) (c:cs) (d:ds) = (a,b,c,d) : zip4 as bs cs ds

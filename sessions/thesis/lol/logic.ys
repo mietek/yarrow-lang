@@ -16,11 +16,11 @@ Load "lambdaL"
 -----------------------
 
 Def False := @P:*p.P
-                                   
+
 Def True := @P:*p.P->P
 
 Def Not := \P:*p. P->False
-      
+
 Def (/\) := \P,Q:*p. (@R:*p. (P->Q->R)->R)
 InfixR 3 (/\)
 -- Name in lemmas: And
@@ -36,10 +36,10 @@ Binder Ex
 
 -- We define existential quantifications over propkinds for three categories
 -- of propkinds, viz. over propkinds of the form
---    *p       (exis. quant. over propositions, denoted by ExP), 
+--    *p       (exis. quant. over propositions, denoted by ExP),
 --    A->*p    (exis. quant. over predicates, denoted by ExQ,
 --              which is polymorphic in A:*s), and
---    A->B->*p (exis. quant. over relations, denoted by ExR, 
+--    A->B->*p (exis. quant. over relations, denoted by ExR,
 --              which is polymorphic in A,B:*s)
 -- (See Remark 4.5.2 on page 88)
 
@@ -82,7 +82,7 @@ Var is_pi1 : @A:*s->*s. @f,g:(@X:*s. A X). (@X:*s. f X = g X) -> f = g
 --    *p       (equality of propositions, denoted by <=>),
 --    A->*p    (equality of predicates, denoted by <==>,
 --              which is polymorphic in A:*s), and
---    A->B->*p (equality of relations, denoted by <===>, 
+--    A->B->*p (equality of relations, denoted by <===>,
 --              which is polymorphic in A,B:*s).
 -- (See Remark 4.5.2 on page 88.)
 
@@ -106,7 +106,7 @@ Infix 1 (<===>)
 -- (See Remark 4.5.2 on page 88.)
 Var equiv_predQ : @A:*s. @P,Q:A->*p. (@a:A. P a <=> Q a) -> P <==> Q
 
-Var equiv_predR : @A,B:*s. @P,Q:A->B->*p. (@a:A.@b:B. P a b <=> Q a b) -> 
+Var equiv_predR : @A,B:*s. @P,Q:A->B->*p. (@a:A.@b:B. P a b <=> Q a b) ->
                                           P <===> Q
 
 
@@ -125,8 +125,8 @@ Apply H
 Exit
 
 -- Indicate that this lemma must used by the FalseE tactic
-Use FalseE ex_falso                           
-  
+Use FalseE ex_falso
+
 Prove Not_i : @P:*p. (P->False) -> Not P
 Intros
 Assumption
@@ -148,7 +148,7 @@ Unfold True
 Intro P,H
 Apply H
 Exit
-           
+
 Prove And_i : @P,Q:*p. P -> Q -> P/\Q
 Unfold (/\)
 Intro P,Q,HP,HQ,R,HI
@@ -290,7 +290,7 @@ Exit
 -- Indicate that this lemma must used by the Rewrite tactic
 Use Rewrite is_elim_l
 
-             
+
 Prove is_sym : @A:*s.@x,y:A. x=y -> y=x
 Intros
 Rewrite H
@@ -315,7 +315,7 @@ NotE H
 OrIL
 Assumption
 Exit
-   
+
 Prove contrapos : @P,Q:*p.(Not P -> Q) -> (Not Q -> P)
 Intro P, Q, H1, H2
 Apply classic

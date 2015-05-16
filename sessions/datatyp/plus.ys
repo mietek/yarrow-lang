@@ -18,9 +18,9 @@ Prove Sm_plus : @m,n:Nat. S m + n = S (m + n)
 Intro m, n
 Refl
 Exit
-    
+
 Prove plus_O : @n:Nat. n+O = n
-Apply indnat  
+Apply indnat
 
 Refl
 
@@ -70,4 +70,3 @@ Refl
 Exit
 
 InfixR 5 (+)
-

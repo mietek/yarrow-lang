@@ -18,7 +18,7 @@ Def PointRep := {|x:Nat|}
 
 Def pointInit := {x=O} : PointRep
 
-Def PointI := \R:*s. {|getX:R->Nat, 
+Def PointI := \R:*s. {|getX:R->Nat,
                        setX:R->Nat->R,
                        bump:R->R|}
 
@@ -31,7 +31,7 @@ Def pointMet := {getX = \st:PointRep. st`x,
 -- Step 2: Encapsulation --
 ---------------------------
 
-Def newPoint := (pack (\X:*s. {| state : X, met : PointI X |}) PointRep 
+Def newPoint := (pack (\X:*s. {| state : X, met : PointI X |}) PointRep
                        {state = pointInit,
                                         met = pointMet}) :
                 Sig X:*s. {| state : X, met : PointI X |}
@@ -45,17 +45,17 @@ Def Object := \I:*s->*s. Sig X:*s. {| state : X, met : I X |}
 Var Colour : *s
 Var red,white, blue : Colour
 
-Def ColPointI := \R:*s. {|getX:R->Nat, 
+Def ColPointI := \R:*s. {|getX:R->Nat,
                           setX:R->Nat->R,
                           bump:R->R,
-                          getC:R->Colour, 
+                          getC:R->Colour,
                           setC:R->Colour->R|}
 
 Def ColPoint := Object ColPointI
 
-Def newColPoint := (pack (\X:*s. {| state : X, met : ColPointI X |}) {||} 
+Def newColPoint := (pack (\X:*s. {| state : X, met : ColPointI X |}) {||}
                        {state = {},
-                        met = {getX= \r:{||}.O, 
+                        met = {getX= \r:{||}.O,
                                setX= \r:{||}.\n:Nat. r,
                                bump= \r:{||}.r,
                                getC= \r:{||}.red,
@@ -72,21 +72,21 @@ Check ColPointI <: PointI
 Check Object ColPointI <: Object PointI
 -- Result: Yes.
 
-Def point'bump := \I<:PointI. \p:Object I. 
+Def point'bump := \I<:PointI. \p:Object I.
                   unpack p (\X:*s.\x:{|state:X,met : I X|}.
                             pack (\X:*s. {| state : X, met : I X |})
                                  X {state= x`met`bump x`state,
                                     met = x`met}) :
                   @I<:PointI. Object I -> Object I
 
-Def point'setX := \I<:PointI. \p:Object I. 
+Def point'setX := \I<:PointI. \p:Object I.
                   \n:Nat. unpack p (\X:*s.\x:{|state:X,met : I X|}.
                             pack (\X:*s. {| state : X, met : I X |})
                                  X {state= x`met`setX x`state n,
                                     met = x`met}) :
                   @I<:PointI. Object I -> Nat -> Object I
 
-Def point'getX := \I<:PointI. \p:Object I. 
+Def point'getX := \I<:PointI. \p:Object I.
                   unpack p (\X:*s.\x:{|state:X,met :I X|}.
                             x`met`getX x`state) :
                   @I<:PointI. Object I -> Nat
@@ -94,16 +94,14 @@ Def point'getX := \I<:PointI. \p:Object I.
 Type point'bump ColPointI newColPoint
 -- Result: Object ColPointI
 
-Def colPoint'getC := \I<:ColPointI. \p:Object I. 
+Def colPoint'getC := \I<:ColPointI. \p:Object I.
                   unpack p (\X:*s.\x:{|state:X,met :I X|}.
                             x`met`getC x`state) :
                   @I<:ColPointI. Object I -> Colour
 
-Def colPoint'setC := \I<:ColPointI. \p:Object I. 
+Def colPoint'setC := \I<:ColPointI. \p:Object I.
                   \col:Colour. unpack p (\X:*s.\x:{|state:X,met : I X|}.
                             pack (\X:*s. {| state : X, met : I X |})
                                  X {state= x`met`setC x`state col,
                                     met = x`met}) :
                   @I<:ColPointI. Object I -> Colour -> Object I
-
-

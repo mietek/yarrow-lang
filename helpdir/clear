@@ -13,12 +13,12 @@
            Clear<BR>
            Clear<BR>
            Save "int1and2"</CODE><BR>
-     Now module <CODE>int1and2</CODE> contains all declarations of both 
+     Now module <CODE>int1and2</CODE> contains all declarations of both
      <CODE>int1</CODE> and <CODE>int2</CODE>. Without the <CODE>clear</CODE>
      commands, <CODE>int1and2</CODE> would be empty.
  <DT>Prove-mode:
  <DD>This command is not available in prove-mode.
- <DT>See also:                          
+ <DT>See also:
  <DD><A HREF="#Load"><CODE>Load</CODE></A>,
-     <A HREF="#Save"><CODE>Save</CODE></A>
-</DL>  
+     <A HREF="#Save"><CODE>Save</CODE></A>
+</DL>

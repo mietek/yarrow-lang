@@ -2,7 +2,7 @@
  <DT>Syntax:
  <DD><OL>
      <LI><CODE>Apply</CODE> <VAR>term</VAR>
-     <LI><CODE>Apply</CODE> <VAR>term</VAR> <CODE>On</CODE> 
+     <LI><CODE>Apply</CODE> <VAR>term</VAR> <CODE>On</CODE>
                                             <VAR>term-list</VAR>
      </OL>
  <DT>Effect 1:
@@ -34,9 +34,9 @@
                 second argument is of type <CODE>P zero</CODE> and could
                 not be determined by matching, so becomes a new hole.
  <DT>Effect 2:
- <DD><P>The second variant is a combination of the Forward tactic and the 
+ <DD><P>The second variant is a combination of the Forward tactic and the
         Apply 1 tactic.
-     </P>   
+     </P>
  <DT>Example 2:
  <DD>Suppose our goal is<BR>
      <CODE>lem : @x,y,z : Int. x&lt;y -&gt; y&lt;z -&gt; x&lt;z</CODE><BR>

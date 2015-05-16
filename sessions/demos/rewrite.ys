@@ -5,30 +5,30 @@
 --   For all x and y, (x+y)*(x-y) = x*x-y*y
 -- In particular, we show the advantage of the possibility of indicating
 -- which subterm has to be rewritten.
-                 
+
 
 path "../logic"
 
 -- Enter the proper PTS
-read "lambdaL"     
-            
+read "lambdaL"
+
 -- Load the definition of equality
 load "is"
-   
+
 
 -- Introduce the integers axiomatically
 
 -- First postulate the set and its operations
-var Int:*s                              
+var Int:*s
 -- O represents zero, E represents one
 var O,E : Int
-var minus : Int->Int                   
+var minus : Int->Int
 -- Prefix notation for + is plus
 -- Prefix notation for & is mult (since it represents multiplication)
 var (+),(&) : Int -> Int -> Int
 infixr 5 (+)
 infixr 6 (&)
-                                             
+
 -- Then postulate the axioms
 var plus_comm : @x,y:Int. x+y = y+x
 var plus_assoc : @x,y,z:Int. (x+y)+z = x+(y+z)
@@ -39,7 +39,7 @@ var mult_comm : @x,y:Int. x&y = y&x
 var mult_assoc : @x,y,z:Int. (x&y)&z = x&(y&z)
 var mult_E : @x:Int. x&E = x
 var dist_plus_l : @x,y,z:Int. (x+y)&z = x&z + y&z
-                            
+
 
 -- Prove lots of lemmas
 

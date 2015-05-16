@@ -1,13 +1,13 @@
 -- File: Tactics
--- Description: This module defines the tactics for the 
+-- Description: This module defines the tactics for the
 --   prove-mode of the proof assistant.
 
 module Tactics(pAppQQ, pAppGQ, hideTac, unhideTac, unhideAllTac,
                allForbiddenVars,
-               introVar, intro, introsTac, introsNumTac, 
-               letTac, letTypTac, 
+               introVar, intro, introsTac, introsNumTac,
+               letTac, letTypTac,
                unfoldDef, unfold, unfoldHyp, simplify, convertTac,
-               pattern, exact, assumption, 
+               pattern, exact, assumption,
                cut, firstTac,
                primApplyTac, primApplyMaxTac, applyTac, applyMaxTac,
                checkExConConcl,
@@ -32,7 +32,7 @@ import ProvDat
 import MainSta
 import GenComs
 import Tactals
-              
+
 
 
 -- In the prove-mode an inhabitant (proof-term) for some type is
@@ -64,7 +64,7 @@ checkRule sort1 sort2 =
      else
         skip
 
-                      
+
 -------------------------------------
 --    B A S I C   T A C T I C S    --
 -------------------------------------
@@ -152,7 +152,7 @@ pDelta var (goal,locCon,gi,_) =
 -- New goals are
 -- |- ?1 : U->T
 -- |- ?2 : U
-pAppQQ :: (Term,Sort) -> Tactic 
+pAppQQ :: (Term,Sort) -> Tactic
 pAppQQ (u,s) (goal,locCon,gi,_) =
     newHnum >>= \gnum1 ->
     newHnum >>= \gnum2 ->
@@ -171,7 +171,7 @@ pAppQQ (u,s) (goal,locCon,gi,_) =
 -- ? := t ?1
 -- New goal is
 -- |- ?1 : U
-pAppGQ :: Term -> Term -> Tactic 
+pAppGQ :: Term -> Term -> Tactic
 pAppGQ u t (goal,locCon,gi,_) =
           newHnum >>= \gnum ->
           let proof = t `mkApp` mkHole gnum
@@ -185,17 +185,17 @@ pAppGQ u t (goal,locCon,gi,_) =
 -- Given u, @x:U.T (=typ)
 -- With: |- u : U
 --       |- @x:U.T : s
--- ? := ?1 u  
+-- ? := ?1 u
 -- New goal is
 -- |- ?1 : @x:U.T
-pAppQG :: Term -> Term -> Tactic 
+pAppQG :: Term -> Term -> Tactic
 pAppQG typ u (goal,locCon,gi,_) =
           newHnum >>= \gnum ->
           let proof = mkHole gnum `mkApp` u
               newG2 = typ
               newGoals = [(gnum,(newG2,locCon,gi))] in
           return (proof,newGoals)
- 
+
 
 -- pTerm t  gives a direct term for the goal
 --
@@ -220,7 +220,7 @@ pTerm t _ =
 pConv :: Term -> Tactic
 pConv t (goal,locCon,gi,_) =
           newHnum >>= \gnum ->
-          let proof = mkHole gnum  
+          let proof = mkHole gnum
               newGoals = [(gnum,(t,locCon,gi))] in
           return (proof,newGoals)
 
@@ -234,7 +234,7 @@ pConv t (goal,locCon,gi,_) =
 pConvCon :: LContext -> Tactic
 pConvCon locCon (goal,_,gi,_) =
           newHnum >>= \gnum ->
-          let proof = mkHole gnum  
+          let proof = mkHole gnum
               newGoals = [(gnum,(goal,locCon,gi))] in
           return (proof,newGoals)
 
@@ -256,7 +256,7 @@ hideGenTac vs mkNewGi s (goal,locCon,gi,_) =
           let locConV = fmap fst (locConToList locCon) in
           if not (vs `sublist` locConV) then
              genErrS ("Only local variables can be " ++ s)
-          else     
+          else
           newHnum >>= \gnum ->
           let proof = mkHole gnum
               mkNewGi' v old = mkNewGi (v `elem` vs) old
@@ -265,7 +265,7 @@ hideGenTac vs mkNewGi s (goal,locCon,gi,_) =
           return (proof,newGoals)
 
 
-  
+
 ----------------------------------------------
 --        I N T R O   T A C T I C S         --
 ----------------------------------------------
@@ -281,9 +281,9 @@ freshVar v locCon =  fmap (v `notElemC`) (allForbiddenVars locCon)
 allForbiddenVars :: LContext -> M (ListsAndTree Vari)
 allForbiddenVars locCon = fetchCon >>= \globCon ->
                           fetchTasks >>= \(_,tasks) ->
-                          return (fmap extractTaskId tasks +++ 
+                          return (fmap extractTaskId tasks +++
                                   domCon (locCon `addLocG` globCon))
-                   
+
 -- intro tactics add variables to the local context
 
 
@@ -310,7 +310,7 @@ introVar _ _ = genErrS "Not so many @-types or definitions"
 -- intro is the same as introVar, but the computer creates the name of
 -- the variable (see findNiceFree).
 intro :: Tactic
-intro (all,locCon,gi,totCon) | isGenAll all=                        
+intro (all,locCon,gi,totCon) | isGenAll all=
     allForbiddenVars locCon >>= \forVars ->
     let (_,(v,_,sort),_,_,_) = deconstructGenAll all
         var = findNiceFree sort forVars v in
@@ -323,8 +323,8 @@ intro (delta,locCon,gi,totCon) | isDelta delta =
 intro _ = notAllTypeErr
 
 notAllTypeErr :: M a
-notAllTypeErr = genErrS "Not an @-type or definition" 
-  
+notAllTypeErr = genErrS "Not an @-type or definition"
+
 -- intros tries intro as often as possible, at least once
 -- (so it aborts with error if once is not possible)
 introsTac :: Tactic
@@ -358,8 +358,8 @@ letTypTac var term0 typ0 gl@(goal,locCon,_,totCon) =
          fetchSyn >>= \si ->
          handleTypeErr
             (checkDef si totCon term0 typ0) >>= \(term,typ,sort) ->
-         let typ' = if forgetIT typ0==dummyTerm then 
-                       bnfNC typ 
+         let typ' = if forgetIT typ0==dummyTerm then
+                       bnfNC typ
                     else
                       typ in
          freshVar var locCon >>= \ok ->
@@ -383,7 +383,7 @@ letTac var term0 = letTypTac var term0 dummyTermIT
 -- unfoldDef  replaces occurrences of var in term by defOfVar. select
 --            determines which occurrences are replaced (usually used for
 --            unfolding).
-unfoldDef :: Context -> Term -> Vari -> Term -> (TermPath,Selector) -> 
+unfoldDef :: Context -> Term -> Vari -> Term -> (TermPath,Selector) ->
              M Term
 unfoldDef con term var defOfVar select =
             let f t | deconstructSpecVar t var = (True,defOfVar)
@@ -437,7 +437,7 @@ convertTac (term,sort) (goal,locCon,gi,totCon) =
             else
             pConv term (goal,locCon,gi,totCon)
 
-  
+
 -- pattern  changes the goal to a specific beta-convertible variant:
 --          it abstracts over the selected occurrences of term, and
 --          then applies this abstraction to this term
@@ -463,7 +463,7 @@ pattern select (term,typ,sort) (goal,locCon,gi,totCon) =
 
 -- replaceTerm t1 t2 t3 replaces in t1 all occurrences of t2 by t3
 -- make sure no variables of t3 will be bound by subterms of t1!
-replaceTerm :: Context -> Term -> Term -> Term -> (TermPath,Selector) -> 
+replaceTerm :: Context -> Term -> Term -> Term -> (TermPath,Selector) ->
                M Term
 replaceTerm con t1 t2 t3 select =
            let f t = if t==t2 then (True,t3) else (False,t) in
@@ -473,8 +473,8 @@ replaceTerm con t1 t2 t3 select =
 -- makePattern  beta-expands t1 so it is applied to t2.
 -- it abstracts on the selected occurrences of t2
 -- the name of the variable is v, its type is typ, and the sort is s
-makePattern :: Context -> Term -> Term -> Vari -> Term -> Sort -> 
-               (TermPath,Selector) -> 
+makePattern :: Context -> Term -> Term -> Vari -> Term -> Sort ->
+               (TermPath,Selector) ->
                 M Term
 makePattern con t1 t2 v typ sort select =
        replaceTerm con t1 t2 (mkVr v) select >>= \t1' ->
@@ -507,12 +507,12 @@ assumption :: Tactic
 assumption (goal,locCon,gi,totCon) =
               findVarWithType totCon locCon goal "proof" >>= \v ->
               pTerm (mkVr v) (goal,locCon,gi,totCon)
-  
+
 -- findVarWithType con1 con2 typ  searches con2 for a declaration of type
 --   subtype of typ. Subtype checking (conversion) is done in con1.
 findVarWithType :: Context -> LContext -> Term -> String -> M Vari
 findVarWithType con1 con2 typ mess =
-         fetchSyn >>= \si ->        
+         fetchSyn >>= \si ->
          let find' [] = genErrS ("No "++mess++" in context")
              find' ((v,vTyp):l) = if subtype si con1 vTyp typ then
                                      return v
@@ -523,7 +523,7 @@ findVarWithType con1 con2 typ mess =
 ----------------------------------------------
 --           C U T   T A C T I C S          --
 ----------------------------------------------
- 
+
 cut :: (Term,Sort) -> Tactic
 cut (term,sort) (goal,locCon,gi,totCon) =
      getSort totCon goal >>= \goalSort ->
@@ -536,12 +536,12 @@ firstTac :: (Term,Sort) -> Tactic
 firstTac ts tr =
     cut ts tr >>=
     (\(p,[goal1,goal2]) -> return (p,[goal2,goal1]))
-    
+
 ----------------------------------------------
 --        A P P L Y   T A C T I C           --
 ----------------------------------------------
 
--- We first treat primApplyTac, which is a special case of applyTac.                   
+-- We first treat primApplyTac, which is a special case of applyTac.
 -- primApplyTac (term,typ) (goal,locCon,totCon)
 --           (Corresponds with 'Apply term')
 -- Rough intuition:
@@ -577,28 +577,28 @@ firstTac ts tr =
 --       The proof-term is t applied to the all substituenda resp. holes.
 --
 -- Example:
---   Suppose 
+--   Suppose
 --     goal = "a=b"
---     totCon = "{Nat:*, S : Nat->Nat, (=) : Nat->Nat->*, 
---                lem:@x,y:Nat. S x = S y -> x=y, 
+--     totCon = "{Nat:*, S : Nat->Nat, (=) : Nat->Nat->*,
+--                lem:@x,y:Nat. S x = S y -> x=y,
 --                a:Nat, b:Nat}"
 --   and we invoke primApplyTac (lem, @x,y:Nat. ...)
---   Then 
+--   Then
 --     pairs = [({x:Nat, y:Nat, H : S a = S b}, <x := a, y := b>]
 --     checkExConConl .. = skip
 --     makeProof results in a proofterm
 --        lem a b ?,  where ? : S a = S b
-   
+
 primApplyTac :: MatchOptions -> (Term,Term,Sort) -> Tactic
-primApplyTac options (term,typ,_) (goal,locCon,gi,totCon) = 
+primApplyTac options (term,typ,_) (goal,locCon,gi,totCon) =
     fetchSyn >>= \si ->
     let pairs = combineConcl options si totCon goal (emptyLCon,typ) in
     doFirstOk (applyExCon term (goal,locCon,gi,totCon)) makeApplyErr pairs
 -- primApplyTac tts = applyTac (tts,[])
-                                 
+
 -- applyMax (t:T:s) matches only with the conclusion of T
 primApplyMaxTac :: MatchOptions -> (Term,Term,Sort) -> Tactic
-primApplyMaxTac options (term,typ,_) (goal,locCon,gi,totCon) = 
+primApplyMaxTac options (term,typ,_) (goal,locCon,gi,totCon) =
     fetchSyn >>= \si ->
     let pairs = combineConclMax options si totCon goal (emptyLCon,typ) in
     doFirstOk (applyExCon term (goal,locCon,gi,totCon)) makeApplyErr pairs
@@ -608,10 +608,10 @@ primApplyMaxTac options (term,typ,_) (goal,locCon,gi,totCon) =
 applyExCon :: Term -> (Term,LContext,GoalInfo,Context) -> (LContext,Subst) ->
               M (Term,Goals)
 applyExCon term (goal,locCon,gi,totCon) (exCon,sigma) =
-           checkExConConcl (exCon,sigma) >>   
+           checkExConConcl (exCon,sigma) >>
            makeProof term (exCon,sigma) (goal,locCon,gi,totCon)
 
-makeApplyErr messs = 
+makeApplyErr messs =
     let addNum ([ES ""],_) = ""
         addNum ([ES mess,_],(exCon,_))= show (length (indexedToListIL exCon))
                                         ++ " arguments: " ++ mess
@@ -625,7 +625,7 @@ makeApplyErr messs =
 --      is defined by sigma.
 --      It issues an error if this is not the case.
 checkExConConcl :: (LContext,Subst) -> M ()
-checkExConConcl (exCon,sigma) =                              
+checkExConConcl (exCon,sigma) =
     let undefs = domDeclLCon exCon \\ domSubst sigma
                  -- undefined existential variables
         fvExCon = fvLCon exCon in
@@ -642,7 +642,7 @@ checkExConConcl (exCon,sigma) =
 --             an inhabitant of the goal.
 --
 -- Implementation:
---    Create with combinePrem on typ and termtyps a list of triples 
+--    Create with combinePrem on typ and termtyps a list of triples
 --    (exCon,pat,sigma), where exCon contains n declarations for the first
 --    n @-items of typ, pat is the body of typ, after n @-items have been
 --    stripped and sigma has been applied, and sigma is a substitution
@@ -655,10 +655,10 @@ checkExConConcl (exCon,sigma) =
 --    Make a proof term by function makeProof.
 --
 -- Example:
---   Suppose 
+--   Suppose
 --     goal = "a<c"
---     totCon = "{Nat:*, S : Nat->Nat, (<) : Nat->Nat->*, 
---                lem:@x,y,z:Nat. x < y -> y < z -> x<z, 
+--     totCon = "{Nat:*, S : Nat->Nat, (<) : Nat->Nat->*,
+--                lem:@x,y,z:Nat. x < y -> y < z -> x<z,
 --                a:Nat, b:Nat, c:Nat, H:b<c}"
 --   and we invoke applyTac (lem, @x,y:Nat. ...) [(H, b<c)]
 --   Then
@@ -687,8 +687,8 @@ applyGenTac combine options ((term,typ,_),termtyps) (goal,locCon,gi,totCon) =
     let termtyps' = forgetSorts termtyps
         trips = combinePrems options si totCon typ termtyps'
         comb :: (LContext, Term, Subst) -> [(LContext, Subst)]
-        comb (exCon,pat,sigma) = 
-          fmap (doSnd (sigma++)) 
+        comb (exCon,pat,sigma) =
+          fmap (doSnd (sigma++))
               (combine options si totCon goal (exCon,pat))
         pairs = concat (fmap comb trips) in
     checkExtSolutions trips >>
@@ -697,7 +697,7 @@ applyGenTac combine options ((term,typ,_),termtyps) (goal,locCon,gi,totCon) =
     doFirstOk (applyExCon term (goal,locCon,gi,totCon)) makeApplyErr pairs'
 
 ordPair :: (LContext,Subst) -> (LContext,Subst) -> Bool
-ordPair (lCon1,_) (lCon2,_) = 
+ordPair (lCon1,_) (lCon2,_) =
     length (locConToList lCon1) <= length (locConToList lCon2)
 
 
@@ -718,19 +718,19 @@ ordPair (lCon1,_) (lCon2,_) =
 --   * if con |- p : @exCon. pat and arg_i = sigma(x_i)
 --     then con, exCon'\dom(sigma) |- p arg_1 .. arg_n : pat'
 --   * dom(sigma) subset of dom(exCon')
---   * exCon' contains only declarations 
+--   * exCon' contains only declarations
 -- Clarifications:
 --   * @{y_1 : U_1, .. y_n : U_n}. V = @y_1:U_1,..@y_n:U_n. V
 --   * {x:T, y:U, z:V} \ {y} = {x:T, z:V}
 --
--- Examples:                   
+-- Examples:
 --   combineConcl "a=b" ([],"@x,y:Nat. S x = S y -> x=y") =
 --           [({x:Nat, y:Nat, H : S a = S b}, <x := a, y := b>]
 --   combineConcl "A->B" ([],"@P,Q:*. P->(Q->P)",[]) =
 --           [({P:*, Q:*, H:B}, <P:=B, Q:=A>),
 --            ({P:*, Q:*, H:A->B, H1:Q}, <P := "A->B">)]
 --   combineConcl "7=7" ([],"@A:*. @a:A. a = a") =
---           [({A:*, a:A}, {A:=Nat, a=7}]                  
+--           [({A:*, a:A}, {A:=Nat, a=7}]
 --
 -- Implementation:
 --    Combine the following pairs:
@@ -747,9 +747,9 @@ combineConcl options si con typ pair =
        doMatchConcl options si con typ pair ++
        combineConcl' options si con typ pair
 
-combineConcl' options si con typ (exCon,pat) = 
+combineConcl' options si con typ (exCon,pat) =
        let exTotCon = exCon `addLoc` con
-           pat' = if mayUnfoldPattern options then 
+           pat' = if mayUnfoldPattern options then
                      bdwhnf exTotCon pat
                   else
                      pat in
@@ -764,9 +764,9 @@ combineConcl' options si con typ (exCon,pat) =
 -- combineConclMax is similar, but matches only the conclusion.
 combineConclMax :: MatchOptions -> SyntaxInfo -> Context -> Term ->
                    (LContext,Term) -> [(LContext, Subst)]
-combineConclMax options si con typ (exCon,pat) = 
+combineConclMax options si con typ (exCon,pat) =
        let exTotCon = exCon `addLoc` con
-           pat' = if mayUnfoldPattern options then 
+           pat' = if mayUnfoldPattern options then
                      bdwhnf exTotCon pat
                   else
                      pat in
@@ -784,16 +784,16 @@ doMatchConcl options si con typ (exCon,pat) =
        let sigmas = doMatch options si con exCon pat typ in
        fmap (adaptConcl exCon) sigmas
 
-adaptConcl :: LContext -> Subst -> 
+adaptConcl :: LContext -> Subst ->
               (LContext, Subst)
 adaptConcl exCon sigma =
     (applyLConSubst sigma exCon, sigma)
-         
+
 ------------------------------------------------------
 -- Routines for both backward and forward reasoning --
 ------------------------------------------------------
 
-doMatch :: MatchOptions -> SyntaxInfo -> Context -> LContext -> Term -> 
+doMatch :: MatchOptions -> SyntaxInfo -> Context -> LContext -> Term ->
            Term -> [Subst]
 doMatch options si con exCon p t =
     match options si (exCon `addLoc` con, domLCon exCon, p, t)
@@ -818,8 +818,8 @@ checkExConGen undefs vars =
 --
 -- Example:
 --    makeProof lem [({x:Nat, y:Nat, H : S a = S b}, <x := a, y := b>] =
---        (pAppQQ "S a = S b") `then1Tac` 
---        (pAppQG dummy "b") `then1Tac` 
+--        (pAppQQ "S a = S b") `then1Tac`
+--        (pAppQG dummy "b") `then1Tac`
 --        (pAppQG dummy "a") `then1Tac`
 --        pTerm lem
 --    which results in a proofterm
@@ -843,16 +843,16 @@ makeProof' term (ce:ces, sigma) | isGenDecl ce =
                 makeProof' term (ces,sigma)
        otherwise -> \_ ->
                     genErrS "Holes with subtyping constraint not permitted"
-makeProof' term (ce:ces, sigma) | isDef ce = 
+makeProof' term (ce:ces, sigma) | isDef ce =
     \_ -> internalErr "function makeProof gets definition in context"
 
 
 ----------------------------------------------
 --            F O R W A R D                 --
 ----------------------------------------------
- 
+
 -- forward gets as argument one typed term (say t) and a list of typed terms,
--- say t1,..tn. This tactic tries to make a well-typed application with t 
+-- say t1,..tn. This tactic tries to make a well-typed application with t
 -- on the head and t1 .. tn as arguments, but interleaved with other
 -- arguments as necessary. These other arguments are either holes or terms
 -- found by matching.
@@ -863,15 +863,15 @@ forwardTac options ((term,typ,_),termtyps) (goal,locCon,gi,totCon) =
     fetchSyn >>= \si ->
     let termtyps' = forgetSorts termtyps
         -- generate a list of possible solutions
-        trips = combinePrems options si totCon typ termtyps' in 
+        trips = combinePrems options si totCon typ termtyps' in
     -- give error if no solutions
-    checkExtSolutions trips >>    
-    -- order solutions                 
-    let trips' = sortOrd ordTrip trips in 
+    checkExtSolutions trips >>
+    -- order solutions
+    let trips' = sortOrd ordTrip trips in
     -- try solutions with least no. of args first.
     doFirstOk (forwardExCon (term,typ) (goal,locCon,gi,totCon))
-              makeForwErr trips'      
- 
+              makeForwErr trips'
+
 forwardExCon (term,typ) (goal,locCon,gi,totCon) (exCon,resTyp,sigma) =
      checkExConPrem (exCon,resTyp,sigma) >>
      let resTyp' = bnfNC resTyp in
@@ -882,9 +882,9 @@ forwardExCon (term,typ) (goal,locCon,gi,totCon) (exCon,resTyp,sigma) =
                    else
                       intro in
      (firstTac (resTyp',sort) `thenTac`
-      [makeProof term (exCon,sigma), myIntro]) (goal,locCon,gi,totCon)              
+      [makeProof term (exCon,sigma), myIntro]) (goal,locCon,gi,totCon)
 makeForwErr messs =
-    let addNum ([ES mess,_],(exCon,_,_)) = 
+    let addNum ([ES mess,_],(exCon,_,_)) =
                           show (length (indexedToListIL exCon))
                           ++ " arguments: " ++ mess
         messs' = fmap addNum messs in
@@ -898,12 +898,12 @@ forgetSorts :: [(Term,Term,Sort)] -> [(Term,Term)]
 forgetSorts = fmap (\(a,b,c) -> (a,b))
 
 ordTrip :: (LContext,Term,Subst) -> (LContext,Term,Subst) -> Bool
-ordTrip (lCon1,_,_) (lCon2,_,_) = 
+ordTrip (lCon1,_,_) (lCon2,_,_) =
     length (locConToList lCon1) <= length (locConToList lCon2)
 
 
 primForwardTac :: (Term,Term,Sort) -> Tactic
-primForwardTac (term,typ,sort) = 
+primForwardTac (term,typ,sort) =
      -- the following code is equivalent to 'forwardTac (tts,[])'
      firstTac (typ,sort) `thenTac` [exact (term,typ,sort), intro]
 
@@ -912,11 +912,11 @@ primForwardTac (term,typ,sort) =
 --      that are not defined by sigma.
 --      If this is false, it issues an error message
 checkExConPrem :: (LContext,Term, Subst) -> M ()
-checkExConPrem (exCon,t,sigma) = 
+checkExConPrem (exCon,t,sigma) =
     let undefs = domDeclLCon exCon \\ domSubst sigma
         fvExConT = fvLCon exCon ++ fv t in
     checkExConGen undefs fvExConT
-                         
+
 
 
 -- forwardUltTac is the same as forwardTac, but it always peels off all
@@ -928,7 +928,7 @@ forwardUltTac options ((term,typ,_),termtyps) tac (goal,locCon,gi,totCon) =
         trips = combinePrems options si totCon typ termtyps' in
     checkExtSolutions trips >>
     let trips' = sortOrd ordTrip trips in
-    doFirstOk (forwardUltExCon (term,typ) tac (goal,locCon,gi,totCon)) 
+    doFirstOk (forwardUltExCon (term,typ) tac (goal,locCon,gi,totCon))
               makeForwErr trips'
 
 forwardUltExCon (term,typ) tac (goal,locCon,gi,totCon) (exCon,resTyp,sigma) =
@@ -943,22 +943,22 @@ forwardUltExCon (term,typ) tac (goal,locCon,gi,totCon) (exCon,resTyp,sigma) =
                       intro in
       [makeProof term (exCon',sigma), myIntro `thenTac` [tac]])
      (goal,locCon,gi,totCon)
-                  
+
 tryHideTac :: Term -> Tactic
 tryHideTac t gl@(goal,locCon,gi,totCon) =
-    let (ok1, v) = deconstructVar t 
+    let (ok1, v) = deconstructVar t
         ok2 = v `elem` (fmap fst (locConToList locCon)) in
     if ok1 && ok2 then
        hideTac [v] gl
     else
        idTac gl
 
-               
+
 
 ------------------
 -- combinePrem --
 ------------------
-    
+
 -- combinePrem is the major building block of the forward tactic
 -- combinePrems is a straightforward extension of this function
 
@@ -971,16 +971,16 @@ tryHideTac t gl@(goal,locCon,gi,totCon) =
 --   * if con |- p : @exCon. pat
 --     and arg_i = sigma(x_i)
 --     then con, exCon'\dom(sigma) |- p arg_1 .. arg_n : pat'
---   * for some i, arg_i = term        
+--   * for some i, arg_i = term
 --   * dom(sigma) subset of dom(exCon')
 --   * exCon' contains only declarations
 -- Clarifications:
 --   * @{y_1 : U_1, .. y_n : U_n}. V = @y_1:U_1,..@y_n:U_n. V
 --   * {x:T, y:U, z:V} \ {y} = {x:T, z:V}
---    
+--
 --
 -- Examples:
--- combinePrem t (S a = S b) ({}, (@m,n:Nat. S m = S n -> m=n)) = 
+-- combinePrem t (S a = S b) ({}, (@m,n:Nat. S m = S n -> m=n)) =
 --     [({m:Nat, n:Nat, H: S a = S b},  a=b,         <m:=a, n:=b, H:=t>)]
 --
 -- combinePrem t (a<b)       ({}, (@x,y,z:Nat. x<y -> y<z -> x<z))  =
@@ -994,7 +994,7 @@ tryHideTac t gl@(goal,locCon,gi,totCon) =
 --    1) match v with term in con,exCon'. For every sigma, return a triple
 --       (sigma(exCon'), sigma(body), sigma)
 --    2) Go into recursion with (exCon', body)
---                             
+--
 -- This is inefficient, because the matching routine has to calculate the
 -- type of term, which we already know (viz. typ).
 -- Since v is always an existential variable in exCon', we know we just
@@ -1005,8 +1005,8 @@ tryHideTac t gl@(goal,locCon,gi,totCon) =
 --
 -- The MatchOptions given as argument are used both in the matching routine
 -- and in the code of combinePrem itself.
-combinePrem :: MatchOptions -> SyntaxInfo -> Context -> (Term,Term) -> 
-               (LContext,Term) -> 
+combinePrem :: MatchOptions -> SyntaxInfo -> Context -> (Term,Term) ->
+               (LContext,Term) ->
                [(LContext,Term,Subst)]
 combinePrem options si con (term,typ) (exCon,pat) =
     let exTotCon = exCon `addLoc` con
@@ -1033,14 +1033,14 @@ combinePrem options si con (term,typ) (exCon,pat) =
        combinePrem options si con (term,typ) (exCon', body)
     else
        []
- 
-adaptPrem :: (LContext,Term) -> Subst -> 
+
+adaptPrem :: (LContext,Term) -> Subst ->
              (LContext,Term, Subst)
 adaptPrem (exCon,typ) sigma =
-    (applyLConSubst sigma exCon, 
-     applySubst sigma typ, 
+    (applyLConSubst sigma exCon,
+     applySubst sigma typ,
      sigma)
-    
+
 -- combinePrems' si con [(term_1,typ_1), .. (term_k,typ_k)] (exCon, pat)
 -- Preconditions: * con |- term_i : typ_i
 --                * con,exCon |- pat : s  for some sort s
@@ -1053,33 +1053,33 @@ adaptPrem (exCon,typ) sigma =
 --   * for all i in 1.. k, there is a j such that arg_j) = term_i
 --   * dom(sigma) subset of dom(exCon')
 --   * exCon' contains only declarations
---    
+--
 --
 -- Examples:
 -- combinePrems' [(t1,a<b), (t2,b<c)] ({}, (@x,y,z:Nat. x<y -> y<z -> x<z)) =
---     [({x,y,z:Nat,H:a<b, H1: b<c}, 
---         <x:=a, y:=b, z:=c, H:=t1, H1:=t2>)]      
-combinePrems' :: MatchOptions -> SyntaxInfo -> Context -> [(Term,Term)] -> 
-                 (LContext, Term) -> 
+--     [({x,y,z:Nat,H:a<b, H1: b<c},
+--         <x:=a, y:=b, z:=c, H:=t1, H1:=t2>)]
+combinePrems' :: MatchOptions -> SyntaxInfo -> Context -> [(Term,Term)] ->
+                 (LContext, Term) ->
                  [(LContext, Term, Subst)]
-combinePrems' options si con [] (lCon,pat) = 
+combinePrems' options si con [] (lCon,pat) =
     [(lCon,pat,emptySubst)]
 combinePrems' options si con ((termtyp):ttlist) trip =
-    let trips = combinePrem options si con termtyp trip 
+    let trips = combinePrem options si con termtyp trip
         comb :: (LContext, Term, Subst) -> [(LContext, Term, Subst)]
-        comb (exCon,pat,sigma) = 
-          fmap (doThd3 (sigma++)) 
+        comb (exCon,pat,sigma) =
+          fmap (doThd3 (sigma++))
               (combinePrems' options si con ttlist (exCon,pat)) in
     concat (fmap comb trips)
 
 
-combinePrems :: MatchOptions -> SyntaxInfo -> Context -> Term -> 
+combinePrems :: MatchOptions -> SyntaxInfo -> Context -> Term ->
                 [(Term,Term)] -> [(LContext, Term, Subst)]
-combinePrems options si con typ termtyps = 
+combinePrems options si con typ termtyps =
           combinePrems' options si con termtyps (emptyLCon, typ)
 
 
-                       
+
 -- shiftPrem (con,pat)  shifts all pis from pat into the con
 --                      (it is used in many special tactics).
 shiftPrem :: Context -> (LContext,Term) -> (LContext,Term)

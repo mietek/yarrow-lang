@@ -6,7 +6,7 @@
 <H1>Formal Theory in my Thesis</H1>
 <!-- thesis linken -->
 <P>
-This page presents the formal theory given in my 
+This page presents the formal theory given in my
 <A HREF="../../publications">thesis</A>.
 This presentation is only scarcely documented; for explanation I refer to
 my thesis.
@@ -53,19 +53,19 @@ The Yarrow syntax of terms is as follows:
 </P>
 
 <P>
-Precedence goes from lowest to highest, so <CODE>\x:T.x x</CODE> means 
+Precedence goes from lowest to highest, so <CODE>\x:T.x x</CODE> means
       <CODE>\x:T.(x x)</CODE> and not <CODE>(\x:T.x) x</CODE>.
 The lambda, pi and let terms do extend to right as far as possible.
 </P>
 
-<P>    
+<P>
 We use the following shorthands:
 </P>
 <DL COMPACT>
 <DT><CODE>\x1,x2,..xn:T.e       </CODE><DD> for a repeated abstraction
-<DT><CODE>@x1,x2,..xn:T.e       </CODE><DD> for a repeated pi-type 
+<DT><CODE>@x1,x2,..xn:T.e       </CODE><DD> for a repeated pi-type
 <DT><CODE>T-&gt;U      </CODE><DD> as a short-hand for <CODE>@x:T.U</CODE> if <C
-ODE>x</CODE> does not occur 
+ODE>x</CODE> does not occur
                         in <CODE>U</CODE> (the <CODE>-&gt;</CODE> is right-assoc
 iative)
 </DL>

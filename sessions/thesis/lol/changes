@@ -29,10 +29,8 @@ Forward Perm_cons On a, H
 -- volgende commando duurt superlang! Omdat er een falende match
 -- (a ; sort as)  met  (insert a (sort as))
 -- geprobeerd wordt
-Apply Perm_trans On H1                                               
+Apply Perm_trans On H1
 -- Dit commando duurt ook vrij lang. Onduidelijk waarom.
 Apply Perm_insert
 Exit
 ***********************************************
-
-

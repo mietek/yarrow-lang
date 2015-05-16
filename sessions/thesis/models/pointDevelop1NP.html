@@ -30,15 +30,15 @@
 </FONT><FONT COLOR="#000000">
 </FONT><FONT COLOR="#0000FF">Def bump := \st:PointRep. {x= S st`x} :
 </FONT><FONT COLOR="#0000FF">            PointRep -&gt; PointRep
-</FONT><FONT COLOR="#000000">                 
+</FONT><FONT COLOR="#000000">
 </FONT><FONT COLOR="#0000FF">Def pointMet := {getX = \st:PointRep. st`x,
 </FONT><FONT COLOR="#0000FF">                 setX = \st:PointRep. \n:Nat. {x=n},
 </FONT><FONT COLOR="#0000FF">                 bump = \st:PointRep. {x= S st`x}} :
-</FONT><FONT COLOR="#0000FF">                {|getX:PointRep-&gt;Nat, 
+</FONT><FONT COLOR="#0000FF">                {|getX:PointRep-&gt;Nat,
 </FONT><FONT COLOR="#0000FF">                  setX:PointRep-&gt;Nat-&gt;PointRep,
 </FONT><FONT COLOR="#0000FF">                  bump:PointRep-&gt;PointRep|}
 </FONT><FONT COLOR="#000000">
-</FONT><FONT COLOR="#0000FF">Def PointI := \R:*s. {|getX:R-&gt;Nat, 
+</FONT><FONT COLOR="#0000FF">Def PointI := \R:*s. {|getX:R-&gt;Nat,
 </FONT><FONT COLOR="#0000FF">                       setX:R-&gt;Nat-&gt;R,
 </FONT><FONT COLOR="#0000FF">                       bump:R-&gt;R|}
 </FONT><FONT COLOR="#000000">

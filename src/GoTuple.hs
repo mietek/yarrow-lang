@@ -36,7 +36,7 @@ snd5 (_,b,_,_,_) = b
 thd5 (_,_,c,_,_) = c
 fth5 (_,_,_,d,_) = d
 ffh5 (_,_,_,_,e) = e
-               
+
 doFst6 z (a,b,c,d,e,f) = (z a,  b,  c,  d,  e,  f)
 doSnd6 z (a,b,c,d,e,f) = (  a,z b,  c,  d,  e,  f)
 doThd6 z (a,b,c,d,e,f) = (  a,  b,z c,  d,  e,  f)
@@ -50,21 +50,20 @@ thd6 (_,_,c,_,_,_) = c
 fth6 (_,_,_,d,_,_) = d
 ffh6 (_,_,_,_,e,_) = e
 sxh6 (_,_,_,_,_,f) = f
-               
+
 
 --------------------------------------------------------
 -- GENERAL FUNCTIONS OF HASKELL, NOT PRESENT IN GOFER --
 --------------------------------------------------------
 
-  
+
 replicate :: Int -> a -> [a]
 replicate = copy
-                
+
 -- equality on triples
 instance (Eq a, Eq b, Eq c) => Eq (a,b,c) where
          (a,b,c) == (a',b',c') = a==a' && b==b' && c==c'
- 
+
 instance (Ord a, Ord b, Ord c) => Ord (a,b,c) where
  (a1,b1,c1) <= (a2,b2,c2) = a1 < a2 || (a1 == a2 &&
                                         (b1 < b2 || (b1 == b2 && c1 <= c2)))
-

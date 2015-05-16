@@ -1,12 +1,12 @@
 -- File: MainSta
 -- Description: This module contains the state we use in yarrow
 
-module MainSta(OptList,ModuleName,Checksum, ModuleInfo, 
+module MainSta(OptList,ModuleName,Checksum, ModuleInfo,
                StatusLoad(..), StatusSave,
                SpecialLemmas, emptyLemmas,
-               MainS, Tasks, M, 
+               MainS, Tasks, M,
                PartContext(..), HasContext(..),
-               fetchModulesInfo, setModulesInfo, 
+               fetchModulesInfo, setModulesInfo,
                fetchTasks, updateTasks', setTasks,
                fetchLemmas, updateLemmas', removeLemmas, setLemma,
                extractTaskId, taskHasId, updateTask', fetchTask, setTask,
@@ -29,14 +29,14 @@ import ProvDat
 
 --------------------
 -- Handling State --
---------------------                                        
+--------------------
 
 -- the type of options for the 'option' command.
 type OptList = (String,Bool)
 
 type ModuleName = String
 
-type Checksum = Int                      
+type Checksum = Int
 
 type ModuleInfo = (ModuleName, (Vari, Vari), Checksum)
 --                 name        first  last
@@ -49,24 +49,24 @@ type ModuleInfo = (ModuleName, (Vari, Vari), Checksum)
 -- The following two types are used only in the module "Modules.hs" and
 -- some queries concerning loading and saving of modules.
 
-data StatusLoad = 
+data StatusLoad =
     StartLoading ModuleName System (String,Checksum) [(String,Checksum)] |
-    StartChecking ModuleName 
+    StartChecking ModuleName
                       ([(Vari,(Int,Assoc))],[Vari],[(Vari,Int)],[(Vari,Int)],
                           [((Vari,Int),(Vari,String,[Sort]))],[Vari],Checksum)
                       [ContextE] GContext
 
 type StatusSave = [ModuleInfo]
 
-                                           
--- The type SpecialLemmas is used for remembering the lemmas used in the 
+
+-- The type SpecialLemmas is used for remembering the lemmas used in the
 -- special tactics. They are characterized by
 --   1. the connective
---   2. the name of the special tactic 
+--   2. the name of the special tactic
 --   3. a list of sorts.
 -- As additional info the number of arguments for polymorphism is stored
 -- (which is only used for refl, existsi, existse, rewrite, lewrite)
-type SpecialLemmas = IL (Vari,String,[Sort]) (Vari,Int)          
+type SpecialLemmas = IL (Vari,String,[Sort]) (Vari,Int)
 -- Naming convention: lemmas
 
 emptyLemmas :: SpecialLemmas
@@ -74,7 +74,7 @@ emptyLemmas = emptyI
 
 
 data MainS= MAINS (SyntaxInfo,GContext,[ModuleInfo],Tasks,SpecialLemmas)
-                                 
+
 -- The integer in the tasks-type is only used for tactics, i.e.
 -- indicate on what task a tactic is acting
 type Tasks = (TaskId,[Task])
@@ -102,7 +102,7 @@ class (Functor m, Monad m) => HasContext m where
      setCon new  = fmap (const ()) (updateCon (\old -> new))
 
 
-    
+
 instance PartContext s => HasContext (State s) where
      updateCon f = fmap extractCon (updateS2 (insertCon f))
      -- hbc 0.9999.4 will complain if we replace updateS2 above by update,
@@ -111,8 +111,8 @@ instance PartContext s => HasContext (State s) where
 updateS2 :: (s->s) -> State s s
 updateS2 = update
 
-    
-               
+
+
 instance PartSyntax MainS where
      extractSyn (MAINS ps) = fst5 ps
      insertSyn f (MAINS ps) = MAINS (doFst5 f ps)
@@ -129,7 +129,7 @@ fetchModulesInfo = fmap (\(MAINS (_,_,mi,_,_)) -> mi) fetchS
 fetchS :: State s s
 fetchS = fetch
 
-setModulesInfo :: [ModuleInfo] -> M ()                                
+setModulesInfo :: [ModuleInfo] -> M ()
 setModulesInfo mi = update' (\(MAINS (si,con,_ ,mode, lemmas)) ->
                                 MAINS (si,con,mi,mode, lemmas))
 
@@ -154,7 +154,7 @@ updateLemmas' fLemmas = update' (\(MAINS (si,con,mi,mode,lemmas)) ->
                                     MAINS (si,con,mi,mode,fLemmas lemmas))
 
 removeLemmas :: Vari -> M ()
-removeLemmas v = 
+removeLemmas v =
     let f = listToIndexedIL . filter ((/=v).fst.snd) . indexedToListIL in
     updateLemmas' f
 
@@ -168,15 +168,15 @@ setLemma key v = fetchLemmas >>= \lemmas ->
 -----------------------------------------------------------------------
 --  H A N D L I N G   S T A T E   I N   T H E   P R O O F - M O D E  --
 -----------------------------------------------------------------------
-              
+
 extractTaskId :: Task -> TaskId
 extractTaskId = fst3 . fst4
 
 taskHasId :: TaskId -> Task -> Bool
 taskHasId taskId= (==taskId) . extractTaskId
 
-updateTask' :: TaskId -> (Task->Task) -> M ()                   
-updateTask' taskId f = 
+updateTask' :: TaskId -> (Task->Task) -> M ()
+updateTask' taskId f =
        let f' task = if extractTaskId task == taskId then
                            f task
                         else
@@ -184,14 +184,14 @@ updateTask' taskId f =
        updateTasks' (doSnd (fmap f'))
 
 fetchTask :: TaskId -> M Task
-fetchTask taskId = fmap (head.(filter (taskHasId taskId)).snd) 
+fetchTask taskId = fmap (head.(filter (taskHasId taskId)).snd)
                          fetchTasks
-    
+
 setTask :: TaskId -> Task -> M ()
 setTask taskId task = let f t | taskHasId taskId t = task
                           f t | otherwise = t in
                       updateTasks' (doSnd (fmap f))
-                                                     
+
 fetchTaskItem :: TaskId -> M Item
 fetchTaskItem taskId = fmap fst4 (fetchTask taskId)
 
@@ -214,7 +214,7 @@ setTaskId :: TaskId -> M ()
 setTaskId taskId = fetchTasks >>= \(_,tasks) ->
                      --if taskId >= length tasks then
                      --   internalErr "Selection of task"
-                     --else 
+                     --else
                      updateTasks' (doFst (const taskId))
 
 -- The following two commands are the only ones that use the
@@ -228,7 +228,7 @@ fetchHnumS = fetchTaskId >>= \taskId ->
              fmap fth4 (fetchTask taskId)
 
 makeToProve :: TaskId -> M ToProve
-makeToProve taskId = 
+makeToProve taskId =
     fetchTacticTree taskId >>= \tacTree ->
     fetchTacPaths taskId >>= \tacPaths ->
     return (snd (makeProofTerm tacTree),
@@ -240,8 +240,8 @@ makeProofTerm (TTTac _ (hnum,_,term) tacTrees) =
        (hnum,foldl replace term (fmap makeProofTerm tacTrees))
 
 
--- replace n t u  replaces in term t all occurrences of Hole n by u 
-replace :: Term -> (Hnum, Term) -> Term  
+-- replace n t u  replaces in term t all occurrences of Hole n by u
+replace :: Term -> (Hnum, Term) -> Term
 replace (Basic (Hole m)) (n,u) | n==m = u
 -- rest: distribute
 replace (Basic cat) s = mkBasic cat
@@ -254,8 +254,8 @@ replace (Bind cat ts (v,t,s) b) sig = mkBind cat
 
 -- Delivers all variables occuring in local contexts
 domAllLocCon :: M [Vari]
-domAllLocCon = 
-    fetchCon >>= \globCon ->                   
+domAllLocCon =
+    fetchCon >>= \globCon ->
     fetchTasks >>= \(_,tasks) ->
     let varsTask :: TaskId -> M [Vari]
         varsTask taskId =
@@ -267,7 +267,7 @@ domAllLocCon =
 
 -- findGoal tree path finds the goal corresponding to path in tree
 findGoal :: TacticTree -> TacPath -> (Hnum,Goal)
-findGoal tacTree tacPath = 
+findGoal tacTree tacPath =
     let TTHole p = (findSubtree tacTree tacPath) in
     p
 
@@ -278,7 +278,7 @@ findSubtree (TTTac _ _ ts) (n:ns) = findSubtree (ts!!n) ns
 -------------------------------
 -- I N I T I A L   S T A T E --
 -------------------------------
-                         
+
 -- initial state
 
 -- initial context
@@ -286,9 +286,7 @@ initCon = emptyGCon
 
 -- Initial syntax
 initSyntax :: System -> SyntaxInfo
-initSyntax sys = (sys,(False,True,False,False),emptyI,[],emptyI,emptyI) 
-                                            
+initSyntax sys = (sys,(False,True,False,False),emptyI,[],emptyI,emptyI)
+
 
 initState sys = MAINS (initSyntax sys,initCon,[],initTasks,emptyLemmas)
-
-             

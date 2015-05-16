@@ -3,7 +3,7 @@ In Yarrow certain extensions to Pure Type Systems may be selected.
 These extensions are not automatically active; they have to be selected
 with the command <CODE>System</CODE>.
 </P>
-<P>                                                                          
+<P>
 At the moment we have the following extensions:
 </P>
 <UL>

@@ -22,10 +22,10 @@ module Printer(-- polymorphic printing routines, e.g. of type
 -- The printing routines for terms carry a parameter 'path', which is used
 -- to label subterms.
 --
--- All printing routines have as parameter the syntactic info, which 
+-- All printing routines have as parameter the syntactic info, which
 -- contains the precedence and number of implicit arguments of variables.
 -- This information is needed to print expressions with as little brackets
--- as possible and without implicit arguments.             
+-- as possible and without implicit arguments.
 
 import HaTuple(space)
 import General
@@ -37,25 +37,25 @@ import Display
 import Engine
 
 import Scanner
-      
-{- for testing. Will only work under Gofer 
+
+{- for testing. Will only work under Gofer
 instance Text (Vari,Path) where
-   showsPrec _ (v,path) = (v ++ concat (map show path))++                
+   showsPrec _ (v,path) = (v ++ concat (map show path))++
 -}
- 
+
 type DisplayTerm a = Display Path a
 
 --------------------------
 -- PRINTING EXPRESSIONS --
 --------------------------
-       
--- TERM  
+
+-- TERM
 printTerm :: DisplayTerm a -> SyntaxInfo -> Path -> Term -> a
-printTerm stuff@(_,_,_,label) si path term = 
+printTerm stuff@(_,_,_,label) si path term =
     label path (printTerm' stuff si path term)
 
 printTerm' :: DisplayTerm a -> SyntaxInfo -> Path -> Term -> a
-printTerm' stuff si path abs | isAbs abs = 
+printTerm' stuff si path abs | isAbs abs =
         let (_,(v,t,_),u) = deconstructAbs abs in
         printLambdaTerm stuff si path [v] t u
         -- for alternative version, with more nested boxes:
@@ -68,13 +68,13 @@ printTerm' stuff si path all | isRealAll all =
 -- Extension: Subtyping:
 printTerm' stuff si path abs | isSubAbs abs =
         let (_,(v,b,t,_),u) = deconstructSubAbs abs in
-        printBinderOne stuff si path "\\" v " <: " b t u isSubAbs 
+        printBinderOne stuff si path "\\" v " <: " b t u isSubAbs
 printTerm' stuff si path all | isSubAll all =
         let (_,(v,b,t,_),u) = deconstructSubAll all in
-        printBinderOne stuff si path "@" v " <: " b t u isSubAll 
+        printBinderOne stuff si path "@" v " <: " b t u isSubAll
 -- End Extension: Subtyping
 printTerm' stuff si path delta | isDelta delta =
-        let (_,(v,d,t,_),u) = deconstructDelta delta in 
+        let (_,(v,d,t,_),u) = deconstructDelta delta in
         printBinderOne stuff si path "let " v " := " d t u isDelta
 printTerm' stuff si path app | isApp app =
    let l = breakListL deconstructApp app
@@ -85,17 +85,17 @@ printTerm' stuff si path app | isApp app =
        implicits = extractOptImplicit si
        l' = if isVar && implicits then dropImplic numImp l else l
        lArg = last l' in
-       -- an operator is always printed infix if it has least 2 arguments 
+       -- an operator is always printed infix if it has least 2 arguments
        -- UNLESS it has implicit arguments that must be printed since
        -- this option is turned off.
        -- This exception is necessary to prevent the printing to get ugly.
    if isVar && isBind && length l' == 2 && isAbs lArg then
-      printBinderTerm stuff si path v lArg 
+      printBinderTerm stuff si path v lArg
    else
       printSmall stuff si path app
 printTerm' stuff si path t = printSmall stuff si path t
 
-printBinderTerm stuff@(conc,_,bas,_) si path bv abs = 
+printBinderTerm stuff@(conc,_,bas,_) si path bv abs =
     let (_,(v,t,s),u) = deconstructAbs abs
         path' = mkPathAppArg path in
     conc [bas bv,  -- not with printVar as this gives brackets.
@@ -115,7 +115,7 @@ printBinderOne stuff@(conc,_,bas,_) si path s1 v s2 d t u isFun =
               bas " : ",  printTerm stuff si (mkPathBindTyp path) t,
               bas (if isFun u then "." else ". "),
                           printTerm stuff si (mkPathBindBody path) u]
-       
+
 
 -- abstractions with the same type are contracted
 -- consecutive abstractions have no space between them
@@ -129,7 +129,7 @@ printLambdaTerm stuff@(conc,_,bas,_) si path vl typ term =
                  bas (if isAbs then "." else ". "),
                           printTerm stuff si (mkPathBindBody path) term]
 
-{- alternative version, with more nested boxes 
+{- alternative version, with more nested boxes
 printLambdaTerm stuff si path term =
         let (isAbs,(v,t,s),u) = deconstructAbs term in
         if isAbs && typ == t then
@@ -155,24 +155,24 @@ printAllTerm stuff@(conc,_,bas,_) si path vl typ term =
                  bas (if isRealAll term then "." else ". "),
                           printTerm stuff si (mkPathBindBody path) term]
 
-                           
+
 -- 'SMALL' terms
-printSmall stuff si path t = 
+printSmall stuff si path t =
      fst (prListConsSpaceR stuff (printFactor stuff si 0)
                             path "->" mkPathBindTyp mkPathBindBody
                             (breakListR deconstructArrow t))
 
-        
+
 -- FACTOR
 -- printFactor delivers a pair, where the first element is the 'string',
 -- and the second element is a number designating the number of
 -- spaces lower precedence operators should have around them.
 -- If the term is an application, this number is always 1,
--- if the term is bracketed, this number is always 0. 
+-- if the term is bracketed, this number is always 0.
 -- For the other cases, see prListSpace below
-printFactor :: DisplayTerm a -> SyntaxInfo -> Int -> Path -> 
+printFactor :: DisplayTerm a -> SyntaxInfo -> Int -> Path ->
                Term -> (a,Int)
-printFactor stuff@(conc,_,bas,_) si n path t = 
+printFactor stuff@(conc,_,bas,_) si n path t =
    let l = breakListL deconstructApp t
        h = head l
        (isVar,v) = deconstructVar h
@@ -181,21 +181,21 @@ printFactor stuff@(conc,_,bas,_) si n path t =
        numImp = getImplicit si v
        implicits = extractOptImplicit si
        l' = if isVar && implicits then dropImplic numImp l else l in
-       -- an operator is always printed infix if it has least 2 arguments 
+       -- an operator is always printed infix if it has least 2 arguments
        -- UNLESS it has implicit arguments that must be printed since
        -- this option is turned off.
        -- This exception is necessary to prevent the printing to get ugly.
-   if isOp && length l' > 2 && not (not implicits && numImp > 0) then 
+   if isOp && length l' > 2 && not (not implicits && numImp > 0) then
       -- print INFIX !
       let (pr,as) = extractPrec si v
           pArgs (t1:t2:[]) = -- two arguments
-              let prF = printFactor stuff si (pr+1) 
+              let prF = printFactor stuff si (pr+1)
                   mkPathLeft = mkPathAppArg . mkPathAppFun
                   mkPathRight = mkPathAppArg
                   mkPathConn = mkPathAppFun . mkPathAppFun in
               case as of
               NoAssoc -> prListSpaceR stuff prF path v [t1,t2]
-              LeftAssoc -> 
+              LeftAssoc ->
                   let opl = breakListLRev (deconstructSpecOper v numImp) in
                   prListSpaceL stuff prF path v ([t2] ++ opl t1)
               RightAssoc ->
@@ -205,7 +205,7 @@ printFactor stuff@(conc,_,bas,_) si n path t =
                        (conc [bas "(", fst (pArgs [t1,t2]),
                               bas ") ", printPrefixApps stuff si path l],1)
           res = pArgs (tail l') in
-      if pr >= n then 
+      if pr >= n then
          res
       else -- enclose in parentheses
          (conc [bas "(", fst res, bas ")"], 0)
@@ -220,10 +220,10 @@ printFactor stuff@(conc,_,bas,_) si n path t =
 
 printPrefixApps :: DisplayTerm a -> SyntaxInfo -> Path -> [Term] -> a
 printPrefixApps stuff si path l = prListApp stuff si path (reverse l)
-                                           
+
 -- dropImplic n l  drops n arguments in l if explicit arguments will be left
 dropImplic :: Int -> [Term] -> [Term]
-dropImplic n l = 
+dropImplic n l =
      if (length l -1) > n then
         -- the first n arguments are left out, when at least
         -- one explicit argument remains.
@@ -235,7 +235,7 @@ dropImplic n l =
         l
 
 
--- prListConsSpaceR prints spaces around right-associative constructors. 
+-- prListConsSpaceR prints spaces around right-associative constructors.
 prListConsSpaceR ::  DisplayTerm a -> (Path -> Term -> (a,Int)) ->
                      Path -> String ->
                      (Path->Path) -> (Path->Path) ->
@@ -248,7 +248,7 @@ prListConsSpaceR stuff@(conc,_,bas,label) prin path sep mkPathL mkPathR l =
        numSpac = maximum (map snd ll)
        spaces = space numSpac
        printSubtermsR path [x] = x
-       printSubtermsR path (x:xs) = 
+       printSubtermsR path (x:xs) =
             conc [label (mkPathL path) x,
                   bas (spaces++sep++spaces),
                   let path' = mkPathR path in
@@ -260,7 +260,7 @@ prListConsSpaceR stuff@(conc,_,bas,label) prin path sep mkPathL mkPathR l =
 -- prListApp prints a list of applications.
 prListApp :: DisplayTerm a -> SyntaxInfo -> Path -> [Term] -> a
 prListApp stuff si path [t] = printBasic2 stuff si path t
-prListApp stuff@(conc,_,bas,label) si path (t:ts) = 
+prListApp stuff@(conc,_,bas,label) si path (t:ts) =
              conc [let path' = mkPathAppFun path in
                    label path' (prListApp stuff si path' ts),
                    bas " ",
@@ -287,12 +287,12 @@ prListSpaceR stuff@(conc,_,bas,label) prin path sep l =
        numSpac = maximum (map snd ll)
        spaces = space numSpac
        printSubtermsR path [x] = x
-       printSubtermsR path (x:xs) = 
+       printSubtermsR path (x:xs) =
             conc [let path' = mkPathAppFun path in
                   label path' (conc [label (mkPathAppArg path') x,
                                      bas spaces,
                                      label (mkPathAppFun path') (bas sep)]),
-                  bas spaces,                                     
+                  bas spaces,
                   let path' = mkPathAppArg path in
                   label path' (printSubtermsR path' xs)] in
    (printSubtermsR path (map fst ll), newNum l numSpac)
@@ -314,24 +314,24 @@ prListSpaceL stuff@(conc,_,bas,label) prin path sep l =
        numSpac = maximum (map snd ll)
        spaces = space numSpac
        printSubtermsL path [x] = x
-       printSubtermsL path (x:xs) = 
-            conc [let path' = mkPathAppFun path 
+       printSubtermsL path (x:xs) =
+            conc [let path' = mkPathAppFun path
                       path'' = mkPathAppArg path' in
                   label path' (conc [label path'' (printSubtermsL path'' xs),
                                      bas spaces,
                                      label (mkPathAppFun path') (bas sep)]),
-                  bas spaces,                                     
+                  bas spaces,
                   label (mkPathAppArg path) x] in
    (printSubtermsL path (map fst ll), newNum l numSpac)
 
-    
+
 -- The number of spaces around LOWER priority operatos is specified
 -- in newNum. Some alternatives (with an example that shows the results
 -- for each alternative):
 -- newNum = 1+numSpac -> One more space around them, e.g.
 --                       x^y * z  +  square a   =   O
 -- newNum = 1         -> Always one space for lower priority operators, e.g.
---                       x^y * z + square a = O     
+--                       x^y * z + square a = O
 -- newNum = numSpac   -> Only a space if there is an application, e.g.
 --                       x^y*z + square a = O
 newNum l numSpac = if length l==1 then
@@ -340,9 +340,9 @@ newNum l numSpac = if length l==1 then
                    else
                       1
 
--- Extension: Records:   
-printBasic2 stuff@(conc,_,bas,label) si path r | isRecSelect r =           
-                      let (_,t,l) = deconstructRecSelect r 
+-- Extension: Records:
+printBasic2 stuff@(conc,_,bas,label) si path r | isRecSelect r =
+                      let (_,t,l) = deconstructRecSelect r
                           path' = mkPathNonb 0 path in
                       conc [label path' (printBasic2 stuff si path' t),
                             bas ("`"++l)]
@@ -353,17 +353,17 @@ printBasic2 stuff si path t = printBasic stuff si path t
 printBasic stuff si path srt | isSort srt = let (_,s) = deconstructSort srt in
                                  printSort stuff si s
 printBasic stuff si path vr | isVar vr = let (_,v) = deconstructVar vr in
-                                 printVar stuff si v    
-printBasic stuff@(_,_,bas,_) si path hole | isHole hole = 
+                                 printVar stuff si v
+printBasic stuff@(_,_,bas,_) si path hole | isHole hole =
                                    let (_,hnum) = deconstructHole hole in
-                                   bas (printHnumSt si hnum)      
+                                   bas (printHnumSt si hnum)
 -- Extension: Records:
-printBasic stuff@(conc,_,bas,_) si path r | isRecValue r =       
+printBasic stuff@(conc,_,bas,_) si path r | isRecValue r =
            let (_,fs) = deconstructRecValue r in
            conc ([bas "{"] ++
                  printList stuff si path (printField stuff si "= ") fs ++
                  [bas "}"])
-printBasic stuff@(conc,_,bas,_) si path r | isRecType r =       
+printBasic stuff@(conc,_,bas,_) si path r | isRecType r =
            let (_,fs) = deconstructRecType r in
            conc ([bas "{|"] ++
                  printList stuff si path (printField stuff si ":") fs ++
@@ -378,46 +378,46 @@ printList :: DisplayTerm a -> SyntaxInfo -> Path -> (Path -> b -> a) ->
 printList stuff si path f ts = printList' stuff si path f ts 0
 
 printList' stuff si path f [] n = []
-printList' stuff si path f [t] n = 
+printList' stuff si path f [t] n =
               [f (mkPathNonb n path) t]
-printList' stuff@(_,_,bas,_) si path f (t:ts) n = 
+printList' stuff@(_,_,bas,_) si path f (t:ts) n =
                    [f (mkPathNonb n path) t, bas ","] ++
                    printList' stuff si path f ts (n+1)
-            
-printField :: DisplayTerm a -> SyntaxInfo -> String -> Path -> 
-              (RecLabel,Term) -> a 
-printField stuff@(conc,_,bas,_) si s path (l,t) = 
+
+printField :: DisplayTerm a -> SyntaxInfo -> String -> Path ->
+              (RecLabel,Term) -> a
+printField stuff@(conc,_,bas,_) si s path (l,t) =
                             conc [bas (l++s), printTerm stuff si path t]
 -- End Extension: Records:
 
 
 printSort :: DisplayTerm a -> SyntaxInfo -> Sort -> a
 printSort stuff@(_,_,bas,_) si s = bas (printSortSt si s)
-                  
+
 printVar :: DisplayTerm a -> SyntaxInfo -> Vari -> a
 printVar stuff@(_,_,bas,_) si v = bas (printVarSt si v)
- 
+
 printVarList :: DisplayTerm a -> SyntaxInfo -> [Vari] -> a
 printVarList stuff si [v] = printVar stuff si v
-printVarList stuff@(conc,_,bas,_) si (v:vs) =  
+printVarList stuff@(conc,_,bas,_) si (v:vs) =
                             conc [printVar stuff si v,
                                   bas ",",
                                   printVarList stuff si vs]
 
 deconstructSpecOper :: Vari -> Int -> Term -> (Bool,Term,Term)
-deconstructSpecOper op numImp t = 
+deconstructSpecOper op numImp t =
                            let (ok1,t1,ts) = deconstructAppN t (numImp+2)
-                               ok2 = deconstructSpecVar t1 op 
+                               ok2 = deconstructSpecVar t1 op
                                [t2,t3] = drop numImp ts in
                            (ok1 && ok2, t2, t3)
 
-                                               
+
 -----------------------------
 -- OTHER PRINTING ROUTINES --
 -----------------------------
 
-                              
--- printContextE prints a context item. The boolean function specifies 
+
+-- printContextE prints a context item. The boolean function specifies
 -- for which definitions the definiens is fully printed (and not abbreviated
 -- to "..")
 printContextE :: DisplayTerm a -> SyntaxInfo -> (Sort -> Bool) ->
@@ -429,7 +429,7 @@ printContextE stuff@(conc,_,bas,label) si _ ce | isGenDecl ce =
                    CNone -> []
                    -- Extension: Subtyping:
                    CSub ->  [bas " <: ",
-                             printTerm stuff si (mkPathConOther v 0) 
+                             printTerm stuff si (mkPathConOther v 0)
                                        (head cts)]
                    -- End Extension: Subtyping
                   ) ++
@@ -440,7 +440,7 @@ printContextE stuff@(conc,_,bas,label) si pDef ce | isDef ce =
             conc [label (mkPathConVar v) (printVar stuff si v), bas " := ",
                   let path' = mkPathConDef v in
                   label path' (if pDef s then
-                                  printTerm' stuff si path' d 
+                                  printTerm' stuff si path' d
                                else
                                   bas ".."),
                   bas " : ", printTermS stuff si v (t,s)]
@@ -453,17 +453,17 @@ printTermS stuff@(conc,_,bas,_) si v (t,u) | extractOptShowSort si && isProperSo
       conc [printTerm stuff si (mkPathConTyp v) t,
             bas " : ", printSort stuff si {- (mkPathConSort v)-} u]
 printTermS stuff si v (t,u) = printTerm stuff si (mkPathConTyp v) t
-  
+
 
 printContext :: DisplayTerm a -> SyntaxInfo -> (Sort->Bool) -> [ContextE] ->
                 [a]
 printContext stuff si pDef c = map (printContextE stuff si pDef) (reverse c)
 
-  
+
 ------------------------------------
 -- GENERAL FUNCTIONS FOR PRINTING --
 ------------------------------------
-        
+
 -- breakListL breaks a term into a list
 -- e.g. breakListL br (((a $ b) $ c) $ d) = [a,b,c,d]
 --      when br (a $ b) = (True,a,b)
@@ -476,7 +476,7 @@ breakListL break t = let (contin,t1,t2) = break t in
 
 -- breakListLRev breaks a term into a list
 -- e.g. breakListLRev br (((a $ b) $ c) $ d) = [d,c,b,a]
---      when br (a $ b) = (True,a,b)                
+--      when br (a $ b) = (True,a,b)
 -- breakListRev = reverse . breakList
 breakListLRev :: (a -> (Bool,a,a)) -> a -> [a]
 breakListLRev break t = let (contin,t1,t2) = break t in

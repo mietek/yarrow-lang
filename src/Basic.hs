@@ -3,14 +3,14 @@
 
 module Basic(-- TERMS
              Sort(SORT),topSort,isProperSort,dummySort,
-             identToSort, sortToIdent, 
+             identToSort, sortToIdent,
              Hnum(N),
              Vari,dummyVar,
              RecLabel, dummyRecLabel,
-             Item,ItemD, 
+             Item,ItemD,
              Term(..),
              BasicCat(..),NonbCat(..),BindCat(..), Constraints(..),
-             dummyTerm, dummyItem, 
+             dummyTerm, dummyItem,
              {- dummyItemD, dummyTermL, dummyBasicCat, dummyNonbCat,
                 dummyBindCat -}
 
@@ -22,11 +22,11 @@ module Basic(-- TERMS
 
              -- FREE VARIABLES & SUBSTITUTION
              fv, subst, alpha, findFree,
-             changeVar, equateVarsBinders, changeVar2, occurVar, 
+             changeVar, equateVarsBinders, changeVar2, occurVar,
              isDummyVar, findNiceFree, changeNiceVar,
 
              -- CONTEXTS
-             infinity, ContextE, ContextERest, ContCat(..), 
+             infinity, ContextE, ContextERest, ContCat(..),
              GContext, emptyGCon, addC,
              LContext, emptyLCon, dummyLContext, filterLCon, concLCon,
              Context, dummyContext, emptyCon, globToTot, addLoc, addLocG,
@@ -44,15 +44,15 @@ module Basic(-- TERMS
              isVar, isSort, isHole, isGenAbs, isAbs, isSubAbs, isApp,
              isGenAll, isAll, isSubAll, isDelta, isArrow, isRealAll,
              isRecValue, isRecType, isRecSelect, isGenAllN,
-             deconstructBasic, deconstructNonb, deconstructBind, 
+             deconstructBasic, deconstructNonb, deconstructBind,
              deconstructVar, deconstructSort, deconstructHole,
              deconstructAbs, deconstructGenAbs, deconstructSubAbs,
-             deconstructApp, 
-             deconstructAll, deconstructGenAll, deconstructSubAll, 
-             deconstructDelta, 
+             deconstructApp,
+             deconstructAll, deconstructGenAll, deconstructSubAll,
+             deconstructDelta,
              deconstructAbsMax,
              deconstructArrow, deconstructSpecVar, deconstructApp2,
-             deconstructApp3, deconstructAppN, deconstructAppMax, 
+             deconstructApp3, deconstructAppN, deconstructAppMax,
              deconstructGenAllMax, deconstructArrowN,
              deconstructRecValue, deconstructRecType, deconstructRecSelect,
 
@@ -61,7 +61,7 @@ module Basic(-- TERMS
              TermIT, dummyTermIT, forgetIT, changeStart, changeEnd,
              changeStartEnd, combinePlace, combineIT, termToTermIT,
 
-             -- MISCELLANEOUS 
+             -- MISCELLANEOUS
              ErrorElem(..), Error, errConc,
              maxPrec,
              PTSystem, Extension(..), SortEx, ExSystem, System
@@ -71,7 +71,7 @@ import Char(isDigit)
 import General
 import HaTuple
 import Collect
-         
+
 infixl 7 `mkApp`
 
 -- I introduce here a number of naming conventions. All names may be suffixed
@@ -80,8 +80,8 @@ infixl 7 `mkApp`
 -- name will be used :-), and sometimes a more confusing name is used :-(
 
 -- SORTS
-                            
-data Sort = SORT String 
+
+data Sort = SORT String
 -- Naming convention: s
 
 identToSort :: String -> Sort
@@ -89,7 +89,7 @@ identToSort = SORT
 
 sortToIdent :: Sort -> String
 sortToIdent (SORT s) = s
-                            
+
 instance Eq Sort where SORT s1 == SORT s2 = s1 == s2
 
 -- for type-technical reasons also neeeded:
@@ -97,7 +97,7 @@ instance Ord Sort where SORT s1 < SORT s2 = s1 < s2
 
 -- topSort is used for terms that have no proper sort.
 -- For a more extensive discussion, see the typing module.
-topSort =  SORT "0" 
+topSort =  SORT "0"
 
 -- contains the sorts of the system
 isProperSort :: Sort -> Bool
@@ -113,25 +113,25 @@ dummySort = SORT "1"               -- may be anything that cannot be confused
 
 -- Holes are solely for the interactiver prover.
 -- They are included in the term structure because for ease.
-data Hnum = N Int 
+data Hnum = N Int
 -- Naming convention: hn
 
 instance Eq Hnum where (N a) == (N b) = a ==b
 
-dummyHole = N 0                
-      
+dummyHole = N 0
+
 
 -- VARIABLES
 
-type Vari = String     
+type Vari = String
 -- Naming convention: v,w
 
 dummyVar :: Vari
 dummyVar = "_"
 
-  
+
 -- Extensions: Records:
-type RecLabel = String             
+type RecLabel = String
 
 dummyRecLabel :: RecLabel
 dummyRecLabel = "_"
@@ -227,7 +227,7 @@ mkVr :: Vari -> Term
 mkSrt :: Sort -> Term
 mkHole :: Hnum -> Term
 mkArrow :: (Term,Sort) -> Term -> Term
-               
+
 -- Extensions: Records:
 mkRecValue :: [(RecLabel,Term)] -> Term
 mkRecType :: [(RecLabel,Term)] -> Term
@@ -254,7 +254,7 @@ mkVr v = Basic (Vr v)
 mkSrt s = Basic (Srt s)
 mkHole hn = Basic (Hole hn)
 mkArrow (t,s) u = mkAll (dummyVar,t,s) u
-               
+
 -- Extensions: Records:
 mkRecValue fs = let (labels,ts) = unzip fs in
                 Nonb (RecValue labels) ts
@@ -262,7 +262,7 @@ mkRecType fs = let (labels,ts) = unzip fs in
                Nonb (RecType labels) ts
 mkRecSelect t l = Nonb (RecSelect l) [t]
 -- End Extension: Records
-  
+
 
 -------------------------------------
 -- FREE VARIABLES & ALPHA EQUALITY --
@@ -273,9 +273,9 @@ fv :: Term -> [Vari]
 fv (Basic (Vr v)) = single v
 fv (Basic _) = empty
 fv (Nonb _ ts) = union (map fv ts)
-fv (Bind _ ts (v,t,s) u) = union (map fv ts) +++ fv t +++ 
+fv (Bind _ ts (v,t,s) u) = union (map fv ts) +++ fv t +++
                            (removeC (fv u) v)
-                                 
+
 
 instance Eq BasicCat where
           (Vr v) == (Vr w) = v==w
@@ -311,12 +311,12 @@ instance Eq Term where
   Nonb cat1 ts1 == Nonb cat2 ts2 = cat1 == cat2 && and (zipWith (==) ts1 ts2)
   Bind cat1 ts1 (v1,t1,s1) u1 == Bind cat2 ts2 (v2,t2,s2) u2 =
                       cat1 == cat2 &&
-                      s1 == s2 && 
-                      t1 == t2 && 
+                      s1 == s2 &&
+                      t1 == t2 &&
                       and (zipWith (==) ts1 ts2) && (
                       if v1 == v2 then
                          u1 == u2
-                      else 
+                      else
                          if v1 `elemC` fv u2 then False
                          else
                             u1 == subst u2 v2 (mkVr v1)
@@ -333,26 +333,26 @@ instance Eq Term where
 -- subst t v u  substitutes in t all occurrences of v for u
 subst :: Term -> Vari -> Term -> Term
 subst t v u = substFvL t v u (add v (fv u))
-                     
 
-                                                 
+
+
 -- substFv  does the same, but assumes fvu = add v (fv u)
 -- this efficiency measure makes the whole prover about 4% faster.
 substFv :: Collection c => Term -> Vari -> Term -> c Vari -> Term
-substFv b@(Basic (Vr w)) v u _ | w==v = u 
+substFv b@(Basic (Vr w)) v u _ | w==v = u
                                | otherwise = b
 substFv b@(Basic cat) _ _ _ = b
 substFv (Nonb cat ts) v u fvu = Nonb cat (map (\a -> substFv a v u fvu) ts)
-substFv (Bind cat ts (w,t1,s1) t2) v u fvu = 
+substFv (Bind cat ts (w,t1,s1) t2) v u fvu =
                      let ts' = map (\a -> substFv a v u fvu) ts
                          t1' = substFv t1 v u fvu in
                      if w==v then Bind cat ts' (w,t1',s1) t2
                      else
                      let (w',t2') = alpha (w,t2) fvu in
                      Bind cat ts' (w',t1',s1) (substFv t2' v u fvu)
- 
-  
-      
+
+
+
 -- alpha v t fvl  renames the variable v in t in such a way that it
 -- doesn't occur in fvl (it doesn't rename to a free variable of t).
 -- It also returns the new name of the variable
@@ -364,7 +364,7 @@ alpha (v,t) fvl = if v `notElemC` fvl then
                      (w,subst t v (mkVr w))
 
 -- find a variable (looking like v) not already occuring in set freev
--- by appending it with a number         
+-- by appending it with a number
 findFree :: Collection c => c Vari -> Vari -> Vari
 findFree freev v = let suffixes = "":(map show [1..])
                        -- drop everything after the first digit
@@ -375,23 +375,23 @@ findFree freev v = let suffixes = "":(map show [1..])
                        altern = v : map (v'++) suffixes in
                    head (filter (flip notElemC freev) altern)
 
-                                           
+
 -- For some *STUPID* bug in Gofer, we have to specialize these functions
 -- to lists, for use in subst.
 
 substFvL :: Term -> Vari -> Term -> [Vari] -> Term
-substFvL b@(Basic (Vr w)) v t _ | w==v = t 
+substFvL b@(Basic (Vr w)) v t _ | w==v = t
                                 | otherwise = b
 substFvL b@(Basic cat) _ _ _ = b
 substFvL (Nonb cat ts) v t fvt = Nonb cat (map (\a -> substFvL a v t fvt) ts)
-substFvL (Bind cat ts (w,t1,s1) t2) v t fvt = 
+substFvL (Bind cat ts (w,t1,s1) t2) v t fvt =
                       let ts' = map (\a -> substFvL a v t fvt) ts
                           t1' = substFvL t1 v t fvt in
                       if w==v then Bind cat ts' (w,t1',s1) t2
                       else
                       let (w',t2') = alphaL (w,t2) fvt in
                       Bind cat ts' (w',t1',s1) (substFvL t2' v t fvt)
- 
+
 alphaL :: (Vari,Term) -> [Vari] -> (Vari,Term)
 alphaL (v,t) fvl = if v `notElemC` fvl then
                       (v,t)
@@ -407,7 +407,7 @@ alphaL (v,t) fvl = if v `notElemC` fvl then
 
 
 -- changeVar t fv changes the name of a variable in a binder
--- so that it doesn't occur in fv 
+-- so that it doesn't occur in fv
 -- doesn't change the information !
 changeVar :: Collection c => Term -> c Vari -> Term
 changeVar (Bind cat ts (v,t,s) u) fvl = let (v',u') = alpha (v,u) fvl in
@@ -428,7 +428,7 @@ equateVarsBinders fvl (v1,u1) (v2,u2) =
                     renameBoth
            else
               renameBoth
-           where renameBoth = 
+           where renameBoth =
                     let v3 = findFree (fv u1 +++ fv u2 +++ fvl) v1 in
                     (v3, subst u1 v1 (mkVr v3), subst u2 v2 (mkVr v3))
 
@@ -464,7 +464,7 @@ findNiceFree sort oldNames vr = let vr' = if isDummyVar vr then
                                           else
                                              vr in
                                 findFree oldNames vr'
-  
+
 -- alphaNice is a variant of the functions alpha (in the basic module)
 -- that gives a nice name to dummy variables
 -- This could be made more efficient in the case the variable is
@@ -487,8 +487,8 @@ changeNiceVar (Bind cat ts (v,t,s) u) fvl =
 
 ---------------------
 -- C O N T E X T S --
----------------------                                  
-                    
+---------------------
+
 
 -- infinity is used for the maximum length of a context
 infinity :: Int
@@ -498,14 +498,14 @@ infinity = 10000000
 -- (in a PTS, the context consists solely of declarations,
 --  we implement a DPTS that can also have definitions)
 type ContextERest = ((Term,Sort),ContCat,[Term])
-                                                       
+
 -- ContextE stands for context element
 type ContextE = (Vari,ContextERest)
 
 data ContCat = Decl Constraints |     -- For other arguments, see Constraints
                Def                    -- One other argument
-                                              
-                                      
+
+
 
 -- For efficiency reasons (quick lookup of a name), we implement three sorts
 -- of contexts:
@@ -516,19 +516,19 @@ data ContCat = Decl Constraints |     -- For other arguments, see Constraints
 --     created in a proof session or in the typing algorithm.
 --     This is implemented by lists, because it stays small (in practice
 --     at most 20 elements), and changes frequently.
---   * Context: for the total context, the combination of a (number of) 
+--   * Context: for the total context, the combination of a (number of)
 --     LContext's and the GContext.
 -- The order in contexts is opposite to the order in which contexts normally
 -- are written on paper. E.g. the local context
 --     [mkDecl x A *, mkDecl A * #]
--- stands for 
+-- stands for
 --     A:*:#, x:A:*
 -- In a total context, the local context always has the more recent items.
 
 
 type GContext = TreeWithOrder Vari ContextERest
 
-emptyGCon :: GContext                 
+emptyGCon :: GContext
 emptyGCon = emptyI
 
 -- addC :: ContextE -> {G,L, }Context -> {G,L, }Context
@@ -540,7 +540,7 @@ type LContext = IL Vari ContextERest
 
 -- Functions for local contexts
 
-emptyLCon :: LContext                 
+emptyLCon :: LContext
 emptyLCon = emptyI
 
 dummyLContext :: LContext
@@ -561,17 +561,17 @@ type Context = ListsAndOTree Vari ContextERest
 -- Functions for total contexts
 
 dummyContext :: Context
-dummyContext = undefined    
- 
+dummyContext = undefined
+
 emptyCon :: Context
 emptyCon = emptyI
 
 
--- Other functions for contexts                  
+-- Other functions for contexts
 
 globToTot :: GContext -> Context
 globToTot = makeLAOT
-                 
+
 addLoc :: LContext -> Context -> Context
 addLoc = addLAOT
 
@@ -595,7 +595,7 @@ convBindToCont (Abs constr) = Decl constr
 convBindToCont (All constr) = Decl constr
 convBindToCont Delta = Def
 
-                
+
 isGenDeclRest :: ContextERest -> Bool
 isGenDeclRest (_,Decl _,_) = True
 isGenDeclRest _ = False
@@ -656,28 +656,28 @@ mkContextE :: ContCat -> [Term] -> Item -> ContextE
 mkContextE cat ts (v,t,s) = (v,((t,s),cat,ts))
 
 -- ALL VARIABLES
-  
+
 
 lConToType :: LContext -> IL Vari Term
 lConToType = mapI (fst . fst3)
-                      
+
 -- domConE  gives the variable declared in a context-item
 domConE :: ContextE -> Vari
-domConE = fst               
+domConE = fst
 
--- domLCon  gives the domain of a local context 
+-- domLCon  gives the domain of a local context
 --          (all variables declared/defined in a local context)
 domLCon :: LContext -> [Vari]
 domLCon = keysIL
- 
+
 -- domGCon finds all variables in a global context
 domGCon :: GContext -> Tree Vari
 domGCon = keysTWO
- 
+
 -- domCon finds all variables in a context
 domCon :: Context -> ListsAndTree Vari
 domCon = keysLAOT
-  
+
 -- fvLCon gives the free variables in a local context
 fvLCon :: LContext -> [Vari]
 fvLCon = union . map fvContextE . locConToList
@@ -685,10 +685,10 @@ fvLCon = union . map fvContextE . locConToList
 -- fvContextE gives the free variables in a context element
 fvContextE :: ContextE -> [Vari]
 fvContextE (_,((typ,_),_,terms)) = concat (map fv (typ:terms))
-        
+
 
 -- FOR DECLARATIONS
-        
+
 -- domDeclLCon finds all variables that are declared (not defined) in a
 -- local context
 domDeclLCon :: LContext -> [Vari]
@@ -696,22 +696,22 @@ domDeclLCon = domLCon . filterLCon isGenDeclRest
 
 
 -- findDeclDef  finds declaration / definition                               findDeclDef :: Context -> Vari -> (Bool,ContextERest)
-findDeclDef c v = findI c v                 
+findDeclDef c v = findI c v
 
 
 -- findTypeSort  finds the occurence of the variable and delivers the type
 --               and sort
-findTypeSort :: AssocList a => 
+findTypeSort :: AssocList a =>
                 a Vari ContextERest -> Vari -> (Bool,(Term,Sort))
 findTypeSort c v = doSnd fst3 (findI c v)
-  
+
 
 -- findType finds the occurences of the variable and delivers the type
 findType :: AssocList a => a Vari ContextERest -> Vari -> (Bool,Term)
-findType c v = doSnd fst (findTypeSort c v) 
+findType c v = doSnd fst (findTypeSort c v)
 
 findGenDecl :: AssocList a =>
-               a Vari ContextERest -> Vari -> 
+               a Vari ContextERest -> Vari ->
                (Bool,(Term,Sort),Constraints,[Term])
 findGenDecl c v = let (b,cer) = findI c v in
                   if not b then
@@ -733,7 +733,7 @@ findDefTypeSort c v = let (b,ce) = findI c v in
                          _ -> (False,undefined)
                       else
                          (False,undefined)
- 
+
 -- findDef  finds the definition of a variable
 findDef :: Context -> Vari -> (Bool,Term)
 findDef c v = doSnd fst3 (findDefTypeSort c v)
@@ -773,11 +773,11 @@ isBind _ = False
 isCatVar :: BasicCat -> Bool
 isCatVar (Vr _) = True
 isCatVar _ = False
- 
+
 isCatRecSelect :: NonbCat -> Bool
 isCatRecSelect (RecSelect _) = True
 isCatRecSelect _ = False
- 
+
 isVar :: Term -> Bool
 isVar (Basic (Vr _)) = True
 isVar _ = False
@@ -798,7 +798,7 @@ isAbs :: Term -> Bool
 isAbs (Bind (Abs CNone) _ _ _) = True
 isAbs _ = False
 
--- Extension: Subtyping:              
+-- Extension: Subtyping:
 isSubAbs :: Term -> Bool
 isSubAbs (Bind (Abs CSub) _ _ _) = True
 isSubAbs _ = False
@@ -816,7 +816,7 @@ isAll :: Term -> Bool
 isAll (Bind (All CNone) _ _ _) = True
 isAll _ = False
 
--- Extension: Subtyping:              
+-- Extension: Subtyping:
 isSubAll :: Term -> Bool
 isSubAll (Bind (All CSub) _ _ _) = True
 isSubAll _ = False
@@ -848,7 +848,7 @@ isRecSelect :: Term -> Bool
 isRecSelect (Nonb (RecSelect _) _) = True
 isRecSelect _ = False
 -- End Extension: Records
-                 
+
 isGenAllN :: Term -> Int -> Bool
 isGenAllN t 0 = True
 isGenAllN t n | isGenAll t = let (_,_,_,_,t') = deconstructGenAll t in
@@ -872,11 +872,11 @@ deconstructBind _ = (False,dummyBindCat,dummyTermL,dummyItem,dummyTerm)
 deconstructSort :: Term -> (Bool,Sort)
 deconstructSort (Basic (Srt s)) = (True,s)
 deconstructSort _ = (False,dummySort)
-                                     
+
 deconstructVar :: Term -> (Bool,Vari)
 deconstructVar (Basic (Vr v)) = (True,v)
 deconstructVar _ = (False,dummyVar)
-                                     
+
 deconstructHole :: Term -> (Bool,Hnum)
 deconstructHole (Basic (Hole hn)) = (True,hn)
 deconstructHole _ = (False,dummyHole)
@@ -889,11 +889,11 @@ deconstructAll :: Term -> (Bool,Item,Term)
 deconstructAll (Bind (All CNone) _ it u) = (True,it,u)
 deconstructAll _ = (False,dummyItem,dummyTerm)
 
--- Extension: Subtyping:    
+-- Extension: Subtyping:
 deconstructGenAll :: Term -> (Bool,Item,Constraints,[Term],Term)
 deconstructGenAll (Bind (All constr) cts it u) = (True,it,constr,cts,u)
 deconstructGenAll _ = (False,dummyItem,dummyConstr,dummyTermL,dummyTerm)
-          
+
 deconstructSubAll :: Term -> (Bool,ItemD,Term)
 deconstructSubAll (Bind (All CSub) [b] (v,t,s) u) = (True,(v,b,t,s),u)
 deconstructSubAll _ = (False,dummyItemD,dummyTerm)
@@ -903,11 +903,11 @@ deconstructAbs :: Term -> (Bool,Item,Term)
 deconstructAbs (Bind (Abs CNone) _ it u) = (True,it,u)
 deconstructAbs _ = (False,dummyItem,dummyTerm)
 
--- Extension: Subtyping:              
+-- Extension: Subtyping:
 deconstructGenAbs :: Term -> (Bool,Item,Constraints,[Term],Term)
 deconstructGenAbs (Bind (Abs constr) cts it u) = (True,it,constr,cts,u)
 deconstructGenAbs _ = (False,dummyItem,dummyConstr,dummyTermL,dummyTerm)
-          
+
 deconstructSubAbs :: Term -> (Bool,ItemD,Term)
 deconstructSubAbs (Bind (Abs CSub) [b] (v,t,s) u) = (True,(v,b,t,s),u)
 deconstructSubAbs _ = (False,dummyItemD,dummyTerm)
@@ -917,9 +917,9 @@ deconstructDelta :: Term -> (Bool,ItemD,Term)
 deconstructDelta (Bind Delta [d] (v,t,s) u) = (True,(v,d,t,s),u)
 deconstructDelta _ = (False,dummyItemD,dummyTerm)
 
-                        
+
 deconstructAbsMax :: Term -> ([Item],Term)
-deconstructAbsMax t | isAbs t = 
+deconstructAbsMax t | isAbs t =
                       let (_,it,u) = deconstructAbs t
                           (its,v) = deconstructAbsMax u in
                       (its ++ [it], v)
@@ -954,15 +954,15 @@ deconstructAppN t n = let (ap1,t1,t2) = deconstructApp t
                       (ap1 && ap2, t0, ts ++ [t2])
 
 deconstructAppMax :: Term -> (Term,[Term])
-deconstructAppMax t | isApp t = 
+deconstructAppMax t | isApp t =
                       let (_,t1,t2) = deconstructApp t
                           (t0,ts) = deconstructAppMax t1 in
                       (t0, ts ++ [t2])
 deconstructAppMax t = (t,[])
 
-                        
+
 deconstructGenAllMax :: Term -> ([ContextE],Term)
-deconstructGenAllMax t | isGenAll t = 
+deconstructGenAllMax t | isGenAll t =
                       let (_,it,cts,ts,u) = deconstructGenAll t
                           (its,v) = deconstructGenAllMax u in
                       (its ++ [mkGenDecl (it,cts,ts)], v)
@@ -1008,7 +1008,7 @@ dummyPlace :: Place
 dummyPlace = (0,0)
 dummyPI :: PlaceInfo
 dummyPI = (dummyPlace,dummyPlace)
-                    
+
 
 -- An InfoTree follows the structure of the term
 data InfoTree = IT PlaceInfo [InfoTree]
@@ -1021,22 +1021,22 @@ dummyIT = IT dummyPI []
 
 -- A term together with a tree of place-information
 type TermIT = (Term,InfoTree)
-                                 
+
 dummyTermIT :: TermIT
 dummyTermIT = (dummyTerm,dummyIT)
-                         
+
 forgetIT :: TermIT -> Term
 forgetIT = fst
 
-changeStart :: PlaceInfo -> TermIT -> TermIT         
+changeStart :: PlaceInfo -> TermIT -> TermIT
 changeStart (start,_) (t, IT (_,end) its) = (t, IT (start,end) its)
-                                      
-changeEnd :: PlaceInfo -> TermIT -> TermIT         
+
+changeEnd :: PlaceInfo -> TermIT -> TermIT
 changeEnd (_,end) (t, IT (start,_) its) = (t, IT (start,end) its)
-                                      
+
 changeStartEnd :: PlaceInfo -> TermIT -> TermIT
 changeStartEnd pi (t, IT _ its) = (t, IT pi its)
-                                      
+
 combinePlace :: PlaceInfo -> PlaceInfo -> PlaceInfo
 combinePlace (start1,end1) (start2,end2) = (start1,end2)
 
@@ -1050,7 +1050,7 @@ termToTermIT t = (t,termToIT t)
 termToIT :: Term -> InfoTree
 termToIT (Basic bas) = dummyIT
 termToIT (Nonb _ ts) = IT dummyPI (map termToIT ts)
-termToIT (Bind _ ts (v,t,s) b) = 
+termToIT (Bind _ ts (v,t,s) b) =
      --            v           t        s           b         other
      IT dummyPI ([dummyIT, termToIT t, dummyIT, termToIT b]++map termToIT ts)
 
@@ -1071,18 +1071,18 @@ errConc e s = e ++ [ES s]
 
 
 
--- user defined operators have a precedence of 1 .. maxPrec      
+-- user defined operators have a precedence of 1 .. maxPrec
 maxPrec :: Int
-maxPrec = 9                                                
+maxPrec = 9
 
 
---               Sorts  Axioms        Rules              
+--               Sorts  Axioms        Rules
 type PTSystem = ([Sort],[(Sort,Sort)],[(Sort,Sort,Sort)],
                  -- Extension: Subtyping:
                  [Sort],[(Sort,Sort,Sort)])
---              SortsSub, RulesSub 
+--              SortsSub, RulesSub
                  -- End Extension: Subtyping
-                           
+
 data Extension = -- Extension: Records:
                  Records
                  -- End Extension: Records
@@ -1092,10 +1092,9 @@ instance Eq Extension where
             Records == Records = True
             -- End Extension: Records
             _ == _ = False
-             
+
 type SortEx = (Sort,Extension)
 
 type ExSystem = [SortEx]
 
 type System = (PTSystem,ExSystem)
-

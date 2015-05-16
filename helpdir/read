@@ -8,7 +8,6 @@
      input after the error is ignored.
  <DT>Prove-mode:
  <DD>This command is also available in prove-mode.
- <DT>See also:                          
+ <DT>See also:
  <DD><A HREF="#Path"><CODE>Path</CODE></A>
 </DL>
-

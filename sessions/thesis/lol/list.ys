@@ -25,8 +25,8 @@ Var nil : @A:*s. List A
 
 -- Name in lemmas: cons
 Var (;) : @A:*s. A -> List A -> List A
-Implicit 1 (;)    
-InfixR 5 (;)   
+Implicit 1 (;)
+InfixR 5 (;)
 
 
 Var primreclist : @A,B:*s. B-> (A -> List A -> B -> B) -> List A -> B
@@ -37,7 +37,7 @@ Var primreclist_nil : @A,B:*s. @nv:B. @sv: A -> List A -> B -> B.
 
 Var primreclist_cons : @A,B:*s. @nv:B. @sv: A -> List A -> B -> B.
                          @head:A. @tail:List A.
-                                  primreclist nv sv (head;tail) = 
+                                  primreclist nv sv (head;tail) =
                                   sv head tail (primreclist nv sv tail)
 
 Var indlist : @A:*s. @P:List A->*p. P (nil A) ->
@@ -71,7 +71,7 @@ Exit
 
 Prove iterlist_cons : @A,B:*s. @nv:B. @sv: A -> B -> B.
                          @head:A. @tail:List A.
-                                  iterlist nv sv (head;tail) = 
+                                  iterlist nv sv (head;tail) =
                                   sv head (iterlist nv sv tail)
 Intros
 Unfold 1 iterlist
@@ -148,7 +148,7 @@ Apply is_sym
 Assumption
 Exit
 
-Prove cons_is_cons_ : @A:*s. @l1,l2:List A. @a1,a2:A. 
+Prove cons_is_cons_ : @A:*s. @l1,l2:List A. @a1,a2:A.
                              a1;l1 = a2;l2 -> a1 = a2 /\ l1=l2
 Intros
 AndI
@@ -183,7 +183,7 @@ Rewrite iterlist_nil
 Refl
 Exit
 
-Prove cons_concat : @A:*s. @a:A. @as,as': List A. 
+Prove cons_concat : @A:*s. @a:A. @as,as': List A.
                     (a;as) ++ as' = a ; (as++as')
 Intros
 Unfold (++)
@@ -216,7 +216,7 @@ Exit
 ---------------
 -- singleton --
 ---------------
-                                          
+
 Def singleton := \A:*s. \a:A. a ; (nil A) : @A:*s. A -> List A
 Implicit 1 singleton
 
@@ -224,7 +224,7 @@ Implicit 1 singleton
 -- RELATION Elem --
 -------------------
 
-Def Elem := \A:*s.\a:A.\l:List A. 
+Def Elem := \A:*s.\a:A.\l:List A.
                  @P:List A -> *p. (@m:List A. P (a;m)) ->
                                   (@m:List A.@b:A. P m -> P (b;m)) ->
                                   P l :
@@ -244,7 +244,7 @@ Intros
 Apply H2
 Unfold Elem In H
 Apply H Then Assumption
-Exit                   
+Exit
 
 Prove Elem_strong_ind : @A:*s.@a:A.@l:List A. Elem a l ->
                            @P:List A -> *p.
@@ -271,10 +271,10 @@ AndE H3
 Apply H2 Then Assumption
 Exit
 
-Prove Elem_exh : @A:*s.@a:A.@l:List A. 
-                     Elem a l -> 
+Prove Elem_exh : @A:*s.@a:A.@l:List A.
+                     Elem a l ->
                      (Ex m:List A. l = a;m) \/
-                     (Ex m:List A. Ex b:A. l = b;m /\ Elem a m) 
+                     (Ex m:List A. Ex b:A. l = b;m /\ Elem a m)
 Intros
 Apply Elem_strong_ind On H
 Intros
@@ -318,6 +318,3 @@ AndER cons_is_cons_ On H5
 Rewrite H8
 Assumption
 Exit
-
-
-

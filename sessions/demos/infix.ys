@@ -7,9 +7,9 @@
 
 path "../logic"
 read "lambdaL"
-                              
 
--- Introduce some operations 
+
+-- Introduce some operations
 
 var (\/) : *p -> *p -> *p
 infixl 1 (\/)
@@ -29,7 +29,7 @@ var false : Bool
 
 var (=) : Bool -> Bool -> *p
 infix 3 (=)
-                             
+
 var (||) : Bool -> Bool -> Bool
 infix 4 (||)
 
@@ -42,9 +42,9 @@ infix 6 (+)
 var (/) : Nat -> Nat -> Nat
 infix 7 (/)
 
-var (^) : Nat -> Nat -> Nat 
+var (^) : Nat -> Nat -> Nat
 infix 8 (^)
-                
+
 
 -- Now show how an expression with lots of infix operations is printed
 var v1 : @x,y,z:Nat. x^y/z+O==S O = true || false /\ True\/False\/True->
@@ -68,6 +68,6 @@ var a,b,c,d,e,f : *p
 -- Compare the following line:
 var v2 : a/\b/\c \/ d/\e \/ f
 infix 5 (/\)
-infix 5 (\/)                  
+infix 5 (\/)
 -- With this line:
 type v2

@@ -20,7 +20,7 @@ Load "list2"
 ------------------------------------------------------------
 ------------------------------------------------------------
 
-Def StackI := \Rep:*s. {| empty : Rep, 
+Def StackI := \Rep:*s. {| empty : Rep,
                           push : Nat -> Rep -> Rep,
                           pop : Rep -> Rep,
                           top : Rep -> Nat,
@@ -154,4 +154,3 @@ AndE H4
 Rewrite H6
 Apply H1
 Exit
-

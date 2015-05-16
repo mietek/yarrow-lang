@@ -21,11 +21,11 @@
 </FONT><FONT COLOR="#000000">-----------------------
 </FONT><FONT COLOR="#000000">
 </FONT><FONT COLOR="#0000FF">Def False := @P:*p.P
-</FONT><FONT COLOR="#000000">                                   
+</FONT><FONT COLOR="#000000">
 </FONT><FONT COLOR="#0000FF">Def True := @P:*p.P-&gt;P
 </FONT><FONT COLOR="#000000">
 </FONT><FONT COLOR="#0000FF">Def Not := \P:*p. P-&gt;False
-</FONT><FONT COLOR="#000000">      
+</FONT><FONT COLOR="#000000">
 </FONT><FONT COLOR="#0000FF">Def (/\) := \P,Q:*p. (@R:*p. (P-&gt;Q-&gt;R)-&gt;R)
 </FONT><FONT COLOR="#000000">InfixR 3 (/\)
 </FONT><FONT COLOR="#000000">-- Name in lemmas: And
@@ -41,10 +41,10 @@
 </FONT><FONT COLOR="#000000">
 </FONT><FONT COLOR="#000000">-- We define existential quantifications over propkinds for three categories
 </FONT><FONT COLOR="#000000">-- of propkinds, viz. over propkinds of the form
-</FONT><FONT COLOR="#000000">--    *p       (exis. quant. over propositions, denoted by ExP), 
+</FONT><FONT COLOR="#000000">--    *p       (exis. quant. over propositions, denoted by ExP),
 </FONT><FONT COLOR="#000000">--    A-&gt;*p    (exis. quant. over predicates, denoted by ExQ,
 </FONT><FONT COLOR="#000000">--              which is polymorphic in A:*s), and
-</FONT><FONT COLOR="#000000">--    A-&gt;B-&gt;*p (exis. quant. over relations, denoted by ExR, 
+</FONT><FONT COLOR="#000000">--    A-&gt;B-&gt;*p (exis. quant. over relations, denoted by ExR,
 </FONT><FONT COLOR="#000000">--              which is polymorphic in A,B:*s)
 </FONT><FONT COLOR="#000000">-- (See Remark 4.5.2 on page 88)
 </FONT><FONT COLOR="#000000">
@@ -87,7 +87,7 @@
 </FONT><FONT COLOR="#000000">--    *p       (equality of propositions, denoted by &lt;=&gt;),
 </FONT><FONT COLOR="#000000">--    A-&gt;*p    (equality of predicates, denoted by &lt;==&gt;,
 </FONT><FONT COLOR="#000000">--              which is polymorphic in A:*s), and
-</FONT><FONT COLOR="#000000">--    A-&gt;B-&gt;*p (equality of relations, denoted by &lt;===&gt;, 
+</FONT><FONT COLOR="#000000">--    A-&gt;B-&gt;*p (equality of relations, denoted by &lt;===&gt;,
 </FONT><FONT COLOR="#000000">--              which is polymorphic in A,B:*s).
 </FONT><FONT COLOR="#000000">-- (See Remark 4.5.2 on page 88.)
 </FONT><FONT COLOR="#000000">
@@ -111,7 +111,7 @@
 </FONT><FONT COLOR="#000000">-- (See Remark 4.5.2 on page 88.)
 </FONT><FONT COLOR="#FF0000">Var equiv_predQ : @A:*s. @P,Q:A-&gt;*p. (@a:A. P a &lt;=&gt; Q a) -&gt; P &lt;==&gt; Q
 </FONT><FONT COLOR="#000000">
-</FONT><FONT COLOR="#FF0000">Var equiv_predR : @A,B:*s. @P,Q:A-&gt;B-&gt;*p. (@a:A.@b:B. P a b &lt;=&gt; Q a b) -&gt; 
+</FONT><FONT COLOR="#FF0000">Var equiv_predR : @A,B:*s. @P,Q:A-&gt;B-&gt;*p. (@a:A.@b:B. P a b &lt;=&gt; Q a b) -&gt;
 </FONT><FONT COLOR="#FF0000">                                          P &lt;===&gt; Q
 </FONT><FONT COLOR="#000000">
 </FONT><FONT COLOR="#000000">
@@ -130,8 +130,8 @@
 </FONT><FONT COLOR="#000000">Exit
 </FONT><FONT COLOR="#000000">
 </FONT><FONT COLOR="#000000">-- Indicate that this lemma must used by the FalseE tactic
-</FONT><FONT COLOR="#000000">Use FalseE ex_falso                           
-</FONT><FONT COLOR="#000000">  
+</FONT><FONT COLOR="#000000">Use FalseE ex_falso
+</FONT><FONT COLOR="#000000">
 </FONT><FONT COLOR="#0000FF">Prove Not_i : @P:*p. (P-&gt;False) -&gt; Not P
 </FONT><FONT COLOR="#000000">Intros
 </FONT><FONT COLOR="#000000">Assumption
@@ -153,7 +153,7 @@
 </FONT><FONT COLOR="#000000">Intro P,H
 </FONT><FONT COLOR="#000000">Apply H
 </FONT><FONT COLOR="#000000">Exit
-</FONT><FONT COLOR="#000000">           
+</FONT><FONT COLOR="#000000">
 </FONT><FONT COLOR="#0000FF">Prove And_i : @P,Q:*p. P -&gt; Q -&gt; P/\Q
 </FONT><FONT COLOR="#000000">Unfold (/\)
 </FONT><FONT COLOR="#000000">Intro P,Q,HP,HQ,R,HI
@@ -295,7 +295,7 @@
 </FONT><FONT COLOR="#000000">-- Indicate that this lemma must used by the Rewrite tactic
 </FONT><FONT COLOR="#000000">Use Rewrite is_elim_l
 </FONT><FONT COLOR="#000000">
-</FONT><FONT COLOR="#000000">             
+</FONT><FONT COLOR="#000000">
 </FONT><FONT COLOR="#0000FF">Prove is_sym : @A:*s.@x,y:A. x=y -&gt; y=x
 </FONT><FONT COLOR="#000000">Intros
 </FONT><FONT COLOR="#000000">Rewrite H
@@ -320,7 +320,7 @@
 </FONT><FONT COLOR="#000000">OrIL
 </FONT><FONT COLOR="#000000">Assumption
 </FONT><FONT COLOR="#000000">Exit
-</FONT><FONT COLOR="#000000">   
+</FONT><FONT COLOR="#000000">
 </FONT><FONT COLOR="#0000FF">Prove contrapos : @P,Q:*p.(Not P -&gt; Q) -&gt; (Not Q -&gt; P)
 </FONT><FONT COLOR="#000000">Intro P, Q, H1, H2
 </FONT><FONT COLOR="#000000">Apply classic

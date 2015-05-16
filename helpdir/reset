@@ -7,10 +7,9 @@
                but infix declarations are not.<BR>
      Variables occurring in loaded modules cannot be removed. If the
      context starting with this variable has to be deleted anyway, the
-     modules should be cleared first. 
+     modules should be cleared first.
  <DT>Prove-mode:
  <DD>This command is not available in prove-mode.
  <DT>See also:
  <DD><A HREF="#Clear"><CODE>Clear</CODE></A>
 </DL>
-                               

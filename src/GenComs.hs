@@ -35,48 +35,48 @@ import YarMsg
 
 handleTypeErr :: PreErrorMonad m => E a -> m a
 handleTypeErr res = handle res err return
-              
+
 getTermRet :: (HasSyntax m, PreErrorMonad m) =>
               Context -> PseudoTermIT -> m (Term,PseudoTerm)
 getTermRet cont term =
            fetchSyn >>= \si ->
            handleTypeErr (inferTermRet si cont term)
 
-getTypeRet :: (HasSyntax m, PreErrorMonad m) => 
+getTypeRet :: (HasSyntax m, PreErrorMonad m) =>
               Context -> PseudoTermIT -> m (Term, Term,Sort)
 getTypeRet cont term =
            fetchSyn >>= \si ->
            handleTypeErr (inferTypeRet si cont term)
 
-getSortRet :: (HasSyntax m, PreErrorMonad m) => 
+getSortRet :: (HasSyntax m, PreErrorMonad m) =>
               Context -> PseudoTermIT -> m (Term,Sort)
 getSortRet cont term =
            fetchSyn >>= \si ->
            handleTypeErr (inferSortRet si cont term)
 
-getDefRet :: (HasSyntax m, PreErrorMonad m) => 
+getDefRet :: (HasSyntax m, PreErrorMonad m) =>
               Context -> PseudoTermIT -> PseudoTermIT -> m (Term,Term,Sort)
 getDefRet cont term typ =
            fetchSyn >>= \si ->
            handleTypeErr (checkDef si cont term typ)
 
-getLContextRet :: (HasSyntax m, PreErrorMonad m) => 
+getLContextRet :: (HasSyntax m, PreErrorMonad m) =>
                   Context -> LContext -> InfoTree -> InfoTree -> m LContext
 getLContextRet cont lcon it1 it2 =
            fetchSyn >>= \si ->
-           handle (lContOkRet si cont lcon it1 it2)       
-           -- in case of error, remove 'at <var>' piece, which is 
+           handle (lContOkRet si cont lcon it1 it2)
+           -- in case of error, remove 'at <var>' piece, which is
            -- next-to-last
            (\er -> err (take (length er -2) er ++ [last er]))
            return
 
-getType :: (HasSyntax m, PreErrorMonad m) => 
+getType :: (HasSyntax m, PreErrorMonad m) =>
            Context -> Term -> m (Term,Sort)
 getType cont term =
            fetchSyn >>= \si ->
            handleTypeErr (inferType si cont term)
 
-getSort :: (HasSyntax m, PreErrorMonad m) => 
+getSort :: (HasSyntax m, PreErrorMonad m) =>
            Context -> Term -> m Sort
 getSort cont term =
            fetchSyn >>= \si ->
@@ -92,7 +92,7 @@ fetchTCon = fmap globToTot fetchCon
 -- this routine delivers the combination of the global and local context
 fetchTotalCon :: TaskId -> M Context
 fetchTotalCon taskId =
-                fetchCon >>= \globCon -> 
+                fetchCon >>= \globCon ->
                 let globCon' = globToTot globCon in
                 if taskId == noTask then
                    return globCon'
@@ -111,7 +111,7 @@ fetchTotalCon taskId =
 -- This section is divided in a number of subsections, corresponding to
 -- groups of commands.
 
-              
+
 ---------------------
 --     Options     --
 ---------------------
@@ -147,14 +147,14 @@ qSetLaTeX (v,i) =
              setLatex v i >>
              fmap RSyntaxInfoIs fetchSyn
 
-                               
+
 qSetImplArgs :: (Vari,Int) -> M Result
 qSetImplArgs (v,n) =
      fetchTCon >>= \c ->
      checkImplic v n >>
      setImplicit v n >>
      fmap RSyntaxInfoIs fetchSyn
- 
+
 givePossibleImplArgs :: Vari -> M [Int]
 givePossibleImplArgs v =
            fetchTCon >>= \c ->
@@ -180,9 +180,9 @@ checkImplic v n =
 -- C O N T E X T - S E N S I T I V E   C O M M A N D S  --
 ----------------------------------------------------------
 
-getLContextDITRet :: (HasSyntax m, PreErrorMonad m) => 
+getLContextDITRet :: (HasSyntax m, PreErrorMonad m) =>
                      Context -> LContext -> m LContext
-getLContextDITRet c lc = 
+getLContextDITRet c lc =
            fetchSyn >>= \si ->
            handleTypeErr (lContOkRet si c lc dummyIT dummyIT)
 
@@ -198,7 +198,7 @@ giveType taskId (lCon0,term0) =
 
 -- giveNormalForm   gives the reduction path of a term in some local context
 giveNormalForm :: Reduction -> TaskId -> (LContext,TermIT) -> M Result
-giveNormalForm red taskId (lCon0,term0) = 
+giveNormalForm red taskId (lCon0,term0) =
                 fetchTotalCon taskId >>= \c ->
                 getLContextDITRet c lCon0 >>= \lCon ->
                 let cc = lCon `addLoc` c in
@@ -206,7 +206,7 @@ giveNormalForm red taskId (lCon0,term0) =
                 return (RReductionPathIs (redSeq red c term,lCon))
 
 qCheckType :: TaskId -> (LContext,TermIT,TermIT) ->M Result
-qCheckType taskId (lCon0,t1,t2) = 
+qCheckType taskId (lCon0,t1,t2) =
                 fetchTotalCon taskId >>= \c ->
                 getLContextDITRet c lCon0 >>= \lCon ->
                 let cc = lCon `addLoc` c in
@@ -216,7 +216,7 @@ qCheckType taskId (lCon0,t1,t2) =
                 return (RCheckIs (subtype si cc t1Typ t2',lCon))
 
 qCheckConv :: TaskId -> (LContext,TermIT,TermIT) ->M Result
-qCheckConv taskId (lCon0,t1,t2) = 
+qCheckConv taskId (lCon0,t1,t2) =
                 fetchTotalCon taskId >>= \c ->
                 getLContextDITRet c lCon0 >>= \lCon ->
                 let cc = lCon `addLoc` c in
@@ -226,13 +226,13 @@ qCheckConv taskId (lCon0,t1,t2) =
 
 -- Extension: Subtyping:
 qCheckSubtype :: TaskId -> (LContext,TermIT,TermIT) -> M Result
-qCheckSubtype taskId (lCon0,t1,t2) = 
+qCheckSubtype taskId (lCon0,t1,t2) =
                 fetchTotalCon taskId >>= \c ->
                 getLContextDITRet c lCon0 >>= \lCon ->
                 let cc = lCon `addLoc` c in
                 getTermRet cc t1 >>= \(t1',_) ->
                 getTermRet cc t2 >>= \(t2',_) ->
-                fetchSyn >>= \si ->               
+                fetchSyn >>= \si ->
                 return (RCheckIs (subtype si cc t1' t2', lCon))
 -- End Extension: Subtyping
 
@@ -245,7 +245,7 @@ qZMatch taskId (lCon0,exVars,p0,t0) =
              getTermRet cc t0 >>= \(t,_) ->
              fetchSyn >>= \si ->
              return (RZMatchIs (match alwaysUnfold si (cc,exVars,p,t)))
-                                      
+
 ---------------------
 -- OTHER FUNCTIONS --
 ---------------------
@@ -259,13 +259,12 @@ getPath1 :: TaskId -> M TacPath
 getPath1 taskId = fetchTacPaths taskId >>= \tacPaths ->
                   if null tacPaths then
                      genErrS "There is no goal"
-                  else   
+                  else
                      return (head tacPaths)
-                     
+
 -- replaceTPath tree path u  replaces in tree at location path the tree
---                           by u                        
+--                           by u
 replaceTPath :: TacticTree -> TacPath -> TacticTree -> TacticTree
 replaceTPath _ [] u = u
-replaceTPath (TTTac tac p ts) (n:ns) u = 
+replaceTPath (TTTac tac p ts) (n:ns) u =
     TTTac tac p (doInList n (\t -> replaceTPath t ns u) ts)
-

@@ -2,7 +2,7 @@
  <DT>Syntax:
  <DD>
   <OL>
-  <LI><VAR>tactic</VAR> <CODE>Then (</CODE> <VAR>tactic1</VAR> 
+  <LI><VAR>tactic</VAR> <CODE>Then (</CODE> <VAR>tactic1</VAR>
       <CODE>|</CODE> <VAR>tactic2</VAR> <CODE>|</CODE> ...
      <CODE>|</CODE> <VAR>tacticn</VAR> <CODE>)</CODE>
   <LI><VAR>tactic</VAR> <CODE>Then</CODE> <VAR>tactic1</VAR>

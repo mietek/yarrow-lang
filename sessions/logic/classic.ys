@@ -20,7 +20,7 @@ NotE H
 OrIL
 Assumption
 Exit
-   
+
 Prove contrapos : @P,Q:*p.(Not P -> Q) -> (Not Q -> P)
 Intro P, Q, H1, H2
 Apply classic
@@ -47,4 +47,3 @@ NotE H
 Apply H1
 Assumption
 Exit
-

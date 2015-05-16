@@ -4,7 +4,7 @@
 -- These lemmas are not included in the thesis, and are divided into three
 -- groups.
 -- 1) Introduction and elimination principles for ExP, ExQ, ExR, ExK
--- 2) Reflexivity, elimination, symmetry and transitivity for <=>, <==>, <===> 
+-- 2) Reflexivity, elimination, symmetry and transitivity for <=>, <==>, <===>
 -- 3) Miscellaneous
 
 Path "../lol"
@@ -76,7 +76,7 @@ Exit
 Use ExistsI ExR_i
 
 -- The next lemma is used by the ExistsE tactic.
-Prove ExR_e : @A,B:*s.@P:(A->B->*p)->*p.@R:*p. (ExR) P -> 
+Prove ExR_e : @A,B:*s.@P:(A->B->*p)->*p.@R:*p. (ExR) P ->
                       (@X:A->B->*p. P X -> R) -> R
 Unfold ExR
 Intro A,B,P,R,H
@@ -174,7 +174,7 @@ Exit
 
 Use Refl BimplR_refl
 
-Prove BimplR_elim_r : @A,B:*s. @P,Q:A->B->*p.@R:(A->B->*p)->*p. 
+Prove BimplR_elim_r : @A,B:*s. @P,Q:A->B->*p.@R:(A->B->*p)->*p.
                       P<===>Q -> R P -> R Q
 Intros
 Apply H
@@ -183,7 +183,7 @@ Exit
 
 Use Lewrite BimplR_elim_r
 
-Prove BimplR_elim_l : @A,B:*s. @P,Q:A->B->*p.@R:(A->B->*p)->*p. 
+Prove BimplR_elim_l : @A,B:*s. @P,Q:A->B->*p.@R:(A->B->*p)->*p.
                       P<===>Q -> R Q -> R P
 Intros 6
 Lewrite H
@@ -199,7 +199,7 @@ Rewrite H
 Refl
 Exit
 
-Prove BimplR_trans : @A,B:*s.@P,Q,R:A->B->*p. 
+Prove BimplR_trans : @A,B:*s.@P,Q,R:A->B->*p.
                      (P<===>Q) -> (Q<===>R) -> (P<===>R)
 Intros
 Rewrite H
@@ -241,4 +241,3 @@ Assumption
 OrIR
 Assumption
 Exit
-

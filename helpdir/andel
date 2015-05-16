@@ -2,7 +2,7 @@
  <DT>Syntax:
  <DD><OL>
      <LI><CODE>AndEL</CODE> <VAR>term</VAR>
-     <LI><CODE>AndEL</CODE> <VAR>term</VAR> <CODE>On</CODE> 
+     <LI><CODE>AndEL</CODE> <VAR>term</VAR> <CODE>On</CODE>
                                             <VAR>term-list</VAR>
      </OL>
  <DT>Effect:

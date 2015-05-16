@@ -23,7 +23,7 @@ import Command
 ---------------------------
 --    P A R S I N G      --
 ---------------------------
-         
+
 -- parseCommand has as argument the number of the task it was typed in.
 parseCommand :: TaskId -> Parse Command
 parseCommand taskNr =
@@ -37,25 +37,25 @@ parseCommand taskNr =
   otherwise -> return gc
 
 
-                            
-                     
+
+
 
 -- commands are no terminals because this is easier. Furthermore the
 -- command-structure is not so complex that it is needed.
 parseMCommand :: TaskId -> Parse Command
-parseMCommand taskNr = 
+parseMCommand taskNr =
   readToken' >>= \t0 ->
   let t = toLowerIdent t0 in
   case t of
-  Ident "bdred" -> nextToken >> fmap (CGiveBDReductionPath taskNr . 
+  Ident "bdred" -> nextToken >> fmap (CGiveBDReductionPath taskNr .
                                      pair emptyLCon) parseTerm
-  Ident "bred"  -> nextToken >> fmap (CGiveBReductionPath  taskNr . 
+  Ident "bred"  -> nextToken >> fmap (CGiveBReductionPath  taskNr .
                                      pair emptyLCon) parseTerm
-  Ident "dred"  -> nextToken >> fmap (CGiveDReductionPath  taskNr . 
+  Ident "dred"  -> nextToken >> fmap (CGiveDReductionPath  taskNr .
                                      pair emptyLCon) parseTerm
-  Ident "type"  -> nextToken >> fmap (CGiveType taskNr . 
+  Ident "type"  -> nextToken >> fmap (CGiveType taskNr .
                                      pair emptyLCon) parseTerm
-  Ident "check" -> nextToken >> 
+  Ident "check" -> nextToken >>
                    parseTerm >>= \t1 ->
                    readToken' >>= \tok ->
                    let makeC f t2 = f taskNr (emptyLCon,t1,t2) in
@@ -109,11 +109,11 @@ parseMCommand taskNr =
                      fmap CSetBinder parseVar
   Ident "latexvar"-> impHelp CSetLaTeX
   Ident "implicit"-> impHelp CSetImplArgs
-  Ident "read"    -> nextToken >> 
+  Ident "read"    -> nextToken >>
                       parseFilename >>= \f ->
                       return (CRead f)
   Ident "quit"    -> nextToken >> return CQuit
-  Ident "prove"   -> nextToken >> 
+  Ident "prove"   -> nextToken >>
                      parseVar >>= \v ->
                      eat Colon "" >>
                      parseTerm >>= \t ->
@@ -126,14 +126,14 @@ parseMCommand taskNr =
                      -- Extension: Subtyping:
                      CSub -> if (fst t)==dummyTerm then
                                 -- then t wasn't given by user
-                                return (CDeclareVarsSub 
+                                return (CDeclareVarsSub
                                                  ((fmap fst vs),head cts))
                              else
-                                return (CDeclareVarsSubW 
+                                return (CDeclareVarsSubW
                                                  ((fmap fst vs),head cts,t))
                      -- End Extension: Subtyping
   Ident "reset"   -> nextToken >> fmap CDelFromVar parseVar
-  Ident "system"  -> nextToken >> 
+  Ident "system"  -> nextToken >>
                      readToken' >>= \t ->
                      case t of
                      LeftP -> fmap CSetTypingSystem parseSystem
@@ -149,12 +149,12 @@ parseMCommand taskNr =
                                          parseVar >>= \vari ->
                                          return (CUseFor tacName vari)
                         otherwise -> pErr "expected tactic"
-  Ident "load"    -> nextToken >> 
+  Ident "load"    -> nextToken >>
                      readToken' >>= \t ->
                      case t of
                      Eoln -> return CGiveModules
                      otherwise -> fmap CLoadModule parseFilename
-  Ident "save"    -> nextToken >> 
+  Ident "save"    -> nextToken >>
                      fmap CSaveModule parseFilename
   Ident "clear"   -> nextToken >> return CClearModule
   Ident "path"    -> nextToken >>
@@ -162,12 +162,12 @@ parseMCommand taskNr =
                      case t of
                      Eoln -> return CShowPath
                      otherwise -> fmap CAddPath parseFilename
-  Ident "task" ->    nextToken >> 
+  Ident "task" ->    nextToken >>
                      readToken' >>= \t ->
                      case t of
                      Eoln -> return CGiveTasks
                      otherwise -> fmap CSetTask parseVar
-  -- ! Just for testing !      
+  -- ! Just for testing !
   Ident "zmatch" ->  nextToken >>
                      eat LeftP "" >>
                      parseContext >>= \con ->
@@ -187,7 +187,7 @@ parseMCommand taskNr =
                      parseTerm >>= \t2 ->
                      return (CZwerver (t1,t2))
   otherwise       -> return CNoParse
- 
+
 parseComHelp com pars extract = fmap (com . extract fst) pars
 
 parseGiveContext latex =
@@ -218,7 +218,7 @@ parseGiveContext latex =
        return (CGiveContext latex part sortList conTo)
 
 parseConFile :: Parse ConToFile
-parseConFile = 
+parseConFile =
     readToken' >>= \tok ->
     case tok of
     On -> nextToken >>
@@ -239,7 +239,7 @@ parseDeduction taskNr latex =
     parseConFile >>= \conFile ->
     return (CDeduction latex taskNr v n conFile)
 
-            
+
 infHelp assoc = impHelp (\(v,i) -> CSetPrecAndAss (v,i,assoc))
 
 impHelp com = nextToken >>
@@ -253,7 +253,7 @@ parseOption = let errMess = "Expected +opt or -opt" in
               "+" -> return (o,True)
               "-" -> return (o,False)
               otherwise -> pErr errMess
-                                      
+
 readTokensTillEoln :: Parse [Token]
 readTokensTillEoln = readToken' >>= \t ->
                      case t of
@@ -267,7 +267,7 @@ readTokensTillEoln = readToken' >>= \t ->
 -- PARSING A SYSTEM --
 ----------------------
 
--- System = '(' SortExs ')' ',' '(' Axioms ')' ',' '(' Rules ')' 
+-- System = '(' SortExs ')' ',' '(' Axioms ')' ',' '(' Rules ')'
 --          [',' '(' SortsSub ')' ',' '(' Rules ')']
 -- SortExs = List SortEx
 -- SortEx = Ident MaybeAttrS
@@ -281,7 +281,7 @@ readTokensTillEoln = readToken' >>= \t ->
 -- MaybeAttrS = empty | '->' AttrS
 -- AttrS = 'records' | 'subtyping'
 -- List xxx = empty | xxx | xxx ',' .. xxx
-          
+
 parseSystem :: Parse System
 parseSystem = eat LeftP "" >>
               parseSortExs >>= \sorts ->
@@ -298,21 +298,21 @@ parseSystem = eat LeftP "" >>
                         eateat [RightP,Comma,LeftP] >>
                         parseRules >>= \rulesSub ->
                         eat RightP "" >>
-                        return (sortsSub,rulesSub) 
+                        return (sortsSub,rulesSub)
                otherwise -> return ([],[])
               ) >>= \(sortsSub,rulesSub) ->
-              return (quintupleToSystem 
+              return (quintupleToSystem
                                    (sorts,axioms,rules,sortsSub,rulesSub))
 
-quintupleToSystem :: ([(Sort,[Extension])], 
-                      [(Sort,Sort)], 
+quintupleToSystem :: ([(Sort,[Extension])],
+                      [(Sort,Sort)],
                       [(Sort,Sort,Sort)],
-                      [Sort], 
-                      [(Sort,Sort,Sort)]) -> 
+                      [Sort],
+                      [(Sort,Sort,Sort)]) ->
                      System
 quintupleToSystem (sorts',axioms,rules, sortsSub, rulesSub) =
               let mkExs (s,exs) = fmap (pair s) exs in
-              ((fmap fst sorts', axioms, rules, sortsSub, rulesSub), 
+              ((fmap fst sorts', axioms, rules, sortsSub, rulesSub),
                concat (fmap mkExs sorts'))
 
 parseSortExs :: Parse [(Sort,[Extension])]
@@ -340,14 +340,14 @@ parseExtension = eatIdent "name of extension" >>= \exs ->
                  otherwise -> errMess
 
 parseAxioms :: Parse [(Sort,Sort)]
-parseAxioms = parseList startBasic (separator Comma) parseAxiom 
+parseAxioms = parseList startBasic (separator Comma) parseAxiom
 
 parseAxiom :: Parse (Sort,Sort)
 parseAxiom = parseIdAsSort >>= \s1 ->
              eat Colon "" >>
              parseIdAsSort >>= \s2 ->
              return (s1,s2)
-                
+
 parseRules :: Parse [(Sort,Sort,Sort)]
 parseRules = parseList startBasic (separator Comma) parseRule
 
@@ -365,5 +365,3 @@ parseRule = eat LeftP "" >>
                parseIdAsSort >>= \s3 ->
                eat RightP "" >>
                return (s1,s2,s3)
-
-

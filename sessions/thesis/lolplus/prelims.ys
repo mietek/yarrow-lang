@@ -38,7 +38,7 @@ Def IsER := \Y:*s. \R:Y->Y->*p.
                     (@y1,y2,y3:Y. R y1 y2 -> R y2 y3 -> R y1 y3)
 Implicit 1 IsER
 
-Def IsERon := 
+Def IsERon :=
      \Y:*s.\R:Y->Y->*p. \P:Y->*p.
          (@y:Y. P y -> R y y) /\
          (@y1,y2:Y. P y1 -> P y2 -> R y1 y2 -> R y2 y1) /\
@@ -125,7 +125,7 @@ Assumption
 Assumption
 Exit
 
-Prove rel_LeftC : @A,B:*s. @(~):A->B->*p. 
+Prove rel_LeftC : @A,B:*s. @(~):A->B->*p.
                   @a1,a2:A.@b:B. a1~b -> a2~b -> LeftC (~) a1 a2
 Intros
 Unfold LeftC

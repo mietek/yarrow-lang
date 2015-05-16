@@ -33,7 +33,7 @@
 </FONT><FONT COLOR="#FF0000">                    Sim (\X:*s.T) Y Z (~) &lt;===&gt; ((=) T)
 </FONT><FONT COLOR="#FF0000">Var Sim_arrow : @I1,I2:*s-&gt;*s.@Y,Z:*s.@(~):Y-&gt;Z-&gt;*p.
 </FONT><FONT COLOR="#FF0000">                    Sim (\X:*s. I1 X -&gt; I2 X) Y Z (~) &lt;===&gt;
-</FONT><FONT COLOR="#FF0000">                    \opsY:I1 Y -&gt; I2 Y.\opsZ:I1 Z -&gt; I2 Z.            
+</FONT><FONT COLOR="#FF0000">                    \opsY:I1 Y -&gt; I2 Y.\opsZ:I1 Z -&gt; I2 Z.
 </FONT><FONT COLOR="#FF0000">                    (@y:I1 Y.@z:I1 Z. Sim I1 Y Z (~) y z -&gt;
 </FONT><FONT COLOR="#FF0000">                                      Sim I2 Y Z (~) (opsY y) (opsZ z))
 </FONT><FONT COLOR="#FF0000">Var Sim_rec : @I1,I2:*s-&gt;*s.@Y,Z:*s.@(~):Y-&gt;Z-&gt;*p.
@@ -61,7 +61,7 @@
 </FONT><FONT COLOR="#000000">Apply H1
 </FONT><FONT COLOR="#000000">Exit
 </FONT><FONT COLOR="#000000">
-</FONT><FONT COLOR="#0000FF">Prove SimplyT_arrow : @I1,I2:*s-&gt;*s. SimplyT I1 -&gt; SimplyT I2 -&gt; 
+</FONT><FONT COLOR="#0000FF">Prove SimplyT_arrow : @I1,I2:*s-&gt;*s. SimplyT I1 -&gt; SimplyT I2 -&gt;
 </FONT><FONT COLOR="#0000FF">                     SimplyT (\X:*s.I1 X -&gt; I2 X)
 </FONT><FONT COLOR="#000000">Intros
 </FONT><FONT COLOR="#000000">Unfold SimplyT
@@ -71,7 +71,7 @@
 </FONT><FONT COLOR="#000000">Apply H1 Then Assumption
 </FONT><FONT COLOR="#000000">Exit
 </FONT><FONT COLOR="#000000">
-</FONT><FONT COLOR="#0000FF">Prove SimplyT_rec : @I1,I2:*s-&gt;*s. SimplyT I1 -&gt; SimplyT I2 -&gt; 
+</FONT><FONT COLOR="#0000FF">Prove SimplyT_rec : @I1,I2:*s-&gt;*s. SimplyT I1 -&gt; SimplyT I2 -&gt;
 </FONT><FONT COLOR="#0000FF">                     SimplyT (\X:*s.{|l:I1 X,r: I2 X|})
 </FONT><FONT COLOR="#000000">Intros
 </FONT><FONT COLOR="#000000">Unfold SimplyT
@@ -85,9 +85,9 @@
 </FONT><FONT COLOR="#0000FF">              @P:(*s-&gt;*s)-&gt;*p.
 </FONT><FONT COLOR="#0000FF">              P (\X:*s.X) -&gt;
 </FONT><FONT COLOR="#0000FF">              (@T:*s. P (\X:*s. T)) -&gt;
-</FONT><FONT COLOR="#0000FF">              (@I1,I2:*s-&gt;*s. SimplyT I1 -&gt; SimplyT I2 -&gt; 
+</FONT><FONT COLOR="#0000FF">              (@I1,I2:*s-&gt;*s. SimplyT I1 -&gt; SimplyT I2 -&gt;
 </FONT><FONT COLOR="#0000FF">                              P I1 -&gt; P I2 -&gt; P (\X:*s. I1 X -&gt; I2 X)) -&gt;
-</FONT><FONT COLOR="#0000FF">              (@I1,I2:*s-&gt;*s. SimplyT I1 -&gt; SimplyT I2 -&gt; 
+</FONT><FONT COLOR="#0000FF">              (@I1,I2:*s-&gt;*s. SimplyT I1 -&gt; SimplyT I2 -&gt;
 </FONT><FONT COLOR="#0000FF">                              P I1 -&gt; P I2 -&gt; P (\X:*s. {|l:I1 X,r:I2 X|}))-&gt;
 </FONT><FONT COLOR="#0000FF">              P I
 </FONT><FONT COLOR="#000000">Intros 2
@@ -126,7 +126,7 @@
 </FONT><FONT COLOR="#000000">-- Parametricity for Sigma-types.
 </FONT><FONT COLOR="#0000FF">Prove parSigma : @I:*s-&gt;*s. SimplyT I -&gt;
 </FONT><FONT COLOR="#0000FF">                   @Y,Z:*s.@(~):Y-&gt;Z-&gt;*p. @y:I Y. @z:I Z.
-</FONT><FONT COLOR="#0000FF">                     Sim I Y Z (~) y z -&gt; 
+</FONT><FONT COLOR="#0000FF">                     Sim I Y Z (~) y z -&gt;
 </FONT><FONT COLOR="#0000FF">                     (=) (Sig X:*s. I X) (pack I Y y) (pack I Z z)
 </FONT><FONT COLOR="#000000">Intros 2
 </FONT><FONT COLOR="#000000">Forward parPi On pack I
@@ -143,12 +143,12 @@
 </FONT><FONT COLOR="#000000">Assumption
 </FONT><FONT COLOR="#000000">Exit
 </FONT><FONT COLOR="#000000">
-</FONT><FONT COLOR="#0000FF">Def Bisim := \I:*s-&gt;*s. \R:*s.\(~):R-&gt;R-&gt;*p.\opsR:I R. 
+</FONT><FONT COLOR="#0000FF">Def Bisim := \I:*s-&gt;*s. \R:*s.\(~):R-&gt;R-&gt;*p.\opsR:I R.
 </FONT><FONT COLOR="#0000FF">             Sim I R R (~) opsR opsR
 </FONT><FONT COLOR="#000000">
 </FONT><FONT COLOR="#0000FF">Prove Sim_sym : @I:*s-&gt;*s.SimplyT I -&gt;
 </FONT><FONT COLOR="#0000FF">                @Y,Z:*s. @(~):Y-&gt;Z-&gt;*p. @opsY:I Y. @opsZ:I Z.
-</FONT><FONT COLOR="#0000FF">                                 Sim I Y Z (~) opsY opsZ -&gt; 
+</FONT><FONT COLOR="#0000FF">                                 Sim I Y Z (~) opsY opsZ -&gt;
 </FONT><FONT COLOR="#0000FF">                                 Sim I Z Y (Inverse (~)) opsZ opsY
 </FONT><FONT COLOR="#000000">Intros 2
 </FONT><FONT COLOR="#000000">Pattern I
@@ -264,16 +264,16 @@
 </FONT><FONT COLOR="#000000">
 </FONT><FONT COLOR="#FF0000">Var IsInvar_id : @Rep:*s.@Inv:Rep-&gt;*p. IsInvar (\X:*s.X) Rep Inv &lt;==&gt; Inv
 </FONT><FONT COLOR="#000000">
-</FONT><FONT COLOR="#FF0000">Var IsInvar_const : @T:*s.@Rep:*s.@Inv:Rep-&gt;*p. 
+</FONT><FONT COLOR="#FF0000">Var IsInvar_const : @T:*s.@Rep:*s.@Inv:Rep-&gt;*p.
 </FONT><FONT COLOR="#FF0000">                    IsInvar (\X:*s.T) Rep Inv &lt;==&gt; \t:T. True
 </FONT><FONT COLOR="#000000">
-</FONT><FONT COLOR="#FF0000">Var IsInvar_arrow : @I1,I2:*s-&gt;*s. @Rep:*s.@Inv:Rep-&gt;*p. 
-</FONT><FONT COLOR="#FF0000">                    IsInvar (\X:*s.I1 X -&gt; I2 X) Rep Inv &lt;==&gt; 
+</FONT><FONT COLOR="#FF0000">Var IsInvar_arrow : @I1,I2:*s-&gt;*s. @Rep:*s.@Inv:Rep-&gt;*p.
+</FONT><FONT COLOR="#FF0000">                    IsInvar (\X:*s.I1 X -&gt; I2 X) Rep Inv &lt;==&gt;
 </FONT><FONT COLOR="#FF0000">                    (\f:I1 Rep-&gt;I2 Rep. @x:I1 Rep. IsInvar I1 Rep Inv x -&gt;
 </FONT><FONT COLOR="#FF0000">                                                   IsInvar I2 Rep Inv (f x))
 </FONT><FONT COLOR="#000000">
-</FONT><FONT COLOR="#FF0000">Var IsInvar_rec : @I1,I2:*s-&gt;*s. @Rep:*s.@Inv:Rep-&gt;*p. 
-</FONT><FONT COLOR="#FF0000">                    IsInvar (\X:*s.{|l:I1 X, r:I2 X|}) Rep Inv &lt;==&gt; 
+</FONT><FONT COLOR="#FF0000">Var IsInvar_rec : @I1,I2:*s-&gt;*s. @Rep:*s.@Inv:Rep-&gt;*p.
+</FONT><FONT COLOR="#FF0000">                    IsInvar (\X:*s.{|l:I1 X, r:I2 X|}) Rep Inv &lt;==&gt;
 </FONT><FONT COLOR="#FF0000">                    (\f:{|l:I1 Rep,r:I2 Rep|}. IsInvar I1 Rep Inv f`l /\
 </FONT><FONT COLOR="#FF0000">                                                 IsInvar I2 Rep Inv f`r)
 </FONT><FONT COLOR="#000000">
@@ -286,7 +286,7 @@
 </FONT><FONT COLOR="#000000">------------------------------------------------------
 </FONT><FONT COLOR="#000000">------------------------------------------------------
 </FONT><FONT COLOR="#000000">
-</FONT><FONT COLOR="#000000">-- Defines the first-order interfaces, and gives some properties about Sim and 
+</FONT><FONT COLOR="#000000">-- Defines the first-order interfaces, and gives some properties about Sim and
 </FONT><FONT COLOR="#000000">-- IsInvar for these interfaces, namely those properties we need for
 </FONT><FONT COLOR="#000000">-- developing general theory for ADTs
 </FONT><FONT COLOR="#000000">
@@ -311,7 +311,7 @@
 </FONT><FONT COLOR="#000000">Apply H1
 </FONT><FONT COLOR="#000000">Exit
 </FONT><FONT COLOR="#000000">
-</FONT><FONT COLOR="#0000FF">Prove Basic_rec : @I1,I2:*s-&gt;*s. Basic I1 -&gt; Basic I2 -&gt; 
+</FONT><FONT COLOR="#0000FF">Prove Basic_rec : @I1,I2:*s-&gt;*s. Basic I1 -&gt; Basic I2 -&gt;
 </FONT><FONT COLOR="#0000FF">                     Basic (\X:*s.{|l:I1 X,r: I2 X|})
 </FONT><FONT COLOR="#000000">Intros
 </FONT><FONT COLOR="#000000">Unfold Basic
@@ -325,7 +325,7 @@
 </FONT><FONT COLOR="#0000FF">              @P:(*s-&gt;*s)-&gt;*p.
 </FONT><FONT COLOR="#0000FF">              P (\X:*s.X) -&gt;
 </FONT><FONT COLOR="#0000FF">              (@T:*s. P (\X:*s. T)) -&gt;
-</FONT><FONT COLOR="#0000FF">              (@I1,I2:*s-&gt;*s. Basic I1 -&gt; Basic I2 -&gt; 
+</FONT><FONT COLOR="#0000FF">              (@I1,I2:*s-&gt;*s. Basic I1 -&gt; Basic I2 -&gt;
 </FONT><FONT COLOR="#0000FF">                              P I1 -&gt; P I2 -&gt; P (\X:*s. {|l:I1 X,r:I2 X|}))-&gt;
 </FONT><FONT COLOR="#0000FF">              P I
 </FONT><FONT COLOR="#000000">Intros
@@ -366,7 +366,7 @@
 </FONT><FONT COLOR="#000000">Assumption
 </FONT><FONT COLOR="#000000">Exit
 </FONT><FONT COLOR="#000000">
-</FONT><FONT COLOR="#0000FF">Prove FirstO_arrow : @I1,I2:*s-&gt;*s. Basic I1 -&gt; FirstO I2 -&gt; 
+</FONT><FONT COLOR="#0000FF">Prove FirstO_arrow : @I1,I2:*s-&gt;*s. Basic I1 -&gt; FirstO I2 -&gt;
 </FONT><FONT COLOR="#0000FF">                     FirstO (\X:*s.I1 X-&gt;I2 X)
 </FONT><FONT COLOR="#000000">Intros
 </FONT><FONT COLOR="#000000">Unfold FirstO
@@ -376,7 +376,7 @@
 </FONT><FONT COLOR="#000000">Apply H1 Then Assumption
 </FONT><FONT COLOR="#000000">Exit
 </FONT><FONT COLOR="#000000">
-</FONT><FONT COLOR="#0000FF">Prove FirstO_rec : @I1,I2:*s-&gt;*s. FirstO I1 -&gt; FirstO I2 -&gt; 
+</FONT><FONT COLOR="#0000FF">Prove FirstO_rec : @I1,I2:*s-&gt;*s. FirstO I1 -&gt; FirstO I2 -&gt;
 </FONT><FONT COLOR="#0000FF">                     FirstO (\X:*s.{|l:I1 X,r: I2 X|})
 </FONT><FONT COLOR="#000000">Intros
 </FONT><FONT COLOR="#000000">Unfold FirstO
@@ -389,7 +389,7 @@
 </FONT><FONT COLOR="#0000FF">Prove FirstO_elim : @I:*s-&gt;*s. FirstO I -&gt;
 </FONT><FONT COLOR="#0000FF">              @P:(*s-&gt;*s)-&gt;*p.
 </FONT><FONT COLOR="#0000FF">              (@I:*s-&gt;*s. Basic I -&gt; P I) -&gt;
-</FONT><FONT COLOR="#0000FF">              (@I1,I2:*s-&gt;*s. FirstO I2 -&gt; 
+</FONT><FONT COLOR="#0000FF">              (@I1,I2:*s-&gt;*s. FirstO I2 -&gt;
 </FONT><FONT COLOR="#0000FF">                              Basic I1 -&gt; P I2 -&gt; P (\X:*s. I1 X -&gt; I2 X)) -&gt;
 </FONT><FONT COLOR="#0000FF">              (@I1,I2:*s-&gt;*s. FirstO I1 -&gt; FirstO I2 -&gt;
 </FONT><FONT COLOR="#0000FF">                              P I1 -&gt; P I2 -&gt; P (\X:*s. {|l:I1 X,r:I2 X|}))-&gt;

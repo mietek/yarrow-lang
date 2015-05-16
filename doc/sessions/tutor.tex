@@ -17,7 +17,7 @@ below is not clear, type {\tt help syntax}.
 \subsubsection*{EXAMPLE 1}
 We construct a proof of
 $
-\forall P,Q,R:\st.\  
+\forall P,Q,R:\st.\
 (P\Rightarrow Q\Rightarrow R) \Rightarrow (P\Rightarrow
 Q) \Rightarrow (P\Rightarrow R)
 $.
@@ -90,7 +90,7 @@ H2 : P
 An ordinary mathematician would proceed as follows:
 \begin{enumerate}
 \item
-First conclude 
+First conclude
 {\tt Q}
 from
 {\tt H2:P}
@@ -126,7 +126,7 @@ H2 : P
 
 2) ?9 : Q
 \end{verbatim}
-We see the proofterm for {\tt R} is of the form 
+We see the proofterm for {\tt R} is of the form
 {\tt (H ?11 ?9)}, where {\tt ?11 : P} and {\tt ?9 : Q}.
 
 Only the local context of the {\em first} goal is printed.
@@ -247,10 +247,10 @@ Goal proved!
 Yarrow sees that {\tt (IS nat (f zero) two)}
 is an instantiation of {\tt (IS A z z)}.
 For {\tt A} he substitutes {\tt nat}.
-For {\tt z} he substitutes {\tt f zero} 
+For {\tt z} he substitutes {\tt f zero}
 (this is $\beta$-equal to {\tt two}).
 
-With the command {\tt abort} 
+With the command {\tt abort}
 a proof-task is stopped, and the proof is discarded.
 
 \begin{verbatim}
@@ -281,7 +281,7 @@ classic : @P:*. not (not P) -> P
 \end{verbatim}
 Under this assumption we can prove that
 $
-\forall P,Q:\st.\   
+\forall P,Q:\st.\
 (\neg P \Rightarrow Q) \Rightarrow  (\neg Q \Rightarrow P )
 $
 \begin{verbatim}
@@ -323,7 +323,7 @@ Not an @-type or definition (error)
 \end{verbatim}
 
 Yarrow doesn't see that
-\tt (not (not P)) \rm 
+\tt (not (not P)) \rm
 is an arrow-type.
 We have to unfold the definition first.
 With {\tt unfold 1 not} the first occurrence of {\tt not} is unfolded.
@@ -389,7 +389,7 @@ H2 : not P
 --------------------------------------------------
 Q
 \end{verbatim}
-It isn't necessary to unfold the definition of not; 
+It isn't necessary to unfold the definition of not;
 we could have done {\tt apply H1} right away.
 
 We prove {\tt Q} with {\tt H} and {\tt H2}.
@@ -416,7 +416,7 @@ Proofterm= \P,Q:*.\H:not P -> Q.\H1:not Q. classic P (\H2:not P. H1 (H H2))
 Goal proved!
 \end{verbatim}
 
-With the command {\tt restart} 
+With the command {\tt restart}
 we throw away the proof we have given so far, and start the proof from
 scratch.
 \begin{verbatim}
@@ -466,17 +466,17 @@ intros
 abort
 
 Goal not proved
-> 
+>
 \end{verbatim}
 
 \subsubsection*{EXAMPLE 4}
 We prove
-$\forall A:\st.\ 
-  \forall P,Q:A\rightarrow\st.\ 
-  (\forall x:A.\:P x\Rightarrow Q x) \Rightarrow (\forall y:A.\:P y) \Rightarrow (\forall z:A.\:Q z) 
+$\forall A:\st.\
+  \forall P,Q:A\rightarrow\st.\
+  (\forall x:A.\:P x\Rightarrow Q x) \Rightarrow (\forall y:A.\:P y) \Rightarrow (\forall z:A.\:Q z)
 $.
 \begin{verbatim}
-> prove example4 : @A:*. @P,Q:A->*. (@x:A. P x -> Q x) -> (@y:A. P y) -> 
+> prove example4 : @A:*. @P,Q:A->*. (@x:A. P x -> Q x) -> (@y:A. P y) ->
 .                                     (@z:A. Q z)
 Proofterm = ?1
 
@@ -544,7 +544,7 @@ Apply H1
 Exit
 
 example4 := .. : @A:*.@P,Q:A->*. (@x:A. P x -> Q x)->(@y:A. P y)->(@z:A. Q z)
-> 
+>
 \end{verbatim}
 
 \end{document}

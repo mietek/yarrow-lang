@@ -2,7 +2,7 @@
 -- Description: This module implements a command-line interface for Yarrow
 --              A window interface is on the way :-)
 
--- This interface communicates with the kernel of Yarrow by asking Queries and 
+-- This interface communicates with the kernel of Yarrow by asking Queries and
 -- getting Results as answer (see module YarMsg.hs). However, the interface
 -- also reads parts of the state directly, instead of by asking.
 
@@ -46,7 +46,7 @@ initEnvVars :: EnvVars
 initEnvVars = ""
 
 -- Paths contains paths containing names of directories to be searched
--- when loading modules or reading script-files.         
+-- when loading modules or reading script-files.
 type Paths = [String]
 
 initPaths :: Paths
@@ -55,7 +55,7 @@ initPaths = [currentDir]
 initTaskId :: TaskId
 initTaskId = noTask
 
-data CLIS = CLIS (MainS, FileInput, EnvVars, Paths, TaskId) 
+data CLIS = CLIS (MainS, FileInput, EnvVars, Paths, TaskId)
 type CLI a = Imp CLIS a
 
 initCLIState :: CLIS
@@ -102,7 +102,7 @@ fetchEnvVars = fmap (thd5.unClis) fetchS5
 fetchYarrowDir :: CLI String
 fetchYarrowDir = fetchEnvVars
 
-setEnvVars :: EnvVars -> CLI ()                                
+setEnvVars :: EnvVars -> CLI ()
 setEnvVars envVars = update' (CLIS . doThd5 (const envVars) . unClis)
 
 -- path stuff
@@ -148,8 +148,8 @@ loop = mToCLI fetchTasks >>= \(_,tasks) ->
            putSt "> "
         else
            putSt "$ ") >>
-       handleS readCommand 
-       -- error 
+       handleS readCommand
+       -- error
        (\err -> finalHandleError err >> loop)
        -- OK
        (\comm ->
@@ -157,7 +157,7 @@ loop = mToCLI fetchTasks >>= \(_,tasks) ->
         case comm of
         CQuit -> doQuit
         otherwise -> -- doCommand can give an error
-                     handleS (doCommand comm) finalHandleError (\_ -> skip) >> 
+                     handleS (doCommand comm) finalHandleError (\_ -> skip) >>
                      loop
        )
 
@@ -172,7 +172,7 @@ doQuit = putLine "Bye bye"
 
 doCommand :: Command -> CLI ()
 doCommand CSkip = skip
-doCommand (CShow taskId goalNr) = cShow taskId goalNr 
+doCommand (CShow taskId goalNr) = cShow taskId goalNr
 doCommand (CHistory taskId) = cHistory taskId
 doCommand CGiveOptions = cGiveOptions
 doCommand CGiveTypingSystem = cGiveTypingSystem
@@ -249,7 +249,7 @@ yesNoQuestion = getLin >>= \answer ->
 main = goSte (initYarrow >> loop) initCLIState
 
 initYarrow :: CLI ()
-initYarrow = 
+initYarrow =
   -- When changing version, also adapt helpdir/about !
   putSt "Welcome to Yarrow v1.20\n" >>
   handleS getYarrowDir
@@ -261,7 +261,7 @@ initYarrow =
 readCommand :: CLI Command
 readCommand = fetchCurTaskId >>= \taskId ->
               doFullParse getLineI (stop (parseCommand taskId))
-                  
+
 getLineI :: CLI String
 getLineI = fetchInputFile >>= \ils ->
            case ils of
@@ -274,22 +274,22 @@ getLineI = fetchInputFile >>= \ils ->
 -- doFullParse scans and parses a string, given a parser
 -- the input string is also returned
 -- doFullParse :: Parse a -> CLI a
-doFullParse getLine pars = 
+doFullParse getLine pars =
   scanLines [] 1 >>= \ts ->
   fetchSyn >>= \si ->
   fmap fst (performS (PARSES (si,ts)) pars)
 
 -- scanLines ln  scans lines, starting with line number ln
 scanLines :: Tokens -> Int -> CLI Tokens
-scanLines oldToks ln= 
+scanLines oldToks ln=
       getLineI >>= \s->
       scanLine s ln >>= \toks ->
       let allToks = oldToks ++ toks in
       if length toks == 1 || isInputComplete allToks then
          return allToks
-      else                                 
+      else
          -- read another line
-         putSt ". " >>                          
+         putSt ". " >>
          -- init is necessary to cut off the Eoln token
          scanLines (init allToks) (ln+1)
 
@@ -309,7 +309,7 @@ commandToString _ = "C: Other command"
 -- These functions print some requested information on the screen
 
 cShow  :: TaskId -> GoalNr -> CLI ()
-cShow taskId n = 
+cShow taskId n =
           if taskId == noTask then
              errNotInMainMode
           else
@@ -322,13 +322,13 @@ cShow taskId n =
           putLines (printGoalsSt si n toProve) >>
           putLn
 
-cHistory taskId = if taskId == noTask then 
+cHistory taskId = if taskId == noTask then
                     errNotInMainMode
                  else
                  mToCLI (fetchTacPaths taskId) >>= \tacPaths ->
                  mToCLI (fetchTacticTree taskId) >>= \tacTree ->
                  fetchSyn >>= \si ->
-                 putLines (showNumHistory si (tacPaths,tacTree))         
+                 putLines (showNumHistory si (tacPaths,tacTree))
 
 
 cGiveTasks :: CLI ()
@@ -354,17 +354,17 @@ cGiveOptions = fetchSyn >>= \si ->
                         commas (fmap printOpt listOptions))
 
 cGiveContext :: OutputMode -> ConPart -> [Sort] -> ConToFile -> CLI ()
-cGiveContext OutFrank part sl toFile = 
+cGiveContext OutFrank part sl toFile =
     makeFrankPart part >>= \lines ->
     putStream toFile lines
 -- entire module then never write to screen, but use module name instead
-cGiveContext OutJava part@(ConModule m) sl ConToScreen = 
+cGiveContext OutJava part@(ConModule m) sl ConToScreen =
     makeJavaPart part sl >>= \lines ->
     putStream (ConToFile (m++".yct")) lines
-cGiveContext OutJava part sl toFile = 
+cGiveContext OutJava part sl toFile =
     makeJavaPart part sl >>= \lines ->
     putStream toFile lines
-cGiveContext outputMode part sl toFile = 
+cGiveContext outputMode part sl toFile =
     let latex = case outputMode of
                 OutLatex -> True
                 otherwise -> False in
@@ -379,17 +379,17 @@ putStream toFile lines =
 
 cSize :: CLI ()
 cSize = fetchCon >>= \c ->
-        let l = globConToList c 
+        let l = globConToList c
             sizeCE (_,((t,_),_,ts)) = sum (fmap size' (t:ts))
             size' t = let s = size t in
                       if s>=0 then s else s
             size (Basic _) = 1
-            size (Nonb _ ts) = sum (fmap size' ts) 
+            size (Nonb _ ts) = sum (fmap size' ts)
             size (Bind _ ts (_,t,_) b) = sum (fmap size' (t:b:ts)) in
         putLine ("Number of items: " ++ show (length l)) >>
         putLine ("Total size (number of variables and sorts in all terms): " ++
                  show (sum (fmap sizeCE l)))
-        
+
 
 -- cPrintVar  prints the declaration/definition of var
 cPrintVar :: TaskId -> Vari -> CLI ()
@@ -428,7 +428,7 @@ cGiveTypingSystem = fetchSyn >>= \si ->
                                "  Rules:  " ++ l3] ++
                               if not (null l4) then
                               ["  Subtyping sorts:  " ++ l4,
-                               "  Subtyping rules:  " ++ l5] 
+                               "  Subtyping rules:  " ++ l5]
                               else [])
 
 -- handling the path
@@ -438,12 +438,12 @@ putPaths = fetchPaths >>= \path ->
                      fmap (\n -> "\""++n++"\"") path)
 
 addPath :: String -> CLI ()
-addPath path = fetchPaths >>= \paths -> 
+addPath path = fetchPaths >>= \paths ->
                let stPath = standardPathName path in
                if stPath `elem` paths then
                   skip
                else
-                  setNewPath stPath                                     
+                  setNewPath stPath
 
 cSetTask :: Vari -> CLI ()
 cSetTask v =
@@ -451,7 +451,7 @@ cSetTask v =
            let nameTasks = fmap (fst3.fst4) tasks in
            if v `notElemC` nameTasks then
               genErrS ("There is no task "++v)
-           else         
+           else
            setCurTaskId v >>
            mToCLI (makeToProve v) >>= \toProve ->
            mToCLI fetchSyn >>= \si ->
@@ -462,7 +462,7 @@ cSetTask v =
 -- Help --
 ----------
 
--- Help is offered in two forms. 
+-- Help is offered in two forms.
 -- 1. If help for a specific command is asked, genHelpOn is invoked.
 --    It reads the help-text for that command from file.
 --
@@ -477,16 +477,16 @@ cHelp = mToCLI fetchTasks >>= \(_,tasks) ->
         cHelpOn (if null tasks then "main-mode" else "prove-mode")
 
 cHelpOn :: String -> CLI ()
-cHelpOn key = 
+cHelpOn key =
     fetchYarrowDir >>= \yarrowDir ->
     handleS (readFil (fileHelp yarrowDir (toLowers key)))
     (\e -> putLine ("No help on "++key))
-    (\contents -> putSt (format displayString lineLength 
+    (\contents -> putSt (format displayString lineLength
                                 (parseFancy contents)))
-     
+
 lineLength :: Int
-lineLength = 70                     
-   
+lineLength = 70
+
 --------------------
 -- OTHER COMMANDS --
 --------------------
@@ -496,7 +496,7 @@ cSetOptions (s,b) = findOption s >>= \d ->
                     fetchSyn >>= \si ->
                     return (setOptGen si d b)
 
-                  
+
 findOption :: String -> CLI CodeOption
 findOption s = let (found,res) = findAL listOptions s in
                if not found then
@@ -523,17 +523,17 @@ readFilFromPath f = fetchSyn >>= \si ->
                         read [] = genErrS ("Can't find \""++f++"\" on path")
                         read (path:paths) = handleS (readFil (path++dirSep++f))
                                             -- on error, try next path
-                                            (\e -> read paths)        
+                                            (\e -> read paths)
                                             -- OK! Then return result
                                             return in
                     read paths
 
 cSaveModule :: ModuleName -> CLI ()
-cSaveModule modName = 
+cSaveModule modName =
   let modName' = removeExt modName yarrowCodeExt in
   doQueryC (QSaveModule modName') >>= \res ->
   case res of
-  RTrySaveThis contents status -> 
+  RTrySaveThis contents status ->
                    writeFil (makeModuleName modName') contents >>
                    doQueryC (QSaveCompleted status) >>= \res ->
                    fetchSyn >>= \si ->
@@ -541,22 +541,22 @@ cSaveModule modName =
   RError s -> genErr s
 
 cLoadModule :: ModuleName -> CLI ()
-cLoadModule modName = 
+cLoadModule modName =
   let modName' = removeExt modName yarrowCodeExt in
   handleS (cLoadModuleRec modName')
   (\e -> putModules >> err e)
   (\_ -> putModules)
 
 cLoadModuleRec :: ModuleName -> CLI ()
-cLoadModuleRec modName = 
-  readFilFromPath (makeModuleName modName) >>= \contents -> 
+cLoadModuleRec modName =
+  readFilFromPath (makeModuleName modName) >>= \contents ->
   cLoadModuleRec2 (QLoadModuleInput modName contents)
 
 cLoadModuleRec2 :: Query -> CLI ()
 cLoadModuleRec2 query =
   doQueryC query >>= \res ->
   case res of
-  RDone -> skip             
+  RDone -> skip
   RLoadMessage mess status -> putLine ("["++mess++"]") >>
                               cLoadModuleRec2 (QContinueLoad status)
   RModulesAre _ -> skip
@@ -593,13 +593,13 @@ handleResult si (RGlobConIs con) = makePart False ConAll [] >>=
                                    -- we read the context directly from state
 handleResult si (RGlobConExt con) = putContext si con
 handleResult si (RModuleContentsIs con) = putContext si con
-handleResult si (RTactic subst toProve) = 
+handleResult si (RTactic subst toProve) =
                                     putMaybeSubst subst >>
                                     putLines (printGoalsSt si 1 toProve) >>
                                     putLn
 handleResult si (RTaskIs toProve)= putLines (printGoalsSt si 1 toProve) >>
                                       putLn
-handleResult si (RProofTaskId taskId toProve) = 
+handleResult si (RProofTaskId taskId toProve) =
                                     setCurTaskId taskId >>
                                     putLines (printGoalsSt si 1 toProve) >>
                                     putLn
@@ -615,7 +615,7 @@ handleResult si (RSyntaxInfoIs _) = skip
 handleResult si (RUseForIs lemmas) = rUseForIs lemmas
 handleResult _ _ = putSt "Can't handle this Result\n"
 
-rExit con (v,t,his,exitMode) = 
+rExit con (v,t,his,exitMode) =
                    fetchSyn >>= \si ->
                    putLine ("Prove " ++ printVarSt si v ++ " : " ++
                             printTermSt si t) >>
@@ -633,7 +633,7 @@ putModules :: CLI ()
 putModules = mToCLI showModules >>= putLines
 
 makePart :: Bool -> ConPart -> [Sort] -> CLI [String]
-makePart latex ConAll sl = 
+makePart latex ConAll sl =
              fetchCon >>= \c ->
              fetchSyn >>= \si ->
              mToCLI showListModules >>= \modsText ->
@@ -643,13 +643,13 @@ makePart latex ConAll sl =
                                    (globConToList c) in
              putCon si latex sl partC >>= \conText ->
              return (modsText ++ conText)
-makePart latex (ConModule m) sl = 
+makePart latex (ConModule m) sl =
              fetchSyn >>= \si ->
              doQueryC (QGiveModuleContents m) >>= \r ->
              case r of
              RModuleContentsIs con -> putCon si latex sl con
              RError mess -> err mess
-makePart latex (ConRange (v1,v2)) sl = 
+makePart latex (ConRange (v1,v2)) sl =
              fetchCon >>= \c ->
              fetchSyn >>= \si ->
              let partC = takeUntil (\it-> v1 == domConE it)
@@ -680,7 +680,7 @@ makeJavaPart (ConModule m) sl =
              doQueryC (QGiveModuleContents m) >>= \r ->
              case r of
              RError mess -> err mess
-             RModuleContentsIs con -> 
+             RModuleContentsIs con ->
                  putJavaContext (m++dirSep) si (globToTot c) (`elem` sl) (reverse con)
 
 makeJavaPart ConAll sl =
@@ -734,7 +734,7 @@ putJavaContextE dir si con pDef ce | isDef ce =
 
 putJavaContext :: String -> SyntaxInfo -> Context -> (Sort -> Bool) ->
                      [ContextE] -> CLI [String]
-putJavaContext dir si con pDef c = mapL (putJavaContextE dir si con pDef) 
+putJavaContext dir si con pDef c = mapL (putJavaContextE dir si con pDef)
                                        c >>= \ss ->
                                   return (["("] ++ ss ++ [")"])
 {-
@@ -749,7 +749,7 @@ Exit
 javacontext A .. bla : #p On "test.yct"
 -}
 
-makeFrankPart (ConRange (v1,v2)) = 
+makeFrankPart (ConRange (v1,v2)) =
              fetchCon >>= \c ->
              fetchSyn >>= \si ->
              let partC = takeUntil (\it-> v1 == domConE it)
@@ -794,7 +794,7 @@ putFrankCE si c ce | isDecl ce =
         return ("(decl "++v++","++st ++ "," ++ sortToIdent s ++ ")")
 
 --putFrankTerm si (printEverType,printNowType) c t
-putFrankTerm si (_,True) c t = 
+putFrankTerm si (_,True) c t =
       putFrankTerm si (True,False) c t >>= \st ->
       getType c t >>= \(typ,s) ->
       putFrankTerm si (False,False) c typ >>= \styp ->
@@ -816,21 +816,21 @@ putFrankTerm si (pET,False) c t | isArrow t =
       putFrankTerm si (pET,pET) c t2 >>= \st2->
       return ("(arrow "++ st1 ++ " " ++ st2 ++ ")")
 putFrankTerm si (pET,False) c t | isAbs t =
-      let (_,(v,t1,s),t2) = deconstructAbs t 
+      let (_,(v,t1,s),t2) = deconstructAbs t
           c' = addC (mkDecl (v,t1,s)) c in
       putFrankTerm si (False,False) c t1 >>= \st1 ->
       putFrankTerm si (pET,pET) c' t2 >>= \st2 ->
       return ("(lambda "++ v ++ "," ++ st1 ++ "," ++ sortToIdent s ++
               "," ++ st2 ++ ")")
 putFrankTerm si (pET,False) c t | isAll t =
-      let (_,(v,t1,s),t2) = deconstructAll t 
+      let (_,(v,t1,s),t2) = deconstructAll t
           c' = addC (mkDecl (v,t1,s)) c in
       putFrankTerm si (False,False) c t1 >>= \st1 ->
       putFrankTerm si (pET,pET) c' t2 >>= \st2 ->
       return ("(pi "++ v ++ "," ++ st1 ++ "," ++ sortToIdent s ++
               "," ++ st2 ++ ")")
 putFrankTerm si (pET,False) c t | isDelta t =
-      let (_,(v,d1,t1,s),t2) = deconstructDelta t 
+      let (_,(v,d1,t1,s),t2) = deconstructDelta t
           c' = addC (mkDef (v,d1,t1,s)) c in
       putFrankTerm si (pET,pET) c d1 >>= \sd1 ->
       putFrankTerm si (False,False) c t1 >>= \st1 ->
@@ -840,18 +840,18 @@ putFrankTerm si (pET,False) c t | isDelta t =
 putFrankTerm si _ _ _ = genErrS "Unexpected term construct in putFrankTerm"
 
 
-                                 
 
---finalHandleError mess 
+
+--finalHandleError mess
 
 
 putContext :: SyntaxInfo -> [ContextE] -> CLI ()
-putContext si con = 
+putContext si con =
     putCon si False [] con >>=
     putLines
 
 putCon :: SyntaxInfo -> Bool -> [Sort] -> [ContextE] -> CLI [String]
-putCon si latex whichSorts con = 
+putCon si latex whichSorts con =
     let sortsSel = (`elem` whichSorts) in
     if latex then
        fetchCon >>= \c ->
@@ -865,8 +865,8 @@ putReductionPath si redSeq =
             if showPath then
                putLines (fmap (printTermSt si) redSeq)
             else
-               let (count,nf) = lengthLast redSeq in 
-               putSt (printTermSt si nf ++"\n"++ 
+               let (count,nf) = lengthLast redSeq in
+               putSt (printTermSt si nf ++"\n"++
                                     show (count-1) ++ " reductions.\n")
 
 -- lengthLast xs = (length xs, last xs)
@@ -892,11 +892,11 @@ putMaybeSubst subst = fetchOptShowProofterm >>= \spt ->
                       else
                          skip
 
- 
+
 putSubst :: (Hnum,Term) -> CLI ()
 putSubst subst = fetchSyn >>= \si ->
                  putLine (printHoleSubstSt si subst)
- 
+
 
 rUseForIs :: [(String,Vari,Vari)] -> CLI ()
 rUseForIs lemmas =
@@ -904,8 +904,8 @@ rUseForIs lemmas =
              (("tactic","connective","lemma") : niceTable3 lemmas)
 
 niceTable3 :: [(String,String,String)] -> [(String,String,String)]
-niceTable3 table = 
-       let display (a,b,c) (olda,oldb,oldc) = if a == olda then 
+niceTable3 table =
+       let display (a,b,c) (olda,oldb,oldc) = if a == olda then
                                                  if b == oldb then
                                                     ("","",c)
                                                  else
@@ -913,11 +913,11 @@ niceTable3 table =
                                               else
                                                  (a,b,c) in
        zipWith display table (("","","") : table)
-          
+
 putTable3 :: String -> String -> (Align,Align,Align) ->
              [(String,String,String)] -> CLI ()
 putTable3 sep1 sep2 als table = putLines (showTable3 sep1 sep2 als table)
-  
+
 
 ---------------------------------------
 -- P R I N T I N G   R O U T I N E S --
@@ -928,13 +928,13 @@ printContextSt = printContext displayString
 
 -- printFullGoalSt print a goal with its local context
 printFullGoalSt :: SyntaxInfo -> (Hnum,Goal) -> [String]
-printFullGoalSt si (n,(term,locCon,gi)) =  
-    let locConL = locConToList locCon 
+printFullGoalSt si (n,(term,locCon,gi)) =
+    let locConL = locConToList locCon
         shownLocCon = fmap fst (filter (((==) True).snd) (zip locConL gi)) in
     -- const True means "print all definitions in full"
     printContextSt si (const True) shownLocCon ++
     [take 50 (repeat '-')] ++
-    [printGoalSt si goalPath (n,(term,locCon,gi))]    
+    [printGoalSt si goalPath (n,(term,locCon,gi))]
 
 goalPath = ("",[])
 
@@ -963,14 +963,14 @@ printGoalsSt0 si n gs = let len = length gs in
                             restGs
 
 printHoleSubstSt :: SyntaxInfo -> (Hnum,Term) -> String
-printHoleSubstSt si (hnum,term) = 
+printHoleSubstSt si (hnum,term) =
          printHnumSt si hnum ++ " := " ++ printTermSt si term
 
 
 -- print two terms and a sort (see above)
 printTermESSt :: SyntaxInfo -> (Term,Term,Sort) -> String
-printTermESSt si (t,u,v) = printTermSt si t ++ " : " ++ 
-                           printTermSSt si (u,v)  
+printTermESSt si (t,u,v) = printTermSt si t ++ " : " ++
+                           printTermSSt si (u,v)
 
 printTermSSt si =  printTermS displayString si dummyVar
 
@@ -979,7 +979,7 @@ showSubsts si [] = "No substitutions found"
 showSubsts si [s] = showSubst si s
 
 showSubst :: SyntaxInfo -> Subst -> String
-showSubst si s = 
+showSubst si s =
          "<"++ commas (fmap (\(v,t) -> v++":="++printTermSt si t) s) ++">"
 
 ------------------
@@ -997,7 +997,7 @@ cZwerver (t1',t2') = genErrS "Not implemented"
     maplComs (putRes si) (combine si con type1 (t2,type2))
 
 putRes :: SyntaxInfo -> (LContext,Term,Subst) -> CLI ()
-putRes si (lCon,term,sigma) = 
+putRes si (lCon,term,sigma) =
       putLine "Exis. context" >>
       putLines (printContext displayString si True (indexedToList lCon)) >>
       putLine "Rest" >>
@@ -1020,16 +1020,16 @@ cZwerver t = let ts = unwindAppITs t in
                           putLine (printTermSt si typ))
 
 unwindAppITs :: TermIT -> [TermIT]
-unwindAppITs t = unwindAppITs' t []     
+unwindAppITs t = unwindAppITs' t []
 
-unwindAppITs' :: TermIT -> [TermIT] -> [TermIT]                    
+unwindAppITs' :: TermIT -> [TermIT] -> [TermIT]
 unwindAppITs' t l = let (isApp,t1,t2) = deconstructAppIT t in
                     if isApp then
                        unwindAppITs' t1 (t2:l)
                     else
                        t:l
 
-deconstructAppIT (t,IT _ its) | isApp t = 
+deconstructAppIT (t,IT _ its) | isApp t =
                 let (_,t1,t2) = deconstructApp t
                     [it1,it2] = its in
                 (True,(t1,it1),(t2,it2))
@@ -1038,7 +1038,7 @@ deconstructAppIT _ = (False,dummyTermIT,dummyTermIT)
 -- Pre: argument not empty list
 zetHaakjes :: [(Term,Term)] -> E (Term,Term)
 zetHaakjes [(t,typ)] = return (t,typ)
-zetHaakjes ((t,typ):l) | isArrow typ = 
+zetHaakjes ((t,typ):l) | isArrow typ =
             let (_,dom,cod) = deconstructArrow typ in
             zetHaakjes' l dom >>= \(u,l') ->
             zetHaakjes ((t `mkApp` u,cod):l')
@@ -1052,7 +1052,7 @@ zetHaakjes' ((t,typ):l) goal | isArrow typ =
             let (_,dom,cod) = deconstructArrow typ in
             zetHaakjes' l dom >>= \(u,l') ->
             zetHaakjes' ((t `mkApp` u,cod):l') goal
-zetHaakjes' _ _ = genErrS "Lukt niet 3"         
+zetHaakjes' _ _ = genErrS "Lukt niet 3"
 
 {- OLD:
 cZwerver :: Path -> CLI ()
@@ -1064,14 +1064,14 @@ cZwerver p = mToCLI fetchSyn >>= \si ->
 
 findConE :: SyntaxInfo -> GContext -> ContextE -> TermPath -> CLI String
 findConE si con _ [] = pathError
-findConE si con (v,((t,s),_,ts)) (p:ps) | isPathConVar p = 
+findConE si con (v,((t,s),_,ts)) (p:ps) | isPathConVar p =
                     return ("Variabele decl. / def. " ++ v)
-findConE si con (v,((t,s),_,ts)) (p:ps) | isPathConTyp p = 
+findConE si con (v,((t,s),_,ts)) (p:ps) | isPathConTyp p =
                     findSubterm (domGCon con) t ps >>= \(t',subCon) ->
                     return ("In typ van " ++ v ++ " " ++ printTermSt si t')
-findConE si con (v,((t,s),_,ts)) (p:ps) | isPathConSort p = 
+findConE si con (v,((t,s),_,ts)) (p:ps) | isPathConSort p =
                     return ("Soort van " ++ v ++ " "++ printSortSt si s)
-findConE si con (v,((t,s),_,ts)) (p:ps) | isPathConOther p = 
+findConE si con (v,((t,s),_,ts)) (p:ps) | isPathConOther p =
                     let (_,idx) = deconPathConOther p in
                     if idx >= length ts then
                        pathError

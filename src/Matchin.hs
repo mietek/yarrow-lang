@@ -2,9 +2,9 @@
 -- Description: This module contains the basic definitions for substitution
 --              and the matching routine.
 
-module Matchin(Subst, emptySubst,  dummySubst, domSubst, 
+module Matchin(Subst, emptySubst,  dummySubst, domSubst,
                applySubst, applyConSubst, applyLConSubst,
-               defVar, defVar', 
+               defVar, defVar',
                MatchOptions,
                alwaysUnfold, neverUnfold, onlyPatternUnfold, onlyTermUnfold,
                mayUnfoldPattern, mayUnfoldTerm,
@@ -24,21 +24,21 @@ import Typing
 --------------------------------
 
 -- list of variables that may be substituted
-type VarList = [Vari]                      
+type VarList = [Vari]
 
 -- substitution is an association list
 type Subst = [(Vari,Term)]
 
-emptySubst :: Subst               
+emptySubst :: Subst
 emptySubst = []
-              
+
 dummySubst = []
 
 -- domSubst delivers the variables defined in a substitution
 domSubst :: Subst -> [Vari]
-domSubst = fmap fst            
+domSubst = fmap fst
 
--- applySubst applies a substitution to a term                             
+-- applySubst applies a substitution to a term
 applySubst :: Subst -> Term -> Term
 applySubst [] t = t
 applySubst ((v,sub):sigmas) t = applySubst sigmas (subst t v sub)
@@ -53,18 +53,18 @@ applyLConSubst :: Subst -> LContext -> LContext
 applyLConSubst sigma = mapI (applyConESubst sigma)
 
 applyConESubst :: Subst -> ContextERest -> ContextERest
-applyConESubst sigma ((typ,sort),cat,ts) = 
+applyConESubst sigma ((typ,sort),cat,ts) =
               ((applySubst sigma typ,sort),cat,fmap (applySubst sigma) ts)
 
 
 -- defVar delivers the definition of a variable in a substitution
 defVar :: Vari -> Subst -> [Term]
 defVar v sigma = fmap snd (filter ((v==) . fst) sigma)
-                  
+
 -- !!! Kun je defVar nu niet weglaten?
 defVar' :: Vari -> Subst -> (Bool,Term)
 defVar' v sigma = let ts = defVar v sigma in
-                  if null ts then 
+                  if null ts then
                      (False, undefined)
                   else
                      (True, head ts)
@@ -76,7 +76,7 @@ defVar' v sigma = let ts = defVar v sigma in
 
 -- We have a slight extension of first order matching.
 -- First order matching means the routine doesn't know
--- anything about beta or delta reduction. 
+-- anything about beta or delta reduction.
 -- There are three extensions:
 -- - beta-delta equal terms are matched
 -- - definitions are unfolded under some circumstances
@@ -85,7 +85,7 @@ defVar' v sigma = let ts = defVar v sigma in
 --   This is called lambda-patterns.
 -- This matching routine delivers at most one substitution.
 --
--- match con exVars p t 
+-- match con exVars p t
 --     Pre: con\exVars |- t : T
 --          con |- p : P
 --     Post: s in (match con p t) ->
@@ -93,7 +93,7 @@ defVar' v sigma = let ts = defVar v sigma in
 --           2) s(con) |- s(p) : s(P)
 --           3) s(con) |- s(P) <: T
 --           By 2 and 3 s(con) |- s(p) : T
-                                                          
+
 
 type MatchOptions = (Bool,Bool)
 --                    ^    ^
@@ -128,18 +128,18 @@ onlyTermUnfold = (False,True)
 -- The variable p (pattern) is the term in which these existential
 -- variables may occur. The variable t holds the term to which p has to be
 -- matched.
-   
--- ghc does not handle the type annotation of match, lambdaPat and 
---   matches correctly, so we omit the type annotation.               
+
+-- ghc does not handle the type annotation of match, lambdaPat and
+--   matches correctly, so we omit the type annotation.
 {-
 match :: Collection c =>
        MatchOptions -> SyntaxInfo -> (Context, c Vari, Term, Term) -> [Subst]
 -}
 
 -- Precondition: con should be of form
-match options si prob = 
+match options si prob =
                         {- -- FOR TRACES
-                        let (con, exVars, p, t) = prob 
+                        let (con, exVars, p, t) = prob
                             prT t = printTerm displayString si dummyPath t in
                            trace ("Matching: "++
                                  --prCon si (conToList (fst con)) ++ "|- " ++
@@ -167,7 +167,7 @@ match'' options si (con, exVars, Nonb pcat pts, t) | neverRedexNonb pcat =
              (zipWith (\ptsn ttsn -> (con, exVars, ptsn,ttsn)) pts tts)
 
 -- Pattern is a binder that can't be a redex (so not a local definition)
-match'' options si (con, exVars, Bind pcat pts pi@(pv0,pt,ps) pu0, t) 
+match'' options si (con, exVars, Bind pcat pts pi@(pv0,pt,ps) pu0, t)
      | neverRedexBind pcat =
      let (isBind,tcat,tts,(tv0,tt,ts),tu0) = deconstructBind (bdwhnf con t)
          -- force both the variables in p and t to the same (fresh) name
@@ -177,13 +177,13 @@ match'' options si (con, exVars, Bind pcat pts pi@(pv0,pt,ps) pu0, t)
     if not (isBind && pcat == tcat) then
        []
     else
-    matches options si  
+    matches options si
              ([(con, exVars, pt,tt)] ++
               zipWith (\ptsn ttsn -> (con, exVars, ptsn,ttsn)) pts tts ++
               [(conPlusV,exVars,pu,tu)])
 
 -- pattern is existential variable
-match'' options si (con, exVars, p, t) 
+match'' options si (con, exVars, p, t)
     | isVar p && (snd (deconstructVar p)) `elemC` exVars=
     let (_,v) = deconstructVar p in
     -- check t is well-defined in v's context !
@@ -211,15 +211,15 @@ match'' options si (con, exVars, p, t)
         (matchSuper alwaysUnfold si) (con, exVars, pType, tType)
        )
 
-match'' options si (con, exVars, p, t) 
+match'' options si (con, exVars, p, t)
     | mayUnfoldTerm options && bdEqual con p t = [[]]
-                                  
+
 -- Now handle all the cases where pattern is a construction that may be
 -- a redex. First we handle some special cases, then we proceed with the
 -- rest.
 
 -- Special case: pattern is a local definition
-match'' options si (con, exVars, p, t) | isDelta p = 
+match'' options si (con, exVars, p, t) | isDelta p =
     let (_,it,pu) = deconstructDelta (changeVar p (domCon con)) in
     match options si (mkDef it `addC` con, exVars, pu, t)
 
@@ -232,11 +232,11 @@ match'' options si prob@(con, exVars, Basic pcat, t)
        [[]]
     else
        despair options si prob
-                                
 
-match'' options si prob@(con, exVars, Nonb pcat pts, t) 
+
+match'' options si prob@(con, exVars, Nonb pcat pts, t)
     {- | maybeRedexNonb pcat -} =
-    let (isNonb,tcat,tts) = deconstructNonb t 
+    let (isNonb,tcat,tts) = deconstructNonb t
         ss = matches options si
                (zipWith (\ptsn ttsn -> (con, exVars, ptsn,ttsn)) pts tts) in
     if isNonb && pcat == tcat && not (null ss) then
@@ -247,14 +247,14 @@ match'' options si prob@(con, exVars, Nonb pcat pts, t)
           lambdaPat options si prob
        else
        despair options si prob
-                                
+
 -- This case is never used at the moment.
-match'' options si prob@(con, exVars, Bind pcat pts pi@(pv0,pt,ps) pu0, t) 
+match'' options si prob@(con, exVars, Bind pcat pts pi@(pv0,pt,ps) pu0, t)
      {- | maybeRedexBind pcat -} =
      let (isBind,tcat,tts,(tv0,tt,ts),tu0) = deconstructBind (bdwhnf con t)
          -- force both the variables in p and t to the same (fresh) name
          (v,pu,tu) = equateVarsBinders (domCon con) (pv0,pu0) (tv0,tu0)
-         conPlusV = mkDecl (v,tt,ts) `addC` con 
+         conPlusV = mkDecl (v,tt,ts) `addC` con
          ss = matches options si
                  ([(con, exVars, pt, tt)] ++
                   zipWith (\ptsn ttsn -> (con, exVars, ptsn,ttsn)) pts tts ++
@@ -263,7 +263,7 @@ match'' options si prob@(con, exVars, Bind pcat pts pi@(pv0,pt,ps) pu0, t)
        ss
     else
        despair options si prob
-    
+
 
 
 
@@ -272,12 +272,12 @@ match'' options si prob@(con, exVars, Bind pcat pts pi@(pv0,pt,ps) pu0, t)
 -- if p == x x1 .. xn where x existential then it makes a lambda pattern, i.e.
 --       it matches x with \x1,..xn. t
 -- if that doesn't work, matching despairs.
-{- ghc does not handle the type annotation of match, lambdaPat and 
+{- ghc does not handle the type annotation of match, lambdaPat and
    matches correctly, so we omit the type annotation.
 lambdaPat :: Collection c =>
              SyntaxInfo -> (Context, c Vari, Term, Term) -> [Subst]
 -}
-lambdaPat options si (con, exVars, p, t) = 
+lambdaPat options si (con, exVars, p, t) =
     let ts = unwindApps2 p
         ok1 = all isVar ts
         ok2 = length ts > 1
@@ -298,13 +298,13 @@ lambdaPat options si (con, exVars, p, t) =
       despair options si (con, exVars, p, t)
 
 -- unwindApps2 (t1 t2 t3 .. tn) = [tn,..,t3,t2,t1]
-unwindApps2 :: Term -> [Term]                    
+unwindApps2 :: Term -> [Term]
 unwindApps2 t | isApp t = let (_,t1,t2) = deconstructApp t in
                           t2 : unwindApps2 t1
 unwindApps2 t = [t]
 
 {- OLD VERSION:
-lambdaPat options si (con, exVars, p, t) = 
+lambdaPat options si (con, exVars, p, t) =
       let (pApp,pt,pu) = deconstructApp p
           (puVar,v) = deconstructVar pu
           -- ptOk limits pt to the form x x1 .. xn where x existential.
@@ -315,13 +315,13 @@ lambdaPat options si (con, exVars, p, t) =
                      ok2 = x `elemC` exVars
                      ok3 = all isVar sptT in
                  ok1 && ok2 && ok3
-          (_,(vt,vs)) = findTypeSort con v 
-          (tType,tSort) = admitNoErr si (inferType si con t) 
+          (_,(vt,vs)) = findTypeSort con v
+          (tType,tSort) = admitNoErr si (inferType si con t)
           (absOk,_) = rule12 si vs tSort in
       if pApp && puVar && v `notElemC` exVars && ptOk && absOk then
          -- abstract over v
-         match' options si (con, exVars, pt, mkAbs (v,vt,vs) t) 
-      else 
+         match' options si (con, exVars, pt, mkAbs (v,vt,vs) t)
+      else
       despair options si (con, exVars, p, t)
 -}
 
@@ -345,7 +345,7 @@ despair options si (con, exVars, p, t) =
                []
          else
             []
-    
+
 -- matchSuper p t tries to find a substitution s such that t < s(p)
 -- Note that now the first argument is the term (instead of the pattern)
 -- at the moment we have a very naive implementation
@@ -359,13 +359,13 @@ matchSuper options si (con, exVars, p, t) =
 matchSupers options si [] = [[]]
 matchSupers options si (prob:ps) =
     combineMatches (matchSuper options si prob) (matchSupers options si) ps
-{- 
+{-
       let substs = matchSuper' options si prob
           subst = head substs
           ps' = fmap (applyProbSubst subst) ps in
       if null substs then
          []
-      else                 
+      else
       fmap (subst++) (matchSupers options si ps')
 -}
 
@@ -374,13 +374,13 @@ matchSupers options si (prob:ps) =
 -- tries first to solve the first problem of the list, which may help solve
 -- following problems and so on.
 -- This routine uses the fact that match delivers at most one substitution
-{- ghc does not handle the type annotation of match, lambdaPat and 
+{- ghc does not handle the type annotation of match, lambdaPat and
    matches correctly, so we omit the type annotation.
 matches :: Collection c =>
            SyntaxInfo -> [(Context,c Vari,Term,Term)] -> [Subst]
 -}
 matches options si [] = [[]]
-matches options si (prob:ps) = 
+matches options si (prob:ps) =
     combineMatches (match options si prob) (matches options si) ps
 {-
       let substs = match options si prob
@@ -388,48 +388,48 @@ matches options si (prob:ps) =
           ps' = fmap (applyProbSubst subst) ps in
       if null substs then
          []
-      else                 
+      else
       fmap (subst++) (matches options si ps')
 -}
-              
+
 -- apply a substitution to a problem
 applyProbSubst :: Collection c =>
-                  Subst -> (Context,c Vari,Term,Term) -> 
+                  Subst -> (Context,c Vari,Term,Term) ->
                   (Context,c Vari,Term,Term)
-applyProbSubst subst (c,e,p,t) = 
+applyProbSubst subst (c,e,p,t) =
          -- or exVars without the variables determined by subst
      (applyConSubst subst c, e, applySubst subst p,t)
 
 -- combine the substitutions found for one matching problem with a second
 -- matching problem
 combineMatch :: Collection c =>
-                [Subst] -> ((Context,c Vari,Term,Term) -> [Subst]) -> 
+                [Subst] -> ((Context,c Vari,Term,Term) -> [Subst]) ->
                 (Context,c Vari,Term,Term) -> [Subst]
 combineMatch [] match prob = []
-combineMatch [subst] match prob = 
+combineMatch [subst] match prob =
     fmap (subst ++) (match (applyProbSubst subst prob))
 
 combineMatches:: Collection c =>
-                 [Subst] -> ([(Context,c Vari,Term,Term)] -> [Subst]) -> 
+                 [Subst] -> ([(Context,c Vari,Term,Term)] -> [Subst]) ->
                  [(Context,c Vari,Term,Term)] -> [Subst]
 combineMatches [] match probs = []
-combineMatches [subst] match probs = 
+combineMatches [subst] match probs =
     fmap (subst ++) (match (fmap (applyProbSubst subst) probs))
 
 
-            
-       
-         
+
+
+
 -- notFound exVars subst  delivers all variables of exVars for which no
 --                        substitution is found
 notFound :: [Vari] -> Subst -> [Vari]
 notFound exVars subst =  exVars \\ domSubst subst
-            
+
 
 definedBefore :: LContext -> Vari -> Term -> Bool
 definedBefore con v t = let vcon' = con `afterVar` v
                             fvt = fv t in
-                        not (any (`elemC` fvt) vcon') 
+                        not (any (`elemC` fvt) vcon')
 
 afterVar :: LContext -> Vari -> [Vari]
 afterVar con v =  fmap fst (fst (breakIL (==v) con))

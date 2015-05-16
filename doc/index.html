@@ -11,28 +11,28 @@ system. In contrast to a
 <EM>theorem prover</EM>, a proof-assistant cannot find proofs on its own.
 
 <P>
-Yarrow is a proof-assistant for <EM>Pure Type Systems</EM> 
+Yarrow is a proof-assistant for <EM>Pure Type Systems</EM>
 (PTSs) with several extensions.
-A PTS is a particular kind of logical system, defined in 
+A PTS is a particular kind of logical system, defined in
 <A HREF="#Bar92">[Bar92]</A>. In Yarrow you can experiment with various
 pure type systems, representing different logics and programming languages.
-A basic knowledge of Pure Type Systems and the Curry-Howard-de Bruijn 
+A basic knowledge of Pure Type Systems and the Curry-Howard-de Bruijn
 isomorphism is required. (This isomorphism says how you can interpret types
 as propositions.) Experience with <A HREF="#similarassistants">similar
 proof-assistants</A> can be useful.
 
 <P>
 There are three extensions of PTSs implemented in Yarrow.
-First, we have definitions. Definitions are 
+First, we have definitions. Definitions are
 indispensable for any practical use of PTSs.
 Pure Type Systems with definitions (DPTs) are defined in
-<A HREF="#SP93">[SP93]</A>; 
-the most important property of these systems is that apart from 
+<A HREF="#SP93">[SP93]</A>;
+the most important property of these systems is that apart from
 <EM>global</EM> definitions definitions in the context, also <EM>local</EM>
 definitions within terms are admitted.
 <BR>
 Second, we have subtyping. Subtyping makes the type system more flexible.
-In particular, it can be used with records to allow formalization of 
+In particular, it can be used with records to allow formalization of
 Object-Oriented Programming to a certain degree.
 Pure Type Systems with Subtyping are defined in
 <A HREF="#Zwa99">[Zwa99]</A>.
@@ -47,11 +47,11 @@ The main features of Yarrow are:
 <LI> A particular pure type system (with subtyping) can be chosen at run-time.
 <LI> There are general tactics for proving theorems.
 <LI> Tactics for forward reasoning.
-<LI> Special rewriting tactics for the Leibniz-equality, and tactics for 
+<LI> Special rewriting tactics for the Leibniz-equality, and tactics for
      propositional and predicate logic.
 <LI> An easy-to-use system for infix notation, implicit arguments and binders.
-<LI> It is portable, because it runs on any platform on which 
-     Haskell runs. This includes 
+<LI> It is portable, because it runs on any platform on which
+     Haskell runs. This includes
      <!--PC's and --> most Unix systems.
 <LI> It has a built-in help system.
 <!-- <LI> The implementation is well documented. There is extensive
@@ -99,24 +99,24 @@ web pages and the example sessions.
     <EM>Handbook of Logic in Computer Science</EM>,
     volume 1. Oxford University Press, 1992.
 <DT><A NAME="SP93">[SP93]</A>
-<DD>Paula Severi and Erik Poll. <EM>Pure Type Systems with 
+<DD>Paula Severi and Erik Poll. <EM>Pure Type Systems with
     Definitions</EM>.
-    Computing Science Note 93/24. Eindhoven 
+    Computing Science Note 93/24. Eindhoven
     University of Technology, 1993.
 <DT><A NAME="Zwa99">[Zwa99]</A>
 <DD>Jan Zwanenburg. <A HREF="../publications/index.html">
     <EM>Object-Oriented Concepts and Proof Rules:
     Formalization in Type Theory and Implementation in Yarrow</EM></A>.
     Ph.D. thesis. Eindhoven University of Technology, 1999.
-</DL>  
+</DL>
 
 <P>
 <H3><A NAME="similarassistants">Similar proof-assistants:</A></H3>
-<UL> 
+<UL>
 <LI><A HREF="http://pauillac.inria.fr/coq/">Coq</A>
 <LI><A HREF="http://www.dcs.ed.ac.uk/home/lego">Lego</A>
 <LI><A HREF="http://www.informatik.uni-ulm.de/ki/typelab.html">Typelab</A>
-</UL>  
+</UL>
 
 </BODY>
 </HTML>

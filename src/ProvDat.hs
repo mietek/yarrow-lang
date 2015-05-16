@@ -3,7 +3,7 @@
 --              including tactics
 
 module ProvDat(GoalNr, TaskId, noTask, dummyTask,
-               Goal, GoalInfo, dummyGoal, initHnum, nextHnum, 
+               Goal, GoalInfo, dummyGoal, initHnum, nextHnum,
                TacticTree(..), TacPath, Task,
                Goals, ToProve, ExtTermTS, ExtTermIT,
                TacticTerm(..),ProverCommand(..),
@@ -26,22 +26,22 @@ type TaskId = Vari
 noTask :: TaskId
 noTask = ""
 
--- dummyTask is used only by the graphical user interface               
+-- dummyTask is used only by the graphical user interface
 dummyTask :: TaskId
 dummyTask = " "
 
 -----------------------------------------------------
 --  S T A T E   I N   T H E   P R O O F - M O D E  --
 -----------------------------------------------------
-                                     
+
 -- A goal is a type in some local context, with some additional info
-type Goal = (Term,LContext,GoalInfo)                                
-                
+type Goal = (Term,LContext,GoalInfo)
+
 -- currently, the GoalInfo is a list of booleans that says whether the
 -- corresponding element in the local context should be shown
 type GoalInfo = [Bool]
-                 
--- dummyGoal is only used by the graphical user interface  
+
+-- dummyGoal is only used by the graphical user interface
 dummyGoal :: Goal
 dummyGoal = (dummyTerm,emptyLCon,undefined)
 
@@ -50,19 +50,19 @@ dummyGoal = (dummyTerm,emptyLCon,undefined)
 -- data Hnum = N Int
 
 
-initHnum :: Hnum    
-initHnum = N 1                
+initHnum :: Hnum
+initHnum = N 1
 
 nextHnum :: Hnum->Hnum
-nextHnum (N n) = N (n+1)                
+nextHnum (N n) = N (n+1)
 
 -- All tactics that have been performed in a task are stored in a TacticTree
--- There is a direct correspondence between the 
+-- There is a direct correspondence between the
 -- Apart from the tactic itself and its sons, also the following things are
 -- stored:
 -- 1) The goal to which this tactic was applied
 -- 2) The hole-number of this goal
--- 3) The proof-term delivered by this tactic delivered, its 
+-- 3) The proof-term delivered by this tactic delivered, its
 -- An incomplete TacticTree has also holes, in which only the hole-number
 -- and the goal are stored
 data TacticTree = TTTac TacticTerm (Hnum,Goal,Term) [TacticTree] |
@@ -71,7 +71,7 @@ data TacticTree = TTTac TacticTerm (Hnum,Goal,Term) [TacticTree] |
 -- We refer to subtrees of a tacticTree with a TacPath
 type TacPath = [Int]
 
--- Finally, the additional state in the prove-mode                           
+-- Finally, the additional state in the prove-mode
 -- The item holds the name of the lemma, the lemma itself, and its type.
 -- Invariant: the tacPaths points once to each TTHole in the tacicTree
 type Task = (Item,TacticTree,[TacPath],Hnum)
@@ -92,17 +92,17 @@ type ToProve = (Term,Goals)
 type ExtTermTS = ((Term,Term,Sort),[(Term,Term,Sort)])
 
 
-                         
+
 
 
 
 -----------------------
 -- COMMAND STRUCTURE --
 -----------------------
-                    
+
 -- used to designate certain subterms in a term
 data Occurrence = NumOccurrence Int | PathOccurrence TermPath
- 
+
 data TaskExitMode = Exit | Abort
 
 showExitMode Exit = "Exit"
@@ -111,18 +111,18 @@ showExitMode Abort = "Abort"
 data TacticTerm  = TIntro | TIntroVar [Vari] | TIntros | TIntrosNum Int |
                    TAssumption |
                    TLet Vari TermIT | TLetW Vari TermIT TermIT |
-                   TSimplify | TUnfold ([Occurrence],Vari) | 
-                   TUnfoldIn ([Occurrence],Vari,Vari) | 
+                   TSimplify | TUnfold ([Occurrence],Vari) |
+                   TUnfoldIn ([Occurrence],Vari,Vari) |
                    TConvert TermIT |
                    TCut TermIT | TFirst TermIT | TForward ExtTermIT |
-                   TExact TermIT | TApply ExtTermIT | 
+                   TExact TermIT | TApply ExtTermIT |
                    TPattern ([Occurrence],TermIT) |
-                   TRewrite (Occurrence,ExtTermIT) | 
+                   TRewrite (Occurrence,ExtTermIT) |
                    TLewrite (Occurrence,ExtTermIT) |
-                   TRewriteIn (Occurrence,ExtTermIT,Vari) | 
+                   TRewriteIn (Occurrence,ExtTermIT,Vari) |
                    TLewriteIn (Occurrence,ExtTermIT,Vari) |
                    TRefl |
-                   TAndI | 
+                   TAndI |
                    TAndEL ExtTermIT | TAndER ExtTermIT | TAndE ExtTermIT |
                    TOrIL | TOrIR | TOrE ExtTermIT |
                    TNotI | TNotE ExtTermIT |
@@ -137,7 +137,6 @@ data TacticTerm  = TIntro | TIntroVar [Vari] | TIntros | TIntrosNum Int |
                    TNoParse
 
 type ExtTermIT = (TermIT,[TermIT])
-                                                              
+
 data ProverCommand = PUndo Int | PRestart | PFocus GoalNr |
                      PNoParse
-

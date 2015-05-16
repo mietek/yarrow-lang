@@ -12,18 +12,18 @@ import HaMonIO
 
 
 getEnvi :: String -> Imp s String
-getEnvi s = convertIOtoImp (getEnv s) 
+getEnvi s = convertIOtoImp (getEnv s)
                            ("environment variable "++s++" is not set")
 
-getYarrowDir :: Imp s String                  
+getYarrowDir :: Imp s String
 getYarrowDir = getEnvi "YARROW"
 
 -- the name of every helpfile is truncated to 8 characters
 fileHelp :: String -> String -> String
 fileHelp mainDir key = mainDir ++ dirSep ++ "helpdir" ++ dirSep ++ take 8 key
-                        
+
 dirSep = "/"
-extensSep = "." 
+extensSep = "."
 parentDir = ".."
 currentDir = "."
 

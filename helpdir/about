@@ -3,7 +3,7 @@
 <DL>
 <DT>Purpose: <DD>Yarrow is a proof-assistant for PTSs with definitions,
 subtyping and records.
-<DT>Authors: 
+<DT>Authors:
 <DD>Main engine: Jan Zwanenburg (email: janz@cs.kun.nl)<BR>
     Graphical user interface: Eric Raaijmakers
 <DT>Version:

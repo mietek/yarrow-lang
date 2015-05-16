@@ -28,7 +28,7 @@ Var Sim_const : @T:*s.@Y,Z:*s.@(~):Y->Z->*p.
                     Sim (\X:*s.T) Y Z (~) <===> ((=) T)
 Var Sim_arrow : @I1,I2:*s->*s.@Y,Z:*s.@(~):Y->Z->*p.
                     Sim (\X:*s. I1 X -> I2 X) Y Z (~) <===>
-                    \opsY:I1 Y -> I2 Y.\opsZ:I1 Z -> I2 Z.            
+                    \opsY:I1 Y -> I2 Y.\opsZ:I1 Z -> I2 Z.
                     (@y:I1 Y.@z:I1 Z. Sim I1 Y Z (~) y z ->
                                       Sim I2 Y Z (~) (opsY y) (opsZ z))
 Var Sim_rec : @I1,I2:*s->*s.@Y,Z:*s.@(~):Y->Z->*p.
@@ -56,7 +56,7 @@ Intros
 Apply H1
 Exit
 
-Prove SimplyT_arrow : @I1,I2:*s->*s. SimplyT I1 -> SimplyT I2 -> 
+Prove SimplyT_arrow : @I1,I2:*s->*s. SimplyT I1 -> SimplyT I2 ->
                      SimplyT (\X:*s.I1 X -> I2 X)
 Intros
 Unfold SimplyT
@@ -66,7 +66,7 @@ Apply H Then Assumption
 Apply H1 Then Assumption
 Exit
 
-Prove SimplyT_rec : @I1,I2:*s->*s. SimplyT I1 -> SimplyT I2 -> 
+Prove SimplyT_rec : @I1,I2:*s->*s. SimplyT I1 -> SimplyT I2 ->
                      SimplyT (\X:*s.{|l:I1 X,r: I2 X|})
 Intros
 Unfold SimplyT
@@ -80,9 +80,9 @@ Prove SimplyT_elim : @I:*s->*s. SimplyT I ->
               @P:(*s->*s)->*p.
               P (\X:*s.X) ->
               (@T:*s. P (\X:*s. T)) ->
-              (@I1,I2:*s->*s. SimplyT I1 -> SimplyT I2 -> 
+              (@I1,I2:*s->*s. SimplyT I1 -> SimplyT I2 ->
                               P I1 -> P I2 -> P (\X:*s. I1 X -> I2 X)) ->
-              (@I1,I2:*s->*s. SimplyT I1 -> SimplyT I2 -> 
+              (@I1,I2:*s->*s. SimplyT I1 -> SimplyT I2 ->
                               P I1 -> P I2 -> P (\X:*s. {|l:I1 X,r:I2 X|}))->
               P I
 Intros 2
@@ -121,7 +121,7 @@ Var parPi : @I:*s->*s. SimplyT I ->
 -- Parametricity for Sigma-types.
 Prove parSigma : @I:*s->*s. SimplyT I ->
                    @Y,Z:*s.@(~):Y->Z->*p. @y:I Y. @z:I Z.
-                     Sim I Y Z (~) y z -> 
+                     Sim I Y Z (~) y z ->
                      (=) (Sig X:*s. I X) (pack I Y y) (pack I Z z)
 Intros 2
 Forward parPi On pack I
@@ -138,12 +138,12 @@ Intro
 Assumption
 Exit
 
-Def Bisim := \I:*s->*s. \R:*s.\(~):R->R->*p.\opsR:I R. 
+Def Bisim := \I:*s->*s. \R:*s.\(~):R->R->*p.\opsR:I R.
              Sim I R R (~) opsR opsR
 
 Prove Sim_sym : @I:*s->*s.SimplyT I ->
                 @Y,Z:*s. @(~):Y->Z->*p. @opsY:I Y. @opsZ:I Z.
-                                 Sim I Y Z (~) opsY opsZ -> 
+                                 Sim I Y Z (~) opsY opsZ ->
                                  Sim I Z Y (Inverse (~)) opsZ opsY
 Intros 2
 Pattern I
@@ -259,16 +259,16 @@ Var IsInvar : @I:*s->*s. @Rep:*s. (Rep->*p) -> I Rep -> *p
 
 Var IsInvar_id : @Rep:*s.@Inv:Rep->*p. IsInvar (\X:*s.X) Rep Inv <==> Inv
 
-Var IsInvar_const : @T:*s.@Rep:*s.@Inv:Rep->*p. 
+Var IsInvar_const : @T:*s.@Rep:*s.@Inv:Rep->*p.
                     IsInvar (\X:*s.T) Rep Inv <==> \t:T. True
 
-Var IsInvar_arrow : @I1,I2:*s->*s. @Rep:*s.@Inv:Rep->*p. 
-                    IsInvar (\X:*s.I1 X -> I2 X) Rep Inv <==> 
+Var IsInvar_arrow : @I1,I2:*s->*s. @Rep:*s.@Inv:Rep->*p.
+                    IsInvar (\X:*s.I1 X -> I2 X) Rep Inv <==>
                     (\f:I1 Rep->I2 Rep. @x:I1 Rep. IsInvar I1 Rep Inv x ->
                                                    IsInvar I2 Rep Inv (f x))
 
-Var IsInvar_rec : @I1,I2:*s->*s. @Rep:*s.@Inv:Rep->*p. 
-                    IsInvar (\X:*s.{|l:I1 X, r:I2 X|}) Rep Inv <==> 
+Var IsInvar_rec : @I1,I2:*s->*s. @Rep:*s.@Inv:Rep->*p.
+                    IsInvar (\X:*s.{|l:I1 X, r:I2 X|}) Rep Inv <==>
                     (\f:{|l:I1 Rep,r:I2 Rep|}. IsInvar I1 Rep Inv f`l /\
                                                  IsInvar I2 Rep Inv f`r)
 
@@ -281,7 +281,7 @@ Var IsInvar_rec : @I1,I2:*s->*s. @Rep:*s.@Inv:Rep->*p.
 ------------------------------------------------------
 ------------------------------------------------------
 
--- Defines the first-order interfaces, and gives some properties about Sim and 
+-- Defines the first-order interfaces, and gives some properties about Sim and
 -- IsInvar for these interfaces, namely those properties we need for
 -- developing general theory for ADTs
 
@@ -306,7 +306,7 @@ Intros
 Apply H1
 Exit
 
-Prove Basic_rec : @I1,I2:*s->*s. Basic I1 -> Basic I2 -> 
+Prove Basic_rec : @I1,I2:*s->*s. Basic I1 -> Basic I2 ->
                      Basic (\X:*s.{|l:I1 X,r: I2 X|})
 Intros
 Unfold Basic
@@ -320,7 +320,7 @@ Prove Basic_elim : @I:*s->*s. Basic I ->
               @P:(*s->*s)->*p.
               P (\X:*s.X) ->
               (@T:*s. P (\X:*s. T)) ->
-              (@I1,I2:*s->*s. Basic I1 -> Basic I2 -> 
+              (@I1,I2:*s->*s. Basic I1 -> Basic I2 ->
                               P I1 -> P I2 -> P (\X:*s. {|l:I1 X,r:I2 X|}))->
               P I
 Intros
@@ -361,7 +361,7 @@ Apply H1
 Assumption
 Exit
 
-Prove FirstO_arrow : @I1,I2:*s->*s. Basic I1 -> FirstO I2 -> 
+Prove FirstO_arrow : @I1,I2:*s->*s. Basic I1 -> FirstO I2 ->
                      FirstO (\X:*s.I1 X->I2 X)
 Intros
 Unfold FirstO
@@ -371,7 +371,7 @@ Assumption
 Apply H1 Then Assumption
 Exit
 
-Prove FirstO_rec : @I1,I2:*s->*s. FirstO I1 -> FirstO I2 -> 
+Prove FirstO_rec : @I1,I2:*s->*s. FirstO I1 -> FirstO I2 ->
                      FirstO (\X:*s.{|l:I1 X,r: I2 X|})
 Intros
 Unfold FirstO
@@ -384,7 +384,7 @@ Exit
 Prove FirstO_elim : @I:*s->*s. FirstO I ->
               @P:(*s->*s)->*p.
               (@I:*s->*s. Basic I -> P I) ->
-              (@I1,I2:*s->*s. FirstO I2 -> 
+              (@I1,I2:*s->*s. FirstO I2 ->
                               Basic I1 -> P I2 -> P (\X:*s. I1 X -> I2 X)) ->
               (@I1,I2:*s->*s. FirstO I1 -> FirstO I2 ->
                               P I1 -> P I2 -> P (\X:*s. {|l:I1 X,r:I2 X|}))->

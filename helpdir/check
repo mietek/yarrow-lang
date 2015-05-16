@@ -9,7 +9,7 @@
  <DT>Effect:
  <DD> The first variant checks that the typing judgment holds.
       The second variant checks whether or not the two terms are
-      beta-delta convertable. 
+      beta-delta convertable.
       The third variant checks if the first term is a subtype of the second
       term (for systems with subtyping).
  <DT>Prove-mode:

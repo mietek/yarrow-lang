@@ -14,15 +14,15 @@
  <DT>Syntax:
  <DD>There are three additional constructions for records:
      <DL COMPACT>
-     <DT><CODE>{|l1:T1, .. ln:Tn|}</CODE><DD> for a record-type . 
+     <DT><CODE>{|l1:T1, .. ln:Tn|}</CODE><DD> for a record-type .
      <DT><CODE>{l1=t1, .. ln=tn}  </CODE><DD> for a record-value.
      <DT><CODE>t`l</CODE><DD> for selection of a field from record.
          The character separating the term and the label is a backquote,
          usually on some obscure place on the keyboard.
-     </DL>                                                        
+     </DL>
      Note that <CODE>n</CODE> may be zero.<BR>
      For labels all ordinary identifiers may be used. A label is not
-     related in any way to a variable with the same name.     
+     related in any way to a variable with the same name.
  <DT>Typing:
  <DD>For each construction there is a typing rule:
      <UL>
@@ -34,7 +34,7 @@
          and all labels are different
      <LI><CODE>t`li : Ti</CODE><BR>
          if <CODE>t : {|l1:T1, .. ln:Tn|}</CODE>
-     </UL>                                                         
+     </UL>
  <DT>Reduction:
  <DD>There is one reduction rule:
      <UL>
@@ -49,7 +49,7 @@
  <DD><P>
      When both records and subtyping are selected there is subtyping on
      records. The subtyping rule for records is:
-     <CODE>{|l1:T1 .. ln:Tn|} &lt;: {|k1:U1 .. km : Um|}</CODE> if for every 
+     <CODE>{|l1:T1 .. ln:Tn|} &lt;: {|k1:U1 .. km : Um|}</CODE> if for every
      <CODE>j &lt;= m</CODE> there
      is an <CODE>i</CODE> with <CODE>li=kj</CODE> and <CODE>Ti &lt;: Uj</CODE>.
      </P>

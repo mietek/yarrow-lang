@@ -28,7 +28,7 @@ Var primrecnat : @B:*s.B->(Nat->B->B)-> Nat -> B
 Implicit 1 primrecnat
 
 Var primrecnat_O : @B:*s.@nv:B.@sv:Nat->B->B. primrecnat nv sv O = nv
-Var primrecnat_Sm : @B:*s.@nv:B.@sv:Nat->B->B.@m:Nat. 
+Var primrecnat_Sm : @B:*s.@nv:B.@sv:Nat->B->B.@m:Nat.
                        primrecnat nv sv (S m) = sv m (primrecnat nv sv m)
 
 Var indnat : @P:Nat->*p. (P O) -> (@m:Nat.P m -> P (S m)) -> (@m:Nat.P m)
@@ -121,7 +121,7 @@ Unfold iternat
 Apply primrecnat_O
 Exit
 
-Prove iternat_Sm : @B:*s.@nv:B.@sv:B->B.@m:Nat. 
+Prove iternat_Sm : @B:*s.@nv:B.@sv:B->B.@m:Nat.
                        iternat nv sv (S m) = sv (iternat nv sv m)
 Intros
 Unfold iternat
@@ -131,11 +131,11 @@ Exit
 ----------------------------
 -- double induction lemma --
 ----------------------------
-  
+
 -- This lemma of double induction will be very useful for proving properties
 -- about functions that compare two natural numbers in some way.
-Prove nat_double_ind : @R:Nat->Nat->*p. (@m:Nat.R O m) -> 
-                                        (@m:Nat. R (S m) O) -> 
+Prove nat_double_ind : @R:Nat->Nat->*p. (@m:Nat.R O m) ->
+                                        (@m:Nat. R (S m) O) ->
                                         (@m,n:Nat. R m n -> R (S m) (S n)) ->
                                         (@m,n:Nat. R m n)
 Intro R, H, H1, H2
@@ -174,7 +174,7 @@ Prove Le_ind : @m:Nat. @P:Nat->*p. P m -> (@n:Nat. m<=n -> P n -> P (S n)) ->
                                      @n:Nat. m<=n -> P n
 Intros
 Apply H2 (\q:Nat. m<=q /\ P q)
-Focus 3 
+Focus 3
 Intros Then Assumption
 AndI
 Apply Le_refl
@@ -508,7 +508,7 @@ Exit
 -- leq
 
 Def leq := \m,n:Nat. iternat (\m:Nat.isZero m) (
-                         \le_Pn:Nat->Bool. \m:Nat.le_Pn (pred m)) n m: 
+                         \le_Pn:Nat->Bool. \m:Nat.le_Pn (pred m)) n m:
            Nat -> Nat -> Bool
 
 Prove leq_O_m : @m:Nat. leq O m = true
@@ -590,7 +590,3 @@ Lewrite H
 Lewrite H3
 Refl
 Exit
-
-
-
-

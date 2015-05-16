@@ -1,6 +1,6 @@
 -- File: bag3
 
--- This file treats implementation 3 of the example of bags. It follows the 
+-- This file treats implementation 3 of the example of bags. It follows the
 -- structure of Section 6.5.3, and is hence divided in the following parts.
 -- 1.  Interface
 -- 2.  Specification
@@ -33,17 +33,17 @@ Def BagImp := Sig X:*s. BagI X
 -- at the end of Section 6.7.6, on pages 190,191).
 
 Def SimBagI := \Rep1,Rep2:*s. \(~):Rep1 ->Rep2->*p.
-            \ops1:BagI Rep1. \ops2:BagI Rep2. 
+            \ops1:BagI Rep1. \ops2:BagI Rep2.
                 ops1`empty ~ ops2`empty /\
-                (@x:Rep1.@y:Rep2. @m:Nat. x ~ y -> 
+                (@x:Rep1.@y:Rep2. @m:Nat. x ~ y ->
                                           ops1`add m x ~ ops2`add m y) /\
-                (@x:Rep1.@y:Rep2. @m:Nat.  x ~ y -> 
-                                          ops1`card m x = ops2`card m y) /\ 
+                (@x:Rep1.@y:Rep2. @m:Nat.  x ~ y ->
+                                          ops1`card m x = ops2`card m y) /\
                 (@x:Rep1.@y:Rep2. x ~ y -> ops1`bound x = ops2`bound y) :
             @Rep1,Rep2:*s. (Rep1->Rep2->*p) -> BagI Rep1 -> BagI Rep2 -> *p
 
-Def BisimBagI := \Bag:*s.\(~): Bag->Bag->*p.\ops:BagI Bag. 
-                    SimBagI Bag Bag (~) ops ops : 
+Def BisimBagI := \Bag:*s.\(~): Bag->Bag->*p.\ops:BagI Bag.
+                    SimBagI Bag Bag (~) ops ops :
              @Bag:*s. (Bag->Bag->*p) -> BagI Bag -> *p
 
 Def IsInvarBagI := \Rep:*s.\Inv:Rep->*p.\ops:BagI Rep.
@@ -63,10 +63,10 @@ Var parSigmaBagI : @X1:*s.@X2:*s.@x1:BagI X1. @x2:BagI X2.
 
 
 Def NaiveSpec := \Bag:*s. \ops:BagI Bag.
-                 @m,n:Nat. @b:Bag. 
+                 @m,n:Nat. @b:Bag.
                    ops`card m ops`empty = O /\
                    ops`card m (ops`add m b) = S (ops`card m b) /\
-                   (Not (m=n) -> ops`card m (ops`add n b) = 
+                   (Not (m=n) -> ops`card m (ops`add n b) =
                                                 ops`card m b) /\
                    ops`add m (ops`add n b) =
                                    ops`add n (ops`add m b) /\
@@ -98,18 +98,18 @@ Def imp3 := pack BagI Rep3 ops3 : BagImp
 -------------------------------------------------------------------
 
 Def Spec := \Rep:*s. \(~~) : Rep->Rep->*p. \Inv:Rep->*p. \ops:BagI Rep.
-       @m,n:Nat. @r:Rep. Inv r -> 
+       @m,n:Nat. @r:Rep. Inv r ->
           ops`card m ops`empty = O /\
           ops`card m (ops`add m r) = S (ops`card m r) /\
-          (Not (m=n) -> ops`card m (ops`add n r) = 
+          (Not (m=n) -> ops`card m (ops`add n r) =
                                                ops`card m r) /\
           ops`add m (ops`add n r) ~~
                                 ops`add n (ops`add m r) /\
           (S O <= ops`card m r -> m <= ops`bound r) :
          @Rep:*s. (Rep->Rep->*p) -> (Rep->*p) -> BagI Rep -> *p
 
-Prove Spec_True__NaiveSpec : 
-       @R:*s.@opsR:BagI R. 
+Prove Spec_True__NaiveSpec :
+       @R:*s.@opsR:BagI R.
                Spec R ((=) R) (\r:R. True) opsR -> NaiveSpec R opsR
 Intros
 Unfold NaiveSpec
@@ -118,8 +118,8 @@ Apply H
 Exact true_True
 Exit
 
-Prove NaiveSpec__Spec_True : 
-       @R:*s. @opsR:BagI R. 
+Prove NaiveSpec__Spec_True :
+       @R:*s. @opsR:BagI R.
                NaiveSpec R opsR -> Spec R ((=) R) (\r:R. True) opsR
 Intros
 Unfold Spec
@@ -129,15 +129,15 @@ Exit
 
 Def ImplemSpec := \Rep:*s. \ops:BagI Rep.
                    ExR (~~) : Rep->Rep->*p. ExQ Inv:Rep->*p.
-                     Spec Rep (~~) Inv ops /\ 
+                     Spec Rep (~~) Inv ops /\
                      BisimBagI Rep (~~) ops /\
                      IsInvarBagI Rep Inv ops /\
                      IsERon (~~) Inv
 
-Def WeakUserSpec := \bagImp : BagImp. 
-                    ExK Rep:*s. Ex ops:BagI Rep. 
+Def WeakUserSpec := \bagImp : BagImp.
+                    ExK Rep:*s. Ex ops:BagI Rep.
                     ExR (~~) : Rep->Rep->*p. ExQ Inv : Rep->*p.
-                    bagImp = pack BagI Rep ops /\ Spec Rep (~~) Inv ops /\ 
+                    bagImp = pack BagI Rep ops /\ Spec Rep (~~) Inv ops /\
                     BisimBagI Rep (~~) ops /\ IsERon (~~) Inv /\
                     IsInvarBagI Rep Inv ops
 
@@ -161,8 +161,8 @@ Apply Le_trans On H4
 Apply Le_max1
 Exit
 
-Def Sim3 := \r,r':Rep3. Perm r`els r'`els /\ 
-                       r`mx = r'`mx 
+Def Sim3 := \r,r':Rep3. Perm r`els r'`els /\
+                       r`mx = r'`mx
 
 Prove Bisim_Sim3 : BisimBagI Rep3 Sim3 ops3
 Unfold BisimBagI
@@ -272,25 +272,25 @@ Exit
 --                                                                     --
 -------------------------------------------------------------------------
 
-Def IsQuotSubsetAlg := \R:*s. \opsR : BagI R. \(~~) : R->R->*p. \Inv:R->*p. 
+Def IsQuotSubsetAlg := \R:*s. \opsR : BagI R. \(~~) : R->R->*p. \Inv:R->*p.
                \Q:*s. \opsQ : BagI Q.
                      ExR Rel:R->Q->*p.
                      (Inv <==> Dom Rel) /\
                      (@q:Q. Ex r:R. Rel r q) /\
-                     (@r,r':R. @q,q':Q. Rel r q -> Rel r' q' -> 
+                     (@r,r':R. @q,q':Q. Rel r q -> Rel r' q' ->
                                         r~~r' <=> q=q') /\
-                     SimBagI R Q Rel opsR opsQ : 
+                     SimBagI R Q Rel opsR opsQ :
               @R:*s. BagI R -> (R->R->*p) -> (R->*p) -> @Q:*s. BagI Q -> *p
 
-Var exis_QuotSubsetAlg : 
+Var exis_QuotSubsetAlg :
                 @R:*s. @opsR:BagI R. @(~~):R->R->*p. @Inv:R->*p.
-                IsERon (~~) Inv -> 
-                BisimBagI R (~~) opsR -> 
+                IsERon (~~) Inv ->
+                BisimBagI R (~~) opsR ->
                 IsInvarBagI R Inv opsR ->
-                ExK Q:*s. Ex opsQ: BagI Q. 
+                ExK Q:*s. Ex opsQ: BagI Q.
                 IsQuotSubsetAlg R opsR (~~) Inv Q opsQ
 
-Prove pack_QuotSubset : 
+Prove pack_QuotSubset :
                @R:*s. @opsR:BagI R. @(~~):R->R->*p.@Inv:R->*p.
                @Q:*s. @opsQ:BagI Q. IsQuotSubsetAlg R opsR (~~) Inv Q opsQ ->
                pack BagI R opsR = pack BagI Q opsQ
@@ -306,8 +306,8 @@ Exit
 
 Prove Spec_Sens :
                 @R:*s. @opsR:BagI R. @(~~):R->R->*p. @Inv:R->*p.
-                @Q:*s. @opsQ: BagI Q. 
-                IsQuotSubsetAlg R opsR (~~) Inv Q opsQ -> 
+                @Q:*s. @opsQ: BagI Q.
+                IsQuotSubsetAlg R opsR (~~) Inv Q opsQ ->
                 Spec R (~~) Inv opsR ->
                 Spec Q ((=) Q) (\q:Q.True) opsQ
 Intros
@@ -377,7 +377,7 @@ Assumption
 Exit
 
 Prove Implem__UserSpec : @Rep:*s. @ops:BagI Rep.
-                             ImplemSpec Rep ops -> 
+                             ImplemSpec Rep ops ->
                              UserSpec (pack BagI Rep ops)
 Intros
 Unfold UserSpec
@@ -403,7 +403,7 @@ Apply Implem__UserSpec
 Apply ImplemSpec_ops3
 Exit
 
-Prove principle : 
+Prove principle :
        @imp:BagImp. UserSpec imp ->
        @A:*s.@Q:A->*p.@body:@X:*s. BagI X -> A.
        (@X:*s.@ops:BagI X. Spec X ((=) X) (\r:X.True) ops -> Q (body X ops)) ->
@@ -414,12 +414,10 @@ ExistsE H
 ExistsE H2
 AndE H3
 Rewrite H4
-Convert Q (unpack BagI A (pack BagI Rep ops) 
+Convert Q (unpack BagI A (pack BagI Rep ops)
                   (\Rep1:*s.\ops1:BagI Rep1. body Rep1 ops1))
 Rewrite beta_Sig
 Apply H1
 Apply NaiveSpec__Spec_True
 Assumption
 Exit
-
-

@@ -1,25 +1,25 @@
 <P>
 Yarrow is an implementation of Pure Type Systems
 (see <A HREF="#Bar92">[Bar92]</A>) with several extensions.
-In Yarrow you can experiment with various pure type systems, 
-with emphasis on using a type system as a logic.  
-A basic knowledge on type systems and the Curry-Howard-de Bruijn 
-isomorphism is required. Experience with proof-assistants 
+In Yarrow you can experiment with various pure type systems,
+with emphasis on using a type system as a logic.
+A basic knowledge on type systems and the Curry-Howard-de Bruijn
+isomorphism is required. Experience with proof-assistants
 is useful for proving theorems.
 </P>
 
 <P>
 There are three extensions of PTSs implemented in Yarrow.
-First, we have definitions. Definitions are 
+First, we have definitions. Definitions are
 indispensable for any practical use of PTSs.
 Pure Type Systems with definitions (DPTs) are defined in
-<A HREF="#SP93">[SP93]</A>; 
-the most important property of these systems is that apart from 
+<A HREF="#SP93">[SP93]</A>;
+the most important property of these systems is that apart from
 GLOBAL definitions definitions in the context, also LOCAL
 definitions within terms are admitted.
 <BR>
 Second, we have subtyping. Subtyping makes the type system more flexible.
-In particular, it can be used with records to allow formalization of 
+In particular, it can be used with records to allow formalization of
 Object-Oriented Programming to a certain degree.
 Pure Type Systems with Subtyping are defined in
 <A HREF="#Zwa99">[Zwa99]</A>.
@@ -29,30 +29,30 @@ in particular Object-Oriented programs.
 </P>
 
 <P>
-Yarrow is equipped with a fairly extensive help system, that can 
-give a short list of commonly used commands or give more 
-detailed information on one command. Type 'help help' to see 
-how to use the help system. To see the syntax we use, type  
+Yarrow is equipped with a fairly extensive help system, that can
+give a short list of commonly used commands or give more
+detailed information on one command. Type 'help help' to see
+how to use the help system. To see the syntax we use, type
 'help syntax'.
 </P>
 
 <P>
-Yarrow has two modes. It starts in the MAIN-mode, where you can 
-get the type of a term, reduce terms and extend the context. 
+Yarrow has two modes. It starts in the MAIN-mode, where you can
+get the type of a term, reduce terms and extend the context.
 From the main-mode you can get to the PROVE-mode by the 'prove'-
-command. In the prove-mode a term for a certain type is 
-interactively constructed. When this is done, the program 
+command. In the prove-mode a term for a certain type is
+interactively constructed. When this is done, the program
 returns to the main-mode.
-When in the prove-mode, there is an important distinction 
-between COMMANDS and TACTICS. A tactic constructs a part of 
-a proof-term, can be composed with other tactics, and be undone. 
+When in the prove-mode, there is an important distinction
+between COMMANDS and TACTICS. A tactic constructs a part of
+a proof-term, can be composed with other tactics, and be undone.
 A command has no effect on the proof-term.
 For more information on tactics, type 'help tactics'.
 </P>
 
 <P>
-For the background of Yarrow, type 'help background'. There is   
-also described how you can contact the author in case of 
+For the background of Yarrow, type 'help background'. There is
+also described how you can contact the author in case of
 questions or remarks.
 </P>
 
@@ -69,9 +69,9 @@ References:
     <EM>Handbook of Logic in Computer Science</EM>,
     volume 1. Oxford University Press, 1992.
 <DT><A NAME="SP93">[SP93]</A>
-<DD>Paula Severi and Erik Poll. <EM>Pure Type Systems with 
+<DD>Paula Severi and Erik Poll. <EM>Pure Type Systems with
     Definitions</EM>.
-    Computing Science Note 93/24. Eindhoven 
+    Computing Science Note 93/24. Eindhoven
     University of Technology, 1993.
 <DT><A NAME="Zwa99">[Zwa99]</A>
 <DD>Jan Zwanenburg. <A HREF="../publications/index.html">
