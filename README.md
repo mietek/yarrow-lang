@@ -1,3 +1,10 @@
+-------------------------------------------------------------------------------
+
+This is an archival copy.  Please see the [original page](http://www.cs.kun.nl/~janz/yarrow/).
+
+-------------------------------------------------------------------------------
+
+```
 This is the main directory of Yarrow. It has the following subdirectories
 
  - bin        contains the compiled version of Yarrow.
@@ -10,3 +17,4 @@ This is the main directory of Yarrow. It has the following subdirectories
  - sessions   contains examples of Yarrow sessions.
 
 Jan Zwanenburg, 20-3-'97
+```
